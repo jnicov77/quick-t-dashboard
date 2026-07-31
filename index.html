@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick-T Demo - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+    }
+    .card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 12px;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    table tbody tr:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+  </style>
+</head>
+<body class="text-slate-100 p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Quick-T Demo
+      </h1>
+      <p class="text-slate-400 mt-1 text-sm">Control de asistencia NFC</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="pulse-dot"></div>
+      <span class="text-sm text-slate-400">En vivo</span>
+      <button id="refreshBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition">
+        Actualizar
+      </button>
+    </div>
+  </header>
+
+  <!-- Tarjetas de stats -->
+  <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="stat-card p-5 rounded-xl">
+      <p class="text-slate-400 text-sm">Adentro ahora</p>
+      <p class="text-3xl font-bold text-green-400 mt-2" id="statPresentes">0</p>
+    </div>
+    <div class="stat-card p-5 rounded-xl">
+      <p class="text-slate-400 text-sm">Asistencias hoy</p>
+      <p class="text-3xl font-bold text-blue-400 mt-2" id="statHoy">0</p>
+    </div>
+    <div class="stat-card p-5 rounded-xl">
+      <p class="text-slate-400 text-sm">Empleados registrados</p>
+      <p class="text-3xl font-bold text-purple-400 mt-2" id="statEmpleados">0</p>
+    </div>
+    <div class="stat-card p-5 rounded-xl">
+      <p class="text-slate-400 text-sm">Salidas hoy</p>
+      <p class="text-3xl font-bold text-amber-400 mt-2" id="statSalidas">0</p>
+    </div>
+  </section>
+
+  <!-- Grid principal: tabla + gráfico -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Tabla de últimos registros -->
+    <div class="card p-6 lg:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Últimos registros</h2>
+        <span class="text-xs text-slate-400" id="lastUpdate">—</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-400 border-b border-slate-700">
+              <th class="py-3 px-2">Empleado</th>
+              <th class="py-3 px-2">ID</th>
+              <th class="py-3 px-2">Entrada</th>
+              <th class="py-3 px-2">Salida</th>
+              <th class="py-3 px-2">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tablaRegistros">
+            <tr>
+              <td colspan="5" class="py-6 text-center text-slate-500">Cargando…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Gráfico -->
+    <div class="card p-6">
+      <h2 class="text-xl font-semibold mb-4">Asistencia semanal</h2>
+      <canvas id="chartSemanal" height="250"></canvas>
+    </div>
+
+  </section>
+
+  <!-- Estado actual / Quién está adentro -->
+  <section class="card p-6 mt-6">
+    <h2 class="text-xl font-semibold mb-4">Quién está adentro ahora</h2>
+    <div id="presentesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <p class="text-slate-500 col-span-full text-center py-4">Cargando…</p>
+    </div>
+  </section>
+
+  <footer class="text-center text-slate-500 text-xs mt-8 pb-4">
+    Quick-T v3.1 · Demo Dashboard · Auto-refresh cada 30s
+  </footer>
+
+  <script>
+    // === CONFIG ===
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSl_f_np7ZOWA2qkjdpK3xM2zE6esxq2Gjh9tbLOOdEllkAGp2xtGtwFSjjLNuK1G1yNEcODXXX9g7G/pub?gid=1822945878&single=true&output=csv';
+    const REFRESH_MS = 30000;
+
+    // === STATE ===
+    let chartInstance = null;
+    let registros = [];
+
+    // === FETCH ===
+    async function fetchRegistros() {
+      try {
+        const res = await fetch(SHEET_CSV_URL);
+        const text = await res.text();
+        registros = parseCSV(text);
+        render();
+      } catch (err) {
+        console.error('Error fetching:', err);
+        document.getElementById('tablaRegistros').innerHTML = `
+          <tr><td colspan="5" class="py-6 text-center text-red-400">
+            Error cargando datos. Verifica la URL pública del Sheet.
+          </td></tr>`;
+      }
+    }
+
+    // === PARSE CSV ===
+    function parseCSV(text) {
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      return lines.slice(1).map(line => {
+        const cols = line.split(',');
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = (cols[i] || '').trim());
+        return obj;
+      });
+    }
+
+    // === RENDER ===
+    function render() {
+      renderTabla();
+      renderStats();
+      renderPresentes();
+      renderChart();
+      document.getElementById('lastUpdate').textContent = 'Actualizado: ' + new Date().toLocaleTimeString();
+    }
+
+    function renderTabla() {
+      const tbody = document.getElementById('tablaRegistros');
+      const ultimos = registros.slice(-20).reverse();
+      if (ultimos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">Sin registros aún</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = ultimos.map(r => {
+        const tieneEntrada = r.entrada && r.entrada.length > 0;
+        const tieneSalida = r.salida && r.salida.length > 0;
+        let estado = '';
+        let estadoColor = '';
+        if (tieneEntrada && !tieneSalida) {
+          estado = 'Adentro';
+          estadoColor = 'bg-green-500/20 text-green-300';
+        } else if (tieneEntrada && tieneSalida) {
+          estado = 'Salió';
+          estadoColor = 'bg-slate-500/20 text-slate-300';
+        } else if (!tieneEntrada && tieneSalida) {
+          estado = 'Solo salida';
+          estadoColor = 'bg-amber-500/20 text-amber-300';
+        } else {
+          estado = '—';
+          estadoColor = 'bg-slate-500/20 text-slate-400';
+        }
+        return `
+          <tr class="border-b border-slate-800">
+            <td class="py-3 px-2 font-medium">${r.nombre || '—'}</td>
+            <td class="py-3 px-2 text-slate-400">${r.identificacion || '—'}</td>
+            <td class="py-3 px-2 text-green-400">${r.entrada || '—'}</td>
+            <td class="py-3 px-2 text-amber-400">${r.salida || '—'}</td>
+            <td class="py-3 px-2">
+              <span class="px-2 py-1 rounded text-xs ${estadoColor}">${estado}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderStats() {
+      const hoy = new Date().toISOString().split('T')[0];
+      const hoyRegistros = registros.filter(r => (r.entrada || '').startsWith(hoy));
+      const presentes = hoyRegistros.filter(r => r.entrada && !r.salida).length;
+      const salidas = hoyRegistros.filter(r => r.salida).length;
+      const empleadosUnicos = new Set(registros.map(r => r.identificacion).filter(Boolean)).size;
+
+      document.getElementById('statPresentes').textContent = presentes;
+      document.getElementById('statHoy').textContent = hoyRegistros.length;
+      document.getElementById('statEmpleados').textContent = empleadosUnicos;
+      document.getElementById('statSalidas').textContent = salidas;
+    }
+
+    function renderPresentes() {
+      const hoy = new Date().toISOString().split('T')[0];
+      const hoyRegistros = registros.filter(r => (r.entrada || '').startsWith(hoy));
+      const presentes = hoyRegistros.filter(r => r.entrada && !r.salida);
+      const container = document.getElementById('presentesList');
+
+      if (presentes.length === 0) {
+        container.innerHTML = `<p class="text-slate-500 col-span-full text-center py-4">Nadie adentro en este momento</p>`;
+        return;
+      }
+
+      container.innerHTML = presentes.map(r => {
+        const entrada = new Date(r.entrada.replace(' ', 'T'));
+        const minutos = Math.floor((Date.now() - entrada.getTime()) / 60000);
+        const horas = Math.floor(minutos / 60);
+        const mins = minutos % 60;
+        const duracion = horas > 0 ? `${horas}h ${mins}m` : `${mins}m`;
+        return `
+          <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-semibold">${r.nombre}</p>
+                <p class="text-xs text-slate-400">${r.identificacion}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-slate-400">Adentro hace</p>
+                <p class="text-green-400 font-bold">${duracion}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById('chartSemanal').getContext('2d');
+
+      // Agrupar por día de la semana
+      const dias = {};
+      const nombresDias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+      registros.forEach(r => {
+        if (!r.entrada) return;
+        const fecha = new Date(r.entrada.replace(' ', 'T'));
+        const nombre = nombresDias[fecha.getDay()];
+        dias[nombre] = (dias[nombre] || 0) + 1;
+      });
+
+      const orden = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+      const data = orden.map(d => dias[d] || 0);
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: orden,
+          datasets: [{
+            label: 'Asistencias',
+            data: data,
+            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#94a3b8', stepSize: 1 },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#94a3b8' },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // === INIT ===
+    document.getElementById('refreshBtn').addEventListener('click', fetchRegistros);
+    fetchRegistros();
+    setInterval(fetchRegistros, REFRESH_MS);
+  </script>
+</body>
+</html>
