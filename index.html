@@ -3,139 +3,628 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick-T Demo - Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Quick-T — Asistencia en tiempo real</title>
+
+  <!-- Google Fonts: Space Grotesk (titulares/métricas) + Inter (cuerpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
+    :root {
+      /* Paleta oficial Quick-T */
+      --ink-navy: #0A1F44;
+      --nfc-cyan: #00C2D8;
+      --tap-amber: #FFB020;
+      --cloud: #F6F9FC;
+
+      /* Derivados (regla 60-30-10) */
+      --cloud-elevated: #FFFFFF;
+      --cloud-tint: #EEF3F8;
+      --navy-muted: rgba(10, 31, 68, 0.6);
+      --navy-soft: rgba(10, 31, 68, 0.08);
+      --cyan-soft: rgba(0, 194, 216, 0.12);
+      --cyan-glow: rgba(0, 194, 216, 0.25);
+      --amber-soft: rgba(255, 176, 32, 0.12);
+
+      /* Tipografía */
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+
+      /* Composición */
+      --radius-card: 12px;
+      --radius-button: 6px;
+      --shadow-soft: 0 1px 3px rgba(10, 31, 68, 0.08);
+      --shadow-card: 0 4px 16px rgba(10, 31, 68, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      font-family: var(--font-body);
+      background: var(--cloud);
+      color: var(--ink-navy);
       min-height: 100vh;
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
-    .card {
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(148, 163, 184, 0.1);
-      border-radius: 12px;
+
+    /* HEADER */
+    .site-header {
+      background: var(--cloud-elevated);
+      border-bottom: 1px solid var(--navy-soft);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
     }
-    .stat-card {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
-      border: 1px solid rgba(59, 130, 246, 0.3);
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
+
+    .logo-img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+      color: var(--ink-navy);
+      margin: 0;
+    }
+
+    .brand-tagline {
+      font-size: 12px;
+      color: var(--navy-muted);
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--navy-muted);
+      font-family: var(--font-body);
+      font-weight: 500;
+    }
+
     .pulse-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #22c55e;
+      background: var(--nfc-cyan);
+      position: relative;
+    }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: var(--nfc-cyan);
+      opacity: 0.3;
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.5); opacity: 0; }
     }
-    table tbody tr:hover {
-      background: rgba(59, 130, 246, 0.1);
+
+    /* BOTÓN CTA - Ámbar reservado para acción */
+    .btn-cta {
+      background: var(--tap-amber);
+      color: var(--ink-navy);
+      border: none;
+      padding: 10px 18px;
+      border-radius: var(--radius-button);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 176, 32, 0.3);
+    }
+    .btn-cta:active {
+      transform: translateY(0);
+    }
+
+    /* HERO / TÍTULO */
+    .hero {
+      padding: 40px 32px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 42px;
+      letter-spacing: -0.02em;
+      color: var(--ink-navy);
+      margin: 0 0 8px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--navy-muted);
+      margin: 0;
+      max-width: 600px;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 32px 48px;
+    }
+
+    /* TARJETAS DE STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--cloud-elevated);
+      border: 1px solid var(--navy-soft);
+      border-radius: var(--radius-card);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--nfc-cyan);
+    }
+
+    .stat-card[data-accent="cyan"]::before { background: var(--nfc-cyan); }
+    .stat-card[data-accent="amber"]::before { background: var(--tap-amber); }
+    .stat-card[data-accent="navy"]::before { background: var(--ink-navy); }
+
+    .stat-label {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--navy-muted);
+      font-weight: 500;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 42px;
+      color: var(--ink-navy);
+      margin: 0;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    /* GRID PRINCIPAL */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* TARJETAS DE CONTENIDO */
+    .content-card {
+      background: var(--cloud-elevated);
+      border: 1px solid var(--navy-soft);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .content-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--navy-soft);
+    }
+
+    .content-card-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--ink-navy);
+      margin: 0;
+    }
+
+    .content-card-meta {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--navy-muted);
+    }
+
+    /* TABLA */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-body);
+      font-size: 14px;
+    }
+
+    .data-table thead th {
+      text-align: left;
+      padding: 12px 12px;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--navy-muted);
+      border-bottom: 1px solid var(--navy-soft);
+    }
+
+    .data-table tbody td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--cloud-tint);
+      color: var(--ink-navy);
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--cloud-tint);
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .emp-name {
+      font-weight: 600;
+      color: var(--ink-navy);
+    }
+
+    .emp-id {
+      color: var(--navy-muted);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .time-cell {
+      font-family: var(--font-display);
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+    }
+
+    .time-in {
+      color: var(--nfc-cyan);
+    }
+
+    .time-out {
+      color: var(--tap-amber);
+    }
+
+    .time-empty {
+      color: var(--navy-muted);
+    }
+
+    /* CHIPS DE ESTADO */
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-body);
+    }
+
+    .status-chip[data-status="adentro"] {
+      background: var(--cyan-soft);
+      color: var(--ink-navy);
+    }
+    .status-chip[data-status="adentro"]::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--nfc-cyan);
+    }
+
+    .status-chip[data-status="salio"] {
+      background: var(--cloud-tint);
+      color: var(--navy-muted);
+    }
+
+    .status-chip[data-status="solo-salida"] {
+      background: var(--amber-soft);
+      color: var(--ink-navy);
+    }
+    .status-chip[data-status="solo-salida"]::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--tap-amber);
+    }
+
+    /* GRÁFICO */
+    .chart-container {
+      position: relative;
+      height: 280px;
+    }
+
+    /* QUIENES ADENTRO */
+    .presentes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .presente-card {
+      background: var(--cloud);
+      border: 1px solid var(--navy-soft);
+      border-left: 3px solid var(--nfc-cyan);
+      border-radius: var(--radius-button);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .presente-info {
+      min-width: 0;
+    }
+
+    .presente-name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink-navy);
+      margin: 0 0 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .presente-id {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--navy-muted);
+      margin: 0;
+    }
+
+    .presente-time {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--nfc-cyan);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .presente-time-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      color: var(--navy-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-align: right;
+      margin: 0 0 2px;
+    }
+
+    /* ESTADOS VACÍOS */
+    .empty-state {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--navy-muted);
+      font-family: var(--font-body);
+      font-size: 14px;
+    }
+
+    .empty-state--strong {
+      color: var(--ink-navy);
+      font-weight: 500;
+    }
+
+    /* FOOTER */
+    .site-footer {
+      text-align: center;
+      padding: 24px 32px 32px;
+      color: var(--navy-muted);
+      font-size: 12px;
+      font-family: var(--font-body);
+    }
+
+    .footer-brand {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--ink-navy);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      .site-header { padding: 16px 20px; }
+      .hero { padding: 24px 20px 16px; }
+      .hero h1 { font-size: 32px; }
+      .container { padding: 0 20px 32px; }
+      .stat-value { font-size: 32px; }
+      .content-card { padding: 16px; }
     }
   </style>
 </head>
-<body class="text-slate-100 p-4 md:p-8">
+<body>
 
-  <!-- Header -->
-  <header class="flex items-center justify-between mb-8">
-    <div>
-      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Quick-T Demo
-      </h1>
-      <p class="text-slate-400 mt-1 text-sm">Control de asistencia NFC</p>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="logo-area">
+      <img src="https://skyagent-artifacts.skywork.ai/image/019f866a-68f6-71d3-9843-a5f0df48a62b/bc06b6e4-8e31-4702-b0ce-da30e2d751e3/prod_agent_019f866a-68f6-71d3-9843-a5f0df48a62b/quickt_official_logo_2.png"
+           alt="Logo Quick-T"
+           class="logo-img">
+      <div>
+        <h1 class="brand-name">Quick-T</h1>
+        <p class="brand-tagline">Asistencia Inteligente. Cero Fricción.</p>
+      </div>
     </div>
-    <div class="flex items-center gap-3">
-      <div class="pulse-dot"></div>
-      <span class="text-sm text-slate-400">En vivo</span>
-      <button id="refreshBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition">
+    <div class="header-controls">
+      <div class="live-indicator">
+        <span class="pulse-dot"></span>
+        <span>En vivo</span>
+      </div>
+      <button id="refreshBtn" class="btn-cta">
         Actualizar
       </button>
     </div>
   </header>
 
-  <!-- Tarjetas de stats -->
-  <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-    <div class="stat-card p-5 rounded-xl">
-      <p class="text-slate-400 text-sm">Adentro ahora</p>
-      <p class="text-3xl font-bold text-green-400 mt-2" id="statPresentes">0</p>
-    </div>
-    <div class="stat-card p-5 rounded-xl">
-      <p class="text-slate-400 text-sm">Asistencias hoy</p>
-      <p class="text-3xl font-bold text-blue-400 mt-2" id="statHoy">0</p>
-    </div>
-    <div class="stat-card p-5 rounded-xl">
-      <p class="text-slate-400 text-sm">Empleados registrados</p>
-      <p class="text-3xl font-bold text-purple-400 mt-2" id="statEmpleados">0</p>
-    </div>
-    <div class="stat-card p-5 rounded-xl">
-      <p class="text-slate-400 text-sm">Salidas hoy</p>
-      <p class="text-3xl font-bold text-amber-400 mt-2" id="statSalidas">0</p>
-    </div>
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Visibilidad de la operación, en un toque.</h1>
+    <p>Cada registro es exacto, auditable y verificable. Sin planillas, sin fricción, sin suplantación.</p>
   </section>
 
-  <!-- Grid principal: tabla + gráfico -->
-  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- DASHBOARD -->
+  <main class="container">
 
-    <!-- Tabla de últimos registros -->
-    <div class="card p-6 lg:col-span-2">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Últimos registros</h2>
-        <span class="text-xs text-slate-400" id="lastUpdate">—</span>
+    <!-- Tarjetas de stats -->
+    <section class="stats-grid">
+      <div class="stat-card" data-accent="cyan">
+        <p class="stat-label">Adentro ahora</p>
+        <p class="stat-value" id="statPresentes">0</p>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="text-left text-slate-400 border-b border-slate-700">
-              <th class="py-3 px-2">Empleado</th>
-              <th class="py-3 px-2">ID</th>
-              <th class="py-3 px-2">Entrada</th>
-              <th class="py-3 px-2">Salida</th>
-              <th class="py-3 px-2">Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tablaRegistros">
-            <tr>
-              <td colspan="5" class="py-6 text-center text-slate-500">Cargando…</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="stat-card" data-accent="amber">
+        <p class="stat-label">Asistencias hoy</p>
+        <p class="stat-value" id="statHoy">0</p>
       </div>
-    </div>
+      <div class="stat-card" data-accent="navy">
+        <p class="stat-label">Empleados</p>
+        <p class="stat-value" id="statEmpleados">0</p>
+      </div>
+      <div class="stat-card" data-accent="cyan">
+        <p class="stat-label">Salidas hoy</p>
+        <p class="stat-value" id="statSalidas">0</p>
+      </div>
+    </section>
 
-    <!-- Gráfico -->
-    <div class="card p-6">
-      <h2 class="text-xl font-semibold mb-4">Asistencia semanal</h2>
-      <canvas id="chartSemanal" height="250"></canvas>
-    </div>
+    <!-- Grid: tabla + gráfico -->
+    <section class="main-grid">
 
-  </section>
+      <!-- Tabla -->
+      <div class="content-card">
+        <div class="content-card-header">
+          <h2 class="content-card-title">Últimos registros</h2>
+          <span class="content-card-meta" id="lastUpdate">—</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>ID</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tablaRegistros">
+              <tr>
+                <td colspan="5" class="empty-state">Cargando marcaciones…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-  <!-- Estado actual / Quién está adentro -->
-  <section class="card p-6 mt-6">
-    <h2 class="text-xl font-semibold mb-4">Quién está adentro ahora</h2>
-    <div id="presentesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-      <p class="text-slate-500 col-span-full text-center py-4">Cargando…</p>
-    </div>
-  </section>
+      <!-- Gráfico -->
+      <div class="content-card">
+        <div class="content-card-header">
+          <h2 class="content-card-title">Asistencia semanal</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartSemanal"></canvas>
+        </div>
+      </div>
 
-  <footer class="text-center text-slate-500 text-xs mt-8 pb-4">
-    Quick-T v3.1 · Demo Dashboard · Auto-refresh cada 30s
+    </section>
+
+    <!-- Quién está adentro -->
+    <section class="content-card">
+      <div class="content-card-header">
+        <h2 class="content-card-title">Quién está adentro</h2>
+        <span class="content-card-meta">Actualización automática cada 30 segundos</span>
+      </div>
+      <div id="presentesList" class="presentes-grid">
+        <p class="empty-state empty-state--strong">Cargando…</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span class="footer-brand">Quick-T</span> · Brand Book v1.0 · Cada registro es exacto, auditable y verificable.
   </footer>
 
   <script>
-    // === CONFIG ===
+    /* === CONFIG === */
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSl_f_np7ZOWA2qkjdpK3xM2zE6esxq2Gjh9tbLOOdEllkAGp2xtGtwFSjjLNuK1G1yNEcODXXX9g7G/pub?gid=1822945878&single=true&output=csv';
     const REFRESH_MS = 30000;
+    const MAX_PREV_DAYS = 7;
 
-    // === STATE ===
+    /* === STATE === */
     let chartInstance = null;
     let registros = [];
 
-    // === FETCH ===
+    /* === PALETA PARA CHARTS (tomada del brand.json) === */
+    const BRAND_COLORS = {
+      navy: '#0A1F44',
+      cyan: '#00C2D8',
+      amber: '#FFB020',
+      cloud: '#F6F9FC',
+      navyMuted: 'rgba(10, 31, 68, 0.6)',
+      navySoft: 'rgba(10, 31, 68, 0.08)',
+    };
+
+    /* === FETCH === */
     async function fetchRegistros() {
       try {
         const res = await fetch(SHEET_CSV_URL);
@@ -145,13 +634,12 @@
       } catch (err) {
         console.error('Error fetching:', err);
         document.getElementById('tablaRegistros').innerHTML = `
-          <tr><td colspan="5" class="py-6 text-center text-red-400">
-            Error cargando datos. Verifica la URL pública del Sheet.
+          <tr><td colspan="5" class="empty-state">
+            Sin conexión. Los registros se sincronizan al reconectar.
           </td></tr>`;
       }
     }
 
-    // === PARSE CSV ===
     function parseCSV(text) {
       const lines = text.trim().split('\n');
       const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
@@ -160,10 +648,10 @@
         const obj = {};
         headers.forEach((h, i) => obj[h] = (cols[i] || '').trim());
         return obj;
-      });
+      }).filter(r => r.nombre || r.identificacion);
     }
 
-    // === RENDER ===
+    /* === RENDER === */
     function render() {
       renderTabla();
       renderStats();
@@ -176,36 +664,30 @@
       const tbody = document.getElementById('tablaRegistros');
       const ultimos = registros.slice(-20).reverse();
       if (ultimos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">Sin registros aún</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Aún no hay marcaciones. Acerca un tag NFC al lector.</td></tr>`;
         return;
       }
       tbody.innerHTML = ultimos.map(r => {
         const tieneEntrada = r.entrada && r.entrada.length > 0;
         const tieneSalida = r.salida && r.salida.length > 0;
-        let estado = '';
-        let estadoColor = '';
+        let status = 'salio';
+        let statusLabel = 'Salió';
         if (tieneEntrada && !tieneSalida) {
-          estado = 'Adentro';
-          estadoColor = 'bg-green-500/20 text-green-300';
-        } else if (tieneEntrada && tieneSalida) {
-          estado = 'Salió';
-          estadoColor = 'bg-slate-500/20 text-slate-300';
+          status = 'adentro';
+          statusLabel = 'Adentro';
         } else if (!tieneEntrada && tieneSalida) {
-          estado = 'Solo salida';
-          estadoColor = 'bg-amber-500/20 text-amber-300';
-        } else {
-          estado = '—';
-          estadoColor = 'bg-slate-500/20 text-slate-400';
+          status = 'solo-salida';
+          statusLabel = 'Solo salida';
         }
+        const inClass = tieneEntrada ? 'time-in' : 'time-empty';
+        const outClass = tieneSalida ? 'time-out' : 'time-empty';
         return `
-          <tr class="border-b border-slate-800">
-            <td class="py-3 px-2 font-medium">${r.nombre || '—'}</td>
-            <td class="py-3 px-2 text-slate-400">${r.identificacion || '—'}</td>
-            <td class="py-3 px-2 text-green-400">${r.entrada || '—'}</td>
-            <td class="py-3 px-2 text-amber-400">${r.salida || '—'}</td>
-            <td class="py-3 px-2">
-              <span class="px-2 py-1 rounded text-xs ${estadoColor}">${estado}</span>
-            </td>
+          <tr>
+            <td><span class="emp-name">${r.nombre || '—'}</span></td>
+            <td><span class="emp-id">${r.identificacion || '—'}</span></td>
+            <td><span class="time-cell ${inClass}">${r.entrada || '—'}</span></td>
+            <td><span class="time-cell ${outClass}">${r.salida || '—'}</span></td>
+            <td><span class="status-chip" data-status="${status}">${statusLabel}</span></td>
           </tr>
         `;
       }).join('');
@@ -214,13 +696,14 @@
     function renderStats() {
       const hoy = new Date().toISOString().split('T')[0];
       const hoyRegistros = registros.filter(r => (r.entrada || '').startsWith(hoy));
+      const empleadosUnicosHoy = new Set(hoyRegistros.map(r => r.identificacion).filter(Boolean)).size;
+      const empleadosUnicosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean)).size;
       const presentes = hoyRegistros.filter(r => r.entrada && !r.salida).length;
       const salidas = hoyRegistros.filter(r => r.salida).length;
-      const empleadosUnicos = new Set(registros.map(r => r.identificacion).filter(Boolean)).size;
 
       document.getElementById('statPresentes').textContent = presentes;
-      document.getElementById('statHoy').textContent = hoyRegistros.length;
-      document.getElementById('statEmpleados').textContent = empleadosUnicos;
+      document.getElementById('statHoy').textContent = empleadosUnicosHoy;
+      document.getElementById('statEmpleados').textContent = empleadosUnicosTotal;
       document.getElementById('statSalidas').textContent = salidas;
     }
 
@@ -231,7 +714,7 @@
       const container = document.getElementById('presentesList');
 
       if (presentes.length === 0) {
-        container.innerHTML = `<p class="text-slate-500 col-span-full text-center py-4">Nadie adentro en este momento</p>`;
+        container.innerHTML = `<p class="empty-state empty-state--strong" style="grid-column: 1 / -1;">Nadie está en sitio en este momento.</p>`;
         return;
       }
 
@@ -242,16 +725,14 @@
         const mins = minutos % 60;
         const duracion = horas > 0 ? `${horas}h ${mins}m` : `${mins}m`;
         return `
-          <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="font-semibold">${r.nombre}</p>
-                <p class="text-xs text-slate-400">${r.identificacion}</p>
-              </div>
-              <div class="text-right">
-                <p class="text-xs text-slate-400">Adentro hace</p>
-                <p class="text-green-400 font-bold">${duracion}</p>
-              </div>
+          <div class="presente-card">
+            <div class="presente-info">
+              <p class="presente-name">${r.nombre}</p>
+              <p class="presente-id">${r.identificacion}</p>
+            </div>
+            <div>
+              <p class="presente-time-label">Adentro</p>
+              <p class="presente-time">${duracion}</p>
             </div>
           </div>
         `;
@@ -261,48 +742,68 @@
     function renderChart() {
       const ctx = document.getElementById('chartSemanal').getContext('2d');
 
-      // Agrupar por día de la semana
-      const dias = {};
+      // Agrupar por día de la semana (últimos 7 días)
+      const ahora = new Date();
+      const ultimos7 = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(ahora);
+        d.setDate(ahora.getDate() - i);
+        ultimos7.push(d.toISOString().split('T')[0]);
+      }
       const nombresDias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-      registros.forEach(r => {
-        if (!r.entrada) return;
-        const fecha = new Date(r.entrada.replace(' ', 'T'));
-        const nombre = nombresDias[fecha.getDay()];
-        dias[nombre] = (dias[nombre] || 0) + 1;
+      const data = ultimos7.map(fecha => {
+        return registros.filter(r => (r.entrada || '').startsWith(fecha)).length;
       });
-
-      const orden = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-      const data = orden.map(d => dias[d] || 0);
+      const labels = ultimos7.map(fecha => {
+        const d = new Date(fecha + 'T00:00:00');
+        return nombresDias[d.getDay()];
+      });
 
       if (chartInstance) chartInstance.destroy();
 
       chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: orden,
+          labels: labels,
           datasets: [{
             label: 'Asistencias',
             data: data,
-            backgroundColor: 'rgba(59, 130, 246, 0.6)',
-            borderColor: 'rgba(59, 130, 246, 1)',
-            borderWidth: 1,
-            borderRadius: 6
+            backgroundColor: BRAND_COLORS.cyan,
+            borderColor: BRAND_COLORS.cyan,
+            borderWidth: 0,
+            borderRadius: 6,
+            barThickness: 28
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: BRAND_COLORS.navy,
+              titleFont: { family: 'Space Grotesk', weight: '700' },
+              bodyFont: { family: 'Inter' },
+              padding: 10,
+              cornerRadius: 6,
+              displayColors: false
+            }
           },
           scales: {
             y: {
               beginAtZero: true,
-              ticks: { color: '#94a3b8', stepSize: 1 },
-              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+              ticks: {
+                color: BRAND_COLORS.navyMuted,
+                stepSize: 1,
+                font: { family: 'Inter', size: 12 }
+              },
+              grid: { color: BRAND_COLORS.navySoft }
             },
             x: {
-              ticks: { color: '#94a3b8' },
+              ticks: {
+                color: BRAND_COLORS.navyMuted,
+                font: { family: 'Inter', size: 12 }
+              },
               grid: { display: false }
             }
           }
@@ -310,7 +811,7 @@
       });
     }
 
-    // === INIT ===
+    /* === INIT === */
     document.getElementById('refreshBtn').addEventListener('click', fetchRegistros);
     fetchRegistros();
     setInterval(fetchRegistros, REFRESH_MS);
