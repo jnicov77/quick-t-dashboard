@@ -3,15 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick-T — Asistencia en tiempo real</title>
+  <title>Quick-T — Asistencia en tiempo real · Industrias SAS</title>
 
   <!-- Google Fonts: Space Grotesk (titulares/métricas) + Inter (cuerpo) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
@@ -76,6 +73,7 @@
       width: 44px;
       height: 44px;
       object-fit: contain;
+      display: block;
     }
 
     .brand-name {
@@ -91,13 +89,39 @@
       font-size: 12px;
       color: var(--navy-muted);
       margin: 0;
-      font-weight: 400;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     .header-controls {
       display: flex;
       align-items: center;
       gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .header-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      line-height: 1.2;
+    }
+
+    .header-fecha {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink-navy);
+      margin: 0;
+    }
+
+    .header-sync {
+      font-size: 12px;
+      color: var(--navy-muted);
+      margin: 0;
+      font-family: var(--font-body);
     }
 
     .live-indicator {
@@ -131,7 +155,30 @@
       50% { transform: scale(1.5); opacity: 0; }
     }
 
-    /* BOTÓN CTA - Ámbar reservado para acción */
+    /* Botón refresh — solo icono, área táctil mantenida */
+    .btn-refresh {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--tap-amber);
+      color: var(--ink-navy);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-refresh:hover {
+      transform: rotate(180deg);
+      box-shadow: 0 4px 12px rgba(255, 176, 32, 0.3);
+    }
+    .btn-refresh:active {
+      transform: rotate(180deg) scale(0.95);
+    }
+    .btn-refresh svg { width: 18px; height: 18px; }
+
+    /* BOTÓN CTA ámbar (genérico) */
     .btn-cta {
       background: var(--tap-amber);
       color: var(--ink-navy);
@@ -154,6 +201,24 @@
     .btn-cta:active {
       transform: translateY(0);
     }
+    .btn-cta:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--navy-soft);
+      color: var(--ink-navy);
+      padding: 10px 18px;
+      border-radius: var(--radius-button);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { background: var(--cloud-tint); }
 
     /* HERO / TÍTULO */
     .hero {
@@ -239,6 +304,12 @@
       font-variant-numeric: tabular-nums;
       line-height: 1;
     }
+    .stat-value--unit {
+      font-size: 22px;
+      color: var(--navy-muted);
+      margin-left: 4px;
+      font-weight: 500;
+    }
 
     /* GRID PRINCIPAL */
     .main-grid {
@@ -268,6 +339,8 @@
       margin-bottom: 20px;
       padding-bottom: 16px;
       border-bottom: 1px solid var(--navy-soft);
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .content-card-title {
@@ -283,6 +356,33 @@
       font-size: 12px;
       color: var(--navy-muted);
     }
+
+    /* FILTROS */
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-input,
+    .filter-select {
+      border: 1px solid var(--navy-soft);
+      background: var(--cloud-elevated);
+      padding: 8px 12px;
+      border-radius: var(--radius-button);
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--ink-navy);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .filter-input:focus,
+    .filter-select:focus {
+      border-color: var(--nfc-cyan);
+      box-shadow: 0 0 0 3px var(--cyan-soft);
+    }
+    .filter-input { flex: 1; min-width: 200px; }
+    .filter-select { min-width: 140px; }
 
     /* TABLA */
     .data-table {
@@ -334,17 +434,9 @@
       font-size: 13px;
     }
 
-    .time-in {
-      color: var(--nfc-cyan);
-    }
-
-    .time-out {
-      color: var(--tap-amber);
-    }
-
-    .time-empty {
-      color: var(--navy-muted);
-    }
+    .time-in { color: var(--nfc-cyan); }
+    .time-out { color: var(--tap-amber); }
+    .time-empty { color: var(--navy-muted); }
 
     /* CHIPS DE ESTADO */
     .status-chip {
@@ -387,16 +479,129 @@
       background: var(--tap-amber);
     }
 
-    /* GRÁFICO */
-    .chart-container {
-      position: relative;
-      height: 280px;
+    /* CALENDARIO MENSUAL */
+    .cal-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    /* QUIENES ADENTRO */
+    .cal-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cal-nav-arrow {
+      border: 1px solid var(--navy-soft);
+      background: var(--cloud-elevated);
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-button);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-navy);
+      font-size: 16px;
+      line-height: 1;
+    }
+    .cal-nav-arrow:hover { background: var(--cloud-tint); }
+
+    .cal-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--ink-navy);
+      text-transform: capitalize;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .cal-dow {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--navy-muted);
+      text-align: center;
+      padding: 6px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      background: var(--cloud-tint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--ink-navy);
+      position: relative;
+      transition: transform 0.1s;
+    }
+
+    .cal-day--mute { color: var(--navy-muted); background: transparent; }
+    .cal-day--today { background: var(--tap-amber); font-weight: 700; box-shadow: 0 0 0 2px var(--ink-navy) inset; }
+    .cal-day--events { background: var(--cyan-soft); }
+    .cal-day--today.cal-day--events { background: var(--tap-amber); }
+    .cal-day:hover:not(.cal-day--mute) { transform: scale(1.05); cursor: default; }
+
+    .cal-day .cal-dot {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--nfc-cyan);
+    }
+    .cal-day--today .cal-dot { background: var(--ink-navy); }
+
+    /* CUMPLEAÑOS */
+    .cumple-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--navy-soft); }
+
+    .cumple-card {
+      background: var(--cyan-soft);
+      border-left: 3px solid var(--nfc-cyan);
+      padding: 12px 16px;
+      border-radius: var(--radius-button);
+      font-family: var(--font-body);
+      margin-bottom: 8px;
+    }
+    .cumple-card:last-child { margin-bottom: 0; }
+
+    .cumple-name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink-navy);
+      margin: 0 0 2px;
+    }
+    .cumple-meta {
+      font-size: 12px;
+      color: var(--navy-muted);
+      margin: 0;
+    }
+
+    /* PANEL DE NOVEDADES */
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
     .presentes-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 12px;
     }
 
@@ -412,10 +617,7 @@
       gap: 12px;
     }
 
-    .presente-info {
-      min-width: 0;
-    }
-
+    .presente-info { min-width: 0; }
     .presente-name {
       font-family: var(--font-display);
       font-weight: 600;
@@ -426,14 +628,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .presente-id {
       font-family: var(--font-body);
       font-size: 12px;
       color: var(--navy-muted);
       margin: 0;
     }
-
     .presente-time {
       font-family: var(--font-display);
       font-weight: 700;
@@ -442,7 +642,6 @@
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
-
     .presente-time-label {
       font-family: var(--font-body);
       font-size: 10px;
@@ -453,19 +652,125 @@
       margin: 0 0 2px;
     }
 
+    /* NOVEDADES (lista del día) */
+    .novedades-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .novedad-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--cloud);
+      border: 1px solid var(--navy-soft);
+      border-radius: var(--radius-button);
+      font-family: var(--font-body);
+      font-size: 13px;
+    }
+    .novedad-tipo {
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: var(--font-body);
+      white-space: nowrap;
+    }
+    .novedad-tipo[data-tipo="PERMISO"]    { background: var(--cyan-soft);  color: var(--ink-navy); }
+    .novedad-tipo[data-tipo="ACCIDENTE"]  { background: var(--amber-soft); color: var(--ink-navy); }
+    .novedad-tipo[data-tipo="FAMILIAR"]   { background: var(--cyan-soft);  color: var(--ink-navy); }
+    .novedad-tipo[data-tipo="VACACIONES"] { background: var(--navy-soft);  color: var(--ink-navy); }
+    .novedad-tipo[data-tipo="OTRO"]       { background: var(--cloud-tint); color: var(--navy-muted); }
+
+    .novedad-meta { color: var(--navy-muted); font-size: 12px; }
+    .novedad-nota { color: var(--ink-navy); font-size: 13px; flex: 1; min-width: 0; }
+
     /* ESTADOS VACÍOS */
     .empty-state {
       text-align: center;
-      padding: 32px 16px;
+      padding: 24px 16px;
       color: var(--navy-muted);
       font-family: var(--font-body);
       font-size: 14px;
     }
+    .empty-state--strong { color: var(--ink-navy); font-weight: 500; }
+    .empty-state--small  { padding: 16px 8px; font-size: 13px; }
 
-    .empty-state--strong {
+    /* MODAL */
+    .modal[hidden] { display: none; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 31, 68, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-card {
+      background: var(--cloud-elevated);
+      padding: 24px;
+      border-radius: var(--radius-card);
+      width: min(92%, 480px);
+      box-shadow: 0 12px 40px rgba(10, 31, 68, 0.25);
+    }
+    .modal-card h3 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 20px;
       color: var(--ink-navy);
+      margin: 0 0 16px;
+    }
+    .modal-card label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--navy-muted);
       font-weight: 500;
     }
+    .modal-card select,
+    .modal-card textarea,
+    .modal-card input {
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      padding: 8px 12px;
+      border: 1px solid var(--navy-soft);
+      border-radius: var(--radius-button);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ink-navy);
+      background: var(--cloud-elevated);
+      outline: none;
+    }
+    .modal-card select:focus,
+    .modal-card textarea:focus,
+    .modal-card input:focus {
+      border-color: var(--nfc-cyan);
+      box-shadow: 0 0 0 3px var(--cyan-soft);
+    }
+    .modal-card textarea { resize: vertical; min-height: 70px; }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .form-feedback {
+      margin: 12px 0 0;
+      font-size: 13px;
+      font-family: var(--font-body);
+      min-height: 18px;
+    }
+    .form-feedback[data-state="ok"]  { color: var(--nfc-cyan); }
+    .form-feedback[data-state="err"] { color: var(--tap-amber); }
+    .form-feedback[data-state="pending"] { color: var(--navy-muted); }
 
     /* FOOTER */
     .site-footer {
@@ -475,7 +780,6 @@
       font-size: 12px;
       font-family: var(--font-body);
     }
-
     .footer-brand {
       font-family: var(--font-display);
       font-weight: 600;
@@ -490,6 +794,9 @@
       .container { padding: 0 20px 32px; }
       .stat-value { font-size: 32px; }
       .content-card { padding: 16px; }
+      .header-info { align-items: flex-start; }
+      .filter-input { min-width: 100%; }
+      .filter-select { width: 100%; }
     }
   </style>
 </head>
@@ -498,21 +805,32 @@
   <!-- HEADER -->
   <header class="site-header">
     <div class="logo-area">
-      <img src="https://skyagent-artifacts.skywork.ai/image/019f866a-68f6-71d3-9843-a5f0df48a62b/bc06b6e4-8e31-4702-b0ce-da30e2d751e3/prod_agent_019f866a-68f6-71d3-9843-a5f0df48a62b/quickt_official_logo_2.png"
+      <img src="quickt-logo-256.png"
            alt="Logo Quick-T"
-           class="logo-img">
+           class="logo-img"
+           onerror="this.onerror=null;this.src='quickt-logo.png';">
       <div>
         <h1 class="brand-name">Quick-T</h1>
-        <p class="brand-tagline">Asistencia Inteligente. Cero Fricción.</p>
+        <p class="brand-tagline">Industrias SAS</p>
       </div>
     </div>
     <div class="header-controls">
-      <div class="live-indicator">
-        <span class="pulse-dot"></span>
-        <span>En vivo</span>
+      <div class="header-info">
+        <p class="header-fecha" id="headerFecha">Hoy · —</p>
+        <p class="header-sync">
+          <span class="live-indicator">
+            <span class="pulse-dot"></span>
+            <span>Sincronizado <span id="headerSyncTime">—</span></span>
+          </span>
+        </p>
       </div>
-      <button id="refreshBtn" class="btn-cta">
-        Actualizar
+      <button id="refreshBtn" class="btn-refresh" aria-label="Actualizar" title="Actualizar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+          <path d="M20.49 15A9 9 0 0 1 5.64 18.36L1 14"></path>
+        </svg>
       </button>
     </div>
   </header>
@@ -526,35 +844,46 @@
   <!-- DASHBOARD -->
   <main class="container">
 
-    <!-- Tarjetas de stats -->
+    <!-- Tarjetas de stats (4) -->
     <section class="stats-grid">
       <div class="stat-card" data-accent="cyan">
-        <p class="stat-label">Adentro ahora</p>
-        <p class="stat-value" id="statPresentes">0</p>
-      </div>
-      <div class="stat-card" data-accent="amber">
-        <p class="stat-label">Asistencias hoy</p>
-        <p class="stat-value" id="statHoy">0</p>
+        <p class="stat-label">Asistencia %</p>
+        <p class="stat-value" id="statAsistencia">—<span class="stat-value--unit">%</span></p>
       </div>
       <div class="stat-card" data-accent="navy">
         <p class="stat-label">Empleados</p>
         <p class="stat-value" id="statEmpleados">0</p>
       </div>
+      <div class="stat-card" data-accent="amber">
+        <p class="stat-label">Horario</p>
+        <p class="stat-value" id="statHorario">—</p>
+      </div>
       <div class="stat-card" data-accent="cyan">
-        <p class="stat-label">Salidas hoy</p>
-        <p class="stat-value" id="statSalidas">0</p>
+        <p class="stat-label">Novedades</p>
+        <p class="stat-value" id="statNovedades">0</p>
       </div>
     </section>
 
-    <!-- Grid: tabla + gráfico -->
+    <!-- Grid principal: Seguimiento Personal + Calendario/Cumple -->
     <section class="main-grid">
 
-      <!-- Tabla -->
+      <!-- Seguimiento Personal (tabla con filtros) -->
       <div class="content-card">
         <div class="content-card-header">
-          <h2 class="content-card-title">Últimos registros</h2>
+          <h2 class="content-card-title">Seguimiento Personal</h2>
           <span class="content-card-meta" id="lastUpdate">—</span>
         </div>
+
+        <div class="filter-bar">
+          <input id="filtroEmpleado" placeholder="Filtrar por empleado o ID…" class="filter-input" />
+          <select id="filtroEstado" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="adentro">Adentro</option>
+            <option value="salio">Salió</option>
+            <option value="solo-salida">Solo salida</option>
+          </select>
+        </div>
+
         <div style="overflow-x: auto;">
           <table class="data-table">
             <thead>
@@ -575,246 +904,631 @@
         </div>
       </div>
 
-      <!-- Gráfico -->
+      <!-- Calendario mensual + cumpleaños -->
       <div class="content-card">
         <div class="content-card-header">
-          <h2 class="content-card-title">Asistencia semanal</h2>
+          <h2 class="content-card-title">Calendario</h2>
+          <span class="content-card-meta" id="calMeta">—</span>
         </div>
-        <div class="chart-container">
-          <canvas id="chartSemanal"></canvas>
+        <div class="cal-wrap">
+          <div class="cal-toolbar">
+            <button id="calPrev" class="cal-nav-arrow" aria-label="Mes anterior">‹</button>
+            <span class="cal-title" id="calTitle">—</span>
+            <button id="calNext" class="cal-nav-arrow" aria-label="Mes siguiente">›</button>
+          </div>
+          <div id="calendarioMensual" class="cal-grid"></div>
+          <div class="cumple-section" id="cumpleSection">
+            <p class="content-card-meta" style="margin:0 0 10px;">Cumpleaños del día</p>
+            <div id="cumpleDelDia"></div>
+          </div>
         </div>
       </div>
 
     </section>
 
-    <!-- Quién está adentro -->
-    <section class="content-card">
+    <!-- Panel de Novedades -->
+    <section class="content-card" style="margin-bottom: 32px;">
       <div class="content-card-header">
-        <h2 class="content-card-title">Quién está adentro</h2>
-        <span class="content-card-meta">Actualización automática cada 30 segundos</span>
+        <h2 class="content-card-title">Panel de Novedades</h2>
+        <button id="openNovedadFormBtn" class="btn-cta">+ Nueva Novedad</button>
       </div>
-      <div id="presentesList" class="presentes-grid">
-        <p class="empty-state empty-state--strong">Cargando…</p>
+
+      <div class="panel-grid">
+        <div>
+          <p class="content-card-meta" style="margin:0 0 10px;">Quién está adentro</p>
+          <div id="presentesList" class="presentes-grid">
+            <p class="empty-state empty-state--strong">Cargando…</p>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;">
+          <p class="content-card-meta" style="margin:0 0 10px;">Novedades registradas</p>
+          <div id="novedadesList" class="novedades-list">
+            <p class="empty-state empty-state--small">Sin novedades registradas.</p>
+          </div>
+        </div>
       </div>
     </section>
 
   </main>
 
+  <!-- MODAL: Nueva Novedad -->
+  <div id="novedadModal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="novedadTitle">
+      <h3 id="novedadTitle">Registrar novedad</h3>
+
+      <label>Empleado
+        <select id="novedadEmpleado">
+          <option value="">— Seleccionar empleado —</option>
+        </select>
+      </label>
+
+      <label>Tipo
+        <select id="novedadTipo">
+          <option value="PERMISO">PERMISO</option>
+          <option value="ACCIDENTE">ACCIDENTE</option>
+          <option value="FAMILIAR">FAMILIAR</option>
+          <option value="VACACIONES">VACACIONES</option>
+          <option value="OTRO">OTRO</option>
+        </select>
+      </label>
+
+      <label>Nota (opcional)
+        <textarea id="novedadNota" rows="3" maxlength="240" placeholder="Detalle opcional…"></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelNovedadBtn" type="button">Cancelar</button>
+        <button class="btn-cta" id="submitNovedadBtn" type="button">Guardar</button>
+      </div>
+      <p id="novedadFeedback" class="form-feedback" data-state="pending">
+        Esta acción escribe en el Sheet. Requiere aprobación de Nicolás.
+      </p>
+    </div>
+  </div>
+
   <footer class="site-footer">
-    <span class="footer-brand">Quick-T</span> · Brand Book v1.0 · Cada registro es exacto, auditable y verificable.
+    <span class="footer-brand">Quick-T</span> · V.1.0 · Cada registro es exacto, auditable y verificable.
   </footer>
 
   <script>
+    /* ============================================================
+     *  Quick-T Dashboard v2
+     *  Cambios atómicos sobre v1: header, métricas, Seguimiento
+     *  Personal con filtros, calendario mensual + cumpleaños,
+     *  Panel de Novedades + modal, parseCSV defensivo, footer V.1.0.
+     * ============================================================ */
+
     /* === CONFIG === */
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSl_f_np7ZOWA2qkjdpK3xM2zE6esxq2Gjh9tbLOOdEllkAGp2xtGtwFSjjLNuK1G1yNEcODXXX9g7G/pub?gid=1822945878&single=true&output=csv';
+    /* Sheet "eventos" — publicado por Mariana (lectura pública). */
+    const SHEET_EVENTOS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSl_f_np7ZOWA2qkjdpK3xM2zE6esxq2Gjh9tbLOOdEllkAGp2xtGtwFSjjLNuK1G1yNEcODXXX9g7G/pub?gid=1822945878&single=true&output=csv';
+
+    /* Tabs nuevas (Tarea 7): deben ser creadas por ZORO. Mientras
+       tanto, las URLs quedan vacías y la UI muestra empty state. */
+    const SHEET_CUMPLEANOS_URL = '';   // p.ej. &gid=XXXXXXXXXX&single=true&output=csv
+    const SHEET_NOVEDADES_URL  = '';   // p.ej. &gid=XXXXXXXXXX&single=true&output=csv
+
+    /* Endpoint POST para registrar novedades (Tarea 8). VACÍO hasta
+       que Nicolás apruebe la Apps Script Web App. */
+    const APPS_SCRIPT_URL = '';
+
     const REFRESH_MS = 30000;
-    const MAX_PREV_DAYS = 7;
 
     /* === STATE === */
-    let chartInstance = null;
-    let registros = [];
+    let registros         = [];
+    let cumpleanos        = [];
+    let novedades         = [];
+    let registrosPorFecha = Object.create(null); // YYYY-MM-DD -> int
+    let lastFetchAt       = null;
 
-    /* === PALETA PARA CHARTS (tomada del brand.json) === */
+    /* current month being shown in calendar (1-indexed) */
+    let calYear  = new Date().getFullYear();
+    let calMonth = new Date().getMonth(); // 0-indexed
+
+    /* === PALETA PARA CHARTS/UI === */
     const BRAND_COLORS = {
       navy: '#0A1F44',
       cyan: '#00C2D8',
       amber: '#FFB020',
-      cloud: '#F6F9FC',
       navyMuted: 'rgba(10, 31, 68, 0.6)',
-      navySoft: 'rgba(10, 31, 68, 0.08)',
+      navySoft:  'rgba(10, 31, 68, 0.08)',
     };
 
-    /* === FETCH === */
-    async function fetchRegistros() {
+    /* ============================================================
+     *  FETCH (eventos, cumpleaños, novedades)
+     * ============================================================ */
+    async function fetchCsv(url) {
+      if (!url) return [];
       try {
-        const res = await fetch(SHEET_CSV_URL);
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) return [];
         const text = await res.text();
-        registros = parseCSV(text);
-        render();
+        return parseCSV(text);
       } catch (err) {
-        console.error('Error fetching:', err);
-        document.getElementById('tablaRegistros').innerHTML = `
-          <tr><td colspan="5" class="empty-state">
-            Sin conexión. Los registros se sincronizan al reconectar.
-          </td></tr>`;
+        console.warn('CSV fetch failed:', url, err);
+        return [];
       }
     }
 
-    function parseCSV(text) {
-      const lines = text.trim().split('\n');
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-      return lines.slice(1).map(line => {
-        const cols = line.split(',');
-        const obj = {};
-        headers.forEach((h, i) => obj[h] = (cols[i] || '').trim());
-        return obj;
-      }).filter(r => r.nombre || r.identificacion);
+    async function fetchAll() {
+      const [ev, cum, nov] = await Promise.all([
+        fetchCsv(SHEET_EVENTOS_URL),
+        fetchCsv(SHEET_CUMPLEANOS_URL),
+        fetchCsv(SHEET_NOVEDADES_URL),
+      ]);
+      registros  = ev;
+      cumpleanos = cum;
+      novedades  = nov;
+
+      // index por fecha
+      const map = Object.create(null);
+      for (const r of registros) {
+        const e = (r.entrada || '').trim();
+        if (!e) continue;
+        const key = e.slice(0, 10); // YYYY-MM-DD
+        if (/^\d{4}-\d{2}-\d{2}$/.test(key)) map[key] = (map[key] || 0) + 1;
+      }
+      registrosPorFecha = map;
+
+      lastFetchAt = new Date();
+      renderAll();
     }
 
-    /* === RENDER === */
-    function render() {
-      renderTabla();
+    /* ============================================================
+     *  PARSER CSV (RFC 4180 mini)
+     *  Maneja comillasdobles como escape; comas dentro de campos no rompen.
+     * ============================================================ */
+    function parseCSV(text) {
+      if (!text || typeof text !== 'string') return [];
+      const rows = [];
+      let cur = '', inQ = false, row = [];
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (inQ) {
+          if (ch === '"') {
+            if (text[i + 1] === '"') { cur += '"'; i++; }
+            else { inQ = false; }
+          } else {
+            cur += ch;
+          }
+        } else {
+          if (ch === '"') { inQ = true; }
+          else if (ch === ',') { row.push(cur); cur = ''; }
+          else if (ch === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+          else if (ch === '\r') { /* ignorar */ }
+          else { cur += ch; }
+        }
+      }
+      if (cur !== '' || row.length > 0) { row.push(cur); rows.push(row); }
+
+      const head = rows.shift();
+      if (!head) return [];
+      const headers = head.map(h => h.trim().toLowerCase());
+      return rows
+        .filter(r => r.some(c => c.trim() !== ''))
+        .map(r => Object.fromEntries(headers.map((h, i) => [h, (r[i] != null ? r[i] : '').trim()])))
+        .filter(obj => obj.nombre || obj.identificacion);
+    }
+
+    /* ============================================================
+     *  FORMAT helpers (fecha larga en español, hora corta, %)
+     * ============================================================ */
+    const MES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const DOW_ES = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+
+    function formatFechaLarga(d) {
+      return `${DOW_ES[d.getDay()]}, ${d.getDate()} de ${MES_ES[d.getMonth()]} de ${d.getFullYear()}`;
+    }
+    function formatHora(d) {
+      const h = String(d.getHours()).padStart(2, '0');
+      const m = String(d.getMinutes()).padStart(2, '0');
+      return `${h}:${m}`;
+    }
+    function formatMesAnio(y, m) {
+      const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+      return `${cap(MES_ES[m])} ${y}`;
+    }
+
+    /* ============================================================
+     *  RENDER (orquestador)
+     * ============================================================ */
+    function renderAll() {
+      renderHeaderInfo();
       renderStats();
+      renderTabla();
+      renderCalendario();
+      renderCumpleanios();
       renderPresentes();
-      renderChart();
-      document.getElementById('lastUpdate').textContent = 'Actualizado: ' + new Date().toLocaleTimeString();
+      renderNovedades();
+    }
+
+    /* === HEADER === */
+    function renderHeaderInfo() {
+      const now = new Date();
+      document.getElementById('headerFecha').textContent = 'Hoy · ' + formatFechaLarga(now);
+      const t = lastFetchAt ? formatHora(lastFetchAt) : '—';
+      document.getElementById('headerSyncTime').textContent = t;
+      document.getElementById('lastUpdate').textContent = lastFetchAt
+        ? 'Actualizado: ' + formatHora(lastFetchAt)
+        : '—';
+    }
+
+    /* === STATS === */
+    function renderStats() {
+      const now = new Date();
+      const today = now.toISOString().slice(0, 10);
+
+      const hoyRegistros = registros.filter(r => (r.entrada || '').startsWith(today));
+      const idEmpleadosHoy = new Set(hoyRegistros.map(r => r.identificacion).filter(Boolean));
+      const idEmpleadosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean));
+
+      const empleadosUnicosHoy   = idEmpleadosHoy.size;
+      const empleadosUnicosTotal = idEmpleadosTotal.size;
+
+      // 1) Asistencia %
+      const asisEl = document.getElementById('statAsistencia');
+      if (empleadosUnicosTotal === 0) {
+        asisEl.textContent = '—%';
+        asisEl.innerHTML = '—<span class="stat-value--unit">%</span>';
+      } else {
+        const pct = Math.round((empleadosUnicosHoy / empleadosUnicosTotal) * 100);
+        asisEl.innerHTML = `${pct}<span class="stat-value--unit">%</span>`;
+      }
+
+      // 2) Empleados (total)
+      document.getElementById('statEmpleados').textContent = empleadosUnicosTotal;
+
+      // 3) Horario — hora de la última marcación del día (Q2 fallback: opción b)
+      const horEl = document.getElementById('statHorario');
+      if (hoyRegistros.length === 0) {
+        horEl.textContent = '—';
+        horEl.style.fontSize = '32px';
+      } else {
+        const allStamp = [];
+        for (const r of hoyRegistros) {
+          if (r.entrada) allStamp.push(new Date(r.entrada.replace(' ', 'T')));
+          if (r.salida)   allStamp.push(new Date(r.salida.replace(' ', 'T')));
+        }
+        allStamp.sort((a, b) => b.getTime() - a.getTime());
+        horEl.textContent = formatHora(allStamp[0]);
+        horEl.style.fontSize = '42px';
+      }
+
+      // 4) Novedades (del día)
+      const novHoy = novedades.filter(n => (n.timestamp || '').startsWith(today));
+      document.getElementById('statNovedades').textContent = novHoy.length;
+    }
+
+    /* === FILTROS / TABLA === */
+    let debounceTimer = null;
+    let registrosFiltrados = [];
+
+    function aplicarFiltros() {
+      const q = document.getElementById('filtroEmpleado').value.trim().toLowerCase();
+      const estado = document.getElementById('filtroEstado').value;
+      registrosFiltrados = registros.filter(r => {
+        if (q) {
+          const haystack = `${r.nombre || ''} ${r.identificacion || ''}`.toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        const tieneEntrada = r.entrada && r.entrada.length > 0;
+        const tieneSalida  = r.salida && r.salida.length > 0;
+        let st;
+        if (tieneEntrada && !tieneSalida) st = 'adentro';
+        else if (tieneSalida)             st = estado === '' ? 'salio' : 'salio';
+        else                               st = 'salio'; // sin entrada/salida -> "salió"
+        // Para estado "solo-salida" tenemos en cuenta el caso inverso:
+        if (estado === 'solo-salida') {
+          return !tieneEntrada && tieneSalida;
+        }
+        if (estado) return st === estado;
+        return true;
+      });
+      renderTabla();
     }
 
     function renderTabla() {
       const tbody = document.getElementById('tablaRegistros');
-      const ultimos = registros.slice(-20).reverse();
-      if (ultimos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Aún no hay marcaciones. Acerca un tag NFC al lector.</td></tr>`;
+      // Si no hay filtro aplicado, mostrar últimos 20; con filtro, todos los filtrados.
+      const hayFiltro =
+        document.getElementById('filtroEmpleado').value.trim() !== '' ||
+        document.getElementById('filtroEstado').value !== '';
+      const fuente = hayFiltro ? registrosFiltrados : registros;
+      const lista  = (hayFiltro ? fuente : fuente.slice(-20)).slice().reverse();
+
+      if (lista.length === 0) {
+        const msg = hayFiltro
+          ? 'Sin coincidencias para los filtros aplicados.'
+          : 'Aún no hay marcaciones. Acerca un tag NFC al lector.';
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${msg}</td></tr>`;
         return;
       }
-      tbody.innerHTML = ultimos.map(r => {
+      tbody.innerHTML = lista.map(r => {
         const tieneEntrada = r.entrada && r.entrada.length > 0;
-        const tieneSalida = r.salida && r.salida.length > 0;
-        let status = 'salio';
-        let statusLabel = 'Salió';
-        if (tieneEntrada && !tieneSalida) {
-          status = 'adentro';
-          statusLabel = 'Adentro';
-        } else if (!tieneEntrada && tieneSalida) {
-          status = 'solo-salida';
-          statusLabel = 'Solo salida';
-        }
-        const inClass = tieneEntrada ? 'time-in' : 'time-empty';
-        const outClass = tieneSalida ? 'time-out' : 'time-empty';
+        const tieneSalida  = r.salida  && r.salida.length  > 0;
+        let status, statusLabel;
+        if (tieneEntrada && !tieneSalida) { status = 'adentro'; statusLabel = 'Adentro'; }
+        else if (!tieneEntrada && tieneSalida) { status = 'solo-salida'; statusLabel = 'Solo salida'; }
+        else { status = 'salio'; statusLabel = 'Salió'; }
+        const inClass  = tieneEntrada ? 'time-in' : 'time-empty';
+        const outClass = tieneSalida  ? 'time-out' : 'time-empty';
         return `
           <tr>
-            <td><span class="emp-name">${r.nombre || '—'}</span></td>
-            <td><span class="emp-id">${r.identificacion || '—'}</span></td>
-            <td><span class="time-cell ${inClass}">${r.entrada || '—'}</span></td>
-            <td><span class="time-cell ${outClass}">${r.salida || '—'}</span></td>
+            <td><span class="emp-name">${escapeHtml(r.nombre || '—')}</span></td>
+            <td><span class="emp-id">${escapeHtml(r.identificacion || '—')}</span></td>
+            <td><span class="time-cell ${inClass}">${escapeHtml(r.entrada || '—')}</span></td>
+            <td><span class="time-cell ${outClass}">${escapeHtml(r.salida || '—')}</span></td>
             <td><span class="status-chip" data-status="${status}">${statusLabel}</span></td>
-          </tr>
-        `;
+          </tr>`;
       }).join('');
     }
 
-    function renderStats() {
-      const hoy = new Date().toISOString().split('T')[0];
-      const hoyRegistros = registros.filter(r => (r.entrada || '').startsWith(hoy));
-      const empleadosUnicosHoy = new Set(hoyRegistros.map(r => r.identificacion).filter(Boolean)).size;
-      const empleadosUnicosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean)).size;
-      const presentes = hoyRegistros.filter(r => r.entrada && !r.salida).length;
-      const salidas = hoyRegistros.filter(r => r.salida).length;
-
-      document.getElementById('statPresentes').textContent = presentes;
-      document.getElementById('statHoy').textContent = empleadosUnicosHoy;
-      document.getElementById('statEmpleados').textContent = empleadosUnicosTotal;
-      document.getElementById('statSalidas').textContent = salidas;
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+      })[c]);
     }
 
+    /* === CALENDARIO MENSUAL === */
+    function renderCalendario() {
+      const grid = document.getElementById('calendarioMensual');
+      const today = new Date();
+
+      const year  = calYear;
+      const month = calMonth;
+      const firstOfMonth = new Date(year, month, 1);
+      const lastDay      = new Date(year, month + 1, 0).getDate();
+
+      // dow del primer día: getDay()=Dom=0..Sáb=6, lo reordenamos a Lun=0..Dom=6
+      const firstDow = (firstOfMonth.getDay() + 6) % 7;
+
+      document.getElementById('calTitle').textContent = formatMesAnio(year, month);
+
+      const html = [];
+      // headers L M M J V S D
+      ['L','M','M','J','V','S','D'].forEach(d => {
+        html.push(`<div class="cal-dow">${d}</div>`);
+      });
+
+      // huecos previos
+      for (let i = 0; i < firstDow; i++) {
+        html.push(`<div class="cal-day cal-day--mute"></div>`);
+      }
+
+      let totalEventosMes = 0;
+      for (let d = 1; d <= lastDay; d++) {
+        const key = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const has = registrosPorFecha[key] || 0;
+        totalEventosMes += has;
+        const isToday = (d === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+        const cls = ['cal-day'];
+        if (isToday) cls.push('cal-day--today');
+        if (has > 0) cls.push('cal-day--events');
+        const dot = (has > 0) ? `<span class="cal-dot" title="${has} marcaciones"></span>` : '';
+        html.push(`<div class="${cls.join(' ')}" title="${has} marcaciones">${d}${dot}</div>`);
+      }
+      grid.innerHTML = html.join('');
+      document.getElementById('calMeta').textContent = `${totalEventosMes} marcaciones este mes`;
+    }
+
+    /* === CUMPLEAÑOS === */
+    function renderCumpleanios() {
+      const cont = document.getElementById('cumpleDelDia');
+      if (!cumpleanos || cumpleanos.length === 0) {
+        cont.innerHTML = `<p class="empty-state empty-state--small">Sin cumpleaños registrados hoy. Próximamente.</p>`;
+        return;
+      }
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2,'0');
+      const dd = String(now.getDate()).padStart(2,'0');
+      const todayMD = `${mm}-${dd}`;
+      const matches = cumpleanos.filter(c => {
+        const f = c.fecha_nacimiento || c.fechanacimiento || '';
+        if (!f) return false;
+        const m = f.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!m) return false;
+        return `${m[2]}-${m[3]}` === todayMD;
+      });
+      if (matches.length === 0) {
+        cont.innerHTML = `<p class="empty-state empty-state--small">No hay cumpleaños hoy.</p>`;
+        return;
+      }
+      cont.innerHTML = matches.map(m => `
+        <div class="cumple-card">
+          <p class="cumple-name">🎂 ${escapeHtml(m.nombre || '')}</p>
+          <p class="cumple-meta">${escapeHtml(m.fecha_nacimiento || '')}</p>
+        </div>
+      `).join('');
+    }
+
+    /* === PRESENTES === */
     function renderPresentes() {
-      const hoy = new Date().toISOString().split('T')[0];
-      const hoyRegistros = registros.filter(r => (r.entrada || '').startsWith(hoy));
-      const presentes = hoyRegistros.filter(r => r.entrada && !r.salida);
+      const today = new Date().toISOString().slice(0, 10);
+      const hoy = registros.filter(r => (r.entrada || '').startsWith(today));
+      const presentes = hoy.filter(r => r.entrada && !r.salida);
       const container = document.getElementById('presentesList');
 
       if (presentes.length === 0) {
         container.innerHTML = `<p class="empty-state empty-state--strong" style="grid-column: 1 / -1;">Nadie está en sitio en este momento.</p>`;
         return;
       }
-
       container.innerHTML = presentes.map(r => {
         const entrada = new Date(r.entrada.replace(' ', 'T'));
         const minutos = Math.floor((Date.now() - entrada.getTime()) / 60000);
         const horas = Math.floor(minutos / 60);
-        const mins = minutos % 60;
+        const mins  = minutos % 60;
         const duracion = horas > 0 ? `${horas}h ${mins}m` : `${mins}m`;
         return `
           <div class="presente-card">
             <div class="presente-info">
-              <p class="presente-name">${r.nombre}</p>
-              <p class="presente-id">${r.identificacion}</p>
+              <p class="presente-name">${escapeHtml(r.nombre || '')}</p>
+              <p class="presente-id">${escapeHtml(r.identificacion || '')}</p>
             </div>
             <div>
               <p class="presente-time-label">Adentro</p>
               <p class="presente-time">${duracion}</p>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
-    function renderChart() {
-      const ctx = document.getElementById('chartSemanal').getContext('2d');
-
-      // Agrupar por día de la semana (últimos 7 días)
-      const ahora = new Date();
-      const ultimos7 = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(ahora);
-        d.setDate(ahora.getDate() - i);
-        ultimos7.push(d.toISOString().split('T')[0]);
+    /* === NOVEDADES (lista visual) === */
+    function renderNovedades() {
+      const cont = document.getElementById('novedadesList');
+      if (!novedades || novedades.length === 0) {
+        cont.innerHTML = `<p class="empty-state empty-state--small">Sin novedades registradas.</p>`;
+        return;
       }
-      const nombresDias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-      const data = ultimos7.map(fecha => {
-        return registros.filter(r => (r.entrada || '').startsWith(fecha)).length;
-      });
-      const labels = ultimos7.map(fecha => {
-        const d = new Date(fecha + 'T00:00:00');
-        return nombresDias[d.getDay()];
-      });
+      const today = new Date().toISOString().slice(0, 10);
+      const hoy = novedades.filter(n => (n.timestamp || '').startsWith(today));
+      const lista = hoy.length > 0 ? hoy : novedades.slice(-10);
+      cont.innerHTML = lista.map(n => {
+        const tipo = (n.tipo || 'OTRO').toUpperCase();
+        const hora = (n.timestamp || '').slice(11, 16) || '';
+        return `
+          <div class="novedad-row">
+            <span class="novedad-tipo" data-tipo="${escapeHtml(tipo)}">${escapeHtml(tipo)}</span>
+            <span class="novedad-meta">${escapeHtml(n.nombre || '')} · ${escapeHtml(hora)}</span>
+            <span class="novedad-nota">${escapeHtml(n.nota || '')}</span>
+          </div>`;
+      }).join('');
+    }
 
-      if (chartInstance) chartInstance.destroy();
+    /* ============================================================
+     *  MODAL NOVEDAD
+     * ============================================================ */
+    function poblarEmpleadosModal() {
+      const sel = document.getElementById('novedadEmpleado');
+      const ids = new Map();
+      for (const r of registros) {
+        const id  = r.identificacion || '';
+        const nom = r.nombre || '';
+        if (id && !ids.has(id)) ids.set(id, nom);
+      }
+      const opts = [`<option value="">— Seleccionar empleado —</option>`];
+      for (const [id, nom] of ids.entries()) {
+        opts.push(`<option value="${escapeHtml(id)}">${escapeHtml(nom)} (${escapeHtml(id)})</option>`);
+      }
+      sel.innerHTML = opts.join('');
+    }
 
-      chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Asistencias',
-            data: data,
-            backgroundColor: BRAND_COLORS.cyan,
-            borderColor: BRAND_COLORS.cyan,
-            borderWidth: 0,
-            borderRadius: 6,
-            barThickness: 28
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: BRAND_COLORS.navy,
-              titleFont: { family: 'Space Grotesk', weight: '700' },
-              bodyFont: { family: 'Inter' },
-              padding: 10,
-              cornerRadius: 6,
-              displayColors: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: BRAND_COLORS.navyMuted,
-                stepSize: 1,
-                font: { family: 'Inter', size: 12 }
-              },
-              grid: { color: BRAND_COLORS.navySoft }
-            },
-            x: {
-              ticks: {
-                color: BRAND_COLORS.navyMuted,
-                font: { family: 'Inter', size: 12 }
-              },
-              grid: { display: false }
-            }
-          }
-        }
-      });
+    function abrirNovedadModal() {
+      poblarEmpleadosModal();
+      document.getElementById('novedadEmpleado').value = '';
+      document.getElementById('novedadTipo').value = 'PERMISO';
+      document.getElementById('novedadNota').value = '';
+      const fb = document.getElementById('novedadFeedback');
+      // Mensaje claro si APPS_SCRIPT_URL todavía no está aprobado
+      if (!APPS_SCRIPT_URL) {
+        fb.textContent = 'Endpoint pendiente de aprobación de Nicolás. El botón Guardar quedará deshabilitado.';
+        fb.dataset.state = 'pending';
+      } else {
+        fb.textContent = '';
+        fb.dataset.state = '';
+      }
+      document.getElementById('novedadModal').hidden = false;
+    }
+
+    function cerrarNovedadModal() {
+      document.getElementById('novedadModal').hidden = true;
+    }
+
+    async function submitNovedad() {
+      const sel        = document.getElementById('novedadEmpleado');
+      const id         = sel.value;
+      const nombre     = sel.options[sel.selectedIndex]?.text || '';
+      const tipo       = document.getElementById('novedadTipo').value;
+      const nota       = document.getElementById('novedadNota').value.trim();
+      const fb         = document.getElementById('novedadFeedback');
+      const submitBtn  = document.getElementById('submitNovedadBtn');
+      const cancelBtn  = document.getElementById('cancelNovedadBtn');
+
+      if (!APPS_SCRIPT_URL) {
+        fb.dataset.state = 'err';
+        fb.textContent = 'No se puede guardar aún: el endpoint requiere aprobación de Nicolás.';
+        return;
+      }
+      if (!id) {
+        fb.dataset.state = 'err';
+        fb.textContent = 'Selecciona un empleado.';
+        return;
+      }
+
+      const timestamp = new Date().toISOString();
+      const payload = { identificacion: id, nombre, tipo, nota, timestamp };
+
+      submitBtn.disabled = true;
+      cancelBtn.disabled = true;
+      fb.dataset.state = 'pending';
+      fb.textContent = 'Guardando…';
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        // Optimistic UI — append al estado y re-render
+        novedades.push(payload);
+        renderStats();
+        renderNovedades();
+        fb.dataset.state = 'ok';
+        fb.textContent = 'Novedad registrada. Se ve en el panel al recargar la página.';
+        setTimeout(cerrarNovedadModal, 1200);
+      } catch (err) {
+        console.error(err);
+        fb.dataset.state = 'err';
+        fb.textContent = 'No se pudo guardar. Reintentá al reconectar.';
+      } finally {
+        submitBtn.disabled = false;
+        cancelBtn.disabled = false;
+      }
     }
 
     /* === INIT === */
-    document.getElementById('refreshBtn').addEventListener('click', fetchRegistros);
-    fetchRegistros();
-    setInterval(fetchRegistros, REFRESH_MS);
+    function init() {
+      document.getElementById('refreshBtn').addEventListener('click', fetchAll);
+
+      document.getElementById('filtroEmpleado').addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(aplicarFiltros, 200);
+      });
+      document.getElementById('filtroEstado').addEventListener('change', aplicarFiltros);
+
+      document.getElementById('calPrev').addEventListener('click', () => {
+        calMonth -= 1;
+        if (calMonth < 0) { calMonth = 11; calYear -= 1; }
+        renderCalendario();
+      });
+      document.getElementById('calNext').addEventListener('click', () => {
+        calMonth += 1;
+        if (calMonth > 11) { calMonth = 0; calYear += 1; }
+        renderCalendario();
+      });
+
+      document.getElementById('openNovedadFormBtn').addEventListener('click', abrirNovedadModal);
+      document.getElementById('cancelNovedadBtn').addEventListener('click', cerrarNovedadModal);
+      document.getElementById('submitNovedadBtn').addEventListener('click', submitNovedad);
+
+      // Click sobre el overlay cierra el modal
+      document.getElementById('novedadModal').addEventListener('click', (e) => {
+        if (e.target.id === 'novedadModal') cerrarNovedadModal();
+      });
+
+      // primer render del header para no mostrar "—"
+      renderHeaderInfo();
+      aplicarFiltros();
+
+      fetchAll();
+      setInterval(fetchAll, REFRESH_MS);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   </script>
 </body>
 </html>
