@@ -739,9 +739,8 @@
      * ============================================================ */
 
     /* === CONFIG (gate: URLs vacías muestran empty states) === */
-    const SHEET_EVENTOS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSg4hpymZ075Jv0j9xWmykUpX3VPu05MfH9qtRYxUIZdOQ5921jWL0hHdLN1HQUa2x6PVCNLbDxy8XL/pub?gid=0&single=true&output=csv';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmq1s8Oo5yjjc4fJYSdDUD7F7J024rX7p8oIBtdlfu5nPDMO_p6-m0CY2ntNwx2vTgCw/exec';
     const SHEET_NOVEDADES_URL  = '';  // gate: vacío
-    const APPS_SCRIPT_URL = '';        // gate: vacío
     const REFRESH_MS = 30000;
     const PAGE_SIZE = 10;
 
@@ -769,12 +768,26 @@
       }
     }
 
+    async function fetchJsonEvents() {
+      if (!APPS_SCRIPT_URL) return [];
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + '?action=today', { cache: 'no-store' });
+        if (!res.ok) return [];
+        const data = await res.json();
+        if (!Array.isArray(data)) return [];
+        return data.map(normalizeEventoRow).filter(obj => obj.identificacion || obj.nombre);
+      } catch (err) {
+        console.warn('Apps Script read failed:', err);
+        return [];
+      }
+    }
+
     async function fetchAll() {
       const refreshBtn = document.getElementById('refreshBtn');
       refreshBtn.classList.add('reloading');
 
       const [ev, nov] = await Promise.all([
-        fetchCsv(SHEET_EVENTOS_URL),
+        fetchJsonEvents(),
         fetchCsv(SHEET_NOVEDADES_URL),
       ]);
       registros  = ev;
