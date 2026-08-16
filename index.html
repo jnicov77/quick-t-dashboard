@@ -739,7 +739,7 @@
      * ============================================================ */
 
     /* === CONFIG (gate: URLs vacías muestran empty states) === */
-    const SHEET_EVENTOS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSl_f_np7ZOWA2qkjdpK3xM2zE6esxq2Gjh9tbLOOdEllkAGp2xtGtwFSjjLNuK1G1yNEcODXXX9g7G/pub?gid=1822945878&single=true&output=csv';
+    const SHEET_EVENTOS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSg4hpymZ075Jv0j9xWmykUpX3VPu05MfH9qtRYxUIZdOQ5921jWL0hHdLN1HQUa2x6PVCNLbDxy8XL/pub?gid=0&single=true&output=csv';
     const SHEET_NOVEDADES_URL  = '';  // gate: vacío
     const APPS_SCRIPT_URL = '';        // gate: vacío
     const REFRESH_MS = 30000;
@@ -810,11 +810,38 @@
 
       const head = rows.shift();
       if (!head) return [];
-      const headers = head.map(h => h.trim().toLowerCase());
+      // Google Sheets CSV export can prefix headers with cell refs ("A1: timestamp");
+      // strip any "XxN: " prefix and lowercase so both clean and prefixed exports parse.
+      const headers = head.map(h => h.replace(/^[a-z]+\d+:\s*/i, '').trim().toLowerCase());
       return rows
         .filter(r => r.some(c => c.trim() !== ''))
         .map(r => Object.fromEntries(headers.map((h, i) => [h, (r[i] != null ? r[i] : '').trim()])))
-        .filter(obj => obj.nombre || obj.identificacion);
+        .map(normalizeEventoRow)
+        .filter(obj => obj.identificacion || obj.nombre);
+    }
+
+    /* Normalize a CSV row from either schema (new event-log or legacy wide) into a
+       canonical {nombre, identificacion, entrada, salida, action, timestamp} shape.
+       New schema: timestamp, uid, action, device_id, location, employee_name, received_at
+         -> nombre=employee_name, identificacion=uid, entrada/salida derived from action.
+       Legacy schema: nombre, identificacion, entrada, salida (kept for reversibility). */
+    function normalizeEventoRow(obj) {
+      const hasNew = obj.employee_name !== undefined || obj.uid !== undefined || obj.action !== undefined;
+      const nombre         = (obj.employee_name || obj.nombre || '').trim();
+      const identificacion = (obj.uid || obj.identificacion || '').trim();
+      const action         = (obj.action || '').trim().toUpperCase();
+      const timestamp      = (obj.timestamp || '').trim();
+
+      let entrada = (obj.entrada || '').trim();
+      let salida  = (obj.salida  || '').trim();
+
+      if (hasNew) {
+        // Event-log schema: each row is ONE event; derive entrada/salida from action.
+        if (action === 'ENTRADA') entrada = timestamp;
+        else if (action === 'SALIDA') salida = timestamp;
+      }
+
+      return { nombre, identificacion, entrada, salida, action, timestamp };
     }
 
     /* === FORMAT HELPERS === */
@@ -851,22 +878,36 @@
         }
       }
 
-      // Step 2: for today's records, aggregate entrada/salida per employee
+      // Step 2: for today's records, aggregate entrada/salida per employee.
+      // Event-log schema: each row is one ENTRADA/SALIDA event with a timestamp,
+      // so reconstruct per-employee entrada (earliest) / salida (latest) from action.
+      // Legacy wide schema (entrada/salida columns) still supported as fallback.
       const todayMap = new Map(); // id -> {entrada: 'earliest', salida: 'latest'}
       const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
       const validTimePattern = /^\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}/;
 
+      const isToday = ts =>
+        (ts && validDatePattern.test(ts) && ts.startsWith(today) && validTimePattern.test(ts)) ? ts : '';
+
       for (const r of registros) {
         const id = r.identificacion || '';
         if (!id) continue;
-        const entrada = r.entrada || '';
-        const salida  = r.salida  || '';
 
-        // Only consider today's records
-        const ent = validDatePattern.test(entrada) && entrada.startsWith(today) && validTimePattern.test(entrada) ? entrada : '';
-        const sal = validDatePattern.test(salida)  && salida.startsWith(today)  && validTimePattern.test(salida)  ? salida  : '';
+        const action = (r.action || '').toUpperCase();
+        let ent = '', sal = '';
 
-        if (!ent && !sal) continue;
+        if (action === 'ENTRADA' || action === 'SALIDA') {
+          // Event-log schema: derive from action + timestamp
+          const ts = isToday(r.timestamp);
+          if (!ts) continue;
+          if (action === 'ENTRADA') ent = ts;
+          else sal = ts;
+        } else {
+          // Legacy wide schema: entrada/salida columns
+          ent = isToday(r.entrada);
+          sal = isToday(r.salida);
+          if (!ent && !sal) continue;
+        }
 
         if (!todayMap.has(id)) todayMap.set(id, { entrada: '', salida: '' });
         const cur = todayMap.get(id);
