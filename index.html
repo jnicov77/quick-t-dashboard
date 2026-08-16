@@ -895,7 +895,7 @@
       // Event-log schema: each row is one ENTRADA/SALIDA event with a timestamp,
       // so reconstruct per-employee entrada (earliest) / salida (latest) from action.
       // Legacy wide schema (entrada/salida columns) still supported as fallback.
-      const todayMap = new Map(); // id -> {entrada: 'earliest', salida: 'latest'}
+      const todayMap = new Map(); // id -> {entrada: 'earliest', salida: 'latest', lastAction, lastTs}
       const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
       const validTimePattern = /^\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}/;
 
@@ -922,11 +922,18 @@
           if (!ent && !sal) continue;
         }
 
-        if (!todayMap.has(id)) todayMap.set(id, { entrada: '', salida: '' });
+        if (!todayMap.has(id)) todayMap.set(id, { entrada: '', salida: '', lastAction: '', lastTs: '' });
         const cur = todayMap.get(id);
 
         if (ent && (!cur.entrada || ent < cur.entrada)) cur.entrada = ent;  // earliest
         if (sal && (!cur.salida  || sal  > cur.salida))  cur.salida  = sal; // latest
+
+        // Track the LAST event (by timestamp) to determine current state
+        const evtTs = ent || sal;
+        if (evtTs && (!cur.lastTs || evtTs > cur.lastTs)) {
+          cur.lastTs = evtTs;
+          cur.lastAction = action || (ent ? 'ENTRADA' : 'SALIDA');
+        }
       }
 
       // Step 3: build empleadosDia array
@@ -937,10 +944,10 @@
         const salida  = td && td.salida  ? td.salida  : '';
 
         let estado;
-        if (entrada && !salida) {
-          estado = 'ingreso';       // entered, still inside → green
-        } else if (salida) {
-          estado = 'salida';        // has exited → amber
+        if (td && td.lastAction === 'ENTRADA') {
+          estado = 'ingreso';       // último evento fue ENTRADA → adentro
+        } else if (td && td.lastAction === 'SALIDA') {
+          estado = 'salida';        // último evento fue SALIDA → afuera
         } else {
           estado = 'sin-registro';  // no record today → gray
         }
