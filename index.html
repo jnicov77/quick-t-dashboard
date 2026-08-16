@@ -3,948 +3,714 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick-T — Asistencia en tiempo real · Industrias SAS</title>
+  <title>Quick-T — Industrias SAS</title>
 
-  <!-- Google Fonts: Space Grotesk (titulares/métricas) + Inter (cuerpo) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 
   <style>
+    /* =========================================================
+       BRAND BOOK v1.0 — Quick-T
+       Paleta:
+         --ink-navy:   #0A1F44  (primario, texto, estructura)
+         --nfc-cyan:   #00C2D8  (secundario, acentos)
+         --tap-amber:  #FFB020  (CTA, alertas, progress bar — máx 10%)
+         --cloud:      #F6F9FC  (neutro, fondos)
+       Regla 60-30-10: Cloud 60% / Navy 30% / Cyan+Amber 10%
+       Tipografía: Space Grotesk (titulares, métricas) + Inter (cuerpo)
+       Estados (Nicolás): Ingreso=Verde, Salida=Ámbar, Sin Registro=Gris
+       ========================================================= */
     :root {
-      /* Paleta oficial Quick-T */
-      --ink-navy: #0A1F44;
-      --nfc-cyan: #00C2D8;
+      --ink-navy:  #0A1F44;
+      --nfc-cyan:  #00C2D8;
       --tap-amber: #FFB020;
-      --cloud: #F6F9FC;
+      --cloud:     #F6F9FC;
+      --green:     #16A34A;
 
-      /* Derivados (regla 60-30-10) */
-      --cloud-elevated: #FFFFFF;
-      --cloud-tint: #EEF3F8;
-      --navy-muted: rgba(10, 31, 68, 0.6);
-      --navy-soft: rgba(10, 31, 68, 0.08);
-      --cyan-soft: rgba(0, 194, 216, 0.12);
-      --cyan-glow: rgba(0, 194, 216, 0.25);
-      --amber-soft: rgba(255, 176, 32, 0.12);
+      --navy-90:   rgba(10, 31, 68, 0.90);
+      --navy-60:   rgba(10, 31, 68, 0.60);
+      --navy-20:   rgba(10, 31, 68, 0.20);
+      --navy-10:   rgba(10, 31, 68, 0.10);
+      --navy-05:   rgba(10, 31, 68, 0.05);
+      --cyan-15:   rgba(0, 194, 216, 0.15);
+      --amber-15:  rgba(255, 176, 32, 0.15);
+      --green-15:  rgba(22, 163, 74, 0.15);
 
-      /* Tipografía */
-      --font-display: 'Space Grotesk', system-ui, sans-serif;
-      --font-body: 'Inter', system-ui, sans-serif;
-
-      /* Composición */
-      --radius-card: 12px;
-      --radius-button: 6px;
-      --shadow-soft: 0 1px 3px rgba(10, 31, 68, 0.08);
-      --shadow-card: 0 4px 16px rgba(10, 31, 68, 0.06);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --shadow-card: 0 1px 2px rgba(10, 31, 68, 0.04), 0 1px 3px rgba(10, 31, 68, 0.06);
+      --shadow-hover: 0 4px 12px rgba(10, 31, 68, 0.08);
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: var(--font-body);
+    html, body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--ink-navy);
       background: var(--cloud);
-      color: var(--ink-navy);
-      min-height: 100vh;
-      margin: 0;
-      font-size: 15px;
-      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
     }
 
-    /* HEADER */
+    h1, h2, .metric-value, .heading-display {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ========== APP LAYOUT ========== */
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    /* ========== HEADER (glassmorph + shrink on scroll) ========== */
     .site-header {
-      background: var(--cloud-elevated);
-      border-bottom: 1px solid var(--navy-soft);
-      padding: 20px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .logo-img {
-      width: 44px;
-      height: 44px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .brand-name {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 24px;
-      letter-spacing: -0.02em;
-      color: var(--ink-navy);
-      margin: 0;
-    }
-
-    .brand-tagline {
-      font-size: 12px;
-      color: var(--navy-muted);
-      margin: 0;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .header-info {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      line-height: 1.2;
-    }
-
-    .header-fecha {
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--ink-navy);
-      margin: 0;
-    }
-
-    .header-sync {
-      font-size: 12px;
-      color: var(--navy-muted);
-      margin: 0;
-      font-family: var(--font-body);
-    }
-
-    .live-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--navy-muted);
-      font-family: var(--font-body);
-      font-weight: 500;
-    }
-
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--nfc-cyan);
-      position: relative;
-    }
-    .pulse-dot::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      background: var(--nfc-cyan);
-      opacity: 0.3;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.3; }
-      50% { transform: scale(1.5); opacity: 0; }
-    }
-
-    /* Botón refresh — solo icono, área táctil mantenida */
-    .btn-refresh {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--tap-amber);
-      color: var(--ink-navy);
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .btn-refresh:hover {
-      transform: rotate(180deg);
-      box-shadow: 0 4px 12px rgba(255, 176, 32, 0.3);
-    }
-    .btn-refresh:active {
-      transform: rotate(180deg) scale(0.95);
-    }
-    .btn-refresh svg { width: 18px; height: 18px; }
-
-    /* BOTÓN CTA ámbar (genérico) */
-    .btn-cta {
-      background: var(--tap-amber);
-      color: var(--ink-navy);
-      border: none;
-      padding: 10px 18px;
-      border-radius: var(--radius-button);
-      font-family: var(--font-body);
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 176, 32, 0.3);
-    }
-    .btn-cta:active {
-      transform: translateY(0);
-    }
-    .btn-cta:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid var(--navy-soft);
-      color: var(--ink-navy);
-      padding: 10px 18px;
-      border-radius: var(--radius-button);
-      font-family: var(--font-body);
-      font-weight: 500;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .btn-secondary:hover { background: var(--cloud-tint); }
-
-    /* HERO / TÍTULO */
-    .hero {
-      padding: 40px 32px 24px;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .hero h1 {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 42px;
-      letter-spacing: -0.02em;
-      color: var(--ink-navy);
-      margin: 0 0 8px;
-      line-height: 1.1;
-    }
-
-    .hero p {
-      font-family: var(--font-body);
-      font-size: 16px;
-      color: var(--navy-muted);
-      margin: 0;
-      max-width: 600px;
-    }
-
-    /* CONTENEDOR PRINCIPAL */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 32px 48px;
-    }
-
-    /* TARJETAS DE STATS */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: var(--cloud-elevated);
-      border: 1px solid var(--navy-soft);
-      border-radius: var(--radius-card);
-      padding: 20px 24px;
-      box-shadow: var(--shadow-soft);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
+      position: sticky;
       top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--nfc-cyan);
+      z-index: 50;
+      background: rgba(246, 249, 252, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--navy-10);
     }
-
-    .stat-card[data-accent="cyan"]::before { background: var(--nfc-cyan); }
-    .stat-card[data-accent="amber"]::before { background: var(--tap-amber); }
-    .stat-card[data-accent="navy"]::before { background: var(--ink-navy); }
-
-    .stat-label {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--navy-muted);
-      font-weight: 500;
-      margin: 0 0 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .stat-value {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 42px;
-      color: var(--ink-navy);
-      margin: 0;
-      letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-    }
-    .stat-value--unit {
-      font-size: 22px;
-      color: var(--navy-muted);
-      margin-left: 4px;
-      font-weight: 500;
-    }
-
-    /* GRID PRINCIPAL */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-
-    @media (max-width: 900px) {
-      .main-grid { grid-template-columns: 1fr; }
-    }
-
-    /* TARJETAS DE CONTENIDO */
-    .content-card {
-      background: var(--cloud-elevated);
-      border: 1px solid var(--navy-soft);
-      border-radius: var(--radius-card);
-      padding: 24px;
-      box-shadow: var(--shadow-card);
-    }
-
-    .content-card-header {
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 22px 24px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--navy-soft);
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 24px;
+      transition: padding 0.28s ease;
     }
+    .site-header.is-scrolled .header-inner { padding: 10px 24px; }
 
-    .content-card-title {
-      font-family: var(--font-display);
-      font-weight: 600;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
       font-size: 18px;
       color: var(--ink-navy);
-      margin: 0;
     }
+    .logo-mark {
+      width: 44px; height: 44px;
+      display: grid; place-items: center;
+      transition: width 0.28s ease, height 0.28s ease;
+    }
+    .logo-mark img { width: 100%; height: 100%; display: block; }
+    .logo-text { transition: font-size 0.28s ease; }
+    .site-header.is-scrolled .logo-mark { width: 28px; height: 28px; }
+    .site-header.is-scrolled .logo { font-size: 15px; }
 
-    .content-card-meta {
-      font-family: var(--font-body);
-      font-size: 12px;
-      color: var(--navy-muted);
+    .header-meta {
+      transition: max-height 0.28s ease, opacity 0.2s ease;
+      max-height: 40px; overflow: hidden; opacity: 1;
     }
+    .site-header.is-scrolled .header-meta { max-height: 0; opacity: 0; }
 
-    /* FILTROS */
-    .filter-bar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
+    .header-status {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 16px;
     }
-    .filter-input,
-    .filter-select {
-      border: 1px solid var(--navy-soft);
-      background: var(--cloud-elevated);
-      padding: 8px 12px;
-      border-radius: var(--radius-button);
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--ink-navy);
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .filter-input:focus,
-    .filter-select:focus {
-      border-color: var(--nfc-cyan);
-      box-shadow: 0 0 0 3px var(--cyan-soft);
-    }
-    .filter-input { flex: 1; min-width: 200px; }
-    .filter-select { min-width: 140px; }
+    .status-date { font-size: 14px; font-weight: 500; color: var(--navy-60); }
 
-    /* TABLA */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--font-body);
-      font-size: 14px;
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px;
+      background: var(--cyan-15);
+      border-radius: 999px;
+      font-size: 13px; font-weight: 600;
     }
-
-    .data-table thead th {
-      text-align: left;
-      padding: 12px 12px;
-      font-weight: 600;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--navy-muted);
-      border-bottom: 1px solid var(--navy-soft);
-    }
-
-    .data-table tbody td {
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--cloud-tint);
-      color: var(--ink-navy);
-    }
-
-    .data-table tbody tr:hover {
-      background: var(--cloud-tint);
-    }
-
-    .data-table tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    .emp-name {
-      font-weight: 600;
-      color: var(--ink-navy);
-    }
-
-    .emp-id {
-      color: var(--navy-muted);
-      font-size: 13px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .time-cell {
-      font-family: var(--font-display);
-      font-variant-numeric: tabular-nums;
-      font-size: 13px;
-    }
-
-    .time-in { color: var(--nfc-cyan); }
-    .time-out { color: var(--tap-amber); }
-    .time-empty { color: var(--navy-muted); }
-
-    /* CHIPS DE ESTADO */
-    .status-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 600;
-      font-family: var(--font-body);
-    }
-
-    .status-chip[data-status="adentro"] {
-      background: var(--cyan-soft);
-      color: var(--ink-navy);
-    }
-    .status-chip[data-status="adentro"]::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
       background: var(--nfc-cyan);
+      box-shadow: 0 0 0 4px rgba(0, 194, 216, 0.20);
+      animation: dotPulse 2s infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
     }
 
-    .status-chip[data-status="salio"] {
-      background: var(--cloud-tint);
-      color: var(--navy-muted);
+    .icon-btn {
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      background: var(--tap-amber);
+      border-radius: var(--radius-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+    .icon-btn:active { transform: translateY(0); }
+    .icon-btn svg { width: 18px; height: 18px; color: var(--ink-navy); }
+    .icon-btn.reloading { animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ========== HERO ========== */
+    .hero { padding: 28px 0 8px; }
+    .hero h1 {
+      font-size: 40px; line-height: 1.1;
+      font-weight: 700; color: var(--ink-navy);
+      margin-bottom: 6px;
     }
 
-    .status-chip[data-status="solo-salida"] {
-      background: var(--amber-soft);
+    /* ========== SECTIONS ========== */
+    section { margin-top: 32px; }
+
+    .section-head {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 16px; margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px; font-weight: 600;
       color: var(--ink-navy);
     }
-    .status-chip[data-status="solo-salida"]::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--tap-amber);
+    .section-subtitle {
+      font-size: 13px; color: var(--navy-60); margin-top: 2px;
     }
 
-    /* CALENDARIO MENSUAL */
-    .cal-wrap {
-      display: flex;
-      flex-direction: column;
+    /* ========== METRIC CARDS (3, mock style) ========== */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
     }
-
-    .cal-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    @media (max-width: 768px) {
+      .metrics-grid { grid-template-columns: 1fr; }
     }
+    .metric-card {
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+      transition: box-shadow 0.2s ease;
+    }
+    .metric-card:hover { box-shadow: var(--shadow-hover); }
 
-    .cal-nav-arrow {
-      border: 1px solid var(--navy-soft);
-      background: var(--cloud-elevated);
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-button);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .metric-label {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--navy-60);
+      margin-bottom: 12px;
+    }
+    .metric-value {
+      font-size: 36px; font-weight: 700;
       color: var(--ink-navy);
-      font-size: 16px;
       line-height: 1;
     }
-    .cal-nav-arrow:hover { background: var(--cloud-tint); }
-
-    .cal-title {
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: 16px;
-      color: var(--ink-navy);
-      text-transform: capitalize;
+    .metric-value .unit {
+      font-size: 20px; color: var(--nfc-cyan);
+      font-weight: 600; margin-left: 2px;
     }
+    .metric-hint { margin-top: 8px; font-size: 12px; color: var(--navy-60); }
 
-    .cal-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-    }
-
-    .cal-dow {
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--navy-muted);
-      text-align: center;
-      padding: 6px 0;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .cal-day {
-      aspect-ratio: 1;
-      border-radius: 6px;
-      background: var(--cloud-tint);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-weight: 500;
-      font-size: 13px;
-      color: var(--ink-navy);
-      position: relative;
-      transition: transform 0.1s;
-    }
-
-    .cal-day--mute { color: var(--navy-muted); background: transparent; }
-    .cal-day--today { background: var(--tap-amber); font-weight: 700; box-shadow: 0 0 0 2px var(--ink-navy) inset; }
-    .cal-day--events { background: var(--cyan-soft); }
-    .cal-day--today.cal-day--events { background: var(--tap-amber); }
-    .cal-day:hover:not(.cal-day--mute) { transform: scale(1.05); cursor: default; }
-
-    .cal-day .cal-dot {
-      position: absolute;
-      bottom: 4px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--nfc-cyan);
-    }
-    .cal-day--today .cal-dot { background: var(--ink-navy); }
-
-    /* CUMPLEAÑOS */
-    .cumple-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--navy-soft); }
-
-    .cumple-card {
-      background: var(--cyan-soft);
-      border-left: 3px solid var(--nfc-cyan);
-      padding: 12px 16px;
-      border-radius: var(--radius-button);
-      font-family: var(--font-body);
-      margin-bottom: 8px;
-    }
-    .cumple-card:last-child { margin-bottom: 0; }
-
-    .cumple-name {
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--ink-navy);
-      margin: 0 0 2px;
-    }
-    .cumple-meta {
-      font-size: 12px;
-      color: var(--navy-muted);
-      margin: 0;
-    }
-
-    /* PANEL DE NOVEDADES */
-    .panel-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .presentes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
-    }
-
-    .presente-card {
-      background: var(--cloud);
-      border: 1px solid var(--navy-soft);
-      border-left: 3px solid var(--nfc-cyan);
-      border-radius: var(--radius-button);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .presente-info { min-width: 0; }
-    .presente-name {
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--ink-navy);
-      margin: 0 0 2px;
-      white-space: nowrap;
+    /* Progress bar ámbar (Nicolás: "Puede ser color amarillo, el de Quick-T") */
+    .progress-bar {
+      margin-top: 14px;
+      height: 6px;
+      background: var(--navy-05);
+      border-radius: 999px;
       overflow: hidden;
-      text-overflow: ellipsis;
     }
-    .presente-id {
-      font-family: var(--font-body);
-      font-size: 12px;
-      color: var(--navy-muted);
-      margin: 0;
-    }
-    .presente-time {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--nfc-cyan);
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .presente-time-label {
-      font-family: var(--font-body);
-      font-size: 10px;
-      color: var(--navy-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      text-align: right;
-      margin: 0 0 2px;
+    .progress-bar > span {
+      display: block; height: 100%;
+      background: var(--tap-amber);
+      border-radius: 999px;
+      transition: width 0.5s ease;
     }
 
-    /* NOVEDADES (lista del día) */
-    .novedades-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    /* ========== SEARCH & FILTER CHIPS ========== */
+    .toolbar {
+      display: flex; gap: 12px; align-items: center;
+      margin-bottom: 16px; flex-wrap: wrap;
     }
-    .novedad-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      background: var(--cloud);
-      border: 1px solid var(--navy-soft);
-      border-radius: var(--radius-button);
-      font-family: var(--font-body);
-      font-size: 13px;
-    }
-    .novedad-tipo {
-      padding: 4px 10px;
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      font-family: var(--font-body);
-      white-space: nowrap;
-    }
-    .novedad-tipo[data-tipo="PERMISO"]    { background: var(--cyan-soft);  color: var(--ink-navy); }
-    .novedad-tipo[data-tipo="ACCIDENTE"]  { background: var(--amber-soft); color: var(--ink-navy); }
-    .novedad-tipo[data-tipo="FAMILIAR"]   { background: var(--cyan-soft);  color: var(--ink-navy); }
-    .novedad-tipo[data-tipo="VACACIONES"] { background: var(--navy-soft);  color: var(--ink-navy); }
-    .novedad-tipo[data-tipo="OTRO"]       { background: var(--cloud-tint); color: var(--navy-muted); }
-
-    .novedad-meta { color: var(--navy-muted); font-size: 12px; }
-    .novedad-nota { color: var(--ink-navy); font-size: 13px; flex: 1; min-width: 0; }
-
-    /* ESTADOS VACÍOS */
-    .empty-state {
-      text-align: center;
-      padding: 24px 16px;
-      color: var(--navy-muted);
-      font-family: var(--font-body);
-      font-size: 14px;
-    }
-    .empty-state--strong { color: var(--ink-navy); font-weight: 500; }
-    .empty-state--small  { padding: 16px 8px; font-size: 13px; }
-
-    /* MODAL */
-    .modal[hidden] { display: none; }
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 31, 68, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 16px;
-    }
-    .modal-card {
-      background: var(--cloud-elevated);
-      padding: 24px;
-      border-radius: var(--radius-card);
-      width: min(92%, 480px);
-      box-shadow: 0 12px 40px rgba(10, 31, 68, 0.25);
-    }
-    .modal-card h3 {
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: 20px;
+    .search { flex: 1; min-width: 220px; position: relative; }
+    .search input {
+      width: 100%; height: 40px;
+      padding: 0 14px 0 38px;
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 14px;
       color: var(--ink-navy);
-      margin: 0 0 16px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .modal-card label {
-      display: block;
-      margin-bottom: 12px;
-      font-size: 13px;
-      color: var(--navy-muted);
-      font-weight: 500;
-    }
-    .modal-card select,
-    .modal-card textarea,
-    .modal-card input {
-      display: block;
-      width: 100%;
-      margin-top: 4px;
-      padding: 8px 12px;
-      border: 1px solid var(--navy-soft);
-      border-radius: var(--radius-button);
-      font-family: var(--font-body);
-      font-size: 14px;
-      color: var(--ink-navy);
-      background: var(--cloud-elevated);
+    .search input::placeholder { color: var(--navy-60); }
+    .search input:focus {
       outline: none;
-    }
-    .modal-card select:focus,
-    .modal-card textarea:focus,
-    .modal-card input:focus {
       border-color: var(--nfc-cyan);
-      box-shadow: 0 0 0 3px var(--cyan-soft);
+      box-shadow: 0 0 0 3px var(--cyan-15);
     }
-    .modal-card textarea { resize: vertical; min-height: 70px; }
-
-    .modal-actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      margin-top: 16px;
+    .search svg {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px; color: var(--navy-60);
     }
 
-    .form-feedback {
-      margin: 12px 0 0;
-      font-size: 13px;
-      font-family: var(--font-body);
-      min-height: 18px;
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      padding: 8px 14px;
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: 999px;
+      font-size: 13px; font-weight: 500;
+      color: var(--navy-60);
+      transition: all 0.15s ease;
     }
-    .form-feedback[data-state="ok"]  { color: var(--nfc-cyan); }
-    .form-feedback[data-state="err"] { color: var(--tap-amber); }
-    .form-feedback[data-state="pending"] { color: var(--navy-muted); }
+    .chip:hover { border-color: var(--navy-20); color: var(--ink-navy); }
+    .chip.is-active {
+      background: var(--ink-navy); color: white;
+      border-color: var(--ink-navy);
+    }
 
-    /* FOOTER */
-    .site-footer {
-      text-align: center;
-      padding: 24px 32px 32px;
-      color: var(--navy-muted);
-      font-size: 12px;
-      font-family: var(--font-body);
+    /* ========== PANEL / TABLE ========== */
+    .panel {
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
     }
-    .footer-brand {
-      font-family: var(--font-display);
-      font-weight: 600;
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead th {
+      text-align: left; padding: 14px 20px;
+      background: var(--cloud);
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--navy-60);
+      border-bottom: 1px solid var(--navy-10);
+    }
+    tbody td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--navy-05);
       color: var(--ink-navy);
     }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--cloud); }
 
-    /* RESPONSIVE */
+    .emp-cell { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--nfc-cyan);
+      color: var(--ink-navy);
+      display: grid; place-items: center;
+      font-size: 12px; font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .emp-name { font-weight: 500; }
+    .emp-id { font-size: 12px; color: var(--navy-60); }
+
+    /* Time cells: black text (Nicolás feedback) */
+    .time-cell {
+      font-family: 'Space Grotesk', sans-serif;
+      font-variant-numeric: tabular-nums;
+      font-size: 14px;
+      color: var(--ink-navy);
+    }
+    .time-empty { color: var(--navy-60); }
+
+    /* ESTADO TAGS (3 estados: Ingreso verde, Salida ámbar, Sin Registro gris) */
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .tag--ingreso     { background: var(--green-15); color: var(--green); }
+    .tag--salida      { background: var(--amber-15); color: var(--ink-navy); }
+    .tag--sin-registro{ background: var(--navy-10); color: var(--navy-60); }
+
+    /* ========== PAGINATION ========== */
+    .pagination {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--cloud);
+      border-top: 1px solid var(--navy-10);
+    }
+    .pagination-info { font-size: 13px; color: var(--navy-60); }
+    .pagination-btns { display: flex; gap: 8px; }
+    .pg-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px;
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      color: var(--ink-navy);
+      transition: all 0.15s ease;
+    }
+    .pg-btn:hover:not(:disabled) { border-color: var(--navy-20); box-shadow: var(--shadow-hover); }
+    .pg-btn:disabled { opacity: 0.4; cursor: default; }
+    .pg-btn svg { width: 14px; height: 14px; }
+
+    /* ========== NOVEDADES FORM (inline, mock style) ========== */
+    .novedades-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 16px;
+      background: var(--tap-amber); color: var(--ink-navy);
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-primary svg { width: 14px; height: 14px; }
+
+    .novedad-form {
+      display: none;
+      background: var(--cloud);
+      border-bottom: 1px solid var(--navy-10);
+      padding: 16px 20px;
+      gap: 14px;
+      grid-template-columns: 1.1fr 1.1fr 2fr auto;
+      align-items: start;
+    }
+    .novedad-form.is-open { display: grid; }
+    .field { display: flex; flex-direction: column; min-width: 0; }
+    .field label {
+      display: block;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--navy-60);
+      margin-bottom: 6px;
+      height: 18px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%; height: 36px;
+      padding: 8px 12px;
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 13px;
+      color: var(--ink-navy); line-height: 1.4;
+    }
+    .field textarea {
+      height: 36px; min-height: 36px; max-height: 36px;
+      resize: none; overflow: hidden;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--nfc-cyan);
+      box-shadow: 0 0 0 3px var(--cyan-15);
+    }
+    .novedad-actions {
+      display: flex; gap: 8px;
+      align-self: end;
+    }
+    .btn-ghost {
+      padding: 8px 14px;
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      color: var(--navy-60);
+    }
+    .btn-ghost:hover { color: var(--ink-navy); border-color: var(--navy-20); }
+
+    /* Novedad tag colors */
+    .novedad-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .novedad-tag--info    { background: var(--cyan-15);  color: var(--ink-navy); }
+    .novedad-tag--alert   { background: var(--amber-15); color: var(--ink-navy); }
+    .novedad-tag--neutral { background: var(--navy-10);  color: var(--ink-navy); }
+
+    .novedad-note {
+      font-size: 13px; color: var(--navy-60);
+      max-width: 360px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Empty states */
+    .empty-state {
+      text-align: center; padding: 32px 16px;
+      color: var(--navy-60); font-size: 14px;
+    }
+    .empty-state--small { padding: 24px 8px; font-size: 13px; }
+
+    /* Feedback message */
+    .form-feedback {
+      padding: 12px 20px; font-size: 13px;
+      border-top: 1px solid var(--navy-10);
+      color: var(--navy-60);
+    }
+    .form-feedback.is-pending { background: var(--amber-15); color: var(--ink-navy); }
+
+    /* ========== FOOTER ========== */
+    .site-footer {
+      margin-top: 48px; padding: 20px 0;
+      border-top: 1px solid var(--navy-10);
+      font-size: 12px; color: var(--navy-60);
+      text-align: center;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 960px) {
+      .header-status { gap: 10px; }
+    }
     @media (max-width: 640px) {
-      .site-header { padding: 16px 20px; }
-      .hero { padding: 24px 20px 16px; }
-      .hero h1 { font-size: 32px; }
-      .container { padding: 0 20px 32px; }
-      .stat-value { font-size: 32px; }
-      .content-card { padding: 16px; }
-      .header-info { align-items: flex-start; }
-      .filter-input { min-width: 100%; }
-      .filter-select { width: 100%; }
+      .header-inner { gap: 12px; flex-wrap: wrap; padding: 14px 16px; }
+      .site-header.is-scrolled .header-inner { padding: 8px 16px; }
+      .header-status { margin-left: 0; width: 100%; justify-content: space-between; }
+      .hero h1 { font-size: 26px; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .novedad-form { grid-template-columns: 1fr; }
+      .app { padding: 0 16px 48px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="site-header">
-    <div class="logo-area">
-      <img src="quickt-logo-256.png"
-           alt="Logo Quick-T"
-           class="logo-img"
-           onerror="this.onerror=null;this.src='quickt-logo.png';">
-      <div>
-        <h1 class="brand-name">Quick-T</h1>
-        <p class="brand-tagline">Industrias SAS</p>
+  <!-- ========== HEADER (glassmorph, sticky, shrink on scroll) ========== -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">
+          <img src="quickt-logo-256.png" alt="Quick-T"
+               onerror="this.onerror=null;this.src='quickt-logo.png';">
+        </div>
+        <span class="logo-text">Quick-T</span>
       </div>
-    </div>
-    <div class="header-controls">
-      <div class="header-info">
-        <p class="header-fecha" id="headerFecha">Hoy · —</p>
-        <p class="header-sync">
-          <span class="live-indicator">
-            <span class="pulse-dot"></span>
-            <span>Sincronizado <span id="headerSyncTime">—</span></span>
-          </span>
-        </p>
+      <!-- Tagline: "Asistencia Inteligente. Cero Fricción." (Nicolás feedback) -->
+      <div class="header-meta" style="margin-left: 8px; display:flex; align-items:center;">
+        <span style="font-size:13px; color:var(--navy-60);">Asistencia Inteligente. Cero Fricción.</span>
       </div>
-      <button id="refreshBtn" class="btn-refresh" aria-label="Actualizar" title="Actualizar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="23 4 23 10 17 10"></polyline>
-          <polyline points="1 20 1 14 7 14"></polyline>
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
-          <path d="M20.49 15A9 9 0 0 1 5.64 18.36L1 14"></path>
-        </svg>
-      </button>
+      <!-- Fecha · Sincronizado · Refrescar -->
+      <div class="header-status">
+        <span class="status-date" id="headerDate">—</span>
+        <span class="status-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          Sincronizado
+        </span>
+        <button class="icon-btn" id="refreshBtn" type="button"
+                aria-label="Actualizar datos" title="Actualizar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/>
+            <path d="M21 3v5h-5"/>
+            <path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/>
+            <path d="M3 21v-5h5"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <h1>Visibilidad de la operación, en un toque.</h1>
-    <p>Cada registro es exacto, auditable y verificable. Sin planillas, sin fricción, sin suplantación.</p>
-  </section>
+  <main class="app">
 
-  <!-- DASHBOARD -->
-  <main class="container">
+    <!-- ========== HERO: nombre de la empresa (Nicolás: solo "Industrias SAS", sin tagline) ========== -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <h1 id="heroTitle">Industrias SAS</h1>
+    </section>
 
-    <!-- Tarjetas de stats (4) -->
-    <section class="stats-grid">
-      <div class="stat-card" data-accent="cyan">
-        <p class="stat-label">Asistencia %</p>
-        <p class="stat-value" id="statAsistencia">—<span class="stat-value--unit">%</span></p>
-      </div>
-      <div class="stat-card" data-accent="navy">
-        <p class="stat-label">Empleados</p>
-        <p class="stat-value" id="statEmpleados">0</p>
-      </div>
-      <div class="stat-card" data-accent="amber">
-        <p class="stat-label">Horario</p>
-        <p class="stat-value" id="statHorario">—</p>
-      </div>
-      <div class="stat-card" data-accent="cyan">
-        <p class="stat-label">Novedades</p>
-        <p class="stat-value" id="statNovedades">0</p>
+    <!-- ========== MÉTRICAS (3 cards: Asistencia, Empleados, Novedades — Nicolás: quitar Horario) ========== -->
+    <section aria-label="Métricas del día">
+      <div class="metrics-grid">
+
+        <!-- 1. ASISTENCIA con progress bar ámbar + descripción -->
+        <div class="metric-card">
+          <div class="metric-label">Asistencia</div>
+          <div class="metric-value" id="statAsistencia">
+            <span id="statPct">—</span><span class="unit">%</span>
+          </div>
+          <div class="progress-bar"><span id="progressFill" style="width: 0%;"></span></div>
+          <div class="metric-hint" id="statAsistenciaHint">— empleados ingresaron</div>
+        </div>
+
+        <!-- 2. EMPLEADOS -->
+        <div class="metric-card">
+          <div class="metric-label">Empleados</div>
+          <div class="metric-value" id="statEmpleados">0</div>
+          <div class="metric-hint">Total registrados</div>
+        </div>
+
+        <!-- 3. NOVEDADES -->
+        <div class="metric-card">
+          <div class="metric-label">Novedades</div>
+          <div class="metric-value" id="statNovedades">0</div>
+          <div class="metric-hint">Registradas en el día</div>
+        </div>
+
       </div>
     </section>
 
-    <!-- Grid principal: Seguimiento Personal + Calendario/Cumple -->
-    <section class="main-grid">
-
-      <!-- Seguimiento Personal (tabla con filtros) -->
-      <div class="content-card">
-        <div class="content-card-header">
-          <h2 class="content-card-title">Seguimiento Personal</h2>
-          <span class="content-card-meta" id="lastUpdate">—</span>
-        </div>
-
-        <div class="filter-bar">
-          <input id="filtroEmpleado" placeholder="Filtrar por empleado o ID…" class="filter-input" />
-          <select id="filtroEstado" class="filter-select">
-            <option value="">Todos los estados</option>
-            <option value="adentro">Adentro</option>
-            <option value="salio">Salió</option>
-            <option value="solo-salida">Solo salida</option>
-          </select>
-        </div>
-
-        <div style="overflow-x: auto;">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Empleado</th>
-                <th>ID</th>
-                <th>Entrada</th>
-                <th>Salida</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody id="tablaRegistros">
-              <tr>
-                <td colspan="5" class="empty-state">Cargando marcaciones…</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Calendario mensual + cumpleaños -->
-      <div class="content-card">
-        <div class="content-card-header">
-          <h2 class="content-card-title">Calendario</h2>
-          <span class="content-card-meta" id="calMeta">—</span>
-        </div>
-        <div class="cal-wrap">
-          <div class="cal-toolbar">
-            <button id="calPrev" class="cal-nav-arrow" aria-label="Mes anterior">‹</button>
-            <span class="cal-title" id="calTitle">—</span>
-            <button id="calNext" class="cal-nav-arrow" aria-label="Mes siguiente">›</button>
-          </div>
-          <div id="calendarioMensual" class="cal-grid"></div>
-          <div class="cumple-section" id="cumpleSection">
-            <p class="content-card-meta" style="margin:0 0 10px;">Cumpleaños del día</p>
-            <div id="cumpleDelDia"></div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- Panel de Novedades -->
-    <section class="content-card" style="margin-bottom: 32px;">
-      <div class="content-card-header">
-        <h2 class="content-card-title">Panel de Novedades</h2>
-        <button id="openNovedadFormBtn" class="btn-cta">+ Nueva Novedad</button>
-      </div>
-
-      <div class="panel-grid">
+    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
+    <section aria-labelledby="secSeguimiento">
+      <div class="section-head">
         <div>
-          <p class="content-card-meta" style="margin:0 0 10px;">Quién está adentro</p>
-          <div id="presentesList" class="presentes-grid">
-            <p class="empty-state empty-state--strong">Cargando…</p>
+          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
+          <div class="section-subtitle">Últimos movimientos del día</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="text" id="filtroEmpleado"
+                 placeholder="Buscar empleado por nombre..."
+                 aria-label="Buscar empleado" />
+        </div>
+        <div class="chips" id="filterChips" role="tablist">
+          <button class="chip is-active" data-filter="" type="button">Todos</button>
+          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
+          <button class="chip" data-filter="salida" type="button">Salida</button>
+          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
+        </div>
+      </div>
+
+      <div class="panel" id="seguimientoPanel">
+        <table id="tablaSeguimiento">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Hora entrada</th>
+              <th>Hora salida</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tablaSeguimientoBody">
+            <tr>
+              <td colspan="4" class="empty-state">Cargando marcaciones…</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination" id="paginationSeguimiento" style="display:none;">
+          <span class="pagination-info" id="pgInfoSeguimiento"></span>
+          <div class="pagination-btns">
+            <button class="pg-btn" id="pgPrevSeguimiento" disabled
+                    aria-label="Página anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Anterior
+            </button>
+            <button class="pg-btn" id="pgNextSeguimiento"
+                    aria-label="Página siguiente">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </button>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div style="margin-top:8px;">
-          <p class="content-card-meta" style="margin:0 0 10px;">Novedades registradas</p>
-          <div id="novedadesList" class="novedades-list">
-            <p class="empty-state empty-state--small">Sin novedades registradas.</p>
+    <!-- ========== NOVEDADES (renamed from "Panel de Novedades") ========== -->
+    <section aria-labelledby="secNovedades">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="secNovedades">Novedades</div>
+          <div class="section-subtitle">Observaciones sobre ingresos y salidas.</div>
+        </div>
+        <div class="novedades-actions">
+          <button class="btn-primary" id="btnNewNovedad" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Nueva Novedad
+          </button>
+        </div>
+      </div>
+
+      <div class="panel" id="novedadesPanel">
+        <!-- Inline form (hidden by default, toggled) -->
+        <form class="novedad-form" id="novedadForm" autocomplete="off">
+          <div class="field">
+            <label for="novedadEmpleadoSel">Empleado</label>
+            <select id="novedadEmpleadoSel" required>
+              <option value="">Seleccionar empleado</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="novedadTipoSel">Tipo de novedad</label>
+            <select id="novedadTipoSel" required>
+              <option value="">Seleccionar tipo</option>
+              <option value="Permiso">Permiso</option>
+              <option value="Accidente">Accidente</option>
+              <option value="Familiar">Familiar</option>
+              <option value="Vacaciones">Vacaciones</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="novedadNotaInput">Nota</label>
+            <textarea id="novedadNotaInput"
+                      placeholder="Ej: Hoy la persona sale a las 2pm por asunto familiar."
+                      maxlength="240"></textarea>
+          </div>
+          <div class="novedad-actions">
+            <button type="button" class="btn-ghost" id="btnCancelNovedad">Cancelar</button>
+            <button type="submit" class="btn-primary" id="btnSaveNovedad">Guardar</button>
+          </div>
+        </form>
+
+        <!-- Feedback (visible when form is open, gate pending) -->
+        <div class="form-feedback is-pending" id="novedadFeedback">
+          Endpoint pendiente de aprobación de Nicolás. El botón Guardar quedará deshabilitado.
+        </div>
+
+        <!-- Novedades table -->
+        <table id="tablaNovedades">
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Empleado</th>
+              <th>Tipo</th>
+              <th>Nota</th>
+            </tr>
+          </thead>
+          <tbody id="tablaNovedadesBody">
+            <tr>
+              <td colspan="4" class="empty-state empty-state--small">Sin novedades registradas hoy.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination" id="paginationNovedades" style="display:none;">
+          <span class="pagination-info" id="pgInfoNovedades"></span>
+          <div class="pagination-btns">
+            <button class="pg-btn" id="pgPrevNovedades" disabled
+                    aria-label="Página anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Anterior
+            </button>
+            <button class="pg-btn" id="pgNextNovedades"
+                    aria-label="Página siguiente">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -952,91 +718,44 @@
 
   </main>
 
-  <!-- MODAL: Nueva Novedad -->
-  <div id="novedadModal" class="modal" hidden>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="novedadTitle">
-      <h3 id="novedadTitle">Registrar novedad</h3>
-
-      <label>Empleado
-        <select id="novedadEmpleado">
-          <option value="">— Seleccionar empleado —</option>
-        </select>
-      </label>
-
-      <label>Tipo
-        <select id="novedadTipo">
-          <option value="PERMISO">PERMISO</option>
-          <option value="ACCIDENTE">ACCIDENTE</option>
-          <option value="FAMILIAR">FAMILIAR</option>
-          <option value="VACACIONES">VACACIONES</option>
-          <option value="OTRO">OTRO</option>
-        </select>
-      </label>
-
-      <label>Nota (opcional)
-        <textarea id="novedadNota" rows="3" maxlength="240" placeholder="Detalle opcional…"></textarea>
-      </label>
-
-      <div class="modal-actions">
-        <button class="btn-secondary" id="cancelNovedadBtn" type="button">Cancelar</button>
-        <button class="btn-cta" id="submitNovedadBtn" type="button">Guardar</button>
-      </div>
-      <p id="novedadFeedback" class="form-feedback" data-state="pending">
-        Esta acción escribe en el Sheet. Requiere aprobación de Nicolás.
-      </p>
-    </div>
-  </div>
-
   <footer class="site-footer">
-    <span class="footer-brand">Quick-T</span> · V.1.0 · Cada registro es exacto, auditable y verificable.
+    Quick-T V1.0 · Cada registro es exacto, auditable y verificable.
   </footer>
 
   <script>
     /* ============================================================
-     *  Quick-T Dashboard v2
-     *  Cambios atómicos sobre v1: header, métricas, Seguimiento
-     *  Personal con filtros, calendario mensual + cumpleaños,
-     *  Panel de Novedades + modal, parseCSV defensivo, footer V.1.0.
+     *  Quick-T Dashboard v3
+     *  Alineado con mock Checho v3 + feedback Nicolás (16-Ago-2026)
+     *  Cambios:
+     *  - Header glassmorph + shrink on scroll
+     *  - Tagline: "Asistencia Inteligente. Cero Fricción."
+     *  - Hero: "Industrias SAS" (sin tagline)
+     *  - 3 métricas: Asistencia (progress bar ámbar), Empleados, Novedades
+     *  - Tabla agrupada por empleado/día, 3 estados (Ingreso/Salida/SinRegistro)
+     *  - Filter chips, 10 registros por página, paginación
+     *  - Calendario y cumpleaños eliminados
+     *  - Novedades: formulario inline (no modal), tabla mock-style
+     *  - Footer: Quick-T V1.0
      * ============================================================ */
 
-    /* === CONFIG === */
-    /* Sheet "eventos" — publicado por Mariana (lectura pública). */
+    /* === CONFIG (gate: URLs vacías muestran empty states) === */
     const SHEET_EVENTOS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSl_f_np7ZOWA2qkjdpK3xM2zE6esxq2Gjh9tbLOOdEllkAGp2xtGtwFSjjLNuK1G1yNEcODXXX9g7G/pub?gid=1822945878&single=true&output=csv';
-
-    /* Tabs nuevas (Tarea 7): deben ser creadas por ZORO. Mientras
-       tanto, las URLs quedan vacías y la UI muestra empty state. */
-    const SHEET_CUMPLEANOS_URL = '';   // p.ej. &gid=XXXXXXXXXX&single=true&output=csv
-    const SHEET_NOVEDADES_URL  = '';   // p.ej. &gid=XXXXXXXXXX&single=true&output=csv
-
-    /* Endpoint POST para registrar novedades (Tarea 8). VACÍO hasta
-       que Nicolás apruebe la Apps Script Web App. */
-    const APPS_SCRIPT_URL = '';
-
+    const SHEET_NOVEDADES_URL  = '';  // gate: vacío
+    const APPS_SCRIPT_URL = '';        // gate: vacío
     const REFRESH_MS = 30000;
+    const PAGE_SIZE = 10;
 
     /* === STATE === */
-    let registros         = [];
-    let cumpleanos        = [];
-    let novedades         = [];
-    let registrosPorFecha = Object.create(null); // YYYY-MM-DD -> int
+    let registros         = [];   // rows from eventos.csv
+    let empleadosDia      = [];   // aggregated: [{nombre, identificacion, entrada, salida, estado}]
+    let novedades         = [];   // rows from SHEET_NOVEDADES_URL
     let lastFetchAt       = null;
 
-    /* current month being shown in calendar (1-indexed) */
-    let calYear  = new Date().getFullYear();
-    let calMonth = new Date().getMonth(); // 0-indexed
+    // Pagination
+    let segPage = 0, novPage = 0;
+    let segFiltered = [], novFiltered = [];
 
-    /* === PALETA PARA CHARTS/UI === */
-    const BRAND_COLORS = {
-      navy: '#0A1F44',
-      cyan: '#00C2D8',
-      amber: '#FFB020',
-      navyMuted: 'rgba(10, 31, 68, 0.6)',
-      navySoft:  'rgba(10, 31, 68, 0.08)',
-    };
-
-    /* ============================================================
-     *  FETCH (eventos, cumpleaños, novedades)
-     * ============================================================ */
+    /* === FETCH === */
     async function fetchCsv(url) {
       if (!url) return [];
       try {
@@ -1051,33 +770,23 @@
     }
 
     async function fetchAll() {
-      const [ev, cum, nov] = await Promise.all([
+      const refreshBtn = document.getElementById('refreshBtn');
+      refreshBtn.classList.add('reloading');
+
+      const [ev, nov] = await Promise.all([
         fetchCsv(SHEET_EVENTOS_URL),
-        fetchCsv(SHEET_CUMPLEANOS_URL),
         fetchCsv(SHEET_NOVEDADES_URL),
       ]);
       registros  = ev;
-      cumpleanos = cum;
       novedades  = nov;
-
-      // index por fecha
-      const map = Object.create(null);
-      for (const r of registros) {
-        const e = (r.entrada || '').trim();
-        if (!e) continue;
-        const key = e.slice(0, 10); // YYYY-MM-DD
-        if (/^\d{4}-\d{2}-\d{2}$/.test(key)) map[key] = (map[key] || 0) + 1;
-      }
-      registrosPorFecha = map;
 
       lastFetchAt = new Date();
       renderAll();
+
+      refreshBtn.classList.remove('reloading');
     }
 
-    /* ============================================================
-     *  PARSER CSV (RFC 4180 mini)
-     *  Maneja comillasdobles como escape; comas dentro de campos no rompen.
-     * ============================================================ */
+    /* === CSV PARSER (RFC 4180 mini) === */
     function parseCSV(text) {
       if (!text || typeof text !== 'string') return [];
       const rows = [];
@@ -1088,14 +797,12 @@
           if (ch === '"') {
             if (text[i + 1] === '"') { cur += '"'; i++; }
             else { inQ = false; }
-          } else {
-            cur += ch;
-          }
+          } else { cur += ch; }
         } else {
           if (ch === '"') { inQ = true; }
           else if (ch === ',') { row.push(cur); cur = ''; }
           else if (ch === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
-          else if (ch === '\r') { /* ignorar */ }
+          else if (ch === '\r') { /* skip */ }
           else { cur += ch; }
         }
       }
@@ -1110,357 +817,391 @@
         .filter(obj => obj.nombre || obj.identificacion);
     }
 
-    /* ============================================================
-     *  FORMAT helpers (fecha larga en español, hora corta, %)
-     * ============================================================ */
-    const MES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    /* === FORMAT HELPERS === */
+    const MES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                    'agosto','septiembre','octubre','noviembre','diciembre'];
     const DOW_ES = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 
     function formatFechaLarga(d) {
       return `${DOW_ES[d.getDay()]}, ${d.getDate()} de ${MES_ES[d.getMonth()]} de ${d.getFullYear()}`;
     }
-    function formatHora(d) {
-      const h = String(d.getHours()).padStart(2, '0');
-      const m = String(d.getMinutes()).padStart(2, '0');
-      return `${h}:${m}`;
+    function formatHoraStr(ts) {
+      if (!ts) return '—';
+      // ts is "2026-07-31 14:00:00" or ISO "2026-07-31T14:00:00"
+      const m = /(\d{2}):(\d{2})/.exec(ts);
+      return m ? `${m[1]}:${m[2]}` : '—';
     }
-    function formatMesAnio(y, m) {
-      const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-      return `${cap(MES_ES[m])} ${y}`;
-    }
-
-    /* ============================================================
-     *  RENDER (orquestador)
-     * ============================================================ */
-    function renderAll() {
-      renderHeaderInfo();
-      renderStats();
-      renderTabla();
-      renderCalendario();
-      renderCumpleanios();
-      renderPresentes();
-      renderNovedades();
-    }
-
-    /* === HEADER === */
-    function renderHeaderInfo() {
-      const now = new Date();
-      document.getElementById('headerFecha').textContent = 'Hoy · ' + formatFechaLarga(now);
-      const t = lastFetchAt ? formatHora(lastFetchAt) : '—';
-      document.getElementById('headerSyncTime').textContent = t;
-      document.getElementById('lastUpdate').textContent = lastFetchAt
-        ? 'Actualizado: ' + formatHora(lastFetchAt)
-        : '—';
-    }
-
-    /* === STATS === */
-    function renderStats() {
-      const now = new Date();
-      const today = now.toISOString().slice(0, 10);
-
-      const hoyRegistros = registros.filter(r => (r.entrada || '').startsWith(today));
-      const idEmpleadosHoy = new Set(hoyRegistros.map(r => r.identificacion).filter(Boolean));
-      const idEmpleadosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean));
-
-      const empleadosUnicosHoy   = idEmpleadosHoy.size;
-      const empleadosUnicosTotal = idEmpleadosTotal.size;
-
-      // 1) Asistencia %
-      const asisEl = document.getElementById('statAsistencia');
-      if (empleadosUnicosTotal === 0) {
-        asisEl.textContent = '—%';
-        asisEl.innerHTML = '—<span class="stat-value--unit">%</span>';
-      } else {
-        const pct = Math.round((empleadosUnicosHoy / empleadosUnicosTotal) * 100);
-        asisEl.innerHTML = `${pct}<span class="stat-value--unit">%</span>`;
-      }
-
-      // 2) Empleados (total)
-      document.getElementById('statEmpleados').textContent = empleadosUnicosTotal;
-
-      // 3) Horario — hora de la última marcación del día (Q2 fallback: opción b)
-      const horEl = document.getElementById('statHorario');
-      if (hoyRegistros.length === 0) {
-        horEl.textContent = '—';
-        horEl.style.fontSize = '32px';
-      } else {
-        const allStamp = [];
-        for (const r of hoyRegistros) {
-          if (r.entrada) allStamp.push(new Date(r.entrada.replace(' ', 'T')));
-          if (r.salida)   allStamp.push(new Date(r.salida.replace(' ', 'T')));
-        }
-        allStamp.sort((a, b) => b.getTime() - a.getTime());
-        horEl.textContent = formatHora(allStamp[0]);
-        horEl.style.fontSize = '42px';
-      }
-
-      // 4) Novedades (del día)
-      const novHoy = novedades.filter(n => (n.timestamp || '').startsWith(today));
-      document.getElementById('statNovedades').textContent = novHoy.length;
-    }
-
-    /* === FILTROS / TABLA === */
-    let debounceTimer = null;
-    let registrosFiltrados = [];
-
-    function aplicarFiltros() {
-      const q = document.getElementById('filtroEmpleado').value.trim().toLowerCase();
-      const estado = document.getElementById('filtroEstado').value;
-      registrosFiltrados = registros.filter(r => {
-        if (q) {
-          const haystack = `${r.nombre || ''} ${r.identificacion || ''}`.toLowerCase();
-          if (!haystack.includes(q)) return false;
-        }
-        const tieneEntrada = r.entrada && r.entrada.length > 0;
-        const tieneSalida  = r.salida && r.salida.length > 0;
-        let st;
-        if (tieneEntrada && !tieneSalida) st = 'adentro';
-        else if (tieneSalida)             st = estado === '' ? 'salio' : 'salio';
-        else                               st = 'salio'; // sin entrada/salida -> "salió"
-        // Para estado "solo-salida" tenemos en cuenta el caso inverso:
-        if (estado === 'solo-salida') {
-          return !tieneEntrada && tieneSalida;
-        }
-        if (estado) return st === estado;
-        return true;
-      });
-      renderTabla();
-    }
-
-    function renderTabla() {
-      const tbody = document.getElementById('tablaRegistros');
-      // Si no hay filtro aplicado, mostrar últimos 20; con filtro, todos los filtrados.
-      const hayFiltro =
-        document.getElementById('filtroEmpleado').value.trim() !== '' ||
-        document.getElementById('filtroEstado').value !== '';
-      const fuente = hayFiltro ? registrosFiltrados : registros;
-      const lista  = (hayFiltro ? fuente : fuente.slice(-20)).slice().reverse();
-
-      if (lista.length === 0) {
-        const msg = hayFiltro
-          ? 'Sin coincidencias para los filtros aplicados.'
-          : 'Aún no hay marcaciones. Acerca un tag NFC al lector.';
-        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${msg}</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = lista.map(r => {
-        const tieneEntrada = r.entrada && r.entrada.length > 0;
-        const tieneSalida  = r.salida  && r.salida.length  > 0;
-        let status, statusLabel;
-        if (tieneEntrada && !tieneSalida) { status = 'adentro'; statusLabel = 'Adentro'; }
-        else if (!tieneEntrada && tieneSalida) { status = 'solo-salida'; statusLabel = 'Solo salida'; }
-        else { status = 'salio'; statusLabel = 'Salió'; }
-        const inClass  = tieneEntrada ? 'time-in' : 'time-empty';
-        const outClass = tieneSalida  ? 'time-out' : 'time-empty';
-        return `
-          <tr>
-            <td><span class="emp-name">${escapeHtml(r.nombre || '—')}</span></td>
-            <td><span class="emp-id">${escapeHtml(r.identificacion || '—')}</span></td>
-            <td><span class="time-cell ${inClass}">${escapeHtml(r.entrada || '—')}</span></td>
-            <td><span class="time-cell ${outClass}">${escapeHtml(r.salida || '—')}</span></td>
-            <td><span class="status-chip" data-status="${status}">${statusLabel}</span></td>
-          </tr>`;
-      }).join('');
-    }
-
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, c => ({
         '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
       })[c]);
     }
 
-    /* === CALENDARIO MENSUAL === */
-    function renderCalendario() {
-      const grid = document.getElementById('calendarioMensual');
-      const today = new Date();
+    /* === AGGREGATION: group recors by employee per today === */
+    function aggregateEmpleados() {
+      const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
-      const year  = calYear;
-      const month = calMonth;
-      const firstOfMonth = new Date(year, month, 1);
-      const lastDay      = new Date(year, month + 1, 0).getDate();
+      // Step 1: get all unique employees (all time) as master list
+      const empMap = new Map(); // id -> {nombre, identificacion}
+      for (const r of registros) {
+        const id = r.identificacion || '';
+        const nom = r.nombre || '';
+        if (id && !empMap.has(id)) {
+          empMap.set(id, { nombre: nom, identificacion: id });
+        }
+      }
 
-      // dow del primer día: getDay()=Dom=0..Sáb=6, lo reordenamos a Lun=0..Dom=6
-      const firstDow = (firstOfMonth.getDay() + 6) % 7;
+      // Step 2: for today's records, aggregate entrada/salida per employee
+      const todayMap = new Map(); // id -> {entrada: 'earliest', salida: 'latest'}
+      const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
+      const validTimePattern = /^\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}/;
 
-      document.getElementById('calTitle').textContent = formatMesAnio(year, month);
+      for (const r of registros) {
+        const id = r.identificacion || '';
+        if (!id) continue;
+        const entrada = r.entrada || '';
+        const salida  = r.salida  || '';
 
-      const html = [];
-      // headers L M M J V S D
-      ['L','M','M','J','V','S','D'].forEach(d => {
-        html.push(`<div class="cal-dow">${d}</div>`);
+        // Only consider today's records
+        const ent = validDatePattern.test(entrada) && entrada.startsWith(today) && validTimePattern.test(entrada) ? entrada : '';
+        const sal = validDatePattern.test(salida)  && salida.startsWith(today)  && validTimePattern.test(salida)  ? salida  : '';
+
+        if (!ent && !sal) continue;
+
+        if (!todayMap.has(id)) todayMap.set(id, { entrada: '', salida: '' });
+        const cur = todayMap.get(id);
+
+        if (ent && (!cur.entrada || ent < cur.entrada)) cur.entrada = ent;  // earliest
+        if (sal && (!cur.salida  || sal  > cur.salida))  cur.salida  = sal; // latest
+      }
+
+      // Step 3: build empleadosDia array
+      const result = [];
+      for (const [id, emp] of empMap.entries()) {
+        const td = todayMap.get(id);
+        const entrada = td && td.entrada ? td.entrada : '';
+        const salida  = td && td.salida  ? td.salida  : '';
+
+        let estado;
+        if (entrada && !salida) {
+          estado = 'ingreso';       // entered, still inside → green
+        } else if (salida) {
+          estado = 'salida';        // has exited → amber
+        } else {
+          estado = 'sin-registro';  // no record today → gray
+        }
+
+        result.push({
+          nombre: emp.nombre,
+          identificacion: id,
+          entrada: entrada,
+          salida: salida,
+          estado: estado,
+        });
+      }
+
+      // Sort: Ingreso first, then Salida, then Sin Registro; alphabetical within
+      const order = { 'ingreso': 0, 'salida': 1, 'sin-registro': 2 };
+      result.sort((a, b) => {
+        const oa = order[a.estado] ?? 9;
+        const ob = order[b.estado] ?? 9;
+        if (oa !== ob) return oa - ob;
+        return a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase());
       });
 
-      // huecos previos
-      for (let i = 0; i < firstDow; i++) {
-        html.push(`<div class="cal-day cal-day--mute"></div>`);
-      }
-
-      let totalEventosMes = 0;
-      for (let d = 1; d <= lastDay; d++) {
-        const key = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const has = registrosPorFecha[key] || 0;
-        totalEventosMes += has;
-        const isToday = (d === today.getDate() && month === today.getMonth() && year === today.getFullYear());
-        const cls = ['cal-day'];
-        if (isToday) cls.push('cal-day--today');
-        if (has > 0) cls.push('cal-day--events');
-        const dot = (has > 0) ? `<span class="cal-dot" title="${has} marcaciones"></span>` : '';
-        html.push(`<div class="${cls.join(' ')}" title="${has} marcaciones">${d}${dot}</div>`);
-      }
-      grid.innerHTML = html.join('');
-      document.getElementById('calMeta').textContent = `${totalEventosMes} marcaciones este mes`;
+      empleadosDia = result;
     }
 
-    /* === CUMPLEAÑOS === */
-    function renderCumpleanios() {
-      const cont = document.getElementById('cumpleDelDia');
-      if (!cumpleanos || cumpleanos.length === 0) {
-        cont.innerHTML = `<p class="empty-state empty-state--small">Sin cumpleaños registrados hoy. Próximamente.</p>`;
-        return;
-      }
+    /* === RENDER ALL === */
+    function renderAll() {
+      aggregateEmpleados();
+      renderHeaderInfo();
+      renderStats();
+      applyFiltersSeguimiento();
+      renderNovedadesTable();
+      poblarEmpleadosSelect();
+      updateNovedadGate();
+    }
+
+    /* === HEADER === */
+    function renderHeaderInfo() {
       const now = new Date();
-      const mm = String(now.getMonth() + 1).padStart(2,'0');
-      const dd = String(now.getDate()).padStart(2,'0');
-      const todayMD = `${mm}-${dd}`;
-      const matches = cumpleanos.filter(c => {
-        const f = c.fecha_nacimiento || c.fechanacimiento || '';
-        if (!f) return false;
-        const m = f.match(/^(\d{4})-(\d{2})-(\d{2})/);
-        if (!m) return false;
-        return `${m[2]}-${m[3]}` === todayMD;
+      document.getElementById('headerDate').textContent = formatFechaLarga(now);
+      // No lastUpdate display needed; sync dot animates
+    }
+
+    /* === STATS (3 cards) === */
+    function renderStats() {
+      const today = new Date().toISOString().slice(0, 10);
+
+      // Unique employees total (master list)
+      const idEmpleadosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean));
+      const totalEmp = idEmpleadosTotal.size;
+
+      // Count employees with entrada today (Ingreso + Salida that have entrada)
+      const conIngreso = empleadosDia.filter(e => e.estado === 'ingreso').length;
+      const conSalida  = empleadosDia.filter(e => e.estado === 'salida').length;
+      const conEntradaHoy = conIngreso + conSalida; // both have entrada today
+
+      // Asistencia %
+      const pctEl = document.getElementById('statPct');
+      const fillEl = document.getElementById('progressFill');
+      const hintEl = document.getElementById('statAsistenciaHint');
+
+      if (totalEmp === 0) {
+        pctEl.textContent = '—';
+        fillEl.style.width = '0%';
+        hintEl.textContent = 'Sin empleados registrados';
+      } else {
+        const pct = Math.round((conEntradaHoy / totalEmp) * 100);
+        pctEl.textContent = pct;
+        fillEl.style.width = `${pct}%`;
+        hintEl.textContent = `${conEntradaHoy} de ${totalEmp} empleados ingresaron`;
+      }
+
+      // Empleados total
+      document.getElementById('statEmpleados').textContent = totalEmp;
+
+      // Novedades (today)
+      const novHoy = novedades.filter(n => {
+        const ts = n.timestamp || n.fecha || '';
+        return ts.startsWith(today);
       });
-      if (matches.length === 0) {
-        cont.innerHTML = `<p class="empty-state empty-state--small">No hay cumpleaños hoy.</p>`;
-        return;
-      }
-      cont.innerHTML = matches.map(m => `
-        <div class="cumple-card">
-          <p class="cumple-name">🎂 ${escapeHtml(m.nombre || '')}</p>
-          <p class="cumple-meta">${escapeHtml(m.fecha_nacimiento || '')}</p>
-        </div>
-      `).join('');
+      document.getElementById('statNovedades').textContent = novHoy.length;
     }
 
-    /* === PRESENTES === */
-    function renderPresentes() {
-      const today = new Date().toISOString().slice(0, 10);
-      const hoy = registros.filter(r => (r.entrada || '').startsWith(today));
-      const presentes = hoy.filter(r => r.entrada && !r.salida);
-      const container = document.getElementById('presentesList');
+    /* === SEGUIMIENTO: filters + table + pagination === */
+    function applyFiltersSeguimiento() {
+      const q = document.getElementById('filtroEmpleado').value.trim().toLowerCase();
+      const activeChip = document.querySelector('#filterChips .chip.is-active');
+      const estadoFilter = activeChip ? activeChip.dataset.filter : '';
 
-      if (presentes.length === 0) {
-        container.innerHTML = `<p class="empty-state empty-state--strong" style="grid-column: 1 / -1;">Nadie está en sitio en este momento.</p>`;
+      segFiltered = empleadosDia.filter(e => {
+        if (q) {
+          const haystack = `${e.nombre} ${e.identificacion}`.toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        if (estadoFilter && e.estado !== estadoFilter) return false;
+        return true;
+      });
+
+      segPage = 0;
+      renderSeguimientoTable();
+    }
+
+    function renderSeguimientoTable() {
+      const tbody = document.getElementById('tablaSeguimientoBody');
+      const start = segPage * PAGE_SIZE;
+      const page = segFiltered.slice(start, start + PAGE_SIZE);
+      const totalPages = Math.ceil(segFiltered.length / PAGE_SIZE) || 1;
+
+      if (page.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Aún no hay marcaciones. Acerca un tag NFC al lector.</td></tr>`;
+        document.getElementById('paginationSeguimiento').style.display = 'none';
         return;
       }
-      container.innerHTML = presentes.map(r => {
-        const entrada = new Date(r.entrada.replace(' ', 'T'));
-        const minutos = Math.floor((Date.now() - entrada.getTime()) / 60000);
-        const horas = Math.floor(minutos / 60);
-        const mins  = minutos % 60;
-        const duracion = horas > 0 ? `${horas}h ${mins}m` : `${mins}m`;
+
+      tbody.innerHTML = page.map(e => {
+        const init = (e.nombre || '?').charAt(0).toUpperCase();
+        const eHora = e.entrada ? formatHoraStr(e.entrada) : '—';
+        const sHora = e.salida  ? formatHoraStr(e.salida)  : '—';
+        const eCls = e.entrada ? '' : 'time-empty';
+        const sCls = e.salida  ? '' : 'time-empty';
+
+        let estadoLabel, estadoClass;
+        switch (e.estado) {
+          case 'ingreso':      estadoLabel = 'Ingreso';      estadoClass = 'tag--ingreso';      break;
+          case 'salida':       estadoLabel = 'Salida';       estadoClass = 'tag--salida';       break;
+          case 'sin-registro': estadoLabel = 'Sin Registro'; estadoClass = 'tag--sin-registro'; break;
+          default:             estadoLabel = '—';             estadoClass = 'tag--sin-registro'; break;
+        }
+
         return `
-          <div class="presente-card">
-            <div class="presente-info">
-              <p class="presente-name">${escapeHtml(r.nombre || '')}</p>
-              <p class="presente-id">${escapeHtml(r.identificacion || '')}</p>
-            </div>
-            <div>
-              <p class="presente-time-label">Adentro</p>
-              <p class="presente-time">${duracion}</p>
-            </div>
-          </div>`;
+          <tr>
+            <td>
+              <div class="emp-cell">
+                <div class="avatar">${escapeHtml(init)}</div>
+                <div>
+                  <div class="emp-name">${escapeHtml(e.nombre || '—')}</div>
+                  <div class="emp-id">ID ${escapeHtml(e.identificacion)}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="time-cell ${eCls}">${eHora}</span></td>
+            <td><span class="time-cell ${sCls}">${sHora}</span></td>
+            <td><span class="tag ${estadoClass}">${estadoLabel}</span></td>
+          </tr>`;
       }).join('');
+
+      // Pagination
+      const pagDiv = document.getElementById('paginationSeguimiento');
+      pagDiv.style.display = (segFiltered.length > PAGE_SIZE) ? 'flex' : 'none';
+      document.getElementById('pgInfoSeguimiento').textContent =
+        `${start + 1}–${Math.min(start + PAGE_SIZE, segFiltered.length)} de ${segFiltered.length} registros`;
+      document.getElementById('pgPrevSeguimiento').disabled = (segPage === 0);
+      document.getElementById('pgNextSeguimiento').disabled = (segPage >= totalPages - 1);
     }
 
-    /* === NOVEDADES (lista visual) === */
-    function renderNovedades() {
-      const cont = document.getElementById('novedadesList');
-      if (!novedades || novedades.length === 0) {
-        cont.innerHTML = `<p class="empty-state empty-state--small">Sin novedades registradas.</p>`;
+    function paginateSeguimiento(delta) {
+      segPage += delta;
+      const totalPages = Math.ceil(segFiltered.length / PAGE_SIZE) || 1;
+      segPage = Math.max(0, Math.min(segPage, totalPages - 1));
+      renderSeguimientoTable();
+    }
+
+    /* === NOVEDADES: table + pagination === */
+    function renderNovedadesTable() {
+      const today = new Date().toISOString().slice(0, 10);
+      novFiltered = novedades.filter(n => {
+        const ts = n.timestamp || n.fecha || '';
+        return ts.startsWith(today);
+      });
+      // If empty, show all (for now, gate: will be empty)
+      if (novFiltered.length === 0 && novedades.length > 0) {
+        novFiltered = novedades.slice(-50);
+      }
+
+      const tbody = document.getElementById('tablaNovedadesBody');
+      const start = novPage * PAGE_SIZE;
+      const page = novFiltered.slice(start, start + PAGE_SIZE);
+      const totalPages = Math.ceil(novFiltered.length / PAGE_SIZE) || 1;
+
+      if (novFiltered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-state empty-state--small">Sin novedades registradas hoy.</td></tr>`;
+        document.getElementById('paginationNovedades').style.display = 'none';
         return;
       }
-      const today = new Date().toISOString().slice(0, 10);
-      const hoy = novedades.filter(n => (n.timestamp || '').startsWith(today));
-      const lista = hoy.length > 0 ? hoy : novedades.slice(-10);
-      cont.innerHTML = lista.map(n => {
-        const tipo = (n.tipo || 'OTRO').toUpperCase();
-        const hora = (n.timestamp || '').slice(11, 16) || '';
+
+      const tipoTagClass = tipo => {
+        switch ((tipo || '').toLowerCase()) {
+          case 'permiso':
+          case 'vacaciones': return 'novedad-tag--info';
+          case 'accidente':
+          case 'familiar':   return 'novedad-tag--alert';
+          default:           return 'novedad-tag--neutral';
+        }
+      };
+
+      tbody.innerHTML = page.map(n => {
+        const hora = n.timestamp ? formatHoraStr(n.timestamp) : (n.hora || '—');
+        const nombre = n.nombre || n.empleado || '—';
+        const tipo = n.tipo || 'Otro';
+        const nota = n.nota || n.descripcion || '';
+        const init = (nombre || '?').charAt(0).toUpperCase();
         return `
-          <div class="novedad-row">
-            <span class="novedad-tipo" data-tipo="${escapeHtml(tipo)}">${escapeHtml(tipo)}</span>
-            <span class="novedad-meta">${escapeHtml(n.nombre || '')} · ${escapeHtml(hora)}</span>
-            <span class="novedad-nota">${escapeHtml(n.nota || '')}</span>
-          </div>`;
+          <tr>
+            <td>${escapeHtml(hora)}</td>
+            <td>
+              <div class="emp-cell">
+                <div class="avatar">${escapeHtml(init)}</div>
+                <div class="emp-name">${escapeHtml(nombre)}</div>
+              </div>
+            </td>
+            <td><span class="novedad-tag ${tipoTagClass(tipo)}">${escapeHtml(tipo)}</span></td>
+            <td class="novedad-note" title="${escapeHtml(nota)}">${escapeHtml(nota)}</td>
+          </tr>`;
       }).join('');
+
+      // Pagination
+      const pagDiv = document.getElementById('paginationNovedades');
+      pagDiv.style.display = (novFiltered.length > PAGE_SIZE) ? 'flex' : 'none';
+      document.getElementById('pgInfoNovedades').textContent =
+        `${start + 1}–${Math.min(start + PAGE_SIZE, novFiltered.length)} de ${novFiltered.length} novedades`;
+      document.getElementById('pgPrevNovedades').disabled = (novPage === 0);
+      document.getElementById('pgNextNovedades').disabled = (novPage >= totalPages - 1);
     }
 
-    /* ============================================================
-     *  MODAL NOVEDAD
-     * ============================================================ */
-    function poblarEmpleadosModal() {
-      const sel = document.getElementById('novedadEmpleado');
+    function paginateNovedades(delta) {
+      novPage += delta;
+      const totalPages = Math.ceil(novFiltered.length / PAGE_SIZE) || 1;
+      novPage = Math.max(0, Math.min(novPage, totalPages - 1));
+      renderNovedadesTable();
+    }
+
+    /* === NOVEDADES: inline form === */
+    function poblarEmpleadosSelect() {
+      const sel = document.getElementById('novedadEmpleadoSel');
       const ids = new Map();
       for (const r of registros) {
         const id  = r.identificacion || '';
         const nom = r.nombre || '';
         if (id && !ids.has(id)) ids.set(id, nom);
       }
-      const opts = [`<option value="">— Seleccionar empleado —</option>`];
+      let opts = '<option value="">Seleccionar empleado</option>';
       for (const [id, nom] of ids.entries()) {
-        opts.push(`<option value="${escapeHtml(id)}">${escapeHtml(nom)} (${escapeHtml(id)})</option>`);
+        opts += `<option value="${escapeHtml(id)}">${escapeHtml(nom)} (${escapeHtml(id)})</option>`;
       }
-      sel.innerHTML = opts.join('');
+      sel.innerHTML = opts;
     }
 
-    function abrirNovedadModal() {
-      poblarEmpleadosModal();
-      document.getElementById('novedadEmpleado').value = '';
-      document.getElementById('novedadTipo').value = 'PERMISO';
-      document.getElementById('novedadNota').value = '';
+    function updateNovedadGate() {
       const fb = document.getElementById('novedadFeedback');
-      // Mensaje claro si APPS_SCRIPT_URL todavía no está aprobado
+      const saveBtn = document.getElementById('btnSaveNovedad');
       if (!APPS_SCRIPT_URL) {
+        fb.classList.add('is-pending');
         fb.textContent = 'Endpoint pendiente de aprobación de Nicolás. El botón Guardar quedará deshabilitado.';
-        fb.dataset.state = 'pending';
+        saveBtn.disabled = true;
       } else {
+        fb.classList.remove('is-pending');
         fb.textContent = '';
-        fb.dataset.state = '';
+        saveBtn.disabled = false;
       }
-      document.getElementById('novedadModal').hidden = false;
     }
 
-    function cerrarNovedadModal() {
-      document.getElementById('novedadModal').hidden = true;
+    function toggleNovedadForm() {
+      const form = document.getElementById('novedadForm');
+      const fb = document.getElementById('novedadFeedback');
+      form.classList.toggle('is-open');
+      if (form.classList.contains('is-open')) {
+        fb.style.display = 'block';
+        poblarEmpleadosSelect();
+        document.getElementById('novedadEmpleadoSel').value = '';
+        document.getElementById('novedadTipoSel').value = '';
+        document.getElementById('novedadNotaInput').value = '';
+      } else {
+        fb.style.display = 'none';
+      }
     }
 
-    async function submitNovedad() {
-      const sel        = document.getElementById('novedadEmpleado');
-      const id         = sel.value;
-      const nombre     = sel.options[sel.selectedIndex]?.text || '';
-      const tipo       = document.getElementById('novedadTipo').value;
-      const nota       = document.getElementById('novedadNota').value.trim();
-      const fb         = document.getElementById('novedadFeedback');
-      const submitBtn  = document.getElementById('submitNovedadBtn');
-      const cancelBtn  = document.getElementById('cancelNovedadBtn');
+    function cancelNovedad() {
+      document.getElementById('novedadForm').classList.remove('is-open');
+      document.getElementById('novedadFeedback').style.display = 'none';
+    }
+
+    async function submitNovedad(e) {
+      e.preventDefault();
+
+      const empleadoSel = document.getElementById('novedadEmpleadoSel');
+      const empleadoVal  = empleadoSel.value;
+      const empleadoText = empleadoSel.options[empleadoSel.selectedIndex]?.text || '';
+      const tipo  = document.getElementById('novedadTipoSel').value;
+      const nota  = document.getElementById('novedadNotaInput').value.trim();
+      const fb    = document.getElementById('novedadFeedback');
 
       if (!APPS_SCRIPT_URL) {
-        fb.dataset.state = 'err';
         fb.textContent = 'No se puede guardar aún: el endpoint requiere aprobación de Nicolás.';
         return;
       }
-      if (!id) {
-        fb.dataset.state = 'err';
+      if (!empleadoVal) {
         fb.textContent = 'Selecciona un empleado.';
         return;
       }
+      if (!tipo) {
+        fb.textContent = 'Selecciona un tipo de novedad.';
+        return;
+      }
+
+      const saveBtn = document.getElementById('btnSaveNovedad');
+      saveBtn.disabled = true;
 
       const timestamp = new Date().toISOString();
-      const payload = { identificacion: id, nombre, tipo, nota, timestamp };
-
-      submitBtn.disabled = true;
-      cancelBtn.disabled = true;
-      fb.dataset.state = 'pending';
-      fb.textContent = 'Guardando…';
+      const payload = {
+        identificacion: empleadoVal,
+        nombre: empleadoText,
+        tipo: tipo,
+        nota: nota,
+        timestamp: timestamp,
+      };
 
       try {
         await fetch(APPS_SCRIPT_URL, {
@@ -1469,57 +1210,73 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-        // Optimistic UI — append al estado y re-render
+        // Optimistic
         novedades.push(payload);
+        novPage = 0;
         renderStats();
-        renderNovedades();
-        fb.dataset.state = 'ok';
-        fb.textContent = 'Novedad registrada. Se ve en el panel al recargar la página.';
-        setTimeout(cerrarNovedadModal, 1200);
+        renderNovedadesTable();
+        fb.classList.remove('is-pending');
+        fb.textContent = 'Novedad registrada. Se actualizará al recargar.';
+        setTimeout(cancelNovedad, 1500);
       } catch (err) {
         console.error(err);
-        fb.dataset.state = 'err';
         fb.textContent = 'No se pudo guardar. Reintentá al reconectar.';
       } finally {
-        submitBtn.disabled = false;
-        cancelBtn.disabled = false;
+        saveBtn.disabled = false;
       }
     }
 
     /* === INIT === */
     function init() {
+      // Header shrink on scroll
+      const header = document.getElementById('siteHeader');
+      const SHRINK_THRESHOLD = 24;
+      let ticking = false;
+      function updateHeader() {
+        if (window.scrollY > SHRINK_THRESHOLD) {
+          header.classList.add('is-scrolled');
+        } else {
+          header.classList.remove('is-scrolled');
+        }
+        ticking = false;
+      }
+      window.addEventListener('scroll', () => {
+        if (!ticking) { window.requestAnimationFrame(updateHeader); ticking = true; }
+      }, { passive: true });
+      updateHeader();
+
+      // Refresh button
       document.getElementById('refreshBtn').addEventListener('click', fetchAll);
 
+      // Filter chips
+      document.querySelectorAll('#filterChips .chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('#filterChips .chip').forEach(c => c.classList.remove('is-active'));
+          chip.classList.add('is-active');
+          applyFiltersSeguimiento();
+        });
+      });
+
+      // Search input
       document.getElementById('filtroEmpleado').addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(aplicarFiltros, 200);
-      });
-      document.getElementById('filtroEstado').addEventListener('change', aplicarFiltros);
-
-      document.getElementById('calPrev').addEventListener('click', () => {
-        calMonth -= 1;
-        if (calMonth < 0) { calMonth = 11; calYear -= 1; }
-        renderCalendario();
-      });
-      document.getElementById('calNext').addEventListener('click', () => {
-        calMonth += 1;
-        if (calMonth > 11) { calMonth = 0; calYear += 1; }
-        renderCalendario();
+        clearTimeout(window._debounceSeguimiento);
+        window._debounceSeguimiento = setTimeout(applyFiltersSeguimiento, 200);
       });
 
-      document.getElementById('openNovedadFormBtn').addEventListener('click', abrirNovedadModal);
-      document.getElementById('cancelNovedadBtn').addEventListener('click', cerrarNovedadModal);
-      document.getElementById('submitNovedadBtn').addEventListener('click', submitNovedad);
+      // Pagination buttons
+      document.getElementById('pgPrevSeguimiento').addEventListener('click', () => paginateSeguimiento(-1));
+      document.getElementById('pgNextSeguimiento').addEventListener('click', () => paginateSeguimiento(1));
+      document.getElementById('pgPrevNovedades').addEventListener('click', () => paginateNovedades(-1));
+      document.getElementById('pgNextNovedades').addEventListener('click', () => paginateNovedades(1));
 
-      // Click sobre el overlay cierra el modal
-      document.getElementById('novedadModal').addEventListener('click', (e) => {
-        if (e.target.id === 'novedadModal') cerrarNovedadModal();
-      });
+      // Novedades form
+      document.getElementById('btnNewNovedad').addEventListener('click', toggleNovedadForm);
+      document.getElementById('btnCancelNovedad').addEventListener('click', cancelNovedad);
+      document.getElementById('novedadForm').addEventListener('submit', submitNovedad);
 
-      // primer render del header para no mostrar "—"
+      // Initial render
       renderHeaderInfo();
-      aplicarFiltros();
-
+      applyFiltersSeguimiento();
       fetchAll();
       setInterval(fetchAll, REFRESH_MS);
     }
