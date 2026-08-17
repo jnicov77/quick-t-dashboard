@@ -865,6 +865,15 @@
     function formatFechaLarga(d) {
       return `${DOW_ES[d.getDay()]}, ${d.getDate()} de ${MES_ES[d.getMonth()]} de ${d.getFullYear()}`;
     }
+
+    // Fecha de HOY en zona horaria Colombia (UTC-5, sin DST).
+    // El Sheet registra en hora Colombia; usar UTC rompe el filtro "hoy"
+    // después de las 19:00 local (medianoche UTC).
+    function hoyColombia() {
+      const ahora = new Date();
+      const offsetCol = -5 * 60 * 60 * 1000; // UTC-5
+      return new Date(ahora.getTime() + offsetCol).toISOString().slice(0, 10);
+    }
     function formatHoraStr(ts) {
       if (!ts) return '—';
       // ts is "2026-07-31 14:00:00" or ISO "2026-07-31T14:00:00"
@@ -879,7 +888,7 @@
 
     /* === AGGREGATION: group recors by employee per today === */
     function aggregateEmpleados() {
-      const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+      const today = hoyColombia(); // YYYY-MM-DD en hora Colombia
 
       // Step 1: get all unique employees (all time) as master list
       const empMap = new Map(); // id -> {nombre, identificacion}
@@ -993,7 +1002,7 @@
 
     /* === STATS (3 cards) === */
     function renderStats() {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = hoyColombia();
 
       // Unique employees total (master list)
       const idEmpleadosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean));
@@ -1112,7 +1121,7 @@
 
     /* === NOVEDADES: table + pagination === */
     function renderNovedadesTable() {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = hoyColombia();
       novFiltered = novedades.filter(n => {
         const ts = n.timestamp || n.fecha || '';
         return ts.startsWith(today);
