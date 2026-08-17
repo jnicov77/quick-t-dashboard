@@ -934,8 +934,8 @@
         if (!todayMap.has(id)) todayMap.set(id, { entrada: '', salida: '', lastAction: '', lastTs: '' });
         const cur = todayMap.get(id);
 
-        if (ent && (!cur.entrada || ent < cur.entrada)) cur.entrada = ent;  // earliest
-        if (sal && (!cur.salida  || sal  > cur.salida))  cur.salida  = sal; // latest
+        if (ent && (!cur.entrada || ent > cur.entrada)) cur.entrada = ent;  // latest ENTRADA
+        if (sal && (!cur.salida  || sal > cur.salida))  cur.salida  = sal;  // latest SALIDA
 
         // Track the LAST event (by timestamp) to determine current state
         const evtTs = ent || sal;
