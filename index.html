@@ -11,36 +11,36 @@
 
   <style>
     /* =========================================================
-       BRAND BOOK v1.0 — Quick-T
+       BRAND BOOK v2.0 — Quick-T
        Paleta:
-         --ink-navy:   #0A1F44  (primario, texto, estructura)
-         --nfc-cyan:   #00C2D8  (secundario, acentos)
-         --tap-amber:  #FFB020  (CTA, alertas, progress bar — máx 10%)
-         --cloud:      #F6F9FC  (neutro, fondos)
-       Regla 60-30-10: Cloud 60% / Navy 30% / Cyan+Amber 10%
+         --ink-navy:   #343D45  (Quick Charcoal — primario, texto)
+         --nfc-cyan:   #4AC1E0  (NFC Cyan — acentos, interactivo)
+         --tap-amber:  #F5A623  (Tap Amber — CTA, alertas)
+         --cloud:      #F6F9FC  (Cloud White — fondos)
+       Regla 60-25-10-4-1: Cloud 60% / Charcoal 25% / Cyan 10% / Amber 4% / Navy 1%
        Tipografía: Space Grotesk (titulares, métricas) + Inter (cuerpo)
        Estados (Nicolás): Ingreso=Verde, Salida=Ámbar, Sin Registro=Gris
        ========================================================= */
     :root {
-      --ink-navy:  #0A1F44;
-      --nfc-cyan:  #00C2D8;
-      --tap-amber: #FFB020;
+      --ink-navy:  #343D45;
+      --nfc-cyan:  #4AC1E0;
+      --tap-amber: #F5A623;
       --cloud:     #F6F9FC;
       --green:     #16A34A;
 
-      --navy-90:   rgba(10, 31, 68, 0.90);
-      --navy-60:   rgba(10, 31, 68, 0.60);
-      --navy-20:   rgba(10, 31, 68, 0.20);
-      --navy-10:   rgba(10, 31, 68, 0.10);
-      --navy-05:   rgba(10, 31, 68, 0.05);
-      --cyan-15:   rgba(0, 194, 216, 0.15);
-      --amber-15:  rgba(255, 176, 32, 0.15);
+      --navy-90:   rgba(52, 61, 69, 0.90);
+      --navy-60:   rgba(52, 61, 69, 0.60);
+      --navy-20:   rgba(52, 61, 69, 0.20);
+      --navy-10:   rgba(52, 61, 69, 0.10);
+      --navy-05:   rgba(52, 61, 69, 0.05);
+      --cyan-15:   rgba(74, 193, 224, 0.15);
+      --amber-15:  rgba(245, 166, 35, 0.15);
       --green-15:  rgba(22, 163, 74, 0.15);
 
       --radius-sm: 8px;
       --radius-md: 12px;
-      --shadow-card: 0 1px 2px rgba(10, 31, 68, 0.04), 0 1px 3px rgba(10, 31, 68, 0.06);
-      --shadow-hover: 0 4px 12px rgba(10, 31, 68, 0.08);
+      --shadow-card: 0 1px 2px rgba(52, 61, 69, 0.04), 0 1px 3px rgba(52, 61, 69, 0.06);
+      --shadow-hover: 0 4px 12px rgba(52, 61, 69, 0.08);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -130,7 +130,7 @@
     .status-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--nfc-cyan);
-      box-shadow: 0 0 0 4px rgba(0, 194, 216, 0.20);
+      box-shadow: 0 0 0 4px rgba(74, 193, 224, 0.20);
       animation: dotPulse 2s infinite;
     }
     @keyframes dotPulse {
