@@ -982,13 +982,13 @@
 
           // Step 2: for period's records, aggregate entrada/salida per employee.
           const periodMap = new Map();
-          const validDatePattern = /^\\d{4}-\\d{2}-\\d{2}/;
-          const validTimePattern = /^\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}/;
+          const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
+          const validTimePattern = /^\d{4}-\d{2}-\d{2}[\\sT]\d{2}:\d{2}/;
 
           const inPeriod = ts => {
-            if (!ts || !validDatePattern.test(ts)) return false;
+            if (!ts || !validDatePattern.test(ts)) return '';
             const d = ts.slice(0, 10);
-            return d >= from && d <= to && validTimePattern.test(ts);
+            return (d >= from && d <= to && validTimePattern.test(ts)) ? ts : '';
           };
 
       for (const r of registros) {
@@ -1115,7 +1115,7 @@
       // Novedades (today)
       const novHoy = novedades.filter(n => {
         const ts = n.timestamp || n.fecha || '';
-        return ts.d >= from && d <= to;
+        const d = ts.slice(0, 10); return d >= from && d <= to;
       });
       document.getElementById('statNovedades').textContent = novHoy.length;
     }
@@ -1204,7 +1204,7 @@
       const today = hoyColombia();
       novFiltered = novedades.filter(n => {
         const ts = n.timestamp || n.fecha || '';
-        return ts.d >= from && d <= to;
+        const d = ts.slice(0, 10); return d >= from && d <= to;
       });
       // If empty, show all (for now, gate: will be empty)
       if (novFiltered.length === 0 && novedades.length > 0) {
