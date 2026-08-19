@@ -748,7 +748,7 @@
 
     /* === CONFIG (gate: URLs vacías muestran empty states) === */
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzO0UrQK2ivib8mu8qnqXUEjh7Kpo5gLHg8FassFiyKq_myp_bK7DIIHm0S2xoZxvInlA/exec';
-    const SHEET_NOVEDADES_URL  = '';  // gate: vacío
+    const SHEET_NOVEDADES_URL  = APPS_SCRIPT_URL + '?action=novedades_hoy';  // endpoint novedades
     const REFRESH_MS = 30000;
     const PAGE_SIZE = 10;
 
@@ -776,6 +776,28 @@
       }
     }
 
+    async function fetchJsonNovedades() {
+      if (!SHEET_NOVEDADES_URL) return [];
+      try {
+        const res = await fetch(SHEET_NOVEDADES_URL, { cache: 'no-store' });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data) ? data.map(normalizeNovedadRow) : [];
+      } catch (err) {
+        console.warn('Novedades fetch failed:', err);
+        return [];
+      }
+    }
+
+    function normalizeNovedadRow(obj) {
+      return {
+        hora: obj.timestamp || '',
+        empleado: obj.nombre || '',
+        tipo: obj.tipo || '',
+        nota: obj.nota || '',
+      };
+    }
+
     async function fetchJsonEvents() {
       if (!APPS_SCRIPT_URL) return [];
       try {
@@ -796,7 +818,7 @@
 
       const [ev, nov] = await Promise.all([
         fetchJsonEvents(),
-        fetchCsv(SHEET_NOVEDADES_URL),
+        fetchJsonNovedades(),
       ]);
       registros  = ev;
       novedades  = nov;
@@ -1281,21 +1303,27 @@
         timestamp: timestamp,
       };
 
+      const url = APPS_SCRIPT_URL +
+        '?action=novedad' +
+        '&identificacion=' + encodeURIComponent(empleadoVal) +
+        '&nombre=' + encodeURIComponent(empleadoText) +
+        '&tipo=' + encodeURIComponent(tipo) +
+        '&nota=' + encodeURIComponent(nota) +
+        '&timestamp=' + encodeURIComponent(timestamp);
       try {
-        await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        // Optimistic
-        novedades.push(payload);
-        novPage = 0;
-        renderStats();
-        renderNovedadesTable();
-        fb.classList.remove('is-pending');
-        fb.textContent = 'Novedad registrada. Se actualizará al recargar.';
-        setTimeout(cancelNovedad, 1500);
+        const resp = await fetch(url, { cache: 'no-store' });
+        const data = await resp.json().catch(() => ({}));
+        if (data.status === 'ok' || data.status === 'warn') {
+          novedades.push(payload);
+          novPage = 0;
+          renderStats();
+          renderNovedadesTable();
+          fb.classList.remove('is-pending');
+          fb.textContent = 'Novedad registrada.';
+          setTimeout(cancelNovedad, 1500);
+        } else {
+          fb.textContent = data.msg || 'Error al guardar.';
+        }
       } catch (err) {
         console.error(err);
         fb.textContent = 'No se pudo guardar. Reintentá al reconectar.';
