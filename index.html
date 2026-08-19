@@ -586,6 +586,11 @@
           <button class="chip" data-filter="salida" type="button">Salida</button>
           <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
         </div>
+        <div class="chips" id="periodChips" style="margin-left:12px" role="tablist">
+          <button class="chip is-active" data-period="hoy" type="button">Hoy</button>
+          <button class="chip" data-period="semana" type="button">Semana</button>
+          <button class="chip" data-period="mes" type="button">Mes</button>
+        </div>
       </div>
 
       <div class="panel" id="seguimientoPanel">
@@ -758,6 +763,7 @@
     let novedades         = [];   // rows from SHEET_NOVEDADES_URL
     let empleadosLista    = [];   // lista de empleados registrados (hoja empleados)
     let lastFetchAt       = null;
+    let selectedPeriod    = 'hoy';  // hoy | semana | mes
 
     // Pagination
     let segPage = 0, novPage = 0;
@@ -920,6 +926,26 @@
       const offsetCol = -5 * 60 * 60 * 1000; // UTC-5
       return new Date(ahora.getTime() + offsetCol).toISOString().slice(0, 10);
     }
+    function periodRange() {
+      const hoy = new Date();
+      const offsetCol = -5 * 60 * 60 * 1000;
+      const local = new Date(hoy.getTime() + offsetCol);
+      const from = new Date(local);
+      const to = new Date(local);
+      if (selectedPeriod === 'semana') {
+        // Lunes de esta semana
+        const diaSemana = from.getUTCDay();
+        const diff = diaSemana === 0 ? -6 : 1 - diaSemana;
+        from.setUTCDate(from.getUTCDate() + diff);
+      } else if (selectedPeriod === 'mes') {
+        // Día 1 del mes
+        from.setUTCDate(1);
+      }
+      return {
+        from: from.toISOString().slice(0, 10),
+        to: to.toISOString().slice(0, 10)
+      };
+    }
     function formatHoraStr(ts) {
       if (!ts) return '—';
       // ts is "2026-07-31 14:00:00" or ISO "2026-07-31T14:00:00"
@@ -932,30 +958,30 @@
       })[c]);
     }
 
-    /* === AGGREGATION: group recors by employee per today === */
-    function aggregateEmpleados() {
-      const today = hoyColombia(); // YYYY-MM-DD en hora Colombia
+    /* === AGGREGATION: group records by employee per period === */
+        function aggregateEmpleados() {
+          const { from, to } = periodRange(); // YYYY-MM-DD
 
-      // Step 1: get all unique employees (all time) as master list
-      const empMap = new Map(); // id -> {nombre, identificacion}
-      for (const r of registros) {
-        const id = r.identificacion || r.nombre || '';
-        const nom = r.nombre || '';
-        if (id && !empMap.has(id)) {
-          empMap.set(id, { nombre: nom, identificacion: r.identificacion || id });
-        }
-      }
+          // Step 1: get all unique employees (all time) as master list
+          const empMap = new Map();
+          for (const r of registros) {
+            const id = r.identificacion || r.nombre || '';
+            const nom = r.nombre || '';
+            if (id && !empMap.has(id)) {
+              empMap.set(id, { nombre: nom, identificacion: r.identificacion || id });
+            }
+          }
 
-      // Step 2: for today's records, aggregate entrada/salida per employee.
-      // Event-log schema: each row is one ENTRADA/SALIDA event with a timestamp,
-      // so reconstruct per-employee entrada (earliest) / salida (latest) from action.
-      // Legacy wide schema (entrada/salida columns) still supported as fallback.
-      const todayMap = new Map(); // id -> {entrada: 'earliest', salida: 'latest', lastAction, lastTs}
-      const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
-      const validTimePattern = /^\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}/;
+          // Step 2: for period's records, aggregate entrada/salida per employee.
+          const periodMap = new Map();
+          const validDatePattern = /^\\d{4}-\\d{2}-\\d{2}/;
+          const validTimePattern = /^\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}/;
 
-      const isToday = ts =>
-        (ts && validDatePattern.test(ts) && ts.startsWith(today) && validTimePattern.test(ts)) ? ts : '';
+          const inPeriod = ts => {
+            if (!ts || !validDatePattern.test(ts)) return false;
+            const d = ts.slice(0, 10);
+            return d >= from && d <= to && validTimePattern.test(ts);
+          };
 
       for (const r of registros) {
         const id = r.identificacion || r.nombre || '';
@@ -966,19 +992,19 @@
 
         if (action === 'ENTRADA' || action === 'SALIDA') {
           // Event-log schema: derive from action + timestamp
-          const ts = isToday(r.timestamp);
+          const ts = inPeriod(r.timestamp);
           if (!ts) continue;
           if (action === 'ENTRADA') ent = ts;
           else sal = ts;
         } else {
           // Legacy wide schema: entrada/salida columns
-          ent = isToday(r.entrada);
-          sal = isToday(r.salida);
+          ent = inPeriod(r.entrada);
+          sal = inPeriod(r.salida);
           if (!ent && !sal) continue;
         }
 
-        if (!todayMap.has(id)) todayMap.set(id, { entrada: '', salida: '', lastAction: '', lastTs: '' });
-        const cur = todayMap.get(id);
+        if (!periodMap.has(id)) periodMap.set(id, { entrada: '', salida: '', lastAction: '', lastTs: '' });
+        const cur = periodMap.get(id);
 
         if (ent && (!cur.entrada || ent > cur.entrada)) cur.entrada = ent;  // latest ENTRADA
         if (sal && (!cur.salida  || sal > cur.salida))  cur.salida  = sal;  // latest SALIDA
@@ -994,7 +1020,7 @@
       // Step 3: build empleadosDia array
       const result = [];
       for (const [id, emp] of empMap.entries()) {
-        const td = todayMap.get(id);
+        const td = periodMap.get(id);
         const entrada = td && td.entrada ? td.entrada : '';
         const salida  = td && td.salida  ? td.salida  : '';
 
@@ -1048,16 +1074,16 @@
 
     /* === STATS (3 cards) === */
     function renderStats() {
-      const today = hoyColombia();
+      const { from, to } = periodRange();
+      const label = selectedPeriod === 'hoy' ? 'hoy' : selectedPeriod === 'semana' ? 'esta semana' : 'este mes';
 
-      // Unique employees total (master list)
-      const idEmpleadosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean));
-      const totalEmp = idEmpleadosTotal.size;
+      // Unique employees from empleadosLista
+      const totalEmp = empleadosLista.length;
 
-      // Count employees with entrada today (Ingreso + Salida that have entrada)
+      // Count employees with entrada in period (from empleadosDia)
       const conIngreso = empleadosDia.filter(e => e.estado === 'ingreso').length;
       const conSalida  = empleadosDia.filter(e => e.estado === 'salida').length;
-      const conEntradaHoy = conIngreso + conSalida; // both have entrada today
+      const conEntrada = conIngreso + conSalida;
 
       // Asistencia %
       const pctEl = document.getElementById('statPct');
@@ -1069,10 +1095,10 @@
         fillEl.style.width = '0%';
         hintEl.textContent = 'Sin empleados registrados';
       } else {
-        const pct = Math.round((conEntradaHoy / totalEmp) * 100);
+        const pct = Math.round((conEntrada / totalEmp) * 100);
         pctEl.textContent = pct;
         fillEl.style.width = `${pct}%`;
-        hintEl.textContent = `${conEntradaHoy} de ${totalEmp} empleados ingresaron`;
+        hintEl.textContent = `${conEntrada} de ${totalEmp} empleados ingresaron`;
       }
 
       // Empleados total
@@ -1081,7 +1107,7 @@
       // Novedades (today)
       const novHoy = novedades.filter(n => {
         const ts = n.timestamp || n.fecha || '';
-        return ts.startsWith(today);
+        return ts.d >= from && d <= to;
       });
       document.getElementById('statNovedades').textContent = novHoy.length;
     }
@@ -1170,7 +1196,7 @@
       const today = hoyColombia();
       novFiltered = novedades.filter(n => {
         const ts = n.timestamp || n.fecha || '';
-        return ts.startsWith(today);
+        return ts.d >= from && d <= to;
       });
       // If empty, show all (for now, gate: will be empty)
       if (novFiltered.length === 0 && novedades.length > 0) {
@@ -1376,6 +1402,18 @@
         chip.addEventListener('click', () => {
           document.querySelectorAll('#filterChips .chip').forEach(c => c.classList.remove('is-active'));
           chip.classList.add('is-active');
+          applyFiltersSeguimiento();
+        });
+      });
+
+      // Period chips
+      document.querySelectorAll('#periodChips .chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('#periodChips .chip').forEach(c => c.classList.remove('is-active'));
+          chip.classList.add('is-active');
+          selectedPeriod = chip.dataset.period;
+          aggregateEmpleados();
+          renderStats();
           applyFiltersSeguimiento();
         });
       });
