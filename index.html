@@ -756,6 +756,7 @@
     let registros         = [];   // rows from eventos.csv
     let empleadosDia      = [];   // aggregated: [{nombre, identificacion, entrada, salida, estado}]
     let novedades         = [];   // rows from SHEET_NOVEDADES_URL
+    let empleadosLista    = [];   // lista de empleados registrados (hoja empleados)
     let lastFetchAt       = null;
 
     // Pagination
@@ -798,6 +799,19 @@
       };
     }
 
+    async function fetchEmpleados() {
+      if (!APPS_SCRIPT_URL) return [];
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + '?action=empleados', { cache: 'no-store' });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.warn('Empleados fetch failed:', err);
+        return [];
+      }
+    }
+
     async function fetchJsonEvents() {
       if (!APPS_SCRIPT_URL) return [];
       try {
@@ -816,12 +830,14 @@
       const refreshBtn = document.getElementById('refreshBtn');
       refreshBtn.classList.add('reloading');
 
-      const [ev, nov] = await Promise.all([
+      const [ev, nov, emp] = await Promise.all([
         fetchJsonEvents(),
         fetchJsonNovedades(),
+        fetchEmpleados(),
       ]);
       registros  = ev;
       novedades  = nov;
+      empleadosLista = emp;
 
       lastFetchAt = new Date();
       renderAll();
@@ -1222,14 +1238,15 @@
     function poblarEmpleadosSelect() {
       const sel = document.getElementById('novedadEmpleadoSel');
       const ids = new Map();
-      for (const r of registros) {
-        const id  = r.identificacion || '';
+      for (const r of empleadosLista) {
+        const id  = r.uid || r.identificacion || '';
         const nom = r.nombre || '';
-        if (id && !ids.has(id)) ids.set(id, nom);
+        const key = id || nom;
+        if (key && !ids.has(key)) ids.set(key, nom);
       }
       let opts = '<option value="">Seleccionar empleado</option>';
-      for (const [id, nom] of ids.entries()) {
-        opts += `<option value="${escapeHtml(id)}">${escapeHtml(nom)} (${escapeHtml(id)})</option>`;
+      for (const [key, nom] of ids.entries()) {
+        opts += `<option value="${escapeHtml(key)}">${escapeHtml(nom)}</option>`;
       }
       sel.innerHTML = opts;
     }
