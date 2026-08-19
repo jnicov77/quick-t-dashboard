@@ -901,10 +901,10 @@
       // Step 1: get all unique employees (all time) as master list
       const empMap = new Map(); // id -> {nombre, identificacion}
       for (const r of registros) {
-        const id = r.identificacion || '';
+        const id = r.identificacion || r.nombre || '';
         const nom = r.nombre || '';
         if (id && !empMap.has(id)) {
-          empMap.set(id, { nombre: nom, identificacion: id });
+          empMap.set(id, { nombre: nom, identificacion: r.identificacion || id });
         }
       }
 
@@ -920,7 +920,7 @@
         (ts && validDatePattern.test(ts) && ts.startsWith(today) && validTimePattern.test(ts)) ? ts : '';
 
       for (const r of registros) {
-        const id = r.identificacion || '';
+        const id = r.identificacion || r.nombre || '';
         if (!id) continue;
 
         const action = (r.action || '').toUpperCase();
