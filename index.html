@@ -278,6 +278,50 @@
       border-color: var(--ink-navy);
     }
 
+    /* === DATE PICKER === */
+    .date-picker {
+      display: flex; align-items: center; gap: 8px;
+      margin-left: 12px;
+    }
+    .date-picker input[type="date"] {
+      padding: 7px 12px;
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: 999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500;
+      color: var(--ink-navy);
+      transition: all 0.15s ease;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .date-picker input[type="date"]:hover { border-color: var(--navy-20); }
+    .date-picker input[type="date"]:focus {
+      outline: none;
+      border-color: var(--nfc-cyan);
+      box-shadow: 0 0 0 3px var(--cyan-15);
+    }
+    .date-sep {
+      font-size: 14px; font-weight: 500; color: var(--navy-60);
+      user-select: none;
+    }
+    .btn-range-toggle {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: white;
+      border: 1px solid var(--navy-10);
+      border-radius: 999px;
+      color: var(--navy-60);
+      font-size: 16px; font-weight: 600;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-range-toggle:hover { border-color: var(--nfc-cyan); color: var(--nfc-cyan); }
+    .btn-range-toggle.is-active {
+      background: var(--nfc-cyan); color: white;
+      border-color: var(--nfc-cyan);
+    }
+
     /* ========== PANEL / TABLE ========== */
     .panel {
       background: white;
@@ -591,6 +635,13 @@
           <button class="chip" data-period="semana" type="button">Semana</button>
           <button class="chip" data-period="mes" type="button">Mes</button>
         </div>
+        <div class="date-picker" id="datePicker">
+          <input type="date" id="fechaDesde" title="Fecha inicio" />
+          <span class="date-sep" id="dateSep" style="display:none">~</span>
+          <input type="date" id="fechaHasta" title="Fecha fin" style="display:none" />
+          <button class="btn-range-toggle" id="btnRangeToggle" type="button"
+                  title="Activar rango de fechas">+</button>
+        </div>
       </div>
 
       <div class="panel" id="seguimientoPanel">
@@ -763,7 +814,10 @@
     let novedades         = [];   // rows from SHEET_NOVEDADES_URL
     let empleadosLista    = [];   // lista de empleados registrados (hoja empleados)
     let lastFetchAt       = null;
-    let selectedPeriod    = 'hoy';  // hoy | semana | mes
+    // Date picker state (default: today)
+    let fechaDesde       = '';
+    let fechaHasta       = '';
+    let rangeEnabled     = false;
 
     // Pagination
     let segPage = 0, novPage = 0;
@@ -821,7 +875,11 @@
     async function fetchJsonEvents() {
       if (!APPS_SCRIPT_URL) return [];
       try {
-        const res = await fetch(APPS_SCRIPT_URL + '?action=today', { cache: 'no-store' });
+        const { from, to } = periodRange();
+        let url = APPS_SCRIPT_URL + '?action=today';
+        if (from) url += '&from=' + encodeURIComponent(from);
+        if (to && to !== from) url += '&to=' + encodeURIComponent(to);
+        const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) return [];
         const data = await res.json();
         if (!Array.isArray(data)) return [];
@@ -934,25 +992,21 @@
       return new Date(ahora.getTime() + offsetCol).toISOString().slice(0, 10);
     }
     function periodRange() {
-      const hoy = new Date();
-      const offsetCol = -5 * 60 * 60 * 1000; // UTC-5 Colombia
-      const local = new Date(hoy.getTime() + offsetCol);
-      const fmtDate = d => {
+      // Use date picker values; if empty, default to today
+      const fmt = (d) => {
         const y = d.getUTCFullYear();
         const m = String(d.getUTCMonth() + 1).padStart(2, '0');
         const dd = String(d.getUTCDate()).padStart(2, '0');
         return `${y}-${m}-${dd}`;
       };
-      const from = new Date(local);
-      const to = new Date(local);
-      if (selectedPeriod === 'semana') {
-        const diaSemana = from.getUTCDay();
-        const diff = diaSemana === 0 ? -6 : 1 - diaSemana;
-        from.setUTCDate(from.getUTCDate() + diff);
-      } else if (selectedPeriod === 'mes') {
-        from.setUTCDate(1);
-      }
-      return { from: fmtDate(from), to: fmtDate(to) };
+      const now = new Date();
+      const offsetCol = -5 * 60 * 60 * 1000;
+      const local = new Date(now.getTime() + offsetCol);
+      const hoy = fmt(local);
+
+      const from = fechaDesde || hoy;
+      const to = (rangeEnabled && fechaHasta) ? fechaHasta : from;
+      return { from, to };
     }
     function formatHoraStr(ts) {
       if (!ts) return '—';
@@ -1083,7 +1137,7 @@
     /* === STATS (3 cards) === */
     function renderStats() {
       const { from, to } = periodRange();
-      const label = selectedPeriod === 'hoy' ? 'hoy' : selectedPeriod === 'semana' ? 'esta semana' : 'este mes';
+      const label = from === to ? from : `${from} – ${to}`;
 
       // Unique employees from empleadosLista
       const totalEmp = empleadosLista.length;
@@ -1414,16 +1468,43 @@
         });
       });
 
-      // Period chips
-      document.querySelectorAll('#periodChips .chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          document.querySelectorAll('#periodChips .chip').forEach(c => c.classList.remove('is-active'));
-          chip.classList.add('is-active');
-          selectedPeriod = chip.dataset.period;
-          aggregateEmpleados();
-          renderStats();
-          applyFiltersSeguimiento();
-        });
+      // Date picker — set defaults + listen for changes
+      const inputDesde = document.getElementById('fechaDesde');
+      const inputHasta = document.getElementById('fechaHasta');
+      const dateSepEl  = document.getElementById('dateSep');
+      const btnRange   = document.getElementById('btnRangeToggle');
+
+      // Default: fill both with today
+      const offsetCol = -5 * 60 * 60 * 1000;
+      const local = new Date(Date.now() + offsetCol);
+      const hoyStr = local.toISOString().slice(0, 10);
+      inputDesde.value = hoyStr;
+      inputHasta.value = hoyStr;
+      fechaDesde = hoyStr;
+      fechaHasta = hoyStr;
+
+      function onDateChange() {
+        fechaDesde = inputDesde.value;
+        fechaHasta = inputHasta.value;
+        fetchAll();
+      }
+
+      inputDesde.addEventListener('change', onDateChange);
+      inputHasta.addEventListener('change', onDateChange);
+
+      btnRange.addEventListener('click', () => {
+        rangeEnabled = !rangeEnabled;
+        btnRange.classList.toggle('is-active', rangeEnabled);
+        btnRange.textContent = rangeEnabled ? '−' : '+';
+        inputHasta.style.display = rangeEnabled ? '' : 'none';
+        dateSepEl.style.display  = rangeEnabled ? '' : 'none';
+        btnRange.title = rangeEnabled ? 'Desactivar rango' : 'Activar rango de fechas';
+        if (!rangeEnabled) {
+          // Reset hasta to desde
+          inputHasta.value = inputDesde.value;
+          fechaHasta = inputDesde.value;
+        }
+        onDateChange();
       });
 
       // Search input
