@@ -803,7 +803,7 @@
      * ============================================================ */
 
     /* === CONFIG (gate: URLs vacías muestran empty states) === */
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPLcgERsXp12tVEHAjPePfpAIu5flNLhuvCTSgV9zkJqPPzb9nVTTkWVVTu6QXytF4RQ/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkylf99SggPs0yIwp_NLJ2_7FyZVO5LK_Zb6v1yOGexihbYzV1QzNTUnbWaIvobjZb7A/exec';
     const SHEET_NOVEDADES_URL  = APPS_SCRIPT_URL + '?action=novedades_hoy';  // endpoint novedades
     const REFRESH_MS = 30000;
     const PAGE_SIZE = 10;
@@ -877,8 +877,8 @@
       try {
         const { from, to } = periodRange();
         let url = APPS_SCRIPT_URL + '?action=today';
-        if (from) url += '&from=' + encodeURIComponent(from);
-        if (to && to !== from) url += '&to=' + encodeURIComponent(to);
+        if (from) url += '&fecha=' + encodeURIComponent(from);
+        if (to && to !== from) url += '&hasta=' + encodeURIComponent(to);
         const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) return [];
         const data = await res.json();
