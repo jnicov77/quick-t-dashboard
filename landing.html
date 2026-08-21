@@ -111,7 +111,12 @@
       gap:8px; color:var(--charcoal-60); font-size:12px;
     }
     .hero-visual-placeholder .placeholder-icon { font-size:32px; opacity:0.4; }
-    .hero-visual-placeholder img { width:100%; height:100%; object-fit:cover; border-radius:12px; display:none; }
+    .hero-visual-placeholder img {
+      width:100%; height:100%; object-fit:cover; border-radius:12px;
+    }
+    .hero-visual-placeholder.has-image {
+      border:none; background:none; padding:0;
+    }
 
     /* ── Sections ── */
     section { padding:72px 24px; }
@@ -277,8 +282,9 @@
       <span>Imagen del hardware</span>
     </div>
     <div class="hero-visual-placeholder" id="heroDashboard">
-      <span class="placeholder-icon">📊</span>
-      <span>Mock del dashboard</span>
+      <img src="dashboard-mock.jpg" alt="Dashboard Quick-T" style="display:block!important;">
+      <span class="placeholder-icon" style="display:none;">📊</span>
+      <span style="display:none;">Mock del dashboard</span>
     </div>
   </div>
 </section>
