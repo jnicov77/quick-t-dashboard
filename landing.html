@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick-T — Asistencia Inteligente. Cero Fricción.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --charcoal:  #343D45;
+      --cyan:      #4AC1E0;
+      --amber:     #F5A623;
+      --cloud:     #F6F9FC;
+      --navy:      #0A1F44;
+      --charcoal-90: rgba(52,61,69,0.90);
+      --charcoal-60: rgba(52,61,69,0.60);
+      --charcoal-20: rgba(52,61,69,0.20);
+      --charcoal-10: rgba(52,61,69,0.10);
+      --charcoal-05: rgba(52,61,69,0.05);
+      --cyan-15:     rgba(74,193,224,0.15);
+      --amber-15:    rgba(245,166,35,0.15);
+    }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+    html, body {
+      font-family:'Inter',-apple-system,system-ui,sans-serif;
+      font-size:15px; font-weight:400; line-height:1.6;
+      color:var(--charcoal); background:var(--cloud);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    h1, h2, h3, .heading-display {
+      font-family:'Space Grotesk',-apple-system,system-ui,sans-serif;
+      font-weight:700; line-height:1.15;
+    }
+    h1 { font-size:32px; }
+    h2 { font-size:24px; }
+    h3 { font-size:18px; }
+
+    a { color:var(--cyan); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+
+    /* ── Navigation ── */
+    nav {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 24px; max-width:1120px; margin:0 auto;
+    }
+    .nav-logo { height:36px; }
+    .nav-links { display:flex; gap:32px; list-style:none; }
+    .nav-links a {
+      font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:500;
+      color:var(--charcoal); text-transform:uppercase; letter-spacing:0.04em;
+    }
+    .nav-links a:hover { color:var(--cyan); text-decoration:none; }
+
+    /* ── Hero ── */
+    .hero {
+      max-width:1120px; margin:0 auto; padding:80px 24px 64px;
+      display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
+    }
+    .hero-tag {
+      display:inline-block; background:var(--cyan-15); color:var(--cyan);
+      font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600;
+      padding:4px 12px; border-radius:100px; margin-bottom:20px;
+      letter-spacing:0.03em; text-transform:uppercase;
+    }
+    .hero h1 { font-size:clamp(32px,5vw,48px); margin-bottom:16px; }
+    .hero h1 span { color:var(--cyan); }
+    .hero p {
+      font-size:17px; color:var(--charcoal-60); margin-bottom:32px;
+      max-width:480px; line-height:1.65;
+    }
+    .hero-buttons { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn { display:inline-block; padding:12px 24px; border-radius:8px; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; cursor:pointer; border:none; text-decoration:none; transition:transform 0.15s,box-shadow 0.15s; }
+    .btn:hover { transform:translateY(-1px); text-decoration:none; }
+    .btn-primary { background:var(--cyan); color:var(--navy); }
+    .btn-primary:hover { box-shadow:0 4px 16px rgba(74,193,224,0.35); }
+    .btn-outline { background:transparent; color:var(--charcoal); border:1.5px solid var(--charcoal-20); }
+    .btn-outline:hover { border-color:var(--charcoal-60); }
+
+    .hero-visual {
+      background:var(--charcoal-05); border-radius:16px;
+      display:flex; align-items:center; justify-content:center;
+      padding:48px; aspect-ratio:4/3;
+    }
+    .hero-visual img { max-width:80%; height:auto; }
+
+    /* ── Sections ── */
+    section { padding:80px 24px; }
+    .section-label {
+      font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600;
+      color:var(--cyan); text-transform:uppercase; letter-spacing:0.05em;
+      margin-bottom:8px;
+    }
+    .section-intro { max-width:640px; margin-bottom:48px; }
+    .section-intro h2 { margin-bottom:8px; }
+    .section-intro p { color:var(--charcoal-60); font-size:16px; }
+
+    .container { max-width:1120px; margin:0 auto; }
+
+    /* ── Cómo funciona ── */
+    .steps {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:32px;
+      counter-reset:step;
+    }
+    .step {
+      counter-increment:step;
+      background:#fff; border-radius:12px; padding:32px;
+      border:1px solid var(--charcoal-10); position:relative;
+    }
+    .step::before {
+      content:counter(step);
+      font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700;
+      color:var(--cyan); display:flex; align-items:center; justify-content:center;
+      width:28px; height:28px; border-radius:50%;
+      background:var(--cyan-15); margin-bottom:16px;
+    }
+    .step h3 { margin-bottom:8px; }
+    .step p { color:var(--charcoal-60); font-size:14px; line-height:1.6; }
+
+    /* ── Features ── */
+    .features { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
+    .feature {
+      display:flex; gap:16px; align-items:flex-start;
+      padding:24px; background:#fff; border-radius:12px;
+      border:1px solid var(--charcoal-10);
+    }
+    .feature-icon {
+      flex-shrink:0; width:40px; height:40px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px;
+    }
+    .feature-icon.cyan-bg { background:var(--cyan-15); }
+    .feature h4 {
+      font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600;
+      margin-bottom:4px;
+    }
+    .feature p { color:var(--charcoal-60); font-size:13px; line-height:1.55; }
+
+    /* ── Planes ── */
+    .plans { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:start; }
+    .plan {
+      background:#fff; border-radius:14px; padding:32px;
+      border:1px solid var(--charcoal-10); position:relative;
+    }
+    .plan.featured {
+      border:2px solid var(--cyan); transform:scale(1.03);
+      box-shadow:0 8px 32px rgba(74,193,224,0.12);
+    }
+    .plan-badge {
+      display:inline-block; background:var(--cyan); color:var(--navy);
+      font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700;
+      padding:3px 10px; border-radius:100px; margin-bottom:16px;
+      text-transform:uppercase; letter-spacing:0.04em;
+    }
+    .plan h3 { margin-bottom:4px; }
+    .plan-price {
+      font-family:'Space Grotesk',sans-serif; font-size:36px; font-weight:700;
+      color:var(--charcoal); margin:16px 0 4px;
+    }
+    .plan-price small {
+      font-family:'Inter',sans-serif; font-size:14px; font-weight:400;
+      color:var(--charcoal-60);
+    }
+    .plan-price-note { font-size:12px; color:var(--charcoal-60); margin-bottom:24px; }
+    .plan ul {
+      list-style:none; margin-bottom:24px; padding:0;
+    }
+    .plan li {
+      padding:8px 0; border-bottom:1px solid var(--charcoal-05);
+      font-size:14px; display:flex; gap:8px; align-items:center;
+    }
+    .plan li::before { content:"✓"; color:var(--cyan); font-weight:700; flex-shrink:0; }
+    .plan .btn { display:block; text-align:center; }
+
+    /* ── Contacto ── */
+    .contact {
+      background:var(--navy); color:#fff; border-radius:20px;
+      padding:64px; text-align:center;
+    }
+    .contact h2 { color:#fff; margin-bottom:8px; }
+    .contact p { color:rgba(255,255,255,0.65); font-size:16px; margin-bottom:32px; }
+    .contact-cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .btn-amber { background:var(--amber); color:var(--navy); }
+    .btn-amber:hover { box-shadow:0 4px 16px rgba(245,166,35,0.40); }
+
+    /* ── Footer ── */
+    footer {
+      max-width:1120px; margin:0 auto; padding:32px 24px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:12px; color:var(--charcoal-60);
+    }
+    .footer-logo { height:24px; opacity:0.6; }
+
+    @media (prefers-reduced-motion:reduce) {
+      .btn { transition:none; }
+    }
+
+    @media (max-width:768px) {
+      .hero { grid-template-columns:1fr; gap:32px; padding:48px 24px; }
+      .steps { grid-template-columns:1fr; }
+      .features { grid-template-columns:1fr; }
+      .plans { grid-template-columns:1fr; max-width:400px; margin:0 auto; }
+      .plan.featured { transform:none; }
+      .nav-links { display:none; }
+      .contact { padding:48px 24px; border-radius:0; margin:0 -24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="/"><img class="nav-logo" src="quickt-logo-lockup.png" alt="Quick-T"></a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div>
+    <div class="hero-tag">Control horario NFC</div>
+    <h1>Asistencia <span>Inteligente.</span><br>Cero Fricción.</h1>
+    <p>
+      Un toque del tag NFC y el registro queda hecho. Sin planillas, sin huellas, sin contraseñas.
+      Funciona incluso sin internet.
+    </p>
+    <div class="hero-buttons">
+      <a href="#planes" class="btn btn-primary">Ver planes</a>
+      <a href="https://wa.me/573000000000" class="btn btn-outline">Hablar por WhatsApp</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <img src="quickt-logo-256.png" alt="Quick-T lector NFC">
+  </div>
+</section>
+
+<!-- Cómo funciona -->
+<section style="background:#fff;">
+  <div class="container">
+    <div class="section-label">Cómo funciona</div>
+    <div class="section-intro">
+      <h2>Del toque al dashboard en segundos</h2>
+      <p>Sin instalar apps. Sin entrenar al personal. Un flujo que cualquiera entiende el primer día.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <h3>Acercá el tag</h3>
+        <p>El empleado acerca su tag NFC al lector Quick-T al llegar o al salir. Un toque. Sin contacto físico con el dispositivo.</p>
+      </div>
+      <div class="step">
+        <h3>Registro instantáneo</h3>
+        <p>Entrada o salida registrada con fecha y hora exacta. El lector confirma en pantalla. Sin pasos extra.</p>
+      </div>
+      <div class="step">
+        <h3>Dashboard en tiempo real</h3>
+        <p>Toda la información se sincroniza al instante. Quién está, desde cuándo, horas acumuladas. Desde cualquier navegador.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section>
+  <div class="container">
+    <div class="section-label">Por qué Quick-T</div>
+    <div class="section-intro">
+      <h2>Diseñado para funcionar en el mundo real</h2>
+      <p>No es una app más. Es hardware que vive en la entrada de tu empresa y nunca falla.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon cyan-bg">⚡</div>
+        <div>
+          <h4>Funciona sin internet</h4>
+          <p>Registros almacenados localmente. Se sincronizan solos cuando vuelve la conexión.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon cyan-bg">🔒</div>
+        <div>
+          <h4>A prueba de suplantación</h4>
+          <p>Cada tag NFC tiene un identificador único imposible de clonar. Sin huellas dactilares que fallan con las manos sucias.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon cyan-bg">📱</div>
+        <div>
+          <h4>Registro por celular incluido</h4>
+          <p>Empleados sin tag físico pueden registrar desde su celular. Ideal para trabajo remoto o visitas.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon cyan-bg">💰</div>
+        <div>
+          <h4>Costo de infraestructura casi cero</h4>
+          <p>Sin servidores, sin licencias, sin mantenimiento de software. Todo funciona desde Google Sheets o tu propio dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Planes -->
+<section id="planes" style="background:#fff;">
+  <div class="container">
+    <div class="section-label">Planes</div>
+    <div class="section-intro">
+      <h2>Elegí el plan que se ajusta a tu empresa</h2>
+      <p>Hardware de venta independiente. Suscripción mensual sin permanencia.</p>
+    </div>
+    <div class="plans">
+      <!-- Inicial -->
+      <div class="plan">
+        <h3>Inicial</h3>
+        <p style="font-size:13px;color:var(--charcoal-60);">Solo registro por celular</p>
+        <div class="plan-price">$50.000 <small>COP/mes</small></div>
+        <div class="plan-price-note">Sin hardware. Sin costo de instalación.</div>
+        <ul>
+          <li>Registro de asistencia por celular</li>
+          <li>Dashboard web en tiempo real</li>
+          <li>Hasta 50 empleados</li>
+          <li>Soporte por email</li>
+          <li>Sincronización sin WiFi</li>
+        </ul>
+        <a href="https://wa.me/573000000000" class="btn btn-outline">Empezar</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="plan featured">
+        <div class="plan-badge">Más popular</div>
+        <h3>Pro</h3>
+        <p style="font-size:13px;color:var(--charcoal-60);">Lectores NFC + celular</p>
+        <div class="plan-price">$150.000 <small>COP/mes</small></div>
+        <div class="plan-price-note">Hardware: $350.000 COP por lector</div>
+        <ul>
+          <li>Hasta 15 lectores NFC</li>
+          <li>Registro por celular incluido</li>
+          <li>Dashboard web en tiempo real</li>
+          <li>Empleados ilimitados</li>
+          <li>Soporte prioritario (WhatsApp)</li>
+          <li>Sincronización sin WiFi</li>
+          <li>Marca en dashboard</li>
+        </ul>
+        <a href="https://wa.me/573000000000" class="btn btn-primary">Hablar con ventas</a>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="plan">
+        <h3>Enterprise</h3>
+        <p style="font-size:13px;color:var(--charcoal-60);">Ilimitado y a medida</p>
+        <div class="plan-price">A cotizar</div>
+        <div class="plan-price-note">Todo lo de Pro, sin límites.</div>
+        <ul>
+          <li>Lectores ilimitados</li>
+          <li>Dashboard white-label</li>
+          <li>Lectores personalizados</li>
+          <li>Soporte 24/7 con visita</li>
+          <li>Integraciones a medida</li>
+          <li>Capacitación presencial</li>
+          <li>Múltiples sedes</li>
+        </ul>
+        <a href="https://wa.me/573000000000" class="btn btn-outline">Agendar llamada</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contacto -->
+<section>
+  <div class="container">
+    <div class="contact">
+      <h2>¿Listo para eliminar las planillas?</h2>
+      <p>Escribinos por WhatsApp. Te mostramos cómo funciona en 5 minutos.</p>
+      <div class="contact-cta">
+        <a href="https://wa.me/573000000000" class="btn btn-amber">Hablar por WhatsApp</a>
+        <a href="mailto:quickttech@gmail.com" class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);">quickttech@gmail.com</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span>© 2026 Quick-T. Asistencia Inteligente. Cero Fricción.</span>
+  <img class="footer-logo" src="quickt-logo-lockup.png" alt="Quick-T">
+</footer>
+
+</body>
+</html>
