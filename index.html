@@ -3,99 +3,211 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick-T — Industrias SAS</title>
+  <title>Quick-T — Agiliza tu operación. Enfocate en crecer.</title>
+  <meta name="description" content="Quick-T diseña, despliega y opera agentes de IA con hardware integrado para agilizar tu operación." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* =========================================================
-       BRAND BOOK v2.0 — Quick-T
-       Paleta:
-         --ink-navy:   #343D45  (Quick Charcoal — primario, texto)
-         --nfc-cyan:   #4AC1E0  (NFC Cyan — acentos, interactivo)
-         --tap-amber:  #F5A623  (Tap Amber — CTA, alertas)
-         --cloud:      #F6F9FC  (Cloud White — fondos)
-       Regla 60-25-10-4-1: Cloud 60% / Charcoal 25% / Cyan 10% / Amber 4% / Navy 1%
-       Tipografía: Space Grotesk (titulares, métricas) + Inter (cuerpo)
-       Estados (Nicolás): Ingreso=Verde, Salida=Ámbar, Sin Registro=Gris
-       ========================================================= */
-    :root {
-      --ink-navy:  #343D45;
-      --nfc-cyan:  #4AC1E0;
-      --tap-amber: #F5A623;
-      --cloud:     #F6F9FC;
-      --green:     #16A34A;
+    /* ═══════════════════════════════════════════════════════════
+       QUICK-T — LANDING CORPORATIVA
+       Paleta Esmeralda · Tipografía Space Grotesk + Inter
+       ═══════════════════════════════════════════════════════════ */
 
-      --navy-90:   rgba(52, 61, 69, 0.90);
-      --navy-60:   rgba(52, 61, 69, 0.60);
-      --navy-20:   rgba(52, 61, 69, 0.20);
-      --navy-10:   rgba(52, 61, 69, 0.10);
-      --navy-05:   rgba(52, 61, 69, 0.05);
-      --cyan-15:   rgba(74, 193, 224, 0.15);
-      --amber-15:  rgba(245, 166, 35, 0.15);
-      --green-15:  rgba(22, 163, 74, 0.15);
+    :root {
+      --charcoal:  #1A1D23;
+      --emerald:   #10B981;
+      --emerald-hover: #059669;
+      --rose:      #F43F5E;
+      --cloud:     #F8FAFC;
+      --navy:      #0F172A;
+
+      --charcoal-90: rgba(26,29,35,0.90);
+      --charcoal-60: rgba(26,29,35,0.60);
+      --charcoal-20: rgba(26,29,35,0.20);
+      --charcoal-10: rgba(26,29,35,0.10);
+      --charcoal-05: rgba(26,29,35,0.05);
+      --emerald-15:  rgba(16,185,129,0.15);
+      --emerald-25:  rgba(16,185,129,0.25);
+      --white-10:    rgba(255,255,255,0.10);
+      --white-15:    rgba(255,255,255,0.15);
+      --white-60:    rgba(255,255,255,0.60);
+      --white-80:    rgba(255,255,255,0.80);
 
       --radius-sm: 8px;
       --radius-md: 12px;
-      --shadow-card: 0 1px 2px rgba(52, 61, 69, 0.04), 0 1px 3px rgba(52, 61, 69, 0.06);
-      --shadow-hover: 0 4px 12px rgba(52, 61, 69, 0.08);
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --shadow-card: 0 1px 3px rgba(26,29,35,0.06), 0 1px 2px rgba(26,29,35,0.04);
+      --shadow-hover: 0 8px 30px rgba(26,29,35,0.10);
+      --shadow-emerald: 0 4px 20px rgba(16,185,129,0.25);
+      --shadow-lg: 0 20px 60px rgba(26,29,35,0.12);
+
+      --max-width: 1120px;
+      --header-h: 68px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: var(--header-h);
+    }
+
+    body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       font-size: 15px;
       font-weight: 400;
-      color: var(--ink-navy);
+      line-height: 1.6;
+      color: var(--charcoal);
       background: var(--cloud);
       -webkit-font-smoothing: antialiased;
-      line-height: 1.5;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    h1, h2, h3, .metric-value, .heading-display {
-      font-family: 'Space Grotesk', 'Inter', sans-serif;
-      letter-spacing: -0.01em;
+    /* ── Typography ── */
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--charcoal);
     }
-
-    /* Jerarquía tipográfica — brand book v2.0: H1 32/700 · H2 24/700 · H3 18/700 */
-    h1 { font-size: 32px; font-weight: 700; }
-    h2 { font-size: 24px; font-weight: 700; }
-    h3 { font-size: 18px; font-weight: 700; }
+    h1 { font-size: 32px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    .text-small { font-size: 12px; font-weight: 400; }
+    .text-body { font-size: 15px; font-weight: 400; }
 
     a { color: inherit; text-decoration: none; }
-    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ul { list-style: none; padding: 0; }
+    img { max-width: 100%; display: block; }
 
-    /* ========== APP LAYOUT ========== */
-    .app {
-      max-width: 1280px;
+    /* ── Utility ── */
+    .container {
+      max-width: var(--max-width);
       margin: 0 auto;
-      padding: 0 24px 64px;
+      padding: 0 24px;
     }
 
-    /* ========== HEADER (glassmorph + shrink on scroll) ========== */
+    .section-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--emerald);
+      margin-bottom: 8px;
+    }
+
+    .section-intro {
+      max-width: 620px;
+      margin-bottom: 48px;
+    }
+    .section-intro h2 { margin-bottom: 8px; }
+    .section-intro p {
+      color: var(--charcoal-60);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--emerald);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--emerald-hover);
+      box-shadow: var(--shadow-emerald);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--emerald);
+      border: 1.5px solid var(--emerald);
+    }
+    .btn-outline:hover {
+      background: var(--emerald-15);
+      border-color: var(--emerald-hover);
+      color: var(--emerald-hover);
+    }
+
+    .btn-white {
+      background: #fff;
+      color: var(--navy);
+    }
+    .btn-white:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .btn-ghost-light {
+      background: transparent;
+      color: #fff;
+      border: 1.5px solid var(--white-15);
+    }
+    .btn-ghost-light:hover {
+      background: var(--white-10);
+      border-color: var(--white-60);
+    }
+
+    .btn-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      transition: gap 0.2s ease;
+    }
+    .btn-arrow:hover { gap: 10px; }
+    .btn-arrow svg { width: 16px; height: 16px; }
+
+    /* ════════════════════════════════════════════
+       HEADER — glass, sticky
+       ════════════════════════════════════════════ */
     .site-header {
       position: sticky;
       top: 0;
-      z-index: 50;
-      background: rgba(246, 249, 252, 0.85);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--navy-10);
-    }
-    .header-inner {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 22px 24px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
+      z-index: 100;
+      background: rgba(15,23,42,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       transition: padding 0.28s ease;
     }
-    .site-header.is-scrolled .header-inner { padding: 10px 24px; }
 
+    .header-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Logo */
     .logo {
       display: flex;
       align-items: center;
@@ -103,1439 +215,1159 @@
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
       font-size: 18px;
-      color: var(--ink-navy);
+      color: #fff;
+      flex-shrink: 0;
     }
     .logo-mark {
-      width: 44px; height: 44px;
-      display: grid; place-items: center;
-      transition: width 0.28s ease, height 0.28s ease;
-    }
-    .logo-mark img { width: 100%; height: 100%; display: block; }
-    .logo-text { transition: font-size 0.28s ease; }
-    .site-header.is-scrolled .logo-mark { width: 28px; height: 28px; }
-    .site-header.is-scrolled .logo { font-size: 15px; }
-
-    .header-meta {
-      transition: max-height 0.28s ease, opacity 0.2s ease;
-      max-height: 40px; overflow: hidden; opacity: 1;
-    }
-    .site-header.is-scrolled .header-meta { max-height: 0; opacity: 0; }
-
-    .header-status {
-      margin-left: auto;
-      display: flex; align-items: center; gap: 16px;
-    }
-    .status-date { font-size: 14px; font-weight: 500; color: var(--navy-60); }
-
-    .status-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 12px;
-      background: var(--cyan-15);
-      border-radius: 999px;
-      font-size: 13px; font-weight: 600;
-    }
-    .status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--nfc-cyan);
-      box-shadow: 0 0 0 4px rgba(74, 193, 224, 0.20);
-      animation: dotPulse 2s infinite;
-    }
-    @keyframes dotPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .icon-btn {
-      width: 40px; height: 40px;
-      display: grid; place-items: center;
-      background: var(--tap-amber);
+      width: 36px;
+      height: 36px;
       border-radius: var(--radius-sm);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
-    .icon-btn:active { transform: translateY(0); }
-    .icon-btn svg { width: 18px; height: 18px; color: var(--ink-navy); }
-    .icon-btn.reloading { animation: spin 0.6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ========== HERO ========== */
-    .hero { padding: 28px 0 8px; }
-    .hero h1 {
-      font-size: 32px; line-height: 1.1;
-      font-weight: 700; color: var(--ink-navy);
-      margin-bottom: 6px;
+    .logo-mark svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
     }
 
-    /* ========== SECTIONS ========== */
-    section { margin-top: 32px; }
-
-    .section-head {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      gap: 16px; margin-bottom: 16px;
+    /* Nav */
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      gap: 28px;
+      align-items: center;
     }
-    .section-title {
+    .nav-links a {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px; font-weight: 700;
-      color: var(--ink-navy);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--white-80);
+      transition: color 0.15s;
     }
-    .section-subtitle {
-      font-size: 13px; color: var(--navy-60); margin-top: 2px;
+    .nav-links a:hover { color: #fff; }
+
+    .nav-cta {
+      background: var(--emerald);
+      color: #fff !important;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover {
+      background: var(--emerald-hover) !important;
     }
 
-    /* ========== METRIC CARDS (3, mock style) ========== */
-    .metrics-grid {
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+      margin-left: auto;
+      background: none;
+      border: none;
+      z-index: 101;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .hamburger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.is-open span:nth-child(2) { opacity: 0; }
+    .hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--navy);
+      padding: 32px 24px;
+      z-index: 99;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+    }
+    .mobile-menu.is-open { display: flex; }
+    .mobile-menu a {
+      display: block;
+      padding: 14px 0;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white-80);
+      border-bottom: 1px solid var(--white-10);
+    }
+    .mobile-menu a:hover { color: #fff; }
+    .mobile-menu .nav-cta {
+      display: inline-block;
+      margin-top: 16px;
+      text-align: center;
+      border-bottom: none;
+    }
+
+    /* ════════════════════════════════════════════
+       HERO
+       ════════════════════════════════════════════ */
+    .hero {
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Geometric pattern overlay */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 30%, rgba(16,185,129,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 70%, rgba(16,185,129,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 88px 24px 96px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content {
+      max-width: 520px;
+    }
+
+    .hero h1 {
+      font-size: clamp(30px, 5vw, 44px);
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .hero p {
+      color: var(--white-60);
+      font-size: 17px;
+      line-height: 1.65;
+      margin-bottom: 32px;
+      max-width: 460px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.04) 50%, rgba(255,255,255,0.03) 100%);
+      border: 1px solid var(--white-10);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-placeholder::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(16,185,129,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(16,185,129,0.08) 0%, transparent 40%);
+    }
+
+    .hero-placeholder-icon {
+      font-size: 64px;
+      position: relative;
+      z-index: 1;
+      filter: grayscale(0.3);
+    }
+
+    .hero-placeholder-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      color: var(--white-60);
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ════════════════════════════════════════════
+       SECTIONS
+       ════════════════════════════════════════════ */
+    section {
+      padding: 80px 24px;
+    }
+
+    /* ── Cómo lo resolvemos ── */
+    .tres-capas {
+      background: #fff;
+    }
+
+    .cards-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 24px;
     }
-    @media (max-width: 768px) {
-      .metrics-grid { grid-template-columns: 1fr; }
-    }
-    .metric-card {
-      background: white;
-      border: 1px solid var(--navy-10);
+
+    .card-icon {
+      background: #fff;
       border-radius: var(--radius-md);
-      padding: 20px;
-      box-shadow: var(--shadow-card);
-      transition: box-shadow 0.2s ease;
+      padding: 32px 28px;
+      border: 1px solid var(--charcoal-10);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
-    .metric-card:hover { box-shadow: var(--shadow-hover); }
-
-    .metric-label {
-      font-size: 12px; font-weight: 600;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--navy-60);
-      margin-bottom: 12px;
-    }
-    .metric-value {
-      font-size: 36px; font-weight: 700;
-      color: var(--ink-navy);
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-    .metric-value .unit {
-      font-size: 20px; color: var(--nfc-cyan);
-      font-weight: 600; margin-left: 2px;
-    }
-    .metric-hint { margin-top: 8px; font-size: 12px; color: var(--navy-60); }
-
-    /* Progress bar ámbar (Nicolás: "Puede ser color amarillo, el de Quick-T") */
-    .progress-bar {
-      margin-top: 14px;
-      height: 6px;
-      background: var(--navy-05);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .progress-bar > span {
-      display: block; height: 100%;
-      background: var(--tap-amber);
-      border-radius: 999px;
-      transition: width 0.5s ease;
+    .card-icon:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--emerald-25);
     }
 
-    /* ========== SEARCH & FILTER CHIPS ========== */
-    .toolbar {
-      display: flex; gap: 12px; align-items: center;
-      margin-bottom: 16px; flex-wrap: wrap;
+    .card-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--emerald-15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-shrink: 0;
     }
-    .search { flex: 1; min-width: 220px; position: relative; }
-    .search input {
-      width: 100%; height: 40px;
-      padding: 0 14px 0 38px;
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: var(--radius-sm);
-      font-family: inherit; font-size: 14px;
-      color: var(--ink-navy);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-    .search input::placeholder { color: var(--navy-60); }
-    .search input:focus {
-      outline: none;
-      border-color: var(--nfc-cyan);
-      box-shadow: 0 0 0 3px var(--cyan-15);
-    }
-    .search svg {
-      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-      width: 16px; height: 16px; color: var(--navy-60);
+    .card-icon-circle svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--emerald);
+      fill: none;
+      stroke-width: 1.75;
     }
 
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-    .chip {
-      padding: 8px 14px;
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: 999px;
-      font-size: 13px; font-weight: 500;
-      color: var(--navy-60);
-      transition: all 0.15s ease;
-    }
-    .chip:hover { border-color: var(--navy-20); color: var(--ink-navy); }
-    .chip.is-active {
-      background: var(--ink-navy); color: white;
-      border-color: var(--ink-navy);
-    }
-
-    /* === DATE PICKER === */
-    .date-picker {
-      display: flex; align-items: center; gap: 8px;
-      margin-left: 12px;
-    }
-    .date-picker input[type="date"] {
-      padding: 7px 12px;
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: 999px;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 500;
-      color: var(--ink-navy);
-      transition: all 0.15s ease;
-      -webkit-appearance: none;
-      cursor: pointer;
-    }
-    .date-picker input[type="date"]:hover { border-color: var(--navy-20); }
-    .date-picker input[type="date"]:focus {
-      outline: none;
-      border-color: var(--nfc-cyan);
-      box-shadow: 0 0 0 3px var(--cyan-15);
-    }
-    .date-sep {
-      font-size: 14px; font-weight: 500; color: var(--navy-60);
-      user-select: none;
-    }
-    .btn-range-toggle {
-      width: 32px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: 999px;
-      color: var(--navy-60);
-      font-size: 16px; font-weight: 600;
-      transition: all 0.15s ease;
-      cursor: pointer;
-    }
-    .btn-range-toggle:hover { border-color: var(--nfc-cyan); color: var(--nfc-cyan); }
-    .btn-range-toggle.is-active {
-      background: var(--nfc-cyan); color: white;
-      border-color: var(--nfc-cyan);
-    }
-
-    /* ========== PANEL / TABLE ========== */
-    .panel {
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      box-shadow: var(--shadow-card);
-    }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    thead th {
-      text-align: left; padding: 14px 20px;
-      background: var(--cloud);
-      font-size: 12px; font-weight: 600;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--navy-60);
-      border-bottom: 1px solid var(--navy-10);
-    }
-    tbody td {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--navy-05);
-      color: var(--ink-navy);
-    }
-    tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover { background: var(--cloud); }
-
-    .emp-cell { display: flex; align-items: center; gap: 10px; }
-    .avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--nfc-cyan);
-      color: var(--ink-navy);
-      display: grid; place-items: center;
-      font-size: 12px; font-weight: 700;
-      font-family: 'Space Grotesk', sans-serif;
-    }
-    .emp-name { font-weight: 500; }
-    .emp-id { font-size: 12px; color: var(--navy-60); }
-
-    /* Time cells: black text (Nicolás feedback) */
-    .time-cell {
-      font-family: 'Space Grotesk', sans-serif;
-      font-variant-numeric: tabular-nums;
+    .card-icon h3 { margin-bottom: 8px; }
+    .card-icon p {
+      color: var(--charcoal-60);
       font-size: 14px;
-      color: var(--ink-navy);
-    }
-    .time-empty { color: var(--navy-60); }
-
-    /* ESTADO TAGS (3 estados: Ingreso verde, Salida ámbar, Sin Registro gris) */
-    .tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 0.04em; text-transform: uppercase;
-    }
-    .tag--ingreso     { background: var(--green-15); color: var(--green); }
-    .tag--salida      { background: var(--amber-15); color: var(--ink-navy); }
-    .tag--sin-registro{ background: var(--navy-10); color: var(--navy-60); }
-
-    /* ========== PAGINATION ========== */
-    .pagination {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px;
-      background: var(--cloud);
-      border-top: 1px solid var(--navy-10);
-    }
-    .pagination-info { font-size: 13px; color: var(--navy-60); }
-    .pagination-btns { display: flex; gap: 8px; }
-    .pg-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 14px;
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: var(--radius-sm);
-      font-size: 13px; font-weight: 500;
-      color: var(--ink-navy);
-      transition: all 0.15s ease;
-    }
-    .pg-btn:hover:not(:disabled) { border-color: var(--navy-20); box-shadow: var(--shadow-hover); }
-    .pg-btn:disabled { opacity: 0.4; cursor: default; }
-    .pg-btn svg { width: 14px; height: 14px; }
-
-    /* ========== NOVEDADES FORM (inline, mock style) ========== */
-    .novedades-actions { display: flex; align-items: center; gap: 8px; }
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 9px 16px;
-      background: var(--tap-amber); color: var(--ink-navy);
-      border-radius: var(--radius-sm);
-      font-size: 13px; font-weight: 600;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-primary svg { width: 14px; height: 14px; }
-
-    .novedad-form {
-      display: none;
-      background: var(--cloud);
-      border-bottom: 1px solid var(--navy-10);
-      padding: 16px 20px;
-      gap: 14px;
-      grid-template-columns: 1.1fr 1.1fr 2fr auto;
-      align-items: start;
-    }
-    .novedad-form.is-open { display: grid; }
-    .field { display: flex; flex-direction: column; min-width: 0; }
-    .field label {
-      display: block;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--navy-60);
-      margin-bottom: 6px;
-      height: 18px;
-    }
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%; height: 36px;
-      padding: 8px 12px;
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: var(--radius-sm);
-      font-family: inherit; font-size: 13px;
-      color: var(--ink-navy); line-height: 1.4;
-    }
-    .field textarea {
-      height: 36px; min-height: 36px; max-height: 36px;
-      resize: none; overflow: hidden;
-    }
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      outline: none;
-      border-color: var(--nfc-cyan);
-      box-shadow: 0 0 0 3px var(--cyan-15);
-    }
-    .novedad-actions {
-      display: flex; gap: 8px;
-      align-self: end;
-    }
-    .btn-ghost {
-      padding: 8px 14px;
-      background: white;
-      border: 1px solid var(--navy-10);
-      border-radius: var(--radius-sm);
-      font-size: 13px; font-weight: 500;
-      color: var(--navy-60);
-    }
-    .btn-ghost:hover { color: var(--ink-navy); border-color: var(--navy-20); }
-
-    /* Novedad tag colors */
-    .novedad-tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 10px; border-radius: 999px;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 0.04em; text-transform: uppercase;
-    }
-    .novedad-tag--info    { background: var(--cyan-15);  color: var(--ink-navy); }
-    .novedad-tag--alert   { background: var(--amber-15); color: var(--ink-navy); }
-    .novedad-tag--neutral { background: var(--navy-10);  color: var(--ink-navy); }
-
-    .novedad-note {
-      font-size: 13px; color: var(--navy-60);
-      max-width: 360px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      line-height: 1.6;
+      flex: 1;
     }
 
-    /* Empty states */
-    .empty-state {
-      text-align: center; padding: 32px 16px;
-      color: var(--navy-60); font-size: 14px;
-    }
-    .empty-state--small { padding: 24px 8px; font-size: 13px; }
-
-    /* Feedback message */
-    .form-feedback {
-      padding: 12px 20px; font-size: 13px;
-      border-top: 1px solid var(--navy-10);
-      color: var(--navy-60);
-    }
-    .form-feedback.is-pending { background: var(--amber-15); color: var(--ink-navy); }
-
-    /* ========== FOOTER ========== */
-    .site-footer {
-      margin-top: 48px; padding: 20px 0;
-      border-top: 1px solid var(--navy-10);
-      font-size: 12px; color: var(--navy-60);
+    .section-cta {
+      margin-top: 40px;
       text-align: center;
     }
 
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 960px) {
-      .header-status { gap: 10px; }
+    /* ── Producto en acción — Asistenc-IA ── */
+    .asistencia-ia {
+      background: var(--cloud);
     }
-    @media (max-width: 640px) {
-      .header-inner { gap: 12px; flex-wrap: wrap; padding: 14px 16px; }
-      .site-header.is-scrolled .header-inner { padding: 8px 16px; }
-      .header-status { margin-left: 0; width: 100%; justify-content: space-between; }
-      .hero h1 { font-size: 26px; }
-      .metrics-grid { grid-template-columns: 1fr; }
-      .novedad-form { grid-template-columns: 1fr; }
-      .app { padding: 0 16px 48px; }
+
+    .asistencia-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .asistencia-text h2 { margin-bottom: 12px; }
+    .asistencia-text p {
+      color: var(--charcoal-60);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .asistencia-quote {
+      border-left: 3px solid var(--emerald);
+      padding-left: 16px;
+      margin: 20px 0;
+      color: var(--charcoal-60);
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* Dashboard mockup (CSS only) */
+    .dashboard-mock {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--charcoal-10);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--charcoal);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .dash-header .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dash-header .dot.red { background: var(--rose); }
+    .dash-header .dot.amber { background: #F59E0B; }
+    .dash-header .dot.green { background: var(--emerald); }
+
+    .dash-body { padding: 16px; }
+
+    .dash-metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .dash-metric {
+      background: var(--cloud);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      text-align: center;
+    }
+    .dash-metric .value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .dash-metric .label {
+      font-size: 10px;
+      color: var(--charcoal-60);
+      margin-top: 2px;
+    }
+
+    .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }
+    .dash-table th {
+      text-align: left;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--charcoal-60);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 8px 8px 6px;
+      border-bottom: 1px solid var(--charcoal-10);
+    }
+    .dash-table td {
+      padding: 8px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--charcoal-05);
+    }
+    .dash-table .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .dash-table .status-dot.ok { background: var(--emerald); }
+    .dash-table .status-dot.late { background: #F59E0B; }
+    .dash-table .status-dot.miss { background: var(--rose); }
+    .dash-table .time-miss {
+      color: var(--rose);
+      font-weight: 600;
+    }
+
+    .dash-alert {
+      background: rgba(244,63,94,0.08);
+      border: 1px solid rgba(244,63,94,0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .dash-alert-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--rose);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .dash-alert-text {
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .dash-alert-text strong {
+      color: var(--rose);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .dash-alert-action {
+      display: inline-block;
+      margin-top: 4px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--emerald);
+      cursor: pointer;
+    }
+
+    /* ── Sectores ── */
+    .sectores {
+      background: #fff;
+    }
+
+    .sectores-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .sector-card {
+      background: var(--cloud);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      border: 1px solid var(--charcoal-10);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sector-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .sector-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--emerald-15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 22px;
+    }
+
+    .sector-card h3 {
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+    .sector-card p {
+      color: var(--charcoal-60);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .sectores-extra {
+      text-align: center;
+      margin-top: 32px;
+      padding: 20px;
+      background: var(--emerald-15);
+      border-radius: var(--radius-md);
+      color: var(--charcoal);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ── Productos ── */
+    .productos {
+      background: var(--cloud);
+    }
+
+    .productos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .producto-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--charcoal-10);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .producto-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .producto-card.featured {
+      border: 2px solid var(--emerald);
+      box-shadow: 0 4px 24px rgba(16,185,129,0.10);
+    }
+
+    .producto-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+      align-self: flex-start;
+    }
+    .producto-badge.available {
+      color: var(--emerald);
+    }
+    .producto-badge.coming {
+      color: var(--charcoal-60);
+    }
+    .producto-badge .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .producto-badge.available .badge-dot { background: var(--emerald); }
+    .producto-badge.coming .badge-dot { background: var(--charcoal-20); }
+
+    .producto-card h3 { margin-bottom: 4px; }
+    .producto-card .producto-tagline {
+      font-size: 14px;
+      color: var(--charcoal-60);
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+    .producto-features {
+      flex: 1;
+      margin-bottom: 20px;
+    }
+    .producto-features li {
+      font-size: 13px;
+      color: var(--charcoal-60);
+      padding: 6px 0;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .producto-features li::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--emerald);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .producto-card.muted {
+      opacity: 0.65;
+      background: var(--cloud);
+    }
+    .producto-card.muted:hover { opacity: 0.85; }
+
+    /* ════════════════════════════════════════════
+       CTA FINAL
+       ════════════════════════════════════════════ */
+    .cta-final {
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 100%, rgba(16,185,129,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .cta-final-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 80px 24px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-final h2 {
+      color: #fff;
+      font-size: clamp(24px, 4vw, 36px);
+      margin-bottom: 12px;
+    }
+
+    .cta-final .cta-tagline {
+      color: var(--white-60);
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+
+    /* ════════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════════ */
+    .site-footer {
+      background: var(--navy);
+      border-top: 1px solid var(--white-10);
+    }
+    .footer-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-left {
+      font-size: 12px;
+      color: var(--white-60);
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--white-60);
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: #fff; }
+
+    .footer-made {
+      font-size: 12px;
+      color: var(--white-60);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .footer-made .flag {
+      font-size: 15px;
+    }
+
+    /* ════════════════════════════════════════════
+       ANIMATIONS — fade in on scroll
+       ════════════════════════════════════════════ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ════════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 56px 24px 64px;
+      }
+      .hero-content { max-width: 100%; }
+      .hero-visual { order: -1; }
+      .hero-placeholder { aspect-ratio: 16/9; max-width: 420px; }
+
+      .cards-3 { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .asistencia-grid { grid-template-columns: 1fr; gap: 40px; }
+      .sectores-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .productos-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+
+      section { padding: 56px 24px; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-buttons { flex-direction: column; align-items: stretch; }
+      .hero-buttons .btn { width: 100%; justify-content: center; }
+
+      .dash-metric-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .dash-metric { padding: 10px 8px; }
+      .dash-metric .value { font-size: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 26px; }
+      h2 { font-size: 21px; }
+      .dash-metric-row { grid-template-columns: 1fr; gap: 8px; }
+      .dash-table th, .dash-table td { padding: 6px 4px; font-size: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .fade-in { transition: none; opacity: 1; transform: none; }
+      .btn, .card-icon, .sector-card, .producto-card { transition: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ========== HEADER (glassmorph, sticky, shrink on scroll) ========== -->
-  <header class="site-header" id="siteHeader">
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-mark">
-          <img src="quickt-logo-256.png" alt="Quick-T"
-               onerror="this.onerror=null;this.src='quickt-logo.png';">
-        </div>
-        <span class="logo-text">Quick-T</span>
+<!-- ════════════════════════════════════════════
+     HEADER
+     ════════════════════════════════════════════ -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
-      <!-- Tagline: "Asistencia Inteligente. Cero Fricción." (Nicolás feedback) -->
-      <div class="header-meta" style="margin-left: 8px; display:flex; align-items:center;">
-        <span style="font-size:13px; color:var(--navy-60);">Asistencia Inteligente. Cero Fricción.</span>
-      </div>
-      <!-- Fecha · Sincronizado · Refrescar -->
-      <div class="header-status">
-        <span class="status-date" id="headerDate">—</span>
-        <span class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          Sincronizado
-        </span>
-        <button class="icon-btn" id="refreshBtn" type="button"
-                aria-label="Actualizar datos" title="Actualizar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
-               aria-hidden="true">
-            <path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/>
-            <path d="M21 3v5h-5"/>
-            <path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/>
-            <path d="M3 21v-5h5"/>
-          </svg>
-        </button>
+      <span>Quick-T</span>
+    </a>
+
+    <nav class="nav-links" id="mainNav">
+      <a href="#sobre">Sobre</a>
+      <a href="#como-funciona">Cómo Funciona</a>
+      <a href="#sectores">Sectores</a>
+      <a href="#productos">Productos</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#cta-final" class="nav-cta">Empezar</a>
+    </nav>
+
+    <button class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#sobre">Sobre</a>
+    <a href="#como-funciona">Cómo Funciona</a>
+    <a href="#sectores">Sectores</a>
+    <a href="#productos">Productos</a>
+    <a href="#contacto">Contacto</a>
+    <a href="#cta-final" class="nav-cta">Empezar</a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════════ -->
+<section class="hero" id="sobre">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-content fade-in">
+      <h1>Agiliza tu operación.<br>Enfocate en crecer.</h1>
+      <p>Quick-T diseña, despliega y opera agentes de IA con hardware integrado para agilizar tu operación.</p>
+      <div class="hero-buttons">
+        <a href="#como-funciona" class="btn btn-primary">Conoce más</a>
+        <a href="#como-funciona" class="btn-arrow">
+          Ver cómo funciona
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg>
+        </a>
       </div>
     </div>
-  </header>
-
-  <main class="app">
-
-    <!-- ========== HERO: nombre de la empresa (Nicolás: solo "Industrias SAS", sin tagline) ========== -->
-    <section class="hero" aria-labelledby="heroTitle">
-      <h1 id="heroTitle">Industrias SAS</h1>
-    </section>
-
-    <!-- ========== MÉTRICAS (3 cards: Asistencia, Empleados, Novedades — Nicolás: quitar Horario) ========== -->
-    <section aria-label="Métricas del día">
-      <div class="metrics-grid">
-
-        <!-- 1. ASISTENCIA con progress bar ámbar + descripción -->
-        <div class="metric-card">
-          <div class="metric-label">Asistencia</div>
-          <div class="metric-value" id="statAsistencia">
-            <span id="statPct">—</span><span class="unit">%</span>
-          </div>
-          <div class="progress-bar"><span id="progressFill" style="width: 0%;"></span></div>
-          <div class="metric-hint" id="statAsistenciaHint">— empleados ingresaron</div>
-        </div>
-
-        <!-- 2. EMPLEADOS -->
-        <div class="metric-card">
-          <div class="metric-label">Empleados</div>
-          <div class="metric-value" id="statEmpleados">0</div>
-          <div class="metric-hint">Total registrados</div>
-        </div>
-
-        <!-- 3. NOVEDADES -->
-        <div class="metric-card">
-          <div class="metric-label">Novedades</div>
-          <div class="metric-value" id="statNovedades">0</div>
-          <div class="metric-hint">Registradas en el día</div>
-        </div>
-
+    <div class="hero-visual fade-in">
+      <div class="hero-placeholder">
+        <div class="hero-placeholder-icon">🏢</div>
+        <div class="hero-placeholder-label">Oficina Quick-T</div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
-    <section aria-labelledby="secSeguimiento">
-      <div class="section-head">
-        <div>
-          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
-          <div class="section-subtitle">Últimos movimientos del día</div>
+<!-- ════════════════════════════════════════════
+     CÓMO LO RESOLVEMOS — Tres capas
+     ════════════════════════════════════════════ -->
+<section class="tres-capas" id="como-funciona">
+  <div class="container">
+    <div class="section-label fade-in">Cómo lo resolvemos</div>
+    <div class="section-intro fade-in">
+      <h2>Tres capas que trabajan juntas</h2>
+    </div>
+
+    <div class="cards-3">
+      <!-- Card 1 -->
+      <div class="card-icon fade-in">
+        <div class="card-icon-circle">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
+        <h3>Hardware a la medida</h3>
+        <p>Lectores, pantallas, dispositivos NFC diseñados para cómo trabaja tu industria.</p>
       </div>
 
-      <div class="toolbar">
-        <div class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-               aria-hidden="true">
-            <circle cx="11" cy="11" r="7"/>
-            <path d="m21 21-4.3-4.3"/>
-          </svg>
-          <input type="text" id="filtroEmpleado"
-                 placeholder="Buscar empleado por nombre..."
-                 aria-label="Buscar empleado" />
+      <!-- Card 2 -->
+      <div class="card-icon fade-in">
+        <div class="card-icon-circle">
+          <svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 014 4v2h2a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V10a2 2 0 012-2h2V6a4 4 0 014-4zm0 2a2 2 0 00-2 2v2h4V6a2 2 0 00-2-2z"/></svg>
         </div>
-        <div class="chips" id="filterChips" role="tablist">
-          <button class="chip is-active" data-filter="" type="button">Todos</button>
-          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
-          <button class="chip" data-filter="salida" type="button">Salida</button>
-          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
-        </div>
-        <div class="chips" id="periodChips" style="margin-left:12px" role="tablist">
-          <button class="chip is-active" data-period="hoy" type="button">Hoy</button>
-          <button class="chip" data-period="semana" type="button">Semana</button>
-          <button class="chip" data-period="mes" type="button">Mes</button>
-        </div>
-        <div class="date-picker" id="datePicker">
-          <input type="date" id="fechaDesde" title="Fecha inicio" />
-          <span class="date-sep" id="dateSep" style="display:none">~</span>
-          <input type="date" id="fechaHasta" title="Fecha fin" style="display:none" />
-          <button class="btn-range-toggle" id="btnRangeToggle" type="button"
-                  title="Activar rango de fechas">+</button>
-        </div>
+        <h3>Agentes que automatizan</h3>
+        <p>Equipos de IA especializados que registran, trazan, alertan y reportan.</p>
       </div>
 
-      <div class="panel" id="seguimientoPanel">
-        <table id="tablaSeguimiento">
-          <thead>
-            <tr>
-              <th>Empleado</th>
-              <th>Hora entrada</th>
-              <th>Hora salida</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tablaSeguimientoBody">
-            <tr>
-              <td colspan="4" class="empty-state">Cargando marcaciones…</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination" id="paginationSeguimiento" style="display:none;">
-          <span class="pagination-info" id="pgInfoSeguimiento"></span>
-          <div class="pagination-btns">
-            <button class="pg-btn" id="pgPrevSeguimiento" disabled
-                    aria-label="Página anterior">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-              Anterior
-            </button>
-            <button class="pg-btn" id="pgNextSeguimiento"
-                    aria-label="Página siguiente">
-              Siguiente
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m9 18 6-6-6-6"/>
-              </svg>
-            </button>
-          </div>
+      <!-- Card 3 -->
+      <div class="card-icon fade-in">
+        <div class="card-icon-circle">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
+        <h3>Control en un solo lugar</h3>
+        <p>Un monitoreo donde ves todo en vivo: lo que pasa, lo que falta, lo que necesita tu atención. Toma decisiones con datos reales.</p>
       </div>
-    </section>
+    </div>
 
-    <!-- ========== NOVEDADES (renamed from "Panel de Novedades") ========== -->
-    <section aria-labelledby="secNovedades">
-      <div class="section-head">
-        <div>
-          <div class="section-title" id="secNovedades">Novedades</div>
-          <div class="section-subtitle">Observaciones sobre ingresos y salidas.</div>
+    <div class="section-cta fade-in">
+      <a href="#productos" class="btn btn-primary">Conoce nuestros productos</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     PRODUCTO EN ACCIÓN — Asistenc-IA
+     ════════════════════════════════════════════ -->
+<section class="asistencia-ia">
+  <div class="container">
+    <div class="section-label fade-in">Producto en acción</div>
+    <div class="section-intro fade-in">
+      <h2>Asistenc-IA</h2>
+    </div>
+
+    <div class="asistencia-grid">
+      <div class="asistencia-text fade-in">
+        <p>Control de asistencia en hardware y agentes inteligentes que te alertan antes de que surja un problema.</p>
+
+        <div class="asistencia-quote">
+          Cada marcación queda registrada. Cada anomalía se detecta. Cada alerta llega cuando podés actuar.
         </div>
-        <div class="novedades-actions">
-          <button class="btn-primary" id="btnNewNovedad" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
-                 aria-hidden="true">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-            Nueva Novedad
-          </button>
-        </div>
+
+        <a href="#" class="btn btn-primary" style="margin-top: 8px;">Iniciar prueba</a>
       </div>
 
-      <div class="panel" id="novedadesPanel">
-        <!-- Inline form (hidden by default, toggled) -->
-        <form class="novedad-form" id="novedadForm" autocomplete="off">
-          <div class="field">
-            <label for="novedadEmpleadoSel">Empleado</label>
-            <select id="novedadEmpleadoSel" required>
-              <option value="">Seleccionar empleado</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="novedadTipoSel">Tipo de novedad</label>
-            <select id="novedadTipoSel" required>
-              <option value="">Seleccionar tipo</option>
-              <option value="Permiso">Permiso</option>
-              <option value="Accidente">Accidente</option>
-              <option value="Familiar">Familiar</option>
-              <option value="Vacaciones">Vacaciones</option>
-              <option value="Otro">Otro</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="novedadNotaInput">Nota</label>
-            <textarea id="novedadNotaInput"
-                      placeholder="Ej: Hoy la persona sale a las 2pm por asunto familiar."
-                      maxlength="240"></textarea>
-          </div>
-          <div class="novedad-actions">
-            <button type="button" class="btn-ghost" id="btnCancelNovedad">Cancelar</button>
-            <button type="submit" class="btn-primary" id="btnSaveNovedad">Guardar</button>
-          </div>
-        </form>
-
-        <!-- Feedback (visible when form is open, gate pending) -->
-        <div class="form-feedback is-pending" id="novedadFeedback">
-          Endpoint pendiente de aprobación de Nicolás. El botón Guardar quedará deshabilitado.
+      <!-- Dashboard mockup -->
+      <div class="dashboard-mock fade-in">
+        <div class="dash-header">
+          <span class="dot red"></span>
+          <span class="dot amber"></span>
+          <span class="dot green"></span>
+          <span style="margin-left: 8px;">Asistenc-IA · Monitor en tiempo real</span>
         </div>
+        <div class="dash-body">
+          <!-- Metrics -->
+          <div class="dash-metric-row">
+            <div class="dash-metric">
+              <div class="value">24</div>
+              <div class="label">Presentes hoy</div>
+            </div>
+            <div class="dash-metric">
+              <div class="value">3</div>
+              <div class="label">Pendientes</div>
+            </div>
+            <div class="dash-metric">
+              <div class="value">1</div>
+              <div class="label">Alertas activas</div>
+            </div>
+          </div>
 
-        <!-- Novedades table -->
-        <table id="tablaNovedades">
-          <thead>
-            <tr>
-              <th>Hora</th>
-              <th>Empleado</th>
-              <th>Tipo</th>
-              <th>Nota</th>
-            </tr>
-          </thead>
-          <tbody id="tablaNovedadesBody">
-            <tr>
-              <td colspan="4" class="empty-state empty-state--small">Sin novedades registradas hoy.</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination" id="paginationNovedades" style="display:none;">
-          <span class="pagination-info" id="pgInfoNovedades"></span>
-          <div class="pagination-btns">
-            <button class="pg-btn" id="pgPrevNovedades" disabled
-                    aria-label="Página anterior">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-              Anterior
-            </button>
-            <button class="pg-btn" id="pgNextNovedades"
-                    aria-label="Página siguiente">
-              Siguiente
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m9 18 6-6-6-6"/>
-              </svg>
-            </button>
+          <!-- Table -->
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="status-dot ok"></span> María Gómez</td>
+                <td>07:58</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><span class="status-dot ok"></span> Carlos Ruiz</td>
+                <td>08:02</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><span class="status-dot ok"></span> Ana López</td>
+                <td>07:45</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><span class="status-dot miss"></span> Juan Martínez</td>
+                <td class="time-miss">—</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Alert -->
+          <div class="dash-alert">
+            <div class="dash-alert-icon">!</div>
+            <div>
+              <div class="dash-alert-text">
+                <strong>Juan no marcó entrada a las 9:30</strong><br>
+                El agente detectó una ausencia en el turno programado.
+              </div>
+              <div class="dash-alert-action">→ Notificar supervisor</div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-  </main>
+<!-- ════════════════════════════════════════════
+     SECTORES
+     ════════════════════════════════════════════ -->
+<section class="sectores" id="sectores">
+  <div class="container">
+    <div class="section-label fade-in">Sectores</div>
+    <div class="section-intro fade-in">
+      <h2>Para quien operamos</h2>
+    </div>
 
-  <footer class="site-footer">
-    Quick-T V1.0 · Cada registro es exacto, auditable y verificable.
-  </footer>
+    <div class="sectores-grid">
+      <!-- Construcción -->
+      <div class="sector-card fade-in">
+        <div class="sector-icon">🏗️</div>
+        <h3>Construcción y obras</h3>
+        <p>Jornadas variables, múltiples turnos, trabajadores en distintas sedes. Nuestro hardware aguanta el mundo real.</p>
+      </div>
 
-  <script>
-    /* ============================================================
-     *  Quick-T Dashboard v3
-     *  Alineado con mock Checho v3 + feedback Nicolás (16-Ago-2026)
-     *  Cambios:
-     *  - Header glassmorph + shrink on scroll
-     *  - Tagline: "Asistencia Inteligente. Cero Fricción."
-     *  - Hero: "Industrias SAS" (sin tagline)
-     *  - 3 métricas: Asistencia (progress bar ámbar), Empleados, Novedades
-     *  - Tabla agrupada por empleado/día, 3 estados (Ingreso/Salida/SinRegistro)
-     *  - Filter chips, 10 registros por página, paginación
-     *  - Calendario y cumpleaños eliminados
-     *  - Novedades: formulario inline (no modal), tabla mock-style
-     *  - Footer: Quick-T V1.0
-     * ============================================================ */
+      <!-- Retail -->
+      <div class="sector-card fade-in">
+        <div class="sector-icon">🏪</div>
+        <h3>Retail y tiendas</h3>
+        <p>Equipos que rotan, horarios pico, supervisores que no pueden estar en todas las sedes. El monitoreo te centraliza.</p>
+      </div>
 
-    /* === CONFIG (gate: URLs vacías muestran empty states) === */
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkylf99SggPs0yIwp_NLJ2_7FyZVO5LK_Zb6v1yOGexihbYzV1QzNTUnbWaIvobjZb7A/exec';
-    const SHEET_NOVEDADES_URL  = APPS_SCRIPT_URL + '?action=novedades_hoy';  // endpoint novedades
-    const REFRESH_MS = 30000;
-    const PAGE_SIZE = 10;
+      <!-- Oficinas -->
+      <div class="sector-card fade-in">
+        <div class="sector-icon">🏢</div>
+        <h3>Oficinas y servicios</h3>
+        <p>Asistencia limpia, horarios flexibles, datos para liquidación. El set-up que se acomoda a cómo trabajás.</p>
+      </div>
+    </div>
 
-    /* === STATE === */
-    let registros         = [];   // rows from eventos.csv
-    let empleadosDia      = [];   // aggregated: [{nombre, identificacion, entrada, salida, estado}]
-    let novedades         = [];   // rows from SHEET_NOVEDADES_URL
-    let empleadosLista    = [];   // lista de empleados registrados (hoja empleados)
-    let lastFetchAt       = null;
-    // Date picker state (default: today)
-    let fechaDesde       = '';
-    let fechaHasta       = '';
-    let rangeEnabled     = false;
+    <div class="sectores-extra fade-in">
+      Tu operación, nuestro modelo. Si tu sector está en la lista, te ayudamos.
+    </div>
+  </div>
+</section>
 
-    // Pagination
-    let segPage = 0, novPage = 0;
-    let segFiltered = [], novFiltered = [];
+<!-- ════════════════════════════════════════════
+     NUESTROS PRODUCTOS
+     ════════════════════════════════════════════ -->
+<section class="productos" id="productos">
+  <div class="container">
+    <div class="section-label fade-in">Nuestros Productos</div>
+    <div class="section-intro fade-in">
+      <h2>Tecnología que se adapta a tu operación</h2>
+    </div>
 
-    /* === FETCH === */
-    async function fetchCsv(url) {
-      if (!url) return [];
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) return [];
-        const text = await res.text();
-        return parseCSV(text);
-      } catch (err) {
-        console.warn('CSV fetch failed:', url, err);
-        return [];
-      }
-    }
+    <div class="productos-grid">
+      <!-- Asistenc-IA — Featured -->
+      <div class="producto-card featured fade-in">
+        <span class="producto-badge available">
+          <span class="badge-dot"></span> Disponible
+        </span>
+        <h3>Asistenc-IA</h3>
+        <p class="producto-tagline">Te avisamos lo que importa, cuando importa.</p>
+        <ul class="producto-features">
+          <li>Set-up que se acomoda a cómo trabajás</li>
+          <li>Alertas proactivas no solo reportes</li>
+          <li>Datos listos para decidir</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="width: 100%;">Conocé Asistenc-IA</a>
+      </div>
 
-    async function fetchJsonNovedades() {
-      if (!SHEET_NOVEDADES_URL) return [];
-      try {
-        const res = await fetch(SHEET_NOVEDADES_URL, { cache: 'no-store' });
-        if (!res.ok) return [];
-        const data = await res.json();
-        return Array.isArray(data) ? data.map(normalizeNovedadRow) : [];
-      } catch (err) {
-        console.warn('Novedades fetch failed:', err);
-        return [];
-      }
-    }
+      <!-- Food — Muted -->
+      <div class="producto-card muted fade-in">
+        <span class="producto-badge coming">
+          <span class="badge-dot"></span> Próximamente · En desarrollo
+        </span>
+        <h3>Food</h3>
+        <p class="producto-tagline">Pedidos ruteados a cocina sin que el mesero camine.</p>
+        <ul class="producto-features">
+          <li>Integración con punto de venta</li>
+          <li>Ruteo automático a estaciones</li>
+          <li>Notificaciones en tiempo real</li>
+        </ul>
+        <button class="btn btn-outline" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>Próximamente</button>
+      </div>
 
-    function normalizeNovedadRow(obj) {
-      return {
-        hora: obj.timestamp || '',
-        empleado: obj.nombre || '',
-        tipo: obj.tipo || '',
-        nota: obj.nota || '',
-      };
-    }
+      <!-- Home — Muted -->
+      <div class="producto-card muted fade-in">
+        <span class="producto-badge coming">
+          <span class="badge-dot"></span> Próximamente · En ideación
+        </span>
+        <h3>Home</h3>
+        <p class="producto-tagline">Tu hogar identificado al instante.</p>
+        <ul class="producto-features">
+          <li>Identificación inteligente</li>
+          <li>Automatización del hogar</li>
+          <li>Control desde cualquier lugar</li>
+        </ul>
+        <button class="btn btn-outline" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>Próximamente</button>
+      </div>
+    </div>
+  </div>
+</section>
 
-    async function fetchEmpleados() {
-      if (!APPS_SCRIPT_URL) return [];
-      try {
-        const res = await fetch(APPS_SCRIPT_URL + '?action=empleados', { cache: 'no-store' });
-        if (!res.ok) return [];
-        const data = await res.json();
-        return Array.isArray(data) ? data : [];
-      } catch (err) {
-        console.warn('Empleados fetch failed:', err);
-        return [];
-      }
-    }
+<!-- ════════════════════════════════════════════
+     CTA FINAL
+     ════════════════════════════════════════════ -->
+<section class="cta-final" id="cta-final">
+  <div class="cta-final-inner fade-in">
+    <h2>¿Listo para agilizar tu operación?</h2>
+    <p class="cta-tagline">El ritmo de tu negocio, acelerado por tecnología ágil</p>
+    <a href="#" class="btn btn-primary" style="font-size: 16px; padding: 14px 32px;">Quiero empezar</a>
+  </div>
+</section>
 
-    async function fetchJsonEvents() {
-      if (!APPS_SCRIPT_URL) return [];
-      try {
-        const { from, to } = periodRange();
-        let url = APPS_SCRIPT_URL + '?action=today';
-        if (from) url += '&fecha=' + encodeURIComponent(from);
-        if (to && to !== from) url += '&hasta=' + encodeURIComponent(to);
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) return [];
-        const data = await res.json();
-        if (!Array.isArray(data)) return [];
-        return data.flatMap(normalizeEventoRow).filter(obj => obj.identificacion || obj.nombre);
-      } catch (err) {
-        console.warn('Apps Script read failed:', err);
-        return [];
-      }
-    }
+<!-- ════════════════════════════════════════════
+     CONTACTO
+     ════════════════════════════════════════════ -->
+<section id="contacto" style="background: var(--navy); color: #fff; padding: 48px 24px;">
+  <div class="container" style="text-align: center;">
+    <h2 style="color: #fff; margin-bottom: 8px;">Contacto</h2>
+    <p style="color: var(--white-60); margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto;">
+      ¿Tenés preguntas o querés conocer más? Escribinos y conversemos sobre cómo Quick-T puede ayudarte.
+    </p>
+    <a href="mailto:contacto@quick-t.co" class="btn btn-primary">contacto@quick-t.co</a>
+  </div>
+</section>
 
-    async function fetchAll() {
-      const refreshBtn = document.getElementById('refreshBtn');
-      refreshBtn.classList.add('reloading');
+<!-- ════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      © 2026 Quick-T · Tecnología ágil para tu operación
+    </div>
+    <div class="footer-links">
+      <a href="#productos">Producto</a>
+      <a href="#sobre">Sobre Quick-T</a>
+      <a href="#contacto">Contacto</a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="footer-made">
+      <span class="flag">🇨🇴</span> Hecho en Colombia
+    </div>
+  </div>
+</footer>
 
-      const [ev, nov, emp] = await Promise.all([
-        fetchJsonEvents(),
-        fetchJsonNovedades(),
-        fetchEmpleados(),
-      ]);
-      registros  = ev;
-      novedades  = nov;
-      empleadosLista = emp;
+<!-- ════════════════════════════════════════════
+     SCRIPTS
+     ════════════════════════════════════════════ -->
+<script>
+  (function() {
+    /* ── Mobile menu toggle ── */
+    var hamburger = document.getElementById('hamburger');
+    var mobileMenu = document.getElementById('mobileMenu');
 
-      lastFetchAt = new Date();
-      renderAll();
-
-      refreshBtn.classList.remove('reloading');
-    }
-
-    /* === CSV PARSER (RFC 4180 mini) === */
-    function parseCSV(text) {
-      if (!text || typeof text !== 'string') return [];
-      const rows = [];
-      let cur = '', inQ = false, row = [];
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        if (inQ) {
-          if (ch === '"') {
-            if (text[i + 1] === '"') { cur += '"'; i++; }
-            else { inQ = false; }
-          } else { cur += ch; }
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', function() {
+        var isOpen = mobileMenu.classList.contains('is-open');
+        if (isOpen) {
+          mobileMenu.classList.remove('is-open');
+          hamburger.classList.remove('is-open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
         } else {
-          if (ch === '"') { inQ = true; }
-          else if (ch === ',') { row.push(cur); cur = ''; }
-          else if (ch === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
-          else if (ch === '\r') { /* skip */ }
-          else { cur += ch; }
+          mobileMenu.classList.add('is-open');
+          hamburger.classList.add('is-open');
+          hamburger.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
         }
-      }
-      if (cur !== '' || row.length > 0) { row.push(cur); rows.push(row); }
+      });
 
-      const head = rows.shift();
-      if (!head) return [];
-      // Google Sheets CSV export can prefix headers with cell refs ("A1: timestamp");
-      // strip any "XxN: " prefix and lowercase so both clean and prefixed exports parse.
-      const headers = head.map(h => h.replace(/^[a-z]+\d+:\s*/i, '').trim().toLowerCase());
-      return rows
-        .filter(r => r.some(c => c.trim() !== ''))
-        .map(r => Object.fromEntries(headers.map((h, i) => [h, (r[i] != null ? r[i] : '').trim()])))
-        .flatMap(normalizeEventoRow)
-        .filter(obj => obj.identificacion || obj.nombre);
-    }
-
-    /* Normalize a CSV row from either schema (new event-log or legacy wide) into a
-       canonical {nombre, identificacion, entrada, salida, action, timestamp} shape.
-       New schema: timestamp, uid, action, device_id, location, employee_name, received_at
-         -> nombre=employee_name, identificacion=uid, entrada/salida derived from action.
-       Legacy schema: nombre, identificacion, entrada, salida (kept for reversibility). */
-    function normalizeEventoRow(obj) {
-      const nombre         = (obj.employee_name || obj.nombre || '').trim();
-      const identificacion = (obj.uid || obj.identificacion || '').trim();
-      const action         = (obj.action || '').trim().toUpperCase();
-      const timestamp      = (obj.timestamp || '').trim();
-      const entrada        = (obj.entrada || '').trim();
-      const salida         = (obj.salida  || '').trim();
-
-      const hasNew = obj.employee_name !== undefined || obj.uid !== undefined || obj.action !== undefined;
-
-      if (hasNew) {
-        if (action === 'ENTRADA' || action === 'INGRESO')
-          return [{ nombre, identificacion, action: 'ENTRADA', timestamp: timestamp || entrada, entrada: timestamp || entrada, salida: '' }];
-        if (action === 'SALIDA')
-          return [{ nombre, identificacion, action: 'SALIDA', timestamp: timestamp || salida, entrada: '', salida: timestamp || salida }];
-        return [{ nombre, identificacion, action: '', timestamp, entrada, salida }];
-      }
-
-      // Legacy format: entrada/salida columns → expand to event rows
-      const rows = [];
-      if (entrada) rows.push({ nombre, identificacion, action: 'ENTRADA', timestamp: entrada, entrada, salida: '' });
-      if (salida)  rows.push({ nombre, identificacion, action: 'SALIDA',  timestamp: salida,  entrada: '', salida });
-      if (rows.length === 0) rows.push({ nombre, identificacion, action: '', timestamp: '', entrada: '', salida: '' });
-      return rows;
-    }
-
-    /* === FORMAT HELPERS === */
-    const MES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio',
-                    'agosto','septiembre','octubre','noviembre','diciembre'];
-    const DOW_ES = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-
-    function formatFechaLarga(d) {
-      return `${DOW_ES[d.getDay()]}, ${d.getDate()} de ${MES_ES[d.getMonth()]} de ${d.getFullYear()}`;
-    }
-
-    // Fecha de HOY en zona horaria Colombia (UTC-5, sin DST).
-    // El Sheet registra en hora Colombia; usar UTC rompe el filtro "hoy"
-    // después de las 19:00 local (medianoche UTC).
-    function hoyColombia() {
-      const ahora = new Date();
-      const offsetCol = -5 * 60 * 60 * 1000; // UTC-5
-      return new Date(ahora.getTime() + offsetCol).toISOString().slice(0, 10);
-    }
-    function periodRange() {
-      // Use date picker values; if empty, default to today
-      const fmt = (d) => {
-        const y = d.getUTCFullYear();
-        const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-        const dd = String(d.getUTCDate()).padStart(2, '0');
-        return `${y}-${m}-${dd}`;
-      };
-      const now = new Date();
-      const offsetCol = -5 * 60 * 60 * 1000;
-      const local = new Date(now.getTime() + offsetCol);
-      const hoy = fmt(local);
-
-      const from = fechaDesde || hoy;
-      const to = (rangeEnabled && fechaHasta) ? fechaHasta : from;
-      return { from, to };
-    }
-    function formatHoraStr(ts) {
-      if (!ts) return '—';
-      // ts is "2026-07-31 14:00:00" or ISO "2026-07-31T14:00:00"
-      const m = /(\d{2}):(\d{2})/.exec(ts);
-      return m ? `${m[1]}:${m[2]}` : '—';
-    }
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, c => ({
-        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-      })[c]);
-    }
-
-    /* === AGGREGATION: group records by employee per period === */
-        function aggregateEmpleados() {
-          const { from, to } = periodRange(); // YYYY-MM-DD
-
-          // Step 1: get all unique employees (all time) as master list
-          const empMap = new Map();
-          for (const r of registros) {
-            const id = r.identificacion || r.nombre || '';
-            const nom = r.nombre || '';
-            if (id && !empMap.has(id)) {
-              empMap.set(id, { nombre: nom, identificacion: r.identificacion || id });
-            }
-          }
-
-          // Step 2: for period's records, aggregate entrada/salida per employee.
-          const periodMap = new Map();
-          const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
-          const validTimePattern = /^\d{4}-\d{2}-\d{2}[\\sT]\d{2}:\d{2}/;
-
-          const inPeriod = ts => {
-            if (!ts || !validDatePattern.test(ts)) return '';
-            const d = ts.slice(0, 10);
-            return (d >= from && d <= to && validTimePattern.test(ts)) ? ts : '';
-          };
-
-      for (const r of registros) {
-        const id = r.identificacion || r.nombre || '';
-        if (!id) continue;
-
-        const action = (r.action || '').toUpperCase();
-        let ent = '', sal = '';
-
-        if (action === 'ENTRADA' || action === 'SALIDA') {
-          // Event-log schema: derive from action + timestamp
-          const ts = inPeriod(r.timestamp);
-          if (!ts) continue;
-          if (action === 'ENTRADA') ent = ts;
-          else sal = ts;
-        } else {
-          // Legacy wide schema: entrada/salida columns
-          ent = inPeriod(r.entrada);
-          sal = inPeriod(r.salida);
-          if (!ent && !sal) continue;
-        }
-
-        if (!periodMap.has(id)) periodMap.set(id, { entrada: '', salida: '', lastAction: '', lastTs: '' });
-        const cur = periodMap.get(id);
-
-        if (ent && (!cur.entrada || ent > cur.entrada)) cur.entrada = ent;  // latest ENTRADA
-        if (sal && (!cur.salida  || sal > cur.salida))  cur.salida  = sal;  // latest SALIDA
-
-        // Track the LAST event (by timestamp) to determine current state
-        const evtTs = ent || sal;
-        if (evtTs && (!cur.lastTs || evtTs > cur.lastTs)) {
-          cur.lastTs = evtTs;
-          cur.lastAction = action || (ent ? 'ENTRADA' : 'SALIDA');
-        }
-      }
-
-      // Step 3: build empleadosDia array
-      const result = [];
-      for (const [id, emp] of empMap.entries()) {
-        const td = periodMap.get(id);
-        const entrada = td && td.entrada ? td.entrada : '';
-        const salida  = td && td.salida  ? td.salida  : '';
-
-        let estado;
-        if (td && td.lastAction === 'ENTRADA') {
-          estado = 'ingreso';       // último evento fue ENTRADA → adentro
-        } else if (td && td.lastAction === 'SALIDA') {
-          estado = 'salida';        // último evento fue SALIDA → afuera
-        } else {
-          estado = 'sin-registro';  // no record today → gray
-        }
-
-        result.push({
-          nombre: emp.nombre,
-          identificacion: id,
-          entrada: entrada,
-          salida: salida,
-          estado: estado,
+      /* Close menu on link click */
+      mobileMenu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          mobileMenu.classList.remove('is-open');
+          hamburger.classList.remove('is-open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
         });
-      }
-
-      // Sort: Ingreso first, then Salida, then Sin Registro; alphabetical within
-      const order = { 'ingreso': 0, 'salida': 1, 'sin-registro': 2 };
-      result.sort((a, b) => {
-        const oa = order[a.estado] ?? 9;
-        const ob = order[b.estado] ?? 9;
-        if (oa !== ob) return oa - ob;
-        return a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase());
       });
-
-      empleadosDia = result;
     }
 
-    /* === RENDER ALL === */
-    function renderAll() {
-      aggregateEmpleados();
-      renderHeaderInfo();
-      renderStats();
-      applyFiltersSeguimiento();
-      renderNovedadesTable();
-      poblarEmpleadosSelect();
-      updateNovedadGate();
-    }
+    /* ── Fade-in on scroll ── */
+    var fadeEls = document.querySelectorAll('.fade-in');
 
-    /* === HEADER === */
-    function renderHeaderInfo() {
-      const now = new Date();
-      document.getElementById('headerDate').textContent = formatFechaLarga(now);
-      // No lastUpdate display needed; sync dot animates
-    }
-
-    /* === STATS (3 cards) === */
-    function renderStats() {
-      const { from, to } = periodRange();
-      const label = from === to ? from : `${from} – ${to}`;
-
-      // Unique employees from empleadosLista
-      const totalEmp = empleadosLista.length;
-
-      // Count employees with entrada in period (from empleadosDia)
-      const conIngreso = empleadosDia.filter(e => e.estado === 'ingreso').length;
-      const conSalida  = empleadosDia.filter(e => e.estado === 'salida').length;
-      const conEntrada = conIngreso + conSalida;
-
-      // Asistencia %
-      const pctEl = document.getElementById('statPct');
-      const fillEl = document.getElementById('progressFill');
-      const hintEl = document.getElementById('statAsistenciaHint');
-
-      if (totalEmp === 0) {
-        pctEl.textContent = '—';
-        fillEl.style.width = '0%';
-        hintEl.textContent = 'Sin empleados registrados';
-      } else {
-        const pct = Math.round((conEntrada / totalEmp) * 100);
-        pctEl.textContent = pct;
-        fillEl.style.width = `${pct}%`;
-        hintEl.textContent = `${conEntrada} de ${totalEmp} empleados ingresaron`;
-      }
-
-      // Empleados total
-      document.getElementById('statEmpleados').textContent = totalEmp;
-
-      // Novedades (today)
-      const novHoy = novedades.filter(n => {
-        const ts = n.timestamp || n.fecha || '';
-        const d = ts.slice(0, 10); return d >= from && d <= to;
-      });
-      document.getElementById('statNovedades').textContent = novHoy.length;
-    }
-
-    /* === SEGUIMIENTO: filters + table + pagination === */
-    function applyFiltersSeguimiento() {
-      const q = document.getElementById('filtroEmpleado').value.trim().toLowerCase();
-      const activeChip = document.querySelector('#filterChips .chip.is-active');
-      const estadoFilter = activeChip ? activeChip.dataset.filter : '';
-
-      segFiltered = empleadosDia.filter(e => {
-        if (q) {
-          const haystack = `${e.nombre} ${e.identificacion}`.toLowerCase();
-          if (!haystack.includes(q)) return false;
+    function checkFade() {
+      var windowHeight = window.innerHeight;
+      fadeEls.forEach(function(el) {
+        var rect = el.getBoundingClientRect();
+        if (rect.top < windowHeight * 0.88) {
+          el.classList.add('visible');
         }
-        if (estadoFilter && e.estado !== estadoFilter) return false;
-        return true;
       });
-
-      segPage = 0;
-      renderSeguimientoTable();
     }
 
-    function renderSeguimientoTable() {
-      const tbody = document.getElementById('tablaSeguimientoBody');
-      const start = segPage * PAGE_SIZE;
-      const page = segFiltered.slice(start, start + PAGE_SIZE);
-      const totalPages = Math.ceil(segFiltered.length / PAGE_SIZE) || 1;
+    /* Initial check — make above-fold elements visible immediately */
+    checkFade();
 
-      if (page.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Aún no hay marcaciones. Acerca un tag NFC al lector.</td></tr>`;
-        document.getElementById('paginationSeguimiento').style.display = 'none';
-        return;
-      }
+    var scrollTimeout;
+    window.addEventListener('scroll', function() {
+      if (scrollTimeout) return;
+      scrollTimeout = setTimeout(function() {
+        scrollTimeout = null;
+        checkFade();
+      }, 20);
+    }, { passive: true });
 
-      tbody.innerHTML = page.map(e => {
-        const init = (e.nombre || '?').charAt(0).toUpperCase();
-        const eHora = e.entrada ? formatHoraStr(e.entrada) : '—';
-        const sHora = e.salida  ? formatHoraStr(e.salida)  : '—';
-        const eCls = e.entrada ? '' : 'time-empty';
-        const sCls = e.salida  ? '' : 'time-empty';
-
-        let estadoLabel, estadoClass;
-        switch (e.estado) {
-          case 'ingreso':      estadoLabel = 'Ingreso';      estadoClass = 'tag--ingreso';      break;
-          case 'salida':       estadoLabel = 'Salida';       estadoClass = 'tag--salida';       break;
-          case 'sin-registro': estadoLabel = 'Sin Registro'; estadoClass = 'tag--sin-registro'; break;
-          default:             estadoLabel = '—';             estadoClass = 'tag--sin-registro'; break;
-        }
-
-        return `
-          <tr>
-            <td>
-              <div class="emp-cell">
-                <div class="avatar">${escapeHtml(init)}</div>
-                <div>
-                  <div class="emp-name">${escapeHtml(e.nombre || '—')}</div>
-                  <div class="emp-id">ID ${escapeHtml(e.identificacion)}</div>
-                </div>
-              </div>
-            </td>
-            <td><span class="time-cell ${eCls}">${eHora}</span></td>
-            <td><span class="time-cell ${sCls}">${sHora}</span></td>
-            <td><span class="tag ${estadoClass}">${estadoLabel}</span></td>
-          </tr>`;
-      }).join('');
-
-      // Pagination
-      const pagDiv = document.getElementById('paginationSeguimiento');
-      pagDiv.style.display = (segFiltered.length > PAGE_SIZE) ? 'flex' : 'none';
-      document.getElementById('pgInfoSeguimiento').textContent =
-        `${start + 1}–${Math.min(start + PAGE_SIZE, segFiltered.length)} de ${segFiltered.length} registros`;
-      document.getElementById('pgPrevSeguimiento').disabled = (segPage === 0);
-      document.getElementById('pgNextSeguimiento').disabled = (segPage >= totalPages - 1);
-    }
-
-    function paginateSeguimiento(delta) {
-      segPage += delta;
-      const totalPages = Math.ceil(segFiltered.length / PAGE_SIZE) || 1;
-      segPage = Math.max(0, Math.min(segPage, totalPages - 1));
-      renderSeguimientoTable();
-    }
-
-    /* === NOVEDADES: table + pagination === */
-    function renderNovedadesTable() {
-      const today = hoyColombia();
-      novFiltered = novedades.filter(n => {
-        const ts = n.timestamp || n.fecha || '';
-        const d = ts.slice(0, 10); return d >= from && d <= to;
-      });
-      // If empty, show all (for now, gate: will be empty)
-      if (novFiltered.length === 0 && novedades.length > 0) {
-        novFiltered = novedades.slice(-50);
-      }
-
-      const tbody = document.getElementById('tablaNovedadesBody');
-      const start = novPage * PAGE_SIZE;
-      const page = novFiltered.slice(start, start + PAGE_SIZE);
-      const totalPages = Math.ceil(novFiltered.length / PAGE_SIZE) || 1;
-
-      if (novFiltered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-state empty-state--small">Sin novedades registradas hoy.</td></tr>`;
-        document.getElementById('paginationNovedades').style.display = 'none';
-        return;
-      }
-
-      const tipoTagClass = tipo => {
-        switch ((tipo || '').toLowerCase()) {
-          case 'permiso':
-          case 'vacaciones': return 'novedad-tag--info';
-          case 'accidente':
-          case 'familiar':   return 'novedad-tag--alert';
-          default:           return 'novedad-tag--neutral';
-        }
-      };
-
-      tbody.innerHTML = page.map(n => {
-        const hora = n.timestamp ? formatHoraStr(n.timestamp) : (n.hora || '—');
-        const nombre = n.nombre || n.empleado || '—';
-        const tipo = n.tipo || 'Otro';
-        const nota = n.nota || n.descripcion || '';
-        const init = (nombre || '?').charAt(0).toUpperCase();
-        return `
-          <tr>
-            <td>${escapeHtml(hora)}</td>
-            <td>
-              <div class="emp-cell">
-                <div class="avatar">${escapeHtml(init)}</div>
-                <div class="emp-name">${escapeHtml(nombre)}</div>
-              </div>
-            </td>
-            <td><span class="novedad-tag ${tipoTagClass(tipo)}">${escapeHtml(tipo)}</span></td>
-            <td class="novedad-note" title="${escapeHtml(nota)}">${escapeHtml(nota)}</td>
-          </tr>`;
-      }).join('');
-
-      // Pagination
-      const pagDiv = document.getElementById('paginationNovedades');
-      pagDiv.style.display = (novFiltered.length > PAGE_SIZE) ? 'flex' : 'none';
-      document.getElementById('pgInfoNovedades').textContent =
-        `${start + 1}–${Math.min(start + PAGE_SIZE, novFiltered.length)} de ${novFiltered.length} novedades`;
-      document.getElementById('pgPrevNovedades').disabled = (novPage === 0);
-      document.getElementById('pgNextNovedades').disabled = (novPage >= totalPages - 1);
-    }
-
-    function paginateNovedades(delta) {
-      novPage += delta;
-      const totalPages = Math.ceil(novFiltered.length / PAGE_SIZE) || 1;
-      novPage = Math.max(0, Math.min(novPage, totalPages - 1));
-      renderNovedadesTable();
-    }
-
-    /* === NOVEDADES: inline form === */
-    function poblarEmpleadosSelect() {
-      const sel = document.getElementById('novedadEmpleadoSel');
-      const ids = new Map();
-      for (const r of empleadosLista) {
-        const id  = r.uid || r.identificacion || '';
-        const nom = r.nombre || '';
-        const key = id || nom;
-        if (key && !ids.has(key)) ids.set(key, nom);
-      }
-      let opts = '<option value="">Seleccionar empleado</option>';
-      for (const [key, nom] of ids.entries()) {
-        opts += `<option value="${escapeHtml(key)}">${escapeHtml(nom)}</option>`;
-      }
-      sel.innerHTML = opts;
-    }
-
-    function updateNovedadGate() {
-      const fb = document.getElementById('novedadFeedback');
-      const saveBtn = document.getElementById('btnSaveNovedad');
-      if (!APPS_SCRIPT_URL) {
-        fb.classList.add('is-pending');
-        fb.textContent = 'Endpoint pendiente de aprobación de Nicolás. El botón Guardar quedará deshabilitado.';
-        saveBtn.disabled = true;
-      } else {
-        fb.classList.remove('is-pending');
-        fb.textContent = '';
-        saveBtn.disabled = false;
-      }
-    }
-
-    function toggleNovedadForm() {
-      const form = document.getElementById('novedadForm');
-      const fb = document.getElementById('novedadFeedback');
-      form.classList.toggle('is-open');
-      if (form.classList.contains('is-open')) {
-        fb.style.display = 'block';
-        poblarEmpleadosSelect();
-        document.getElementById('novedadEmpleadoSel').value = '';
-        document.getElementById('novedadTipoSel').value = '';
-        document.getElementById('novedadNotaInput').value = '';
-      } else {
-        fb.style.display = 'none';
-      }
-    }
-
-    function cancelNovedad() {
-      document.getElementById('novedadForm').classList.remove('is-open');
-      document.getElementById('novedadFeedback').style.display = 'none';
-    }
-
-    async function submitNovedad(e) {
-      e.preventDefault();
-
-      const empleadoSel = document.getElementById('novedadEmpleadoSel');
-      const empleadoVal  = empleadoSel.value;
-      const empleadoText = empleadoSel.options[empleadoSel.selectedIndex]?.text || '';
-      const tipo  = document.getElementById('novedadTipoSel').value;
-      const nota  = document.getElementById('novedadNotaInput').value.trim();
-      const fb    = document.getElementById('novedadFeedback');
-
-      if (!APPS_SCRIPT_URL) {
-        fb.textContent = 'No se puede guardar aún: el endpoint requiere aprobación de Nicolás.';
-        return;
-      }
-      if (!empleadoVal) {
-        fb.textContent = 'Selecciona un empleado.';
-        return;
-      }
-      if (!tipo) {
-        fb.textContent = 'Selecciona un tipo de novedad.';
-        return;
-      }
-
-      const saveBtn = document.getElementById('btnSaveNovedad');
-      saveBtn.disabled = true;
-
-      const timestamp = new Date().toISOString();
-      const payload = {
-        identificacion: empleadoVal,
-        nombre: empleadoText,
-        tipo: tipo,
-        nota: nota,
-        timestamp: timestamp,
-      };
-
-      const url = APPS_SCRIPT_URL +
-        '?action=novedad' +
-        '&identificacion=' + encodeURIComponent(empleadoVal) +
-        '&nombre=' + encodeURIComponent(empleadoText) +
-        '&tipo=' + encodeURIComponent(tipo) +
-        '&nota=' + encodeURIComponent(nota) +
-        '&timestamp=' + encodeURIComponent(timestamp);
-      try {
-        const resp = await fetch(url, { cache: 'no-store' });
-        const data = await resp.json().catch(() => ({}));
-        if (data.status === 'ok' || data.status === 'warn') {
-          novedades.push(payload);
-          novPage = 0;
-          renderStats();
-          renderNovedadesTable();
-          fb.classList.remove('is-pending');
-          fb.textContent = 'Novedad registrada.';
-          setTimeout(cancelNovedad, 1500);
+    /* ── Header shrink on scroll ── */
+    var header = document.getElementById('siteHeader');
+    if (header) {
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 20) {
+          header.style.padding = '0';
         } else {
-          fb.textContent = data.msg || 'Error al guardar.';
+          header.style.padding = '';
         }
-      } catch (err) {
-        console.error(err);
-        fb.textContent = 'No se pudo guardar. Reintentá al reconectar.';
-      } finally {
-        saveBtn.disabled = false;
-      }
-    }
-
-    /* === INIT === */
-    function init() {
-      // Header shrink on scroll
-      const header = document.getElementById('siteHeader');
-      const SHRINK_THRESHOLD = 24;
-      let ticking = false;
-      function updateHeader() {
-        if (window.scrollY > SHRINK_THRESHOLD) {
-          header.classList.add('is-scrolled');
-        } else {
-          header.classList.remove('is-scrolled');
-        }
-        ticking = false;
-      }
-      window.addEventListener('scroll', () => {
-        if (!ticking) { window.requestAnimationFrame(updateHeader); ticking = true; }
       }, { passive: true });
-      updateHeader();
-
-      // Refresh button
-      document.getElementById('refreshBtn').addEventListener('click', fetchAll);
-
-      // Filter chips
-      document.querySelectorAll('#filterChips .chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          document.querySelectorAll('#filterChips .chip').forEach(c => c.classList.remove('is-active'));
-          chip.classList.add('is-active');
-          applyFiltersSeguimiento();
-        });
-      });
-
-      // Date picker — set defaults + listen for changes
-      const inputDesde = document.getElementById('fechaDesde');
-      const inputHasta = document.getElementById('fechaHasta');
-      const dateSepEl  = document.getElementById('dateSep');
-      const btnRange   = document.getElementById('btnRangeToggle');
-
-      // Default: fill both with today
-      const offsetCol = -5 * 60 * 60 * 1000;
-      const local = new Date(Date.now() + offsetCol);
-      const hoyStr = local.toISOString().slice(0, 10);
-      inputDesde.value = hoyStr;
-      inputHasta.value = hoyStr;
-      fechaDesde = hoyStr;
-      fechaHasta = hoyStr;
-
-      function onDateChange() {
-        fechaDesde = inputDesde.value;
-        fechaHasta = inputHasta.value;
-        fetchAll();
-      }
-
-      inputDesde.addEventListener('change', onDateChange);
-      inputHasta.addEventListener('change', onDateChange);
-
-      btnRange.addEventListener('click', () => {
-        rangeEnabled = !rangeEnabled;
-        btnRange.classList.toggle('is-active', rangeEnabled);
-        btnRange.textContent = rangeEnabled ? '−' : '+';
-        inputHasta.style.display = rangeEnabled ? '' : 'none';
-        dateSepEl.style.display  = rangeEnabled ? '' : 'none';
-        btnRange.title = rangeEnabled ? 'Desactivar rango' : 'Activar rango de fechas';
-        if (!rangeEnabled) {
-          // Reset hasta to desde
-          inputHasta.value = inputDesde.value;
-          fechaHasta = inputDesde.value;
-        }
-        onDateChange();
-      });
-
-      // Search input
-      document.getElementById('filtroEmpleado').addEventListener('input', () => {
-        clearTimeout(window._debounceSeguimiento);
-        window._debounceSeguimiento = setTimeout(applyFiltersSeguimiento, 200);
-      });
-
-      // Pagination buttons
-      document.getElementById('pgPrevSeguimiento').addEventListener('click', () => paginateSeguimiento(-1));
-      document.getElementById('pgNextSeguimiento').addEventListener('click', () => paginateSeguimiento(1));
-      document.getElementById('pgPrevNovedades').addEventListener('click', () => paginateNovedades(-1));
-      document.getElementById('pgNextNovedades').addEventListener('click', () => paginateNovedades(1));
-
-      // Novedades form
-      document.getElementById('btnNewNovedad').addEventListener('click', toggleNovedadForm);
-      document.getElementById('btnCancelNovedad').addEventListener('click', cancelNovedad);
-      document.getElementById('novedadForm').addEventListener('submit', submitNovedad);
-
-      // Initial render
-      renderHeaderInfo();
-      applyFiltersSeguimiento();
-      fetchAll();
-      setInterval(fetchAll, REFRESH_MS);
     }
+  })();
+</script>
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  </script>
 </body>
 </html>
