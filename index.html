@@ -17,35 +17,44 @@
        ═══════════════════════════════════════════════════════════ */
 
     :root {
-      --charcoal:  #1A1D23;
-      --emerald:   #10B981;
-      --emerald-hover: #059669;
-      --rose:      #F43F5E;
-      --cloud:     #F8FAFC;
-      --navy:      #0F172A;
+      /* ── Superficies ── */
+      --bg:         #0F172A;  /* Deep Navy — fondo de página */
+      --surface:    #1A1D23;  /* Quick Charcoal — tarjetas, paneles, cards */
+      --surface-alt:#22272E;  /* Charcoal más claro — hover, filas alternas */
 
-      --charcoal-90: rgba(26,29,35,0.90);
-      --charcoal-60: rgba(26,29,35,0.60);
-      --charcoal-20: rgba(26,29,35,0.20);
-      --charcoal-10: rgba(26,29,35,0.10);
-      --charcoal-05: rgba(26,29,35,0.05);
-      --emerald-15:  rgba(16,185,129,0.15);
-      --emerald-25:  rgba(16,185,129,0.25);
-      --white-10:    rgba(255,255,255,0.10);
-      --white-15:    rgba(255,255,255,0.15);
-      --white-60:    rgba(255,255,255,0.60);
-      --white-80:    rgba(255,255,255,0.80);
+      /* ── Texto ── */
+      --text:       #F8FAFC;  /* Cloud White — texto principal, headings */
+      --text-90:    rgba(248,250,252,0.90);
+      --text-60:    rgba(248,250,252,0.60);  /* texto secundario */
+      --text-40:    rgba(248,250,252,0.40);  /* texto terciario, placeholders */
+      --text-20:    rgba(248,250,252,0.20);
+      --text-10:    rgba(248,250,252,0.10);
+      --text-05:    rgba(248,250,252,0.05);
 
+      /* ── Acento y alerta ── */
+      --accent:     #10B981;  /* Quick Emerald — CTAs, interactivo, enlaces */
+      --accent-hover:#059669; /* Emerald hover */
+      --accent-25:  rgba(16,185,129,0.25);
+      --accent-15:  rgba(16,185,129,0.15);
+      --accent-10:  rgba(16,185,129,0.10);
+      --alert:      #F43F5E;  /* Alert Rose — alertas, urgencias */
+      --alert-25:   rgba(244,63,94,0.25);
+      --alert-15:   rgba(244,63,94,0.15);
+
+      /* ── Sombras ── */
+      --shadow-card:  0 1px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.35);
+      --shadow-emerald: 0 4px 20px rgba(16,185,129,0.20);
+      --shadow-lg:    0 20px 60px rgba(0,0,0,0.40);
+
+      /* ── Radios (iguales en todas) ── */
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 20px;
+      --radius-full: 999px;
 
-      --shadow-card: 0 1px 3px rgba(26,29,35,0.06), 0 1px 2px rgba(26,29,35,0.04);
-      --shadow-hover: 0 8px 30px rgba(26,29,35,0.10);
-      --shadow-emerald: 0 4px 20px rgba(16,185,129,0.25);
-      --shadow-lg: 0 20px 60px rgba(26,29,35,0.12);
-
+      /* ── Layout ── */
       --max-width: 1120px;
       --header-h: 68px;
     }
@@ -62,8 +71,8 @@
       font-size: 15px;
       font-weight: 400;
       line-height: 1.6;
-      color: var(--charcoal);
-      background: var(--cloud);
+      color: var(--text);
+      background: var(--bg);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -73,7 +82,7 @@
       font-family: 'Space Grotesk', system-ui, sans-serif;
       font-weight: 700;
       line-height: 1.2;
-      color: var(--charcoal);
+      color: var(--text);
     }
     h1 { font-size: 32px; }
     h2 { font-size: 24px; }
@@ -98,7 +107,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--emerald);
+      color: var(--accent);
       margin-bottom: 8px;
     }
 
@@ -108,7 +117,7 @@
     }
     .section-intro h2 { margin-bottom: 8px; }
     .section-intro p {
-      color: var(--charcoal-60);
+      color: var(--text-60);
       font-size: 16px;
       line-height: 1.6;
     }
@@ -134,28 +143,28 @@
     .btn:active { transform: translateY(0); }
 
     .btn-primary {
-      background: var(--emerald);
-      color: #fff;
+      background: var(--accent);
+      color: var(--bg);
     }
     .btn-primary:hover {
-      background: var(--emerald-hover);
+      background: var(--accent-hover);
       box-shadow: var(--shadow-emerald);
     }
 
     .btn-outline {
       background: transparent;
-      color: var(--emerald);
-      border: 1.5px solid var(--emerald);
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
     }
     .btn-outline:hover {
-      background: var(--emerald-15);
-      border-color: var(--emerald-hover);
-      color: var(--emerald-hover);
+      background: var(--accent-15);
+      border-color: var(--accent-hover);
+      color: var(--accent-hover);
     }
 
     .btn-white {
-      background: #fff;
-      color: var(--navy);
+      background: var(--surface);
+      color: var(--bg);
     }
     .btn-white:hover {
       box-shadow: 0 4px 16px rgba(0,0,0,0.15);
@@ -163,12 +172,12 @@
 
     .btn-ghost-light {
       background: transparent;
-      color: #fff;
-      border: 1.5px solid var(--white-15);
+      color: var(--text);
+      border: 1.5px solid var(--text-20);
     }
     .btn-ghost-light:hover {
-      background: var(--white-10);
-      border-color: var(--white-60);
+      background: var(--text-10);
+      border-color: var(--text-60);
     }
 
     .btn-arrow {
@@ -178,7 +187,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 14px;
       font-weight: 600;
-      color: #fff;
+      color: var(--text);
       transition: gap 0.2s ease;
     }
     .btn-arrow:hover { gap: 10px; }
@@ -215,14 +224,14 @@
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
       font-size: 18px;
-      color: #fff;
+      color: var(--text);
       flex-shrink: 0;
     }
     .logo-mark {
       width: 36px;
       height: 36px;
       border-radius: var(--radius-sm);
-      background: var(--emerald);
+      background: var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -230,7 +239,7 @@
     .logo-mark svg {
       width: 20px;
       height: 20px;
-      fill: #fff;
+      fill: var(--bg);
     }
 
     /* Nav */
@@ -244,20 +253,20 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 13px;
       font-weight: 500;
-      color: var(--white-80);
+      color: var(--text-90);
       transition: color 0.15s;
     }
-    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover { color: var(--text); }
 
     .nav-cta {
-      background: var(--emerald);
-      color: #fff !important;
+      background: var(--accent);
+      color: var(--bg) !important;
       padding: 8px 18px;
       border-radius: var(--radius-sm);
       font-weight: 600 !important;
     }
     .nav-cta:hover {
-      background: var(--emerald-hover) !important;
+      background: var(--accent-hover) !important;
     }
 
     /* Hamburger */
@@ -276,7 +285,7 @@
       display: block;
       width: 24px;
       height: 2px;
-      background: #fff;
+      background: var(--text);
       border-radius: 2px;
       transition: transform 0.25s ease, opacity 0.25s ease;
     }
@@ -292,7 +301,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: var(--navy);
+      background: var(--bg);
       padding: 32px 24px;
       z-index: 99;
       flex-direction: column;
@@ -306,10 +315,10 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 16px;
       font-weight: 600;
-      color: var(--white-80);
-      border-bottom: 1px solid var(--white-10);
+      color: var(--text-90);
+      border-bottom: 1px solid var(--text-10);
     }
-    .mobile-menu a:hover { color: #fff; }
+    .mobile-menu a:hover { color: var(--text); }
     .mobile-menu .nav-cta {
       display: inline-block;
       margin-top: 16px;
@@ -321,7 +330,7 @@
        HERO
        ════════════════════════════════════════════ */
     .hero {
-      background: var(--navy);
+      background: var(--bg);
       position: relative;
       overflow: hidden;
     }
@@ -366,13 +375,13 @@
 
     .hero h1 {
       font-size: clamp(30px, 5vw, 44px);
-      color: #fff;
+      color: var(--text);
       margin-bottom: 16px;
       line-height: 1.15;
     }
 
     .hero p {
-      color: var(--white-60);
+      color: var(--text-60);
       font-size: 17px;
       line-height: 1.65;
       margin-bottom: 32px;
@@ -397,7 +406,7 @@
       aspect-ratio: 4/3;
       border-radius: var(--radius-lg);
       background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.04) 50%, rgba(255,255,255,0.03) 100%);
-      border: 1px solid var(--white-10);
+      border: 1px solid var(--text-10);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -425,7 +434,7 @@
     .hero-placeholder-label {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 12px;
-      color: var(--white-60);
+      color: var(--text-60);
       margin-top: 8px;
       position: relative;
       z-index: 1;
@@ -440,7 +449,7 @@
 
     /* ── Cómo lo resolvemos ── */
     .tres-capas {
-      background: #fff;
+      background: var(--surface);
     }
 
     .cards-3 {
@@ -450,10 +459,10 @@
     }
 
     .card-icon {
-      background: #fff;
+      background: var(--surface);
       border-radius: var(--radius-md);
       padding: 32px 28px;
-      border: 1px solid var(--charcoal-10);
+      border: 1px solid var(--text-10);
       display: flex;
       flex-direction: column;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -461,14 +470,14 @@
     .card-icon:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
-      border-color: var(--emerald-25);
+      border-color: var(--accent-25);
     }
 
     .card-icon-circle {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: var(--emerald-15);
+      background: var(--accent-15);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -478,14 +487,14 @@
     .card-icon-circle svg {
       width: 24px;
       height: 24px;
-      stroke: var(--emerald);
+      stroke: var(--accent);
       fill: none;
       stroke-width: 1.75;
     }
 
     .card-icon h3 { margin-bottom: 8px; }
     .card-icon p {
-      color: var(--charcoal-60);
+      color: var(--text-60);
       font-size: 14px;
       line-height: 1.6;
       flex: 1;
@@ -498,7 +507,7 @@
 
     /* ── Producto en acción — Asistenc-IA ── */
     .asistencia-ia {
-      background: var(--cloud);
+      background: var(--bg);
     }
 
     .asistencia-grid {
@@ -510,16 +519,16 @@
 
     .asistencia-text h2 { margin-bottom: 12px; }
     .asistencia-text p {
-      color: var(--charcoal-60);
+      color: var(--text-60);
       font-size: 16px;
       line-height: 1.6;
       margin-bottom: 16px;
     }
     .asistencia-quote {
-      border-left: 3px solid var(--emerald);
+      border-left: 3px solid var(--accent);
       padding-left: 16px;
       margin: 20px 0;
-      color: var(--charcoal-60);
+      color: var(--text-60);
       font-size: 14px;
       font-style: italic;
       line-height: 1.6;
@@ -527,9 +536,9 @@
 
     /* Dashboard mockup (CSS only) */
     .dashboard-mock {
-      background: #fff;
+      background: var(--surface);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--charcoal-10);
+      border: 1px solid var(--text-10);
       box-shadow: var(--shadow-lg);
       overflow: hidden;
       font-size: 12px;
@@ -540,16 +549,16 @@
       align-items: center;
       gap: 8px;
       padding: 12px 16px;
-      background: var(--charcoal);
-      color: #fff;
+      background: var(--surface);
+      color: var(--text);
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 600;
       font-size: 13px;
     }
     .dash-header .dot { width: 8px; height: 8px; border-radius: 50%; }
-    .dash-header .dot.red { background: var(--rose); }
+    .dash-header .dot.red { background: var(--alert); }
     .dash-header .dot.amber { background: #F59E0B; }
-    .dash-header .dot.green { background: var(--emerald); }
+    .dash-header .dot.green { background: var(--accent); }
 
     .dash-body { padding: 16px; }
 
@@ -560,7 +569,7 @@
       margin-bottom: 16px;
     }
     .dash-metric {
-      background: var(--cloud);
+      background: var(--bg);
       border-radius: var(--radius-sm);
       padding: 12px;
       text-align: center;
@@ -569,11 +578,11 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 22px;
       font-weight: 700;
-      color: var(--charcoal);
+      color: var(--text);
     }
     .dash-metric .label {
       font-size: 10px;
-      color: var(--charcoal-60);
+      color: var(--text-60);
       margin-top: 2px;
     }
 
@@ -587,16 +596,16 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 10px;
       font-weight: 600;
-      color: var(--charcoal-60);
+      color: var(--text-60);
       text-transform: uppercase;
       letter-spacing: 0.04em;
       padding: 8px 8px 6px;
-      border-bottom: 1px solid var(--charcoal-10);
+      border-bottom: 1px solid var(--text-10);
     }
     .dash-table td {
       padding: 8px;
       font-size: 12px;
-      border-bottom: 1px solid var(--charcoal-05);
+      border-bottom: 1px solid var(--text-05);
     }
     .dash-table .status-dot {
       display: inline-block;
@@ -605,11 +614,11 @@
       border-radius: 50%;
       margin-right: 4px;
     }
-    .dash-table .status-dot.ok { background: var(--emerald); }
+    .dash-table .status-dot.ok { background: var(--accent); }
     .dash-table .status-dot.late { background: #F59E0B; }
-    .dash-table .status-dot.miss { background: var(--rose); }
+    .dash-table .status-dot.miss { background: var(--alert); }
     .dash-table .time-miss {
-      color: var(--rose);
+      color: var(--alert);
       font-weight: 600;
     }
 
@@ -626,8 +635,8 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: var(--rose);
-      color: #fff;
+      background: var(--alert);
+      color: var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -640,7 +649,7 @@
       line-height: 1.5;
     }
     .dash-alert-text strong {
-      color: var(--rose);
+      color: var(--alert);
       font-family: 'Space Grotesk', sans-serif;
     }
     .dash-alert-action {
@@ -649,13 +658,13 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 10px;
       font-weight: 600;
-      color: var(--emerald);
+      color: var(--accent);
       cursor: pointer;
     }
 
     /* ── Sectores ── */
     .sectores {
-      background: #fff;
+      background: var(--surface);
     }
 
     .sectores-grid {
@@ -665,10 +674,10 @@
     }
 
     .sector-card {
-      background: var(--cloud);
+      background: var(--bg);
       border-radius: var(--radius-md);
       padding: 28px;
-      border: 1px solid var(--charcoal-10);
+      border: 1px solid var(--text-10);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .sector-card:hover {
@@ -680,7 +689,7 @@
       width: 44px;
       height: 44px;
       border-radius: 10px;
-      background: var(--emerald-15);
+      background: var(--accent-15);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -693,7 +702,7 @@
       font-size: 17px;
     }
     .sector-card p {
-      color: var(--charcoal-60);
+      color: var(--text-60);
       font-size: 14px;
       line-height: 1.6;
     }
@@ -702,16 +711,16 @@
       text-align: center;
       margin-top: 32px;
       padding: 20px;
-      background: var(--emerald-15);
+      background: var(--accent-15);
       border-radius: var(--radius-md);
-      color: var(--charcoal);
+      color: var(--text);
       font-size: 14px;
       font-weight: 500;
     }
 
     /* ── Productos ── */
     .productos {
-      background: var(--cloud);
+      background: var(--bg);
     }
 
     .productos-grid {
@@ -721,10 +730,10 @@
     }
 
     .producto-card {
-      background: #fff;
+      background: var(--surface);
       border-radius: var(--radius-lg);
       padding: 28px;
-      border: 1px solid var(--charcoal-10);
+      border: 1px solid var(--text-10);
       display: flex;
       flex-direction: column;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -735,7 +744,7 @@
     }
 
     .producto-card.featured {
-      border: 2px solid var(--emerald);
+      border: 2px solid var(--accent);
       box-shadow: 0 4px 24px rgba(16,185,129,0.10);
     }
 
@@ -752,10 +761,10 @@
       align-self: flex-start;
     }
     .producto-badge.available {
-      color: var(--emerald);
+      color: var(--accent);
     }
     .producto-badge.coming {
-      color: var(--charcoal-60);
+      color: var(--text-60);
     }
     .producto-badge .badge-dot {
       width: 7px;
@@ -763,13 +772,13 @@
       border-radius: 50%;
       display: inline-block;
     }
-    .producto-badge.available .badge-dot { background: var(--emerald); }
-    .producto-badge.coming .badge-dot { background: var(--charcoal-20); }
+    .producto-badge.available .badge-dot { background: var(--accent); }
+    .producto-badge.coming .badge-dot { background: var(--text-20); }
 
     .producto-card h3 { margin-bottom: 4px; }
     .producto-card .producto-tagline {
       font-size: 14px;
-      color: var(--charcoal-60);
+      color: var(--text-60);
       margin-bottom: 16px;
       font-style: italic;
     }
@@ -779,7 +788,7 @@
     }
     .producto-features li {
       font-size: 13px;
-      color: var(--charcoal-60);
+      color: var(--text-60);
       padding: 6px 0;
       display: flex;
       gap: 8px;
@@ -790,14 +799,14 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: var(--emerald);
+      background: var(--accent);
       margin-top: 6px;
       flex-shrink: 0;
     }
 
     .producto-card.muted {
       opacity: 0.65;
-      background: var(--cloud);
+      background: var(--bg);
     }
     .producto-card.muted:hover { opacity: 0.85; }
 
@@ -805,7 +814,7 @@
        CTA FINAL
        ════════════════════════════════════════════ */
     .cta-final {
-      background: var(--navy);
+      background: var(--bg);
       position: relative;
       overflow: hidden;
     }
@@ -829,13 +838,13 @@
     }
 
     .cta-final h2 {
-      color: #fff;
+      color: var(--text);
       font-size: clamp(24px, 4vw, 36px);
       margin-bottom: 12px;
     }
 
     .cta-final .cta-tagline {
-      color: var(--white-60);
+      color: var(--text-60);
       font-size: 16px;
       margin-bottom: 32px;
     }
@@ -844,8 +853,8 @@
        FOOTER
        ════════════════════════════════════════════ */
     .site-footer {
-      background: var(--navy);
-      border-top: 1px solid var(--white-10);
+      background: var(--bg);
+      border-top: 1px solid var(--text-10);
     }
     .footer-inner {
       max-width: var(--max-width);
@@ -859,7 +868,7 @@
     }
     .footer-left {
       font-size: 12px;
-      color: var(--white-60);
+      color: var(--text-60);
     }
     .footer-links {
       display: flex;
@@ -868,14 +877,14 @@
     }
     .footer-links a {
       font-size: 12px;
-      color: var(--white-60);
+      color: var(--text-60);
       transition: color 0.15s;
     }
-    .footer-links a:hover { color: #fff; }
+    .footer-links a:hover { color: var(--text); }
 
     .footer-made {
       font-size: 12px;
-      color: var(--white-60);
+      color: var(--text-60);
       display: flex;
       align-items: center;
       gap: 4px;
@@ -1264,10 +1273,10 @@
 <!-- ════════════════════════════════════════════
      CONTACTO
      ════════════════════════════════════════════ -->
-<section id="contacto" style="background: var(--navy); color: #fff; padding: 48px 24px;">
+<section id="contacto" style="background: var(--surface); color: var(--text); padding: 48px 24px;">
   <div class="container" style="text-align: center;">
-    <h2 style="color: #fff; margin-bottom: 8px;">Contacto</h2>
-    <p style="color: var(--white-60); margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto;">
+    <h2 style="color: var(--text); margin-bottom: 8px;">Contacto</h2>
+    <p style="color: var(--text-60); margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto;">
       ¿Tenés preguntas o querés conocer más? Escribinos y conversemos sobre cómo Quick-T puede ayudarte.
     </p>
     <a href="mailto:contacto@quick-t.co" class="btn btn-primary">contacto@quick-t.co</a>

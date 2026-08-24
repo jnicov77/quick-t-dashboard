@@ -11,45 +11,67 @@
 
   <style>
     /* =========================================================
-       PALETA ESMERALDA v3.0 — Quick-T
-         --primary: #1A1D23 (texto, iconos)
+       PALETA ESMERALDA v3.0 — Quick-T Dark Theme
+         --bg:      #0F172A (fondo de página)
+         --surface: #1A1D23 (tarjetas, paneles)
+         --text:    #F8FAFC (texto principal)
          --accent:  #10B981 (CTAs, interactivo)
          --alert:   #F43F5E (alertas, urgencias)
-         --cloud:   #F8FAFC (fondos)
-         --deep:    #0F172A (hero, footer, dark surfaces)
        Regla 60-25-10-4-1
        Tipografía: Space Grotesk (titulares, métricas) + Inter (cuerpo)
        Estados (Nicolás): Ingreso=Verde, Salida=Rose, Sin Registro=Gris
        ========================================================= */
     :root {
-      --primary:   #1A1D23;
-      --accent:    #10B981;
-      --alert:     #F43F5E;
-      --cloud:     #F8FAFC;
-      --deep:      #0F172A;
-      --green:     #16A34A;
+      /* ── Superficies ── */
+      --bg:         #0F172A;  /* Deep Navy — fondo de página */
+      --surface:    #1A1D23;  /* Quick Charcoal — tarjetas, paneles, cards */
+      --surface-alt:#22272E;  /* Charcoal más claro — hover, filas alternas */
 
-      --primary-90: rgba(26, 29, 35, 0.90);
-      --primary-60: rgba(26, 29, 35, 0.60);
-      --primary-20: rgba(26, 29, 35, 0.20);
-      --primary-10: rgba(26, 29, 35, 0.10);
-      --primary-05: rgba(26, 29, 35, 0.05);
-      --accent-15:  rgba(16, 185, 129, 0.15);
-      --alert-15:   rgba(244, 63, 94, 0.15);
-      --green-15:   rgba(22, 163, 74, 0.15);
+      /* ── Texto ── */
+      --text:       #F8FAFC;  /* Cloud White — texto principal, headings */
+      --text-90:    rgba(248,250,252,0.90);
+      --text-60:    rgba(248,250,252,0.60);  /* texto secundario */
+      --text-40:    rgba(248,250,252,0.40);  /* texto terciario, placeholders */
+      --text-20:    rgba(248,250,252,0.20);
+      --text-10:    rgba(248,250,252,0.10);
+      --text-05:    rgba(248,250,252,0.05);
 
+      /* ── Acento y alerta ── */
+      --accent:     #10B981;  /* Quick Emerald — CTAs, interactivo, enlaces */
+      --accent-hover:#059669; /* Emerald hover */
+      --accent-25:  rgba(16,185,129,0.25);
+      --accent-15:  rgba(16,185,129,0.15);
+      --accent-10:  rgba(16,185,129,0.10);
+      --alert:      #F43F5E;  /* Alert Rose — alertas, urgencias */
+      --alert-25:   rgba(244,63,94,0.25);
+      --alert-15:   rgba(244,63,94,0.15);
+      --green:      #16A34A;  /* Estado "Ingreso" (solo dashboard) */
+      --green-15:   rgba(22,163,74,0.15);
+
+      /* ── Sombras ── */
+      --shadow-card:  0 1px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.35);
+      --shadow-emerald: 0 4px 20px rgba(16,185,129,0.20);
+      --shadow-lg:    0 20px 60px rgba(0,0,0,0.40);
+
+      /* ── Radios (iguales en todas) ── */
       --radius-sm: 8px;
       --radius-md: 12px;
-      --shadow-card: 0 1px 2px rgba(26, 29, 35, 0.04), 0 1px 3px rgba(26, 29, 35, 0.06);
-      --shadow-hover: 0 4px 12px rgba(26, 29, 35, 0.08);
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-full: 999px;
+
+      /* ── Layout ── */
+      --max-width: 1120px;
+      --header-h: 68px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      color: var(--primary);
-      background: var(--cloud);
+      color: var(--text);
+      background: var(--bg);
       -webkit-font-smoothing: antialiased;
       line-height: 1.5;
     }
@@ -74,10 +96,10 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(248, 250, 252, 0.85);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--primary-10);
+      background: rgba(15,23,42,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--text-10);
     }
     .header-inner {
       max-width: 1280px;
@@ -97,7 +119,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
       font-size: 18px;
-      color: var(--primary);
+      color: var(--text);
     }
     .logo-mark {
       width: 44px; height: 44px;
@@ -119,7 +141,7 @@
       margin-left: auto;
       display: flex; align-items: center; gap: 16px;
     }
-    .status-date { font-size: 14px; font-weight: 500; color: var(--primary-60); }
+    .status-date { font-size: 14px; font-weight: 500; color: var(--text-60); }
 
     .status-pill {
       display: inline-flex; align-items: center; gap: 8px;
@@ -148,7 +170,7 @@
     }
     .icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
     .icon-btn:active { transform: translateY(0); }
-    .icon-btn svg { width: 18px; height: 18px; color: var(--primary); }
+    .icon-btn svg { width: 18px; height: 18px; color: var(--text); }
     .icon-btn.reloading { animation: spin 0.6s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -156,7 +178,7 @@
     .hero { padding: 28px 0 8px; }
     .hero h1 {
       font-size: 40px; line-height: 1.1;
-      font-weight: 700; color: var(--primary);
+      font-weight: 700; color: var(--text);
       margin-bottom: 6px;
     }
 
@@ -171,10 +193,10 @@
     .section-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 20px; font-weight: 600;
-      color: var(--primary);
+      color: var(--text);
     }
     .section-subtitle {
-      font-size: 13px; color: var(--primary-60); margin-top: 2px;
+      font-size: 13px; color: var(--text-60); margin-top: 2px;
     }
 
     /* ========== METRIC CARDS (3, mock style) ========== */
@@ -187,8 +209,8 @@
       .metrics-grid { grid-template-columns: 1fr; }
     }
     .metric-card {
-      background: white;
-      border: 1px solid var(--primary-10);
+      background: var(--surface);
+      border: 1px solid var(--text-10);
       border-radius: var(--radius-md);
       padding: 20px;
       box-shadow: var(--shadow-card);
@@ -199,25 +221,25 @@
     .metric-label {
       font-size: 12px; font-weight: 600;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--primary-60);
+      color: var(--text-60);
       margin-bottom: 12px;
     }
     .metric-value {
       font-size: 36px; font-weight: 700;
-      color: var(--primary);
+      color: var(--text);
       line-height: 1;
     }
     .metric-value .unit {
       font-size: 20px; color: var(--accent);
       font-weight: 600; margin-left: 2px;
     }
-    .metric-hint { margin-top: 8px; font-size: 12px; color: var(--primary-60); }
+    .metric-hint { margin-top: 8px; font-size: 12px; color: var(--text-60); }
 
     /* Progress bar ámbar (Nicolás: "Puede ser color amarillo, el de Quick-T") */
     .progress-bar {
       margin-top: 14px;
       height: 6px;
-      background: var(--primary-05);
+      background: var(--text-05);
       border-radius: 999px;
       overflow: hidden;
     }
@@ -237,14 +259,14 @@
     .search input {
       width: 100%; height: 40px;
       padding: 0 14px 0 38px;
-      background: white;
-      border: 1px solid var(--primary-10);
+      background: var(--surface);
+      border: 1px solid var(--text-10);
       border-radius: var(--radius-sm);
       font-family: inherit; font-size: 14px;
-      color: var(--primary);
+      color: var(--text);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .search input::placeholder { color: var(--primary-60); }
+    .search input::placeholder { color: var(--text-60); }
     .search input:focus {
       outline: none;
       border-color: var(--accent);
@@ -252,29 +274,29 @@
     }
     .search svg {
       position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-      width: 16px; height: 16px; color: var(--primary-60);
+      width: 16px; height: 16px; color: var(--text-60);
     }
 
     .chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip {
       padding: 8px 14px;
-      background: white;
-      border: 1px solid var(--primary-10);
+      background: var(--surface);
+      border: 1px solid var(--text-10);
       border-radius: 999px;
       font-size: 13px; font-weight: 500;
-      color: var(--primary-60);
+      color: var(--text-60);
       transition: all 0.15s ease;
     }
-    .chip:hover { border-color: var(--primary-20); color: var(--primary); }
+    .chip:hover { border-color: var(--text-20); color: var(--text); }
     .chip.is-active {
-      background: var(--primary); color: white;
-      border-color: var(--primary);
+      background: var(--text); color: var(--bg);
+      border-color: var(--text);
     }
 
     /* ========== PANEL / TABLE ========== */
     .panel {
-      background: white;
-      border: 1px solid var(--primary-10);
+      background: var(--surface);
+      border: 1px solid var(--text-10);
       border-radius: var(--radius-md);
       overflow: hidden;
       box-shadow: var(--shadow-card);
@@ -282,40 +304,40 @@
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     thead th {
       text-align: left; padding: 14px 20px;
-      background: var(--cloud);
+      background: var(--bg);
       font-size: 12px; font-weight: 600;
       letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--primary-60);
-      border-bottom: 1px solid var(--primary-10);
+      color: var(--text-60);
+      border-bottom: 1px solid var(--text-10);
     }
     tbody td {
       padding: 14px 20px;
-      border-bottom: 1px solid var(--primary-05);
-      color: var(--primary);
+      border-bottom: 1px solid var(--text-05);
+      color: var(--text);
     }
     tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover { background: var(--cloud); }
+    tbody tr:hover { background: var(--surface-alt); }
 
     .emp-cell { display: flex; align-items: center; gap: 10px; }
     .avatar {
       width: 32px; height: 32px; border-radius: 50%;
       background: var(--accent);
-      color: var(--primary);
+      color: var(--text);
       display: grid; place-items: center;
       font-size: 12px; font-weight: 700;
       font-family: 'Space Grotesk', sans-serif;
     }
     .emp-name { font-weight: 500; }
-    .emp-id { font-size: 12px; color: var(--primary-60); }
+    .emp-id { font-size: 12px; color: var(--text-60); }
 
     /* Time cells: black text (Nicolás feedback) */
     .time-cell {
       font-family: 'Space Grotesk', sans-serif;
       font-variant-numeric: tabular-nums;
       font-size: 14px;
-      color: var(--primary);
+      color: var(--text);
     }
-    .time-empty { color: var(--primary-60); }
+    .time-empty { color: var(--text-60); }
 
     /* ESTADO TAGS (3 estados: Ingreso verde, Salida ámbar, Sin Registro gris) */
     .tag {
@@ -326,29 +348,29 @@
       letter-spacing: 0.04em; text-transform: uppercase;
     }
     .tag--ingreso     { background: var(--green-15); color: var(--green); }
-    .tag--salida      { background: var(--alert-15); color: var(--primary); }
-    .tag--sin-registro{ background: var(--primary-10); color: var(--primary-60); }
+    .tag--salida      { background: var(--alert-15); color: var(--text); }
+    .tag--sin-registro{ background: var(--text-10); color: var(--text-60); }
 
     /* ========== PAGINATION ========== */
     .pagination {
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 20px;
-      background: var(--cloud);
-      border-top: 1px solid var(--primary-10);
+      background: var(--bg);
+      border-top: 1px solid var(--text-10);
     }
-    .pagination-info { font-size: 13px; color: var(--primary-60); }
+    .pagination-info { font-size: 13px; color: var(--text-60); }
     .pagination-btns { display: flex; gap: 8px; }
     .pg-btn {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 8px 14px;
-      background: white;
-      border: 1px solid var(--primary-10);
+      background: var(--surface);
+      border: 1px solid var(--text-10);
       border-radius: var(--radius-sm);
       font-size: 13px; font-weight: 500;
-      color: var(--primary);
+      color: var(--text);
       transition: all 0.15s ease;
     }
-    .pg-btn:hover:not(:disabled) { border-color: var(--primary-20); box-shadow: var(--shadow-hover); }
+    .pg-btn:hover:not(:disabled) { border-color: var(--text-20); box-shadow: var(--shadow-hover); }
     .pg-btn:disabled { opacity: 0.4; cursor: default; }
     .pg-btn svg { width: 14px; height: 14px; }
 
@@ -357,7 +379,7 @@
     .btn-primary {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 9px 16px;
-      background: var(--alert); color: var(--primary);
+      background: var(--accent); color: var(--bg);
       border-radius: var(--radius-sm);
       font-size: 13px; font-weight: 600;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -368,8 +390,8 @@
 
     .novedad-form {
       display: none;
-      background: var(--cloud);
-      border-bottom: 1px solid var(--primary-10);
+      background: var(--bg);
+      border-bottom: 1px solid var(--text-10);
       padding: 16px 20px;
       gap: 14px;
       grid-template-columns: 1.1fr 1.1fr 2fr auto;
@@ -381,7 +403,7 @@
       display: block;
       font-size: 11px; font-weight: 600;
       letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--primary-60);
+      color: var(--text-60);
       margin-bottom: 6px;
       height: 18px;
     }
@@ -390,11 +412,11 @@
     .field textarea {
       width: 100%; height: 36px;
       padding: 8px 12px;
-      background: white;
-      border: 1px solid var(--primary-10);
+      background: var(--surface);
+      border: 1px solid var(--text-10);
       border-radius: var(--radius-sm);
       font-family: inherit; font-size: 13px;
-      color: var(--primary); line-height: 1.4;
+      color: var(--text); line-height: 1.4;
     }
     .field textarea {
       height: 36px; min-height: 36px; max-height: 36px;
@@ -413,13 +435,13 @@
     }
     .btn-ghost {
       padding: 8px 14px;
-      background: white;
-      border: 1px solid var(--primary-10);
+      background: var(--surface);
+      border: 1px solid var(--text-10);
       border-radius: var(--radius-sm);
       font-size: 13px; font-weight: 500;
-      color: var(--primary-60);
+      color: var(--text-60);
     }
-    .btn-ghost:hover { color: var(--primary); border-color: var(--primary-20); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--text-20); }
 
     /* Novedad tag colors */
     .novedad-tag {
@@ -428,12 +450,12 @@
       font-size: 11px; font-weight: 600;
       letter-spacing: 0.04em; text-transform: uppercase;
     }
-    .novedad-tag--info    { background: var(--accent-15);  color: var(--primary); }
-    .novedad-tag--alert   { background: var(--alert-15); color: var(--primary); }
-    .novedad-tag--neutral { background: var(--primary-10);  color: var(--primary); }
+    .novedad-tag--info    { background: var(--accent-15);  color: var(--text); }
+    .novedad-tag--alert   { background: var(--alert-15); color: var(--text); }
+    .novedad-tag--neutral { background: var(--text-10);  color: var(--text); }
 
     .novedad-note {
-      font-size: 13px; color: var(--primary-60);
+      font-size: 13px; color: var(--text-60);
       max-width: 360px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
@@ -441,23 +463,23 @@
     /* Empty states */
     .empty-state {
       text-align: center; padding: 32px 16px;
-      color: var(--primary-60); font-size: 14px;
+      color: var(--text-60); font-size: 14px;
     }
     .empty-state--small { padding: 24px 8px; font-size: 13px; }
 
     /* Feedback message */
     .form-feedback {
       padding: 12px 20px; font-size: 13px;
-      border-top: 1px solid var(--primary-10);
-      color: var(--primary-60);
+      border-top: 1px solid var(--text-10);
+      color: var(--text-60);
     }
-    .form-feedback.is-pending { background: var(--alert-15); color: var(--primary); }
+    .form-feedback.is-pending { background: var(--alert-15); color: var(--text); }
 
     /* ========== FOOTER ========== */
     .site-footer {
       margin-top: 48px; padding: 20px 0;
-      border-top: 1px solid var(--primary-10);
-      font-size: 12px; color: var(--primary-60);
+      border-top: 1px solid var(--text-10);
+      font-size: 12px; color: var(--text-60);
       text-align: center;
     }
 
@@ -490,7 +512,7 @@
       </div>
       <!-- Tagline: "Asistencia Inteligente. Cero Fricción." (Nicolás feedback) -->
       <div class="header-meta" style="margin-left: 8px; display:flex; align-items:center;">
-        <span style="font-size:13px; color:var(--primary-60);">Asistencia Inteligente. Cero Fricción.</span>
+        <span style="font-size:13px; color:var(--text-60);">Asistencia Inteligente. Cero Fricción.</span>
       </div>
       <!-- Fecha · Sincronizado · Refrescar -->
       <div class="header-status">
