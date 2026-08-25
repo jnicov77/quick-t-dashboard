@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick-T Garden — Tu jardín, monitoreado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:         #0F172A;
+    --surface:    #1A1D23;
+    --surface-alt:#22272E;
+    --text:       #F8FAFC;
+    --text-90:    rgba(248,250,252,0.90);
+    --text-60:    rgba(248,250,252,0.60);
+    --text-40:    rgba(248,250,252,0.40);
+    --text-20:    rgba(248,250,252,0.20);
+    --text-10:    rgba(248,250,252,0.10);
+    --text-05:    rgba(248,250,252,0.05);
+    --accent:     #10B981;
+    --accent-hover:#059669;
+    --accent-25:  rgba(16,185,129,0.25);
+    --accent-15:  rgba(16,185,129,0.15);
+    --alert:      #F43F5E;
+    --alert-25:   rgba(244,63,94,0.25);
+    --alert-15:   rgba(244,63,94,0.15);
+    --warn:       #F59E0B;
+    --warn-15:    rgba(245,158,11,0.15);
+    --sky:        #38BDF8;
+    --sky-15:     rgba(56,189,248,0.15);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 999px;
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-hover: 0 8px 30px rgba(0,0,0,0.35);
+    --max-width: 1120px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px; font-weight: 400; line-height: 1.6;
+    color: var(--text); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .metric-value, .temp-big {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; line-height: 1.15; letter-spacing: -0.01em;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Header ── */
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(15,23,42,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--text-10);
+  }
+  .header-inner {
+    max-width: var(--max-width); margin: 0 auto;
+    padding: 18px 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 18px; color: var(--text);
+  }
+  .logo-mark {
+    width: 40px; height: 40px; display: grid; place-items: center;
+    background: var(--accent-15); border-radius: var(--radius-sm);
+    font-size: 20px;
+  }
+  .header-meta { margin-left: 8px; font-size: 13px; color: var(--text-60); }
+  .header-status {
+    margin-left: auto; display: flex; align-items: center; gap: 12px;
+  }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; background: var(--accent-15);
+    border-radius: var(--radius-full); font-size: 13px; font-weight: 600;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(16,185,129,0.20);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .icon-btn {
+    width: 40px; height: 40px; display: grid; place-items: center;
+    background: var(--accent); border-radius: var(--radius-sm);
+    border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+  .icon-btn svg { width: 18px; height: 18px; color: var(--bg); }
+  .icon-btn.reloading { animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+
+  /* ── Hero ── */
+  .hero { padding: 32px 24px 8px; }
+  .hero h1 { font-size: 40px; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-60); font-size: 16px; }
+
+  /* ── Métricas ── */
+  .metrics-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; padding: 24px;
+  }
+  .metric-card {
+    background: var(--surface); border: 1px solid var(--text-10);
+    border-radius: var(--radius-md); padding: 24px;
+    box-shadow: var(--shadow-card);
+    position: relative; overflow: hidden;
+  }
+  .metric-card.hero-card { grid-column: span 3; text-align: center; padding: 40px 24px; }
+  .metric-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-60); margin-bottom: 12px;
+  }
+  .metric-value { font-size: 36px; }
+  .metric-value .unit { font-size: 20px; color: var(--text-60); font-weight: 600; margin-left: 2px; }
+  .temp-big { font-size: 72px; line-height: 1; }
+  .temp-big .unit { font-size: 32px; color: var(--text-60); }
+  .metric-hint { margin-top: 8px; font-size: 12px; color: var(--text-40); }
+
+  .vpd-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: var(--radius-full);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px;
+    margin-top: 16px;
+  }
+  .vpd-badge.ideal  { background: var(--accent-15); color: var(--accent); }
+  .vpd-badge.bajo   { background: var(--sky-15);    color: var(--sky); }
+  .vpd-badge.alto   { background: var(--warn-15);   color: var(--warn); }
+  .vpd-badge.muyalto{ background: var(--alert-15);  color: var(--alert); }
+
+  /* ── Paneles ── */
+  .panel {
+    background: var(--surface); border: 1px solid var(--text-10);
+    border-radius: var(--radius-lg); padding: 28px;
+    margin-bottom: 24px; box-shadow: var(--shadow-card);
+  }
+  .panel h2 { font-size: 22px; margin-bottom: 20px; }
+  .panel .chart-wrap { position: relative; height: 320px; }
+
+  /* ── Recomendaciones ── */
+  .reco-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .reco-card {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--surface-alt); border: 1px solid var(--text-10);
+    border-radius: var(--radius-md); padding: 20px;
+  }
+  .reco-icon {
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--radius-sm);
+    display: grid; place-items: center; font-size: 22px;
+  }
+  .reco-icon.ideal   { background: var(--accent-15); }
+  .reco-icon.bajo    { background: var(--sky-15); }
+  .reco-icon.alto    { background: var(--warn-15); }
+  .reco-icon.muyalto { background: var(--alert-15); }
+  .reco-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; margin-bottom: 4px; }
+  .reco-card p { color: var(--text-60); font-size: 13px; line-height: 1.5; }
+
+  .reco-highlight {
+    background: var(--accent-15); border: 1px solid var(--accent-25);
+    border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px;
+    font-size: 15px; color: var(--text);
+  }
+  .reco-highlight strong { color: var(--accent); }
+
+  /* ── Footer ── */
+  .site-footer {
+    margin-top: 24px; padding: 24px 0;
+    border-top: 1px solid var(--text-10);
+    font-size: 12px; color: var(--text-60); text-align: center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+    .metric-card.hero-card { grid-column: span 1; }
+    .reco-list { grid-template-columns: 1fr; }
+    .temp-big { font-size: 56px; }
+    .header-meta { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark">🌿</div>
+      <span>Quick-T Garden</span>
+    </a>
+    <div class="header-meta">Tu jardín, monitoreado</div>
+    <div class="header-status">
+      <span class="status-pill"><span class="status-dot"></span>En vivo</span>
+      <button class="icon-btn" id="refreshBtn" aria-label="Actualizar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/>
+          <path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <h1>Jardin principal</h1>
+    <p class="sub" id="lastUpdate">Actualizando…</p>
+  </section>
+
+  <section class="metrics-grid">
+    <div class="metric-card hero-card">
+      <div class="metric-label">Temperatura</div>
+      <div class="temp-big" id="statTemp">—<span class="unit">°C</span></div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Humedad</div>
+      <div class="metric-value" id="statHum">—<span class="unit">%</span></div>
+      <div class="metric-hint">Humedad relativa</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">VPD</div>
+      <div class="metric-value" id="statVPD">—<span class="unit">kPa</span></div>
+      <div class="metric-hint">Déficit de presión de vapor</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Estado del ambiente</div>
+      <div class="vpd-badge ideal" id="vpdBadge">—</div>
+      <div class="metric-hint" id="vpdHint">Condiciones para tus plantas</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Últimas 24 horas</h2>
+    <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
+  </section>
+
+  <section class="panel">
+    <h2>Recomendaciones</h2>
+    <div class="reco-highlight" id="recoHighlight">—</div>
+    <div class="reco-list" id="recoList"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">Quick-T Garden · Te avisamos lo que importa, cuando importa.</footer>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8Abmtcw_qL7_gRersfAwJzgKKOuzbxozedmIACIn-3BvfLoBPXQqWER4qaMsM-yU/exec';
+const REFRESH_MS = 60000; // 1 min
+let chart = null;
+
+const VPD_RANGES = {
+  'BAJO':    { color: 'bajo',    label: 'Bajo',    icon: '💧', msg: 'Riesgo de hongos. Reducí riego y ventilá el espacio.' },
+  'IDEAL':   { color: 'ideal',   label: 'Ideal',   icon: '🌱', msg: 'Condiciones óptimas para tus plantas. ¡Todo en orden!' },
+  'ALTO':    { color: 'alto',    label: 'Alto',    icon: '💨', msg: 'Ventilá un poco. Bueno para etapa vegetativa y crecimiento.' },
+  'MUY ALTO':{ color: 'muyalto', label: 'Muy alto',icon: '🚨', msg: '¡Estrés hídrico! Aumentá humedad o bajá la temperatura.' }
+};
+
+function vpdStatus(vpd) {
+  if (vpd < 0.45) return 'BAJO';
+  if (vpd <= 1.25) return 'IDEAL';
+  if (vpd <= 1.60) return 'ALTO';
+  return 'MUY ALTO';
+}
+
+function fmtTime(ts) {
+  if (!ts) return '—';
+  const t = String(ts);
+  const m = t.match(/(\d{2}:\d{2}:\d{2})$/);
+  return m ? m[1].slice(0,5) : t;
+}
+
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const t = String(ts);
+  const d = new Date(t.replace(' ', 'T'));
+  if (isNaN(d.getTime())) return t.slice(0, 16);
+  const dias = ['dom','lun','mar','mié','jue','vie','sáb'];
+  return `${dias[d.getDay()]} ${d.getDate()} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+async function fetchJson(action) {
+  const res = await fetch(APPS_SCRIPT_URL + '?action=' + action, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+function renderLatest(obj) {
+  if (!obj || typeof obj.temp === 'undefined') {
+    document.getElementById('statTemp').innerHTML = '—<span class="unit">°C</span>';
+    document.getElementById('statHum').innerHTML = '—<span class="unit">%</span>';
+    document.getElementById('statVPD').innerHTML = '—<span class="unit">kPa</span>';
+    return;
+  }
+  const t = parseFloat(obj.temp), h = parseFloat(obj.hum), v = parseFloat(obj.vpd);
+  document.getElementById('statTemp').innerHTML = t.toFixed(1) + '<span class="unit">°C</span>';
+  document.getElementById('statHum').innerHTML = h.toFixed(0) + '<span class="unit">%</span>';
+  document.getElementById('statVPD').innerHTML = v.toFixed(2) + '<span class="unit">kPa</span>';
+
+  const st = vpdStatus(v);
+  const r = VPD_RANGES[st];
+  const badge = document.getElementById('vpdBadge');
+  badge.textContent = r.icon + ' ' + r.label;
+  badge.className = 'vpd-badge ' + r.color;
+
+  document.getElementById('vpdHint').textContent = r.msg;
+  document.getElementById('recoHighlight').innerHTML = '<strong>' + r.icon + ' ' + r.label + ':</strong> ' + r.msg;
+  document.getElementById('lastUpdate').textContent = 'Actualizado ' + fmtDate(obj.timestamp);
+}
+
+function renderChart(rows) {
+  const data = rows.slice(0, 288).reverse(); // últimas 288 (24h a 5min), orden cronológico
+  const labels = data.map(r => fmtTime(r.timestamp));
+  const temps  = data.map(r => parseFloat(r.temp));
+  const hums   = data.map(r => parseFloat(r.hum));
+
+  const ctx = document.getElementById('tempChart');
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Temperatura (°C)',
+          data: temps,
+          borderColor: '#10B981',
+          backgroundColor: 'rgba(16,185,129,0.10)',
+          fill: true, tension: 0.35, pointRadius: 0,
+          borderWidth: 2, yAxisID: 'y'
+        },
+        {
+          label: 'Humedad (%)',
+          data: hums,
+          borderColor: '#38BDF8',
+          backgroundColor: 'rgba(56,189,248,0.06)',
+          fill: true, tension: 0.35, pointRadius: 0,
+          borderWidth: 2, yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: '#F8FAFC', font: { family: 'Inter', size: 12 } }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: 'rgba(248,250,252,0.40)', maxTicksLimit: 12, font: { size: 10 } },
+          grid: { color: 'rgba(248,250,252,0.05)' }
+        },
+        y: {
+          title: { display: true, text: '°C', color: 'rgba(248,250,252,0.60)' },
+          ticks: { color: 'rgba(248,250,252,0.40)', font: { size: 10 } },
+          grid: { color: 'rgba(248,250,252,0.05)' }
+        },
+        y1: {
+          position: 'right',
+          title: { display: true, text: '%', color: 'rgba(248,250,252,0.60)' },
+          ticks: { color: 'rgba(248,250,252,0.40)', font: { size: 10 } },
+          grid: { drawOnChartArea: false }
+        }
+      }
+    }
+  });
+}
+
+function renderRecoList(st) {
+  const list = document.getElementById('recoList');
+  list.innerHTML = '';
+  Object.values(VPD_RANGES).forEach(r => {
+    const active = r.label.toUpperCase() === st || (r.label === 'Muy alto' && st === 'MUY ALTO') || (r.label === 'Alto' && st === 'ALTO') || (r.label === 'Ideal' && st === 'IDEAL') || (r.label === 'Bajo' && st === 'BAJO');
+    const card = document.createElement('div');
+    card.className = 'reco-card';
+    card.style.opacity = active ? '1' : '0.55';
+    if (active) card.style.borderColor = 'var(--accent-25)';
+    card.innerHTML =
+      '<div class="reco-icon ' + r.color + '">' + r.icon + '</div>' +
+      '<div><h4>' + r.label + '</h4><p>' + r.msg + '</p></div>';
+    list.appendChild(card);
+  });
+}
+
+async function refresh() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('reloading');
+  try {
+    const [latest, mediciones] = await Promise.all([
+      fetchJson('ultima'),
+      fetchJson('mediciones')
+    ]);
+    renderLatest(latest);
+    if (Array.isArray(mediciones) && mediciones.length) {
+      renderChart(mediciones);
+      const st = vpdStatus(parseFloat(latest.vpd) || 0);
+      renderRecoList(st);
+    } else {
+      document.getElementById('tempChart').getContext('2d');
+      renderRecoList('IDEAL');
+    }
+  } catch (err) {
+    console.warn('fetch failed:', err);
+    document.getElementById('lastUpdate').textContent = 'Sin conexión con el sensor';
+  }
+  btn.classList.remove('reloading');
+}
+
+refresh();
+setInterval(refresh, REFRESH_MS);
+document.getElementById('refreshBtn').addEventListener('click', refresh);
+</script>
+</body>
+</html>
