@@ -625,45 +625,41 @@
     }
 
     /* ── Sectores ── */
-    .sectores-grid {
+    .sectores-grid-v2 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 16px;
     }
-
-    .sector-card {
+    .sector-card-v2 {
       background: var(--surface);
       border-radius: var(--radius-md);
-      padding: 28px;
+      padding: 20px 16px;
       border: 1px solid var(--text-dark-10);
+      display: flex;
+      align-items: center;
+      gap: 12px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .sector-card:hover {
-      transform: translateY(-3px);
+    .sector-card-v2:hover {
+      transform: translateY(-2px);
       box-shadow: var(--shadow-hover);
     }
-
-    .sector-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+    .sector-icon-v2 {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
       background: rgba(13,242,201,0.10);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16px;
-      font-size: 22px;
+      font-size: 20px;
+      flex-shrink: 0;
     }
-
-    .sector-card h3 {
-      color: var(--text-dark);
-      margin-bottom: 8px;
-      font-size: 17px;
-    }
-    .sector-card p {
-      color: var(--text-dark-60);
+    .sector-card-v2 span {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
       font-size: 14px;
-      line-height: 1.6;
+      color: var(--text-dark);
     }
 
     .sectores-extra {
@@ -1044,7 +1040,7 @@
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
     <a href="/" class="logo">
-      <img src="quickt-logo-lockup.png" alt="Quick-T" style="height: 32px; width: auto; display: block;" />
+      <img src="quickt-logo-nav.png" alt="Quick-T" style="height: 36px; width: auto; display: block;" />
     </a>
 
     <nav class="nav-links" id="mainNav">
@@ -1198,31 +1194,38 @@
   <div class="container">
     <div class="section-label fade-in">Sectores</div>
     <div class="section-intro fade-in">
-      <h2>Diseñamos para todos los sectores</h2>
+      <h2>Para quien operamos</h2>
     </div>
 
-    <div class="sectores-grid">
-      <!-- Industrias -->
-      <div class="sector-card fade-in">
-        <div class="sector-icon">🏭</div>
-        <h3>Industrias</h3>
+    <div class="sectores-grid-v2">
+      <div class="sector-card-v2 fade-in">
+        <div class="sector-icon-v2">🏗️</div>
+        <span>Construcción y obras</span>
       </div>
-
-      <!-- Agro -->
-      <div class="sector-card fade-in">
-        <div class="sector-icon">🌾</div>
-        <h3>Agro</h3>
+      <div class="sector-card-v2 fade-in">
+        <div class="sector-icon-v2">🏪</div>
+        <span>Retail y tiendas</span>
       </div>
-
-      <!-- Retail -->
-      <div class="sector-card fade-in">
-        <div class="sector-icon">🏪</div>
-        <h3>Retail</h3>
+      <div class="sector-card-v2 fade-in">
+        <div class="sector-icon-v2">🏢</div>
+        <span>Oficinas y servicios</span>
+      </div>
+      <div class="sector-card-v2 fade-in">
+        <div class="sector-icon-v2">🌾</div>
+        <span>Agricultura</span>
+      </div>
+      <div class="sector-card-v2 fade-in">
+        <div class="sector-icon-v2">🚚</div>
+        <span>Logística y almacenes</span>
+      </div>
+      <div class="sector-card-v2 fade-in">
+        <div class="sector-icon-v2">⚡</div>
+        <span>Energía y utilities</span>
       </div>
     </div>
 
     <div class="sectores-extra fade-in">
-      Si tu sector está en la lista, hablemos, tenemos algo que se ajusta a tu operación.
+      Tu operación, nuestro modelo. Si tu sector está en la lista, te ayudamos.
     </div>
   </div>
 </section>
@@ -1419,8 +1422,10 @@
       window.addEventListener('scroll', function() {
         if (window.scrollY > 20) {
           header.style.padding = '0';
+          header.style.background = 'rgba(10,31,68,0.98)'; // navy sólido al scrollear
         } else {
           header.style.padding = '';
+          header.style.background = '';
         }
       }, { passive: true });
     }
