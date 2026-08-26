@@ -13,41 +13,50 @@
   <style>
     /* ═══════════════════════════════════════════════════════════
        QUICK-T — LANDING CORPORATIVA
-       Paleta Esmeralda · Tipografía Space Grotesk + Inter
+       Paleta Mint · Navy · Tipografía Space Grotesk + Inter
        ═══════════════════════════════════════════════════════════ */
 
     :root {
       /* ── Superficies ── */
-      --bg:         #0F172A;  /* Deep Navy — fondo de página */
-      --surface:    #1A1D23;  /* Quick Charcoal — tarjetas, paneles, cards */
-      --surface-alt:#22272E;  /* Charcoal más claro — hover, filas alternas */
+      --bg:         #0A1F44;  /* Navy — fondo hero/demo */
+      --bg-light:   #F8FAFC;  /* fondo secciones claras */
+      --surface:    #FFFFFF;  /* cards sobre fondo claro */
+      --surface-alt:#E2E8F0;  /* card "próximamente" */
 
-      /* ── Texto ── */
-      --text:       #F8FAFC;  /* Cloud White — texto principal, headings */
+      /* ── Texto sobre fondo oscuro ── */
+      --text:       #F8FAFC;  /* Cloud White */
       --text-90:    rgba(248,250,252,0.90);
-      --text-60:    rgba(248,250,252,0.60);  /* texto secundario */
-      --text-40:    rgba(248,250,252,0.40);  /* texto terciario, placeholders */
+      --text-60:    rgba(248,250,252,0.60);
+      --text-40:    rgba(248,250,252,0.40);
       --text-20:    rgba(248,250,252,0.20);
       --text-10:    rgba(248,250,252,0.10);
       --text-05:    rgba(248,250,252,0.05);
 
+      /* ── Texto sobre fondo claro ── */
+      --text-dark:      #0F172A;
+      --text-dark-80:   rgba(15,23,42,0.80);
+      --text-dark-60:   rgba(15,23,42,0.60);
+      --text-dark-40:   rgba(15,23,42,0.40);
+      --text-dark-10:   rgba(15,23,42,0.10);
+      --text-dark-05:   rgba(15,23,42,0.05);
+
       /* ── Acento y alerta ── */
-      --accent:     #10B981;  /* Quick Emerald — CTAs, interactivo, enlaces */
-      --accent-hover:#059669; /* Emerald hover */
-      --accent-25:  rgba(16,185,129,0.25);
-      --accent-15:  rgba(16,185,129,0.15);
-      --accent-10:  rgba(16,185,129,0.10);
-      --alert:      #F43F5E;  /* Alert Rose — alertas, urgencias */
+      --accent:     #0DF2C9;  /* Quick Mint */
+      --accent-hover:#0AC9A8; /* Mint hover */
+      --accent-25:  rgba(13,242,201,0.25);
+      --accent-15:  rgba(13,242,201,0.15);
+      --accent-10:  rgba(13,242,201,0.10);
+      --alert:      #F43F5E;  /* Alert Rose */
       --alert-25:   rgba(244,63,94,0.25);
       --alert-15:   rgba(244,63,94,0.15);
 
       /* ── Sombras ── */
-      --shadow-card:  0 1px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
-      --shadow-hover: 0 8px 30px rgba(0,0,0,0.35);
-      --shadow-emerald: 0 4px 20px rgba(16,185,129,0.20);
-      --shadow-lg:    0 20px 60px rgba(0,0,0,0.40);
+      --shadow-card:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.10);
+      --shadow-mint:  0 4px 20px rgba(13,242,201,0.20);
+      --shadow-lg:    0 20px 60px rgba(0,0,0,0.15);
 
-      /* ── Radios (iguales en todas) ── */
+      /* ── Radios ── */
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
@@ -55,7 +64,8 @@
       --radius-full: 999px;
 
       /* ── Layout ── */
-      --max-width: 1120px;
+      --max-width: 1200px;
+      --side-margin: 120px;
       --header-h: 68px;
     }
 
@@ -117,10 +127,18 @@
     }
     .section-intro h2 { margin-bottom: 8px; }
     .section-intro p {
-      color: var(--text-60);
       font-size: 16px;
       line-height: 1.6;
     }
+
+    /* Heading color overrides for light/dark sections */
+    .section-dark h1, .section-dark h2, .section-dark h3, .section-dark h4 { color: var(--text); }
+    .section-dark .section-intro p { color: var(--text-60); }
+    .section-dark .section-label { color: var(--accent); }
+
+    .section-light h1, .section-light h2, .section-light h3, .section-light h4 { color: var(--text-dark); }
+    .section-light .section-intro p { color: var(--text-dark-60); }
+    .section-light .section-label { color: var(--accent); }
 
     /* ── Buttons ── */
     .btn {
@@ -144,11 +162,11 @@
 
     .btn-primary {
       background: var(--accent);
-      color: var(--bg);
+      color: #0A1F44;
     }
     .btn-primary:hover {
       background: var(--accent-hover);
-      box-shadow: var(--shadow-emerald);
+      box-shadow: var(--shadow-mint);
     }
 
     .btn-outline {
@@ -160,14 +178,6 @@
       background: var(--accent-15);
       border-color: var(--accent-hover);
       color: var(--accent-hover);
-    }
-
-    .btn-white {
-      background: var(--surface);
-      color: var(--bg);
-    }
-    .btn-white:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
 
     .btn-ghost-light {
@@ -200,7 +210,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(15,23,42,0.88);
+      background: rgba(10,31,68,0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -224,7 +234,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
       font-size: 18px;
-      color: var(--text);
+      color: #FFFFFF;
       flex-shrink: 0;
     }
     .logo-mark {
@@ -239,7 +249,7 @@
     .logo-mark svg {
       width: 20px;
       height: 20px;
-      fill: var(--bg);
+      fill: #0A1F44;
     }
 
     /* Nav */
@@ -260,7 +270,7 @@
 
     .nav-cta {
       background: var(--accent);
-      color: var(--bg) !important;
+      color: #0A1F44 !important;
       padding: 8px 18px;
       border-radius: var(--radius-sm);
       font-weight: 600 !important;
@@ -335,14 +345,13 @@
       overflow: hidden;
     }
 
-    /* Geometric pattern overlay */
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse at 70% 30%, rgba(16,185,129,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 30% 70%, rgba(16,185,129,0.05) 0%, transparent 50%);
+        radial-gradient(ellipse at 70% 30%, rgba(13,242,201,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 70%, rgba(13,242,201,0.06) 0%, transparent 50%);
       pointer-events: none;
     }
 
@@ -401,70 +410,47 @@
       justify-content: center;
     }
 
-    .hero-placeholder {
+    .hero-visual img {
       width: 100%;
-      aspect-ratio: 4/3;
       border-radius: var(--radius-lg);
-      background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.04) 50%, rgba(255,255,255,0.03) 100%);
-      border: 1px solid var(--text-10);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-placeholder::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 30% 40%, rgba(16,185,129,0.15) 0%, transparent 50%),
-        radial-gradient(circle at 70% 60%, rgba(16,185,129,0.08) 0%, transparent 40%);
-    }
-
-    .hero-placeholder-icon {
-      font-size: 64px;
-      position: relative;
-      z-index: 1;
-      filter: grayscale(0.3);
-    }
-
-    .hero-placeholder-label {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 12px;
-      color: var(--text-60);
-      margin-top: 8px;
-      position: relative;
-      z-index: 1;
+      box-shadow: var(--shadow-lg);
     }
 
     /* ════════════════════════════════════════════
-       SECTIONS
+       SECTIONS — base
        ════════════════════════════════════════════ */
     section {
       padding: 80px 24px;
     }
 
-    /* ── Cómo lo resolvemos ── */
-    .tres-capas {
-      background: var(--surface);
+    /* ── Light section wrapper ── */
+    .section-light {
+      background: var(--bg-light);
     }
 
+    /* ── Dark section wrapper ── */
+    .section-dark {
+      background: var(--bg);
+    }
+
+    /* ── Cómo lo resolvemos (Acerca) ── */
     .cards-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
+      max-width: calc(3 * 378.67px + 2 * 24px); /* 1184px ≈ fits 1200 */
+      margin: 0 auto;
     }
 
     .card-icon {
       background: var(--surface);
       border-radius: var(--radius-md);
       padding: 32px 28px;
-      border: 1px solid var(--text-10);
+      border: 1px solid var(--text-dark-10);
       display: flex;
       flex-direction: column;
+      width: 378.67px;
+      height: 298px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
     .card-icon:hover {
@@ -477,7 +463,7 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: var(--accent-15);
+      background: rgba(13,242,201,0.10);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -492,9 +478,12 @@
       stroke-width: 1.75;
     }
 
-    .card-icon h3 { margin-bottom: 8px; }
+    .card-icon h3 {
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
     .card-icon p {
-      color: var(--text-60);
+      color: var(--text-dark-60);
       font-size: 14px;
       line-height: 1.6;
       flex: 1;
@@ -505,40 +494,245 @@
       text-align: center;
     }
 
-    /* ── Producto en acción — Asistenc-IA ── */
-    .asistencia-ia {
-      background: var(--bg);
-    }
-
-    .asistencia-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 56px;
+    /* ── Productos ── */
+    .productos-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
       align-items: center;
     }
 
-    .asistencia-text h2 { margin-bottom: 12px; }
-    .asistencia-text p {
-      color: var(--text-60);
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 16px;
+    /* Asistenc-IA card — 634×339 */
+    .producto-card-featured {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      border: 2px solid var(--accent);
+      box-shadow: 0 4px 24px rgba(13,242,201,0.12);
+      width: 634px;
+      min-height: 339px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .asistencia-quote {
-      border-left: 3px solid var(--accent);
-      padding-left: 16px;
-      margin: 20px 0;
-      color: var(--text-60);
-      font-size: 14px;
+    .producto-card-featured:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(13,242,201,0.18);
+    }
+
+    .producto-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+      align-self: flex-start;
+      color: var(--accent);
+    }
+    .producto-badge .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      background: var(--accent);
+    }
+
+    .producto-badge.coming {
+      color: var(--text-dark-60);
+    }
+    .producto-badge.coming .badge-dot {
+      background: var(--text-dark-40);
+    }
+
+    .producto-card-featured h3 {
+      color: var(--text-dark);
+      margin-bottom: 4px;
+      font-size: 22px;
+    }
+    .producto-card-featured .producto-tagline {
+      font-size: 15px;
+      color: var(--text-dark-60);
+      margin-bottom: 20px;
       font-style: italic;
+    }
+    .producto-features {
+      flex: 1;
+      margin-bottom: 24px;
+    }
+    .producto-features li {
+      font-size: 14px;
+      color: var(--text-dark-80);
+      padding: 7px 0;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .producto-features li::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .producto-card-featured .btn-arrow {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Gastro / Hogar cards row */
+    .productos-sub-row {
+      display: flex;
+      gap: 24px;
+    }
+
+    .producto-card-soon {
+      background: #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      width: 534px;
+      height: 115px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 1px solid rgba(15,23,42,0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .producto-card-soon:hover {
+      transform: translateY(-2px);
+    }
+
+    .producto-card-soon h3 {
+      color: var(--text-dark);
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    .producto-card-soon .producto-tagline {
+      font-size: 13px;
+      color: var(--text-dark-60);
+      font-style: italic;
+    }
+
+    /* ── Sectores ── */
+    .sectores-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .sector-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      border: 1px solid var(--text-dark-10);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sector-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .sector-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(13,242,201,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 22px;
+    }
+
+    .sector-card h3 {
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+    .sector-card p {
+      color: var(--text-dark-60);
+      font-size: 14px;
       line-height: 1.6;
     }
 
-    /* Dashboard mockup (CSS only) */
-    .dashboard-mock {
-      background: var(--surface);
+    .sectores-extra {
+      text-align: center;
+      margin-top: 32px;
+      padding: 20px;
+      background: rgba(13,242,201,0.08);
+      border-radius: var(--radius-md);
+      color: var(--text-dark);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ── Demo ── */
+    .demo {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .demo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(13,242,201,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 100%, rgba(13,242,201,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .demo-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .demo-header {
+      margin-bottom: 48px;
+    }
+    .demo-header h2 {
+      color: var(--text);
+      font-size: clamp(24px, 4vw, 36px);
+      margin-bottom: 12px;
+    }
+    .demo-header .demo-tagline {
+      color: var(--text-60);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .demo-images {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .demo-mock {
+      flex: 1;
+      max-width: 560px;
+      min-width: 320px;
+    }
+    .demo-mock img {
+      width: 100%;
       border-radius: var(--radius-lg);
-      border: 1px solid var(--text-10);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Dashboard mockup (CSS only) — kept for demo section */
+    .dashboard-mock {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--text-dark-10);
       box-shadow: var(--shadow-lg);
       overflow: hidden;
       font-size: 12px;
@@ -549,8 +743,8 @@
       align-items: center;
       gap: 8px;
       padding: 12px 16px;
-      background: var(--surface);
-      color: var(--text);
+      background: #F1F5F9;
+      color: var(--text-dark);
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 600;
       font-size: 13px;
@@ -569,7 +763,7 @@
       margin-bottom: 16px;
     }
     .dash-metric {
-      background: var(--bg);
+      background: #F8FAFC;
       border-radius: var(--radius-sm);
       padding: 12px;
       text-align: center;
@@ -578,11 +772,11 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 22px;
       font-weight: 700;
-      color: var(--text);
+      color: var(--text-dark);
     }
     .dash-metric .label {
       font-size: 10px;
-      color: var(--text-60);
+      color: var(--text-dark-60);
       margin-top: 2px;
     }
 
@@ -596,16 +790,17 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 10px;
       font-weight: 600;
-      color: var(--text-60);
+      color: var(--text-dark-60);
       text-transform: uppercase;
       letter-spacing: 0.04em;
       padding: 8px 8px 6px;
-      border-bottom: 1px solid var(--text-10);
+      border-bottom: 1px solid var(--text-dark-10);
     }
     .dash-table td {
       padding: 8px;
       font-size: 12px;
-      border-bottom: 1px solid var(--text-05);
+      color: var(--text-dark);
+      border-bottom: 1px solid var(--text-dark-05);
     }
     .dash-table .status-dot {
       display: inline-block;
@@ -636,7 +831,7 @@
       height: 22px;
       border-radius: 50%;
       background: var(--alert);
-      color: var(--text);
+      color: #FFFFFF;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -647,6 +842,7 @@
     .dash-alert-text {
       font-size: 11px;
       line-height: 1.5;
+      color: var(--text-dark);
     }
     .dash-alert-text strong {
       color: var(--alert);
@@ -662,154 +858,6 @@
       cursor: pointer;
     }
 
-    /* ── Sectores ── */
-    .sectores {
-      background: var(--surface);
-    }
-
-    .sectores-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .sector-card {
-      background: var(--bg);
-      border-radius: var(--radius-md);
-      padding: 28px;
-      border: 1px solid var(--text-10);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .sector-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .sector-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: var(--accent-15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      font-size: 22px;
-    }
-
-    .sector-card h3 {
-      margin-bottom: 8px;
-      font-size: 17px;
-    }
-    .sector-card p {
-      color: var(--text-60);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .sectores-extra {
-      text-align: center;
-      margin-top: 32px;
-      padding: 20px;
-      background: var(--accent-15);
-      border-radius: var(--radius-md);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* ── Productos ── */
-    .productos {
-      background: var(--bg);
-    }
-
-    .productos-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .producto-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      border: 1px solid var(--text-10);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-    .producto-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .producto-card.featured {
-      border: 2px solid var(--accent);
-      box-shadow: 0 4px 24px rgba(16,185,129,0.10);
-    }
-
-    .producto-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 16px;
-      align-self: flex-start;
-    }
-    .producto-badge.available {
-      color: var(--accent);
-    }
-    .producto-badge.coming {
-      color: var(--text-60);
-    }
-    .producto-badge .badge-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .producto-badge.available .badge-dot { background: var(--accent); }
-    .producto-badge.coming .badge-dot { background: var(--text-20); }
-
-    .producto-card h3 { margin-bottom: 4px; }
-    .producto-card .producto-tagline {
-      font-size: 14px;
-      color: var(--text-60);
-      margin-bottom: 16px;
-      font-style: italic;
-    }
-    .producto-features {
-      flex: 1;
-      margin-bottom: 20px;
-    }
-    .producto-features li {
-      font-size: 13px;
-      color: var(--text-60);
-      padding: 6px 0;
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-    .producto-features li::before {
-      content: '';
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--accent);
-      margin-top: 6px;
-      flex-shrink: 0;
-    }
-
-    .producto-card.muted {
-      opacity: 0.65;
-      background: var(--bg);
-    }
-    .producto-card.muted:hover { opacity: 0.85; }
-
     /* ════════════════════════════════════════════
        CTA FINAL
        ════════════════════════════════════════════ */
@@ -823,8 +871,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.10) 0%, transparent 60%),
-        radial-gradient(ellipse at 30% 100%, rgba(16,185,129,0.06) 0%, transparent 50%);
+        radial-gradient(ellipse at 50% 0%, rgba(13,242,201,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 100%, rgba(13,242,201,0.06) 0%, transparent 50%);
       pointer-events: none;
     }
 
@@ -909,6 +957,28 @@
     /* ════════════════════════════════════════════
        RESPONSIVE
        ════════════════════════════════════════════ */
+    @media (max-width: 1200px) {
+      .card-icon {
+        width: auto;
+        height: auto;
+        min-height: 260px;
+      }
+      .producto-card-featured {
+        width: 100%;
+        max-width: 634px;
+      }
+      .producto-card-soon {
+        width: 100%;
+        max-width: 534px;
+      }
+      .productos-sub-row {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 634px;
+      }
+    }
+
     @media (max-width: 900px) {
       .hero-inner {
         grid-template-columns: 1fr;
@@ -917,12 +987,18 @@
       }
       .hero-content { max-width: 100%; }
       .hero-visual { order: -1; }
-      .hero-placeholder { aspect-ratio: 16/9; max-width: 420px; }
+      .hero-visual img { max-width: 420px; margin: 0 auto; }
 
       .cards-3 { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
-      .asistencia-grid { grid-template-columns: 1fr; gap: 40px; }
+      .card-icon { width: 100%; height: auto; min-height: 220px; }
+
       .sectores-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
-      .productos-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .productos-wrapper { max-width: 100%; }
+      .producto-card-featured { width: 100%; min-height: auto; }
+      .producto-card-soon { width: 100%; height: auto; min-height: 100px; }
+      .productos-sub-row { flex-direction: column; width: 100%; }
+
+      .demo-images { flex-direction: column; align-items: center; }
 
       section { padding: 56px 24px; }
     }
@@ -937,6 +1013,8 @@
       .dash-metric-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .dash-metric { padding: 10px 8px; }
       .dash-metric .value { font-size: 18px; }
+
+      .producto-card-featured { padding: 28px 24px; }
     }
 
     @media (max-width: 480px) {
@@ -949,7 +1027,7 @@
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .fade-in { transition: none; opacity: 1; transform: none; }
-      .btn, .card-icon, .sector-card, .producto-card { transition: none; }
+      .btn, .card-icon, .sector-card, .producto-card-featured, .producto-card-soon { transition: none; }
     }
   </style>
 </head>
@@ -968,12 +1046,10 @@
     </a>
 
     <nav class="nav-links" id="mainNav">
-      <a href="#sobre">Sobre</a>
-      <a href="#como-funciona">Cómo Funciona</a>
-      <a href="#sectores">Sectores</a>
+      <a href="#como-funciona">Acerca</a>
       <a href="#productos">Productos</a>
-      <a href="#contacto">Contacto</a>
-      <a href="#cta-final" class="nav-cta">Empezar</a>
+      <a href="#sectores">Sectores</a>
+      <a href="#demo">Demo</a>
     </nav>
 
     <button class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
@@ -985,19 +1061,17 @@
 
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#sobre">Sobre</a>
-    <a href="#como-funciona">Cómo Funciona</a>
-    <a href="#sectores">Sectores</a>
+    <a href="#como-funciona">Acerca</a>
     <a href="#productos">Productos</a>
-    <a href="#contacto">Contacto</a>
-    <a href="#cta-final" class="nav-cta">Empezar</a>
+    <a href="#sectores">Sectores</a>
+    <a href="#demo">Demo</a>
   </div>
 </header>
 
 <!-- ════════════════════════════════════════════
      HERO
      ════════════════════════════════════════════ -->
-<section class="hero" id="sobre">
+<section class="hero section-dark" id="sobre">
   <div class="hero-grid"></div>
   <div class="hero-inner">
     <div class="hero-content fade-in">
@@ -1005,25 +1079,22 @@
       <p>Quick-T diseña, despliega y opera agentes de IA con hardware integrado para agilizar tu operación.</p>
       <div class="hero-buttons">
         <a href="#como-funciona" class="btn btn-primary">Conoce más</a>
-        <a href="#como-funciona" class="btn-arrow">
+        <a href="#demo" class="btn-arrow">
           Ver cómo funciona
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg>
         </a>
       </div>
     </div>
     <div class="hero-visual fade-in">
-      <div class="hero-placeholder">
-        <div class="hero-placeholder-icon">🏢</div>
-        <div class="hero-placeholder-label">Oficina Quick-T</div>
-      </div>
+      <img src="quickt_landing_hero_v4_darkblue.jpg" alt="Quick-T: hardware y agente IA en acción" />
     </div>
   </div>
 </section>
 
 <!-- ════════════════════════════════════════════
-     CÓMO LO RESOLVEMOS — Tres capas
+     ACERCA — Cómo lo resolvemos
      ════════════════════════════════════════════ -->
-<section class="tres-capas" id="como-funciona">
+<section class="section-light" id="como-funciona">
   <div class="container">
     <div class="section-label fade-in">Cómo lo resolvemos</div>
     <div class="section-intro fade-in">
@@ -1031,31 +1102,31 @@
     </div>
 
     <div class="cards-3">
-      <!-- Card 1 -->
+      <!-- Card 1: Hardware -->
       <div class="card-icon fade-in">
         <div class="card-icon-circle">
           <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
-        <h3>Hardware a la medida</h3>
-        <p>Lectores, pantallas, dispositivos NFC diseñados para cómo trabaja tu industria.</p>
+        <h3>Hardware</h3>
+        <p>Dispositivos físicos con identificación sin fricción, diseñados a la medida de cada industria integrados con inteligencia artificial</p>
       </div>
 
-      <!-- Card 2 -->
+      <!-- Card 2: Agentes que automatizan -->
       <div class="card-icon fade-in">
         <div class="card-icon-circle">
           <svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 014 4v2h2a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V10a2 2 0 012-2h2V6a4 4 0 014-4zm0 2a2 2 0 00-2 2v2h4V6a2 2 0 00-2-2z"/></svg>
         </div>
         <h3>Agentes que automatizan</h3>
-        <p>Equipos de IA especializados que registran, trazan, alertan y reportan.</p>
+        <p>Equipos de agentes especializados que automatizan procesos operativos — registro, trazabilidad, alertas, reportes</p>
       </div>
 
-      <!-- Card 3 -->
+      <!-- Card 3: Control en un solo lugar -->
       <div class="card-icon fade-in">
         <div class="card-icon-circle">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <h3>Control en un solo lugar</h3>
-        <p>Un monitoreo donde ves todo en vivo: lo que pasa, lo que falta, lo que necesita tu atención. Toma decisiones con datos reales.</p>
+        <p>Un solo lugar donde tienes control real de tu operación: datos en tiempo real, métricas, toma de decisiones</p>
       </div>
     </div>
 
@@ -1066,95 +1137,52 @@
 </section>
 
 <!-- ════════════════════════════════════════════
-     PRODUCTO EN ACCIÓN — Asistenc-IA
+     PRODUCTOS
      ════════════════════════════════════════════ -->
-<section class="asistencia-ia">
+<section class="section-light" id="productos">
   <div class="container">
-    <div class="section-label fade-in">Producto en acción</div>
+    <div class="section-label fade-in">Nuestros Productos</div>
     <div class="section-intro fade-in">
-      <h2>Asistenc-IA</h2>
+      <h2>Encuentra una solución para tu negocio</h2>
     </div>
 
-    <div class="asistencia-grid">
-      <div class="asistencia-text fade-in">
-        <p>Control de asistencia en hardware y agentes inteligentes que te alertan antes de que surja un problema.</p>
-
-        <div class="asistencia-quote">
-          Cada marcación queda registrada. Cada anomalía se detecta. Cada alerta llega cuando podés actuar.
-        </div>
-
-        <a href="#" class="btn btn-primary" style="margin-top: 8px;">Iniciar prueba</a>
+    <div class="productos-wrapper">
+      <!-- Asistenc-IA — Featured 634×339 -->
+      <div class="producto-card-featured fade-in">
+        <span class="producto-badge">
+          <span class="badge-dot"></span> Nuevo
+        </span>
+        <h3>Asistenc-IA — Control de asistencia</h3>
+        <p class="producto-tagline">Registros de asistencia al instante. Deja las planillas atrás.</p>
+        <ul class="producto-features">
+          <li>Hardware que permite la toma de datos en campo</li>
+          <li>Equipo de IA que registran entradas/salidas, detecta anomalías, genera reportes</li>
+          <li>Panel web sincronizado en tiempo real</li>
+        </ul>
+        <a href="#demo" class="btn-arrow">
+          Conocé Asistenc-IA
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg>
+        </a>
       </div>
 
-      <!-- Dashboard mockup -->
-      <div class="dashboard-mock fade-in">
-        <div class="dash-header">
-          <span class="dot red"></span>
-          <span class="dot amber"></span>
-          <span class="dot green"></span>
-          <span style="margin-left: 8px;">Asistenc-IA · Monitor en tiempo real</span>
+      <!-- Row: Gastro + Hogar -->
+      <div class="productos-sub-row fade-in">
+        <!-- Gastro — 534×115 -->
+        <div class="producto-card-soon">
+          <span class="producto-badge coming">
+            <span class="badge-dot"></span> Próximamente
+          </span>
+          <h3>Gastro</h3>
+          <p class="producto-tagline">Optimiza la toma de pedidos en tu negocio e incrementa tus ventas</p>
         </div>
-        <div class="dash-body">
-          <!-- Metrics -->
-          <div class="dash-metric-row">
-            <div class="dash-metric">
-              <div class="value">24</div>
-              <div class="label">Presentes hoy</div>
-            </div>
-            <div class="dash-metric">
-              <div class="value">3</div>
-              <div class="label">Pendientes</div>
-            </div>
-            <div class="dash-metric">
-              <div class="value">1</div>
-              <div class="label">Alertas activas</div>
-            </div>
-          </div>
 
-          <!-- Table -->
-          <table class="dash-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Entrada</th>
-                <th>Salida</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="status-dot ok"></span> María Gómez</td>
-                <td>07:58</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td><span class="status-dot ok"></span> Carlos Ruiz</td>
-                <td>08:02</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td><span class="status-dot ok"></span> Ana López</td>
-                <td>07:45</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td><span class="status-dot miss"></span> Juan Martínez</td>
-                <td class="time-miss">—</td>
-                <td>—</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Alert -->
-          <div class="dash-alert">
-            <div class="dash-alert-icon">!</div>
-            <div>
-              <div class="dash-alert-text">
-                <strong>Juan no marcó entrada a las 9:30</strong><br>
-                El agente detectó una ausencia en el turno programado.
-              </div>
-              <div class="dash-alert-action">→ Notificar supervisor</div>
-            </div>
-          </div>
+        <!-- Hogar — 534×115 -->
+        <div class="producto-card-soon">
+          <span class="producto-badge coming">
+            <span class="badge-dot"></span> Próximamente
+          </span>
+          <h3>Hogar</h3>
+          <p class="producto-tagline">Soluciones para tu hogar.</p>
         </div>
       </div>
     </div>
@@ -1164,96 +1192,131 @@
 <!-- ════════════════════════════════════════════
      SECTORES
      ════════════════════════════════════════════ -->
-<section class="sectores" id="sectores">
+<section class="section-light" id="sectores">
   <div class="container">
     <div class="section-label fade-in">Sectores</div>
     <div class="section-intro fade-in">
-      <h2>Para quien operamos</h2>
+      <h2>Diseñamos para todos los sectores</h2>
     </div>
 
     <div class="sectores-grid">
-      <!-- Construcción -->
+      <!-- Industrias -->
       <div class="sector-card fade-in">
-        <div class="sector-icon">🏗️</div>
-        <h3>Construcción y obras</h3>
-        <p>Jornadas variables, múltiples turnos, trabajadores en distintas sedes. Nuestro hardware aguanta el mundo real.</p>
+        <div class="sector-icon">🏭</div>
+        <h3>Industrias</h3>
+        <p>Plantas de producción, manufactura, control de turnos y trazabilidad de personal en ambientes exigentes.</p>
+      </div>
+
+      <!-- Agro -->
+      <div class="sector-card fade-in">
+        <div class="sector-icon">🌾</div>
+        <h3>Agro</h3>
+        <p>Jornaleros, cuadrillas, cosecha — registro ágil en campo sin depender de conectividad permanente.</p>
       </div>
 
       <!-- Retail -->
       <div class="sector-card fade-in">
         <div class="sector-icon">🏪</div>
-        <h3>Retail y tiendas</h3>
-        <p>Equipos que rotan, horarios pico, supervisores que no pueden estar en todas las sedes. El monitoreo te centraliza.</p>
-      </div>
-
-      <!-- Oficinas -->
-      <div class="sector-card fade-in">
-        <div class="sector-icon">🏢</div>
-        <h3>Oficinas y servicios</h3>
-        <p>Asistencia limpia, horarios flexibles, datos para liquidación. El set-up que se acomoda a cómo trabajás.</p>
+        <h3>Retail</h3>
+        <p>Equipos que rotan, múltiples sedes, horarios pico. Monitoreo centralizado para tomar decisiones.</p>
       </div>
     </div>
 
     <div class="sectores-extra fade-in">
-      Tu operación, nuestro modelo. Si tu sector está en la lista, te ayudamos.
+      Si tu sector está en la lista, hablemos, tenemos algo que se ajusta a tu operación.
     </div>
   </div>
 </section>
 
 <!-- ════════════════════════════════════════════
-     NUESTROS PRODUCTOS
+     DEMO — Asistenc-IA
      ════════════════════════════════════════════ -->
-<section class="productos" id="productos">
-  <div class="container">
-    <div class="section-label fade-in">Nuestros Productos</div>
-    <div class="section-intro fade-in">
-      <h2>Tecnología que se adapta a tu operación</h2>
+<section class="demo section-dark" id="demo">
+  <div class="container demo-inner">
+    <div class="section-label fade-in">Funcionamiento</div>
+    <div class="demo-header fade-in">
+      <h2>Asistenc-IA</h2>
+      <p class="demo-tagline">Control de asistencia con hardware integrado a agentes que te permiten agilizar la toma de decisiones</p>
     </div>
 
-    <div class="productos-grid">
-      <!-- Asistenc-IA — Featured -->
-      <div class="producto-card featured fade-in">
-        <span class="producto-badge available">
-          <span class="badge-dot"></span> Disponible
-        </span>
-        <h3>Asistenc-IA</h3>
-        <p class="producto-tagline">Te avisamos lo que importa, cuando importa.</p>
-        <ul class="producto-features">
-          <li>Set-up que se acomoda a cómo trabajás</li>
-          <li>Alertas proactivas no solo reportes</li>
-          <li>Datos listos para decidir</li>
-        </ul>
-        <a href="#" class="btn btn-primary" style="width: 100%;">Conocé Asistenc-IA</a>
+    <div class="demo-images fade-in">
+      <!-- Dashboard mockup -->
+      <div class="demo-mock">
+        <div class="dashboard-mock">
+          <div class="dash-header">
+            <span class="dot red"></span>
+            <span class="dot amber"></span>
+            <span class="dot green"></span>
+            <span style="margin-left: 8px;">Asistenc-IA · Monitor en tiempo real</span>
+          </div>
+          <div class="dash-body">
+            <!-- Metrics -->
+            <div class="dash-metric-row">
+              <div class="dash-metric">
+                <div class="value">24</div>
+                <div class="label">Presentes hoy</div>
+              </div>
+              <div class="dash-metric">
+                <div class="value">3</div>
+                <div class="label">Pendientes</div>
+              </div>
+              <div class="dash-metric">
+                <div class="value">1</div>
+                <div class="label">Alertas activas</div>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Entrada</th>
+                  <th>Salida</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="status-dot ok"></span> María Gómez</td>
+                  <td>07:58</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><span class="status-dot ok"></span> Carlos Ruiz</td>
+                  <td>08:02</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><span class="status-dot ok"></span> Ana López</td>
+                  <td>07:45</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><span class="status-dot miss"></span> Juan Martínez</td>
+                  <td class="time-miss">—</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Alert -->
+            <div class="dash-alert">
+              <div class="dash-alert-icon">!</div>
+              <div>
+                <div class="dash-alert-text">
+                  <strong>Juan no marcó entrada a las 9:30</strong><br>
+                  El agente detectó una ausencia en el turno programado.
+                </div>
+                <div class="dash-alert-action">→ Notificar supervisor</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Food — Muted -->
-      <div class="producto-card muted fade-in">
-        <span class="producto-badge coming">
-          <span class="badge-dot"></span> Próximamente · En desarrollo
-        </span>
-        <h3>Food</h3>
-        <p class="producto-tagline">Pedidos ruteados a cocina sin que el mesero camine.</p>
-        <ul class="producto-features">
-          <li>Integración con punto de venta</li>
-          <li>Ruteo automático a estaciones</li>
-          <li>Notificaciones en tiempo real</li>
-        </ul>
-        <button class="btn btn-outline" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>Próximamente</button>
-      </div>
-
-      <!-- Home — Muted -->
-      <div class="producto-card muted fade-in">
-        <span class="producto-badge coming">
-          <span class="badge-dot"></span> Próximamente · En ideación
-        </span>
-        <h3>Home</h3>
-        <p class="producto-tagline">Tu hogar identificado al instante.</p>
-        <ul class="producto-features">
-          <li>Identificación inteligente</li>
-          <li>Automatización del hogar</li>
-          <li>Control desde cualquier lugar</li>
-        </ul>
-        <button class="btn btn-outline" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>Próximamente</button>
+      <!-- Hardware mock image -->
+      <div class="demo-mock">
+        <img src="quickt_hardware_mock.jpg" alt="Quick-T lector NFC — hardware" />
       </div>
     </div>
   </div>
@@ -1262,7 +1325,7 @@
 <!-- ════════════════════════════════════════════
      CTA FINAL
      ════════════════════════════════════════════ -->
-<section class="cta-final" id="cta-final">
+<section class="cta-final section-dark" id="cta-final">
   <div class="cta-final-inner fade-in">
     <h2>¿Listo para agilizar tu operación?</h2>
     <p class="cta-tagline">El ritmo de tu negocio, acelerado por tecnología ágil</p>
@@ -1273,10 +1336,10 @@
 <!-- ════════════════════════════════════════════
      CONTACTO
      ════════════════════════════════════════════ -->
-<section id="contacto" style="background: var(--surface); color: var(--text); padding: 48px 24px;">
+<section id="contacto" class="section-light" style="padding: 48px 24px;">
   <div class="container" style="text-align: center;">
-    <h2 style="color: var(--text); margin-bottom: 8px;">Contacto</h2>
-    <p style="color: var(--text-60); margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto;">
+    <h2 style="color: var(--text-dark); margin-bottom: 8px;">Contacto</h2>
+    <p style="color: var(--text-dark-60); margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto;">
       ¿Tenés preguntas o querés conocer más? Escribinos y conversemos sobre cómo Quick-T puede ayudarte.
     </p>
     <a href="mailto:contacto@quick-t.co" class="btn btn-primary">contacto@quick-t.co</a>
@@ -1292,8 +1355,8 @@
       © 2026 Quick-T · Tecnología ágil para tu operación
     </div>
     <div class="footer-links">
-      <a href="#productos">Producto</a>
-      <a href="#sobre">Sobre Quick-T</a>
+      <a href="#productos">Productos</a>
+      <a href="#como-funciona">Acerca</a>
       <a href="#contacto">Contacto</a>
       <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
     </div>
