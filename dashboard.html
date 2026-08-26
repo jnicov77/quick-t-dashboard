@@ -11,11 +11,11 @@
 
   <style>
     /* =========================================================
-       PALETA ESMERALDA v3.0 — Quick-T Dark Theme
-         --bg:      #0F172A (fondo de página)
+       PALETA MINT v3.1 — Quick-T Dark Theme
+         --bg:      #0A1F44 (fondo de página)
          --surface: #1A1D23 (tarjetas, paneles)
          --text:    #F8FAFC (texto principal)
-         --accent:  #10B981 (CTAs, interactivo)
+         --accent:  #0DF2C9 (CTAs, interactivo)
          --alert:   #F43F5E (alertas, urgencias)
        Regla 60-25-10-4-1
        Tipografía: Space Grotesk (titulares, métricas) + Inter (cuerpo)
@@ -23,7 +23,7 @@
        ========================================================= */
     :root {
       /* ── Superficies ── */
-      --bg:         #0F172A;  /* Deep Navy — fondo de página */
+      --bg:         #0A1F44;  /* Navy — fondo de página */
       --surface:    #1A1D23;  /* Quick Charcoal — tarjetas, paneles, cards */
       --surface-alt:#22272E;  /* Charcoal más claro — hover, filas alternas */
 
@@ -37,11 +37,11 @@
       --text-05:    rgba(248,250,252,0.05);
 
       /* ── Acento y alerta ── */
-      --accent:     #10B981;  /* Quick Emerald — CTAs, interactivo, enlaces */
-      --accent-hover:#059669; /* Emerald hover */
-      --accent-25:  rgba(16,185,129,0.25);
-      --accent-15:  rgba(16,185,129,0.15);
-      --accent-10:  rgba(16,185,129,0.10);
+      --accent:     #0DF2C9;  /* Quick Mint — CTAs, interactivo, enlaces */
+      --accent-hover:#00d4b0; /* Mint hover */
+      --accent-25:  rgba(0,223,201,0.25);
+      --accent-15:  rgba(0,223,201,0.15);
+      --accent-10:  rgba(0,223,201,0.10);
       --alert:      #F43F5E;  /* Alert Rose — alertas, urgencias */
       --alert-25:   rgba(244,63,94,0.25);
       --alert-15:   rgba(244,63,94,0.15);
@@ -51,7 +51,7 @@
       /* ── Sombras ── */
       --shadow-card:  0 1px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
       --shadow-hover: 0 8px 30px rgba(0,0,0,0.35);
-      --shadow-emerald: 0 4px 20px rgba(16,185,129,0.20);
+      --shadow-emerald: 0 4px 20px rgba(0,223,201,0.20);
       --shadow-lg:    0 20px 60px rgba(0,0,0,0.40);
 
       /* ── Radios (iguales en todas) ── */
@@ -96,10 +96,10 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(15,23,42,0.88);
+      background: rgba(10,31,68,0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--text-10);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .header-inner {
       max-width: 1280px;
@@ -153,7 +153,7 @@
     .status-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.20);
+      box-shadow: 0 0 0 4px rgba(0, 223, 201, 0.20);
       animation: dotPulse 2s infinite;
     }
     @keyframes dotPulse {
@@ -505,8 +505,8 @@
     <div class="header-inner">
       <div class="logo">
         <div class="logo-mark">
-          <img src="quickt-logo-256.png" alt="Quick-T"
-               onerror="this.onerror=null;this.src='quickt-logo.png';">
+          <img src="quickt-logo-white-256.png" alt="Quick-T"
+               onerror="this.onerror=null;this.src='quickt-logo-white-256.png';">
         </div>
         <span class="logo-text">Quick-T</span>
       </div>
