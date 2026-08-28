@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick-T Lab RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   QUICK-T LAB RPG — Torre de control tipo videojuego
+   Paleta: Mint #0DF2C9 + Navy #0A1F44 + Charcoal #1A1D23
+   ============================================================ */
+
+:root {
+  --mint:        #0DF2C9;
+  --mint-dim:    #0ab896;
+  --mint-glow:   rgba(13, 242, 201, 0.25);
+  --mint-glow-strong: rgba(13, 242, 201, 0.45);
+  --navy:        #0A1F44;
+  --navy-dark:   #06142E;
+  --navy-light:  #0D2A5C;
+  --charcoal:    #1A1D23;
+  --charcoal-light: #252830;
+  --charcoal-lighter: #2F333A;
+  --text:        #E8ECF1;
+  --text-dim:    #8B95A5;
+  --card-bg:     rgba(26, 29, 35, 0.85);
+  --card-border: rgba(13, 242, 201, 0.12);
+  --radius:      16px;
+  --radius-sm:   10px;
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+  --transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--navy-dark);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── RPG Grid Background ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    /* Outer grid */
+    linear-gradient(rgba(13, 242, 201, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 242, 201, 0.04) 1px, transparent 1px),
+    /* Inner grid */
+    linear-gradient(rgba(13, 242, 201, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 242, 201, 0.015) 1px, transparent 1px),
+    /* Radial vignette */
+    radial-gradient(ellipse at 50% 0%, var(--navy-light) 0%, transparent 70%);
+  background-size:
+    80px 80px,
+    80px 80px,
+    16px 16px,
+    16px 16px,
+    100% 100%;
+  pointer-events: none;
+}
+
+/* ── Diagonal scanlines ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+}
+
+/* ── Main Container ── */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(13, 242, 201, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  height: 42px;
+  width: auto;
+  filter: drop-shadow(0 0 8px rgba(13, 242, 201, 0.3));
+}
+
+.header-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--mint);
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 20px rgba(13, 242, 201, 0.2);
+}
+
+.header-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background: rgba(13, 242, 201, 0.1);
+  border: 1px solid rgba(13, 242, 201, 0.25);
+  color: var(--mint);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ═══════════════════════════════════════════
+   MAIN LAYOUT — ZORO + Stations
+   ═══════════════════════════════════════════ */
+.main-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+/* ── ZORO Sidebar ── */
+.zoro-sidebar {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-card);
+}
+
+#zoro-sprite {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--navy-light), var(--navy-dark));
+  border: 3px solid var(--mint);
+  box-shadow:
+    0 0 20px var(--mint-glow),
+    inset 0 0 30px rgba(13, 242, 201, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  position: relative;
+  animation: zoro-idle 3s ease-in-out infinite;
+  /* Placeholder — reemplazar con <img> del sprite sheet real */
+  overflow: hidden;
+}
+
+#zoro-sprite::before {
+  content: '⚔️';
+  filter: grayscale(0.3) brightness(1.2);
+}
+
+/* ── Replace me: cuando Nicolás ponga un <img>, este estilo lo maneja ── */
+#zoro-sprite img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+@keyframes zoro-idle {
+  0%, 100% { transform: translateY(0) scale(1);   box-shadow: 0 0 20px var(--mint-glow), inset 0 0 30px rgba(13, 242, 201, 0.05); }
+  50%      { transform: translateY(-6px) scale(1.04); box-shadow: 0 0 35px var(--mint-glow-strong), inset 0 0 45px rgba(13, 242, 201, 0.1); }
+}
+
+.zoro-name {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--mint);
+  text-align: center;
+}
+
+.zoro-class {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── Speech Bubble ── */
+.speech-bubble {
+  position: relative;
+  background: var(--charcoal-lighter);
+  border: 1px solid rgba(13, 242, 201, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text);
+  text-align: center;
+  max-width: 220px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--charcoal-lighter);
+}
+
+.speech-bubble .typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--mint);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ── Voice Button ── */
+.voice-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, rgba(13, 242, 201, 0.12), rgba(13, 242, 201, 0.04));
+  border: 1px solid var(--mint);
+  border-radius: 30px;
+  color: var(--mint);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.voice-btn:hover {
+  background: var(--mint);
+  color: var(--navy-dark);
+  box-shadow: 0 0 24px var(--mint-glow-strong);
+  transform: translateY(-1px);
+}
+
+.voice-btn:active {
+  transform: scale(0.97);
+}
+
+.voice-btn .mic-icon {
+  font-size: 1.1rem;
+}
+
+/* Listening pulse */
+.voice-btn.listening {
+  background: var(--mint);
+  color: var(--navy-dark);
+  animation: pulse-ring 1.2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(13, 242, 201, 0.6); }
+  70%  { box-shadow: 0 0 0 16px rgba(13, 242, 201, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(13, 242, 201, 0); }
+}
+
+.voice-status {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-align: center;
+  min-height: 1.2em;
+}
+
+/* ═══════════════════════════════════════════
+   STATIONS GRID
+   ═══════════════════════════════════════════ */
+.stations {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.station-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 22px 28px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  color: var(--text);
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.station-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 0% 50%, rgba(13, 242, 201, 0.04), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.station-card:hover {
+  transform: scale(1.02) translateY(-2px);
+  border-color: var(--mint);
+  box-shadow:
+    0 0 30px var(--mint-glow),
+    0 8px 32px rgba(0,0,0,0.5);
+}
+
+.station-card:hover::before {
+  opacity: 1;
+}
+
+.station-card:active {
+  transform: scale(0.99);
+}
+
+.station-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 242, 201, 0.08);
+  border-radius: var(--radius-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.station-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.station-name {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--mint);
+}
+
+.station-meta {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.station-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.online  { background: #0DF2C9; box-shadow: 0 0 6px rgba(13, 242, 201, 0.6); }
+.status-dot.warning { background: #F2A20D; box-shadow: 0 0 6px rgba(242, 162, 13, 0.5); }
+.status-dot.offline { background: #F2460D; box-shadow: 0 0 6px rgba(242, 70, 13, 0.4); }
+
+.station-arrow {
+  font-size: 1.2rem;
+  color: var(--text-dim);
+  transition: var(--transition);
+  position: relative;
+  z-index: 1;
+}
+
+.station-card:hover .station-arrow {
+  color: var(--mint);
+  transform: translateX(4px);
+}
+
+/* ── Placeholder card (no link) ── */
+.station-card.placeholder {
+  opacity: 0.65;
+  cursor: default;
+  filter: grayscale(0.4);
+}
+
+.station-card.placeholder:hover {
+  opacity: 0.85;
+  filter: grayscale(0.2);
+  transform: scale(1.01) translateY(-1px);
+}
+
+.station-card.placeholder .station-name {
+  color: var(--text-dim);
+}
+
+.station-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(242, 162, 13, 0.15);
+  color: #F2A20D;
+  border: 1px solid rgba(242, 162, 13, 0.3);
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — Tablet
+   ═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zoro-sidebar {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  #zoro-sprite {
+    width: 80px;
+    height: 80px;
+    font-size: 2.2rem;
+  }
+
+  .speech-bubble {
+    max-width: 280px;
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .speech-bubble::after {
+    top: -10px;
+    left: 50%;
+  }
+
+  .container {
+    padding: 16px 20px 36px;
+  }
+
+  .station-card {
+    grid-template-columns: 40px 1fr auto;
+    padding: 16px 20px;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 500px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .header-title {
+    font-size: 1.3rem;
+  }
+
+  .station-card {
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+  }
+
+  .station-arrow {
+    display: none;
+  }
+
+  .voice-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="header">
+    <div class="header-left">
+      <img class="header-logo" src="quickt-logo-nav.png" alt="Quick-T" onerror="this.style.display='none'">
+      <h1 class="header-title">Quick-T Lab</h1>
+    </div>
+    <span class="header-badge">v3.0 RPG</span>
+  </header>
+
+  <!-- ═══ MAIN GRID: ZORO + Stations ═══ -->
+  <div class="main-grid">
+
+    <!-- ── ZORO Sidebar ── -->
+    <aside class="zoro-sidebar">
+      <div id="zoro-sprite">
+        <!-- Reemplazar con: <img src="zoro-spritesheet.png" alt="ZORO"> -->
+      </div>
+      <div>
+        <div class="zoro-name">ZORO</div>
+        <div class="zoro-class">Espadachín · NPC</div>
+      </div>
+      <div class="speech-bubble" id="zoro-dialogue">
+        ¿En qué trabajamos hoy, Nicolás?<span class="typing-cursor"></span>
+      </div>
+      <button class="voice-btn" id="voice-btn" title="Hablar con ZORO">
+        <span class="mic-icon">🎤</span> Hablar
+      </button>
+      <div class="voice-status" id="voice-status"></div>
+    </aside>
+
+    <!-- ── STATIONS ── -->
+    <section class="stations">
+
+      <!-- GARDEN -->
+      <a href="garden.html" class="station-card">
+        <div class="station-icon">🌿</div>
+        <div class="station-info">
+          <div class="station-name">GARDEN</div>
+          <div class="station-meta">23.4°C · 56% HR · VPD 0.8 kPa</div>
+          <div class="station-status">
+            <span class="status-dot online"></span>
+            <span style="font-size:0.75rem;color:var(--mint-dim)">VPD IDEAL</span>
+          </div>
+        </div>
+        <span class="station-arrow">→</span>
+      </a>
+
+      <!-- ASISTENC-IA -->
+      <a href="dashboard.html" class="station-card">
+        <div class="station-icon">🏭</div>
+        <div class="station-info">
+          <div class="station-name">ASISTENC-IA</div>
+          <div class="station-meta">24 colaboradores presentes</div>
+          <div class="station-status">
+            <span class="status-dot warning"></span>
+            <span style="font-size:0.75rem;color:#F2A20D">1 alerta pendiente</span>
+          </div>
+        </div>
+        <span class="station-arrow">→</span>
+      </a>
+
+      <!-- FOOD (placeholder) -->
+      <div class="station-card placeholder">
+        <div class="station-icon">🍽️</div>
+        <div class="station-info">
+          <div class="station-name">FOOD <span class="station-badge">pronto</span></div>
+          <div class="station-meta">3 mesas activas · 2 pedidos en curso</div>
+          <div class="station-status">
+            <span class="status-dot online"></span>
+            <span style="font-size:0.75rem;color:var(--text-dim)">En desarrollo</span>
+          </div>
+        </div>
+        <span class="station-arrow">→</span>
+      </div>
+
+      <!-- SERVICE (placeholder) -->
+      <div class="station-card placeholder">
+        <div class="station-icon">🏨</div>
+        <div class="station-info">
+          <div class="station-name">SERVICE <span class="station-badge">pronto</span></div>
+          <div class="station-meta">8 habitaciones · 2 activas</div>
+          <div class="station-status">
+            <span class="status-dot online"></span>
+            <span style="font-size:0.75rem;color:var(--text-dim)">En desarrollo</span>
+          </div>
+        </div>
+        <span class="station-arrow">→</span>
+      </div>
+
+      <!-- MÉTRICAS (placeholder) -->
+      <div class="station-card placeholder">
+        <div class="station-icon">📊</div>
+        <div class="station-info">
+          <div class="station-name">MÉTRICAS <span class="station-badge">pronto</span></div>
+          <div class="station-meta">+12% actividad esta semana</div>
+          <div class="station-status">
+            <span class="status-dot online"></span>
+            <span style="font-size:0.75rem;color:var(--text-dim)">En desarrollo</span>
+          </div>
+        </div>
+        <span class="station-arrow">→</span>
+      </div>
+
+    </section>
+
+  </div><!-- /main-grid -->
+
+</div><!-- /container -->
+
+<!-- ═══════════════════════════════════════════
+     VOICE — Web Speech API
+     ═══════════════════════════════════════════ -->
+<script>
+(function() {
+  const voiceBtn   = document.getElementById('voice-btn');
+  const voiceStatus = document.getElementById('voice-status');
+  const dialogue   = document.getElementById('zoro-dialogue');
+
+  // Check browser support
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    voiceBtn.disabled = true;
+    voiceBtn.style.opacity = '0.5';
+    voiceBtn.title = 'Reconocimiento de voz no disponible en este navegador';
+    voiceStatus.textContent = 'Voz no disponible';
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'es-ES';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  let listening = false;
+
+  voiceBtn.addEventListener('click', function() {
+    if (listening) {
+      recognition.stop();
+      return;
+    }
+    try {
+      recognition.start();
+    } catch(e) {
+      voiceStatus.textContent = 'Error al iniciar';
+    }
+  });
+
+  recognition.addEventListener('start', function() {
+    listening = true;
+    voiceBtn.classList.add('listening');
+    voiceBtn.querySelector('.mic-icon').textContent = '🔴';
+    voiceBtn.childNodes[1] && (voiceBtn.childNodes[1].textContent = ' Escuchando...');
+    voiceStatus.textContent = 'Te escucho...';
+  });
+
+  recognition.addEventListener('end', function() {
+    listening = false;
+    voiceBtn.classList.remove('listening');
+    voiceBtn.querySelector('.mic-icon').textContent = '🎤';
+    voiceBtn.childNodes[1] && (voiceBtn.childNodes[1].textContent = ' Hablar');
+    if (!voiceStatus.textContent.includes('Dijiste')) {
+      voiceStatus.textContent = '';
+    }
+  });
+
+  recognition.addEventListener('result', function(event) {
+    const transcript = event.results[0][0].transcript.trim();
+    voiceStatus.textContent = 'Dijiste: «' + transcript + '»';
+
+    // Simple intent matching for demo
+    const lower = transcript.toLowerCase();
+    if (lower.includes('garden') || lower.includes('jardín') || lower.includes('planta')) {
+      dialogue.innerHTML = '¡Vamos al Garden! Las plantas te esperan 🌿<span class="typing-cursor"></span>';
+      setTimeout(function() { window.location.href = 'garden.html'; }, 1500);
+    } else if (lower.includes('asistenc') || lower.includes('asistencia') || lower.includes('empleado')) {
+      dialogue.innerHTML = 'Abriendo Asistenc-IA... verificando asistencias 🏭<span class="typing-cursor"></span>';
+      setTimeout(function() { window.location.href = 'dashboard.html'; }, 1500);
+    } else if (lower.includes('hola') || lower.includes('buen')) {
+      dialogue.innerHTML = '¡Hola, Nicolás! ¿Qué proyecto quieres revisar hoy?<span class="typing-cursor"></span>';
+    } else {
+      dialogue.innerHTML = 'Entendido: «' + transcript + '». ¿Vamos a alguna estación?<span class="typing-cursor"></span>';
+    }
+  });
+
+  recognition.addEventListener('error', function(event) {
+    voiceStatus.textContent = 'Error: ' + (event.error === 'no-speech' ? 'no te escuché' : event.error);
+    listening = false;
+    voiceBtn.classList.remove('listening');
+    voiceBtn.querySelector('.mic-icon').textContent = '🎤';
+    voiceBtn.childNodes[1] && (voiceBtn.childNodes[1].textContent = ' Hablar');
+  });
+
+  // Rotate dialogue messages
+  const messages = [
+    '¿En qué trabajamos hoy, Nicolás?',
+    '¡El Garden está en VPD ideal!',
+    'Revisa Asistenc-IA, hay una alerta.',
+    'Tus plantas te necesitan, Nicolás.',
+    '¿Probamos el nuevo dashboard?',
+    '¡Buen día para codear!'
+  ];
+  let msgIdx = 0;
+  setInterval(function() {
+    if (listening) return; // don't rotate while listening
+    msgIdx = (msgIdx + 1) % messages.length;
+    dialogue.innerHTML = messages[msgIdx] + '<span class="typing-cursor"></span>';
+  }, 8000);
+})();
+</script>
+
+</body>
+</html>
