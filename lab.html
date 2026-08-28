@@ -35,6 +35,81 @@
     box-shadow: 0 0 80px rgba(13,242,201,0.08);
     overflow: hidden;
   }
+  /* ── Scanning beam ── */
+  .lab-wrapper::before {
+    content: ''; position: absolute; left: 0; right: 0; z-index: 15;
+    height: 40%;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(13,242,201,0.06) 50%,
+      transparent 100%);
+    animation: scan 4s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes scan {
+    0%   { transform: translateY(-100%); }
+    100% { transform: translateY(350%); }
+  }
+
+  /* ── Data particles ── */
+  .particle {
+    position: absolute; z-index: 6; border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ── Energy ring pulse around ZORO center ── */
+  .energy-rings {
+    position: absolute; bottom: 50%; left: 48%; z-index: 4;
+    width: 90px; height: 90px; transform: translate(-50%, 50%);
+    pointer-events: none;
+  }
+  .energy-rings::before,
+  .energy-rings::after {
+    content: ''; position: absolute; inset: -8px; border-radius: 50%;
+    border: 2px solid var(--mint);
+    animation: ring-grow 2.5s ease-out infinite;
+  }
+  .energy-rings::after { animation-delay: 1.25s; }
+  @keyframes ring-grow {
+    0%   { transform: scale(0.6); opacity: 0.7; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+
+  /* ── Vent blinking ── */
+  .vent {
+    position: absolute; z-index: 6; pointer-events: none;
+    width: 4px; height: 12px; background: rgba(13,242,201,0.3);
+    border-radius: 2px;
+    animation: vent-blink 1.8s ease-in-out infinite;
+  }
+  .vent:nth-child(odd) { animation-delay: 0.9s; }
+  @keyframes vent-blink {
+    0%,100% { opacity: 0.2; box-shadow: 0 0 2px rgba(13,242,201,0.2); }
+    50%     { opacity: 0.9; box-shadow: 0 0 8px var(--mint-glow); }
+  }
+
+  /* ── Equipment status dot ── */
+  .equip-dot {
+    position: absolute; z-index: 6; pointer-events: none;
+    width: 5px; height: 5px; border-radius: 50%;
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+  @keyframes dot-pulse {
+    0%,100% { box-shadow: 0 0 3px currentColor; }
+    50%     { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+  }
+
+  /* ── Gas vent (top of lab) ── */
+  .gas {
+    position: absolute; z-index: 6; pointer-events: none;
+    width: 8px; height: 20px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(13,242,201,0.2) 0%, transparent 70%);
+    animation: gas-rise 3s ease-out infinite;
+  }
+  @keyframes gas-rise {
+    0%   { transform: translateY(0) scale(0.5); opacity: 0.4; }
+    100% { transform: translateY(-40px) scale(1.4); opacity: 0; }
+  }
 
   .lab-bg {
     display: block; width: 100%; height: auto;
@@ -132,7 +207,7 @@
     font-size: 0.65rem; color: var(--text-dim);
   }
   .legend .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-  .legend .dot.active { backgrou : var(--mint); box-shadow: 0 0 5px var(--mint); }
+  .legend .dot.active { background: var(--mint); box-shadow: 0 0 5px var(--mint); }
   .legend .dot.soon  { background: #F2A20D; }
 
   .footer-legend {
@@ -151,11 +226,43 @@
     .station-zoro .station-icon-wrap img { width: 44px; height: 44px; }
     .station-label { font-size: 0.5rem; padding: 2px 7px; }
   }
+
+  /* ── Particle float keyframes ── */
+  @keyframes p-float1 { 0%,100%{transform:translate(0,0) scale(1);opacity:1} 33%{transform:translate(30px,-40px) scale(1.5);opacity:0.3} 66%{transform:translate(-20px,-80px) scale(0.8);opacity:0.8} }
+  @keyframes p-float2 { 0%,100%{transform:translate(0,0) scale(1);opacity:1} 50%{transform:translate(-40px,-60px) scale(0.5);opacity:0.2} }
+  @keyframes p-float3 { 0%,100%{transform:translate(0,0) scale(1);opacity:1} 25%{transform:translate(-20px,-30px) scale(1.8);opacity:0.4} 75%{transform:translate(20px,-70px) scale(0.6);opacity:0.6} }
 </style>
 </head>
 <body>
 
 <div class="lab-wrapper">
+
+  <!-- ═══ LAB ANIMATIONS ═══ -->
+  <!-- Energy rings around ZORO -->
+  <div class="energy-rings"></div>
+
+  <!-- Vents (blinking indicators) -->
+  <div class="vent" style="top:18%; left:22%;"></div>
+  <div class="vent" style="top:18%; left:24%;"></div>
+  <div class="vent" style="top:55%; right:20%; height:16px;"></div>
+  <div class="vent" style="top:55%; right:22%; height:16px;"></div>
+
+  <!-- Equipment status dots -->
+  <div class="equip-dot" style="top:22%; left:16%; color:#0DF2C9;"></div>
+  <div class="equip-dot" style="top:58%; right:17%; color:#38BDF8;"></div>
+  <div class="equip-dot" style="bottom:28%; left:34%; color:#F5B731;"></div>
+  <div class="equip-dot" style="top:32%; right:32%; color:#0DF2C9; animation-delay:0.8s;"></div>
+
+  <!-- Gas vents -->
+  <div class="gas" style="top:12%; left:28%;"></div>
+  <div class="gas" style="top:12%; left:56%; animation-delay:1.5s;"></div>
+  <div class="gas" style="top:12%; right:18%; animation-delay:0.7s; width:10px;"></div>
+
+  <!-- Floating data particles -->
+  <div class="particle" style="top:30%; left:12%; width:3px; height:3px; background:#0DF2C9; animation:p-float1 6s ease-in-out infinite;"></div>
+  <div class="particle" style="top:45%; right:14%; width:2px; height:2px; background:#38BDF8; animation:p-float2 7s ease-in-out infinite;"></div>
+  <div class="particle" style="top:20%; left:44%; width:2px; height:2px; background:#F5B731; animation:p-float3 5s ease-in-out infinite;"></div>
+  <div class="particle" style="bottom:30%; right:30%; width:3px; height:3px; background:#0DF2C9; animation:p-float1 8s ease-in-out 2s infinite;"></div>
 
   <!-- MAPA DEL LABORATORIO (Nicolás pixel art) -->
   <img class="lab-bg" src="lab-bg.png" alt="Quick-T Lab">
