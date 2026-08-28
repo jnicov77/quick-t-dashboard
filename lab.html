@@ -171,6 +171,27 @@
   .station-metricas  { bottom: 12%; right:  24%; }
   .station-zoro      { bottom: 45%; left:  50%; } /* centro */
 
+  /* ── Agente miniature (sin tooltip, solo pulso) ── */
+  .agent {
+    position: absolute; z-index: 3;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid rgba(13,242,201,0.35);
+    box-shadow: 0 0 10px rgba(13,242,201,0.2);
+    animation: agent-idle 2.5s ease-in-out infinite;
+    overflow: hidden;
+  }
+  .agent img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  @keyframes agent-idle {
+    0%,100% { transform: translateY(0); box-shadow: 0 0 10px rgba(13,242,201,0.2); }
+    50%     { transform: translateY(-3px); box-shadow: 0 0 18px rgba(13,242,201,0.4); }
+  }
+  .agent-wong { top: 24%; left: 34%; }
+  .agent-wong .agent-label {
+    position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+    font-family: 'Quicksand', sans-serif; font-size: 0.5rem; font-weight: 700;
+    color: var(--mint); white-space: nowrap;
+  }
+
   .station-zoro .station-icon-wrap {
     width: 72px; height: 72px; border-color: var(--mint);
     box-shadow: 0 0 24px var(--mint-glow);
@@ -225,6 +246,7 @@
     .station-zoro .station-icon-wrap { width: 56px; height: 56px; }
     .station-zoro .station-icon-wrap img { width: 44px; height: 44px; }
     .station-label { font-size: 0.5rem; padding: 2px 7px; }
+    .agent { width: 28px; height: 28px; }
   }
 
   /* ── Particle float keyframes ── */
@@ -263,6 +285,12 @@
   <div class="particle" style="top:45%; right:14%; width:2px; height:2px; background:#38BDF8; animation:p-float2 7s ease-in-out infinite;"></div>
   <div class="particle" style="top:20%; left:44%; width:2px; height:2px; background:#F5B731; animation:p-float3 5s ease-in-out infinite;"></div>
   <div class="particle" style="bottom:30%; right:30%; width:3px; height:3px; background:#0DF2C9; animation:p-float1 8s ease-in-out 2s infinite;"></div>
+
+  <!-- Mr. Wong — zona ASISTENC-IA -->
+  <div class="agent agent-wong">
+    <img src="mrwong-sprite.png" alt="Mr. Wong">
+    <div class="agent-label">Mr. Wong</div>
+  </div>
 
   <!-- MAPA DEL LABORATORIO (Nicolás pixel art) -->
   <img class="lab-bg" src="lab-bg.png" alt="Quick-T Lab">
