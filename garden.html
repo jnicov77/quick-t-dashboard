@@ -156,9 +156,9 @@
 
   /* ── Charts row ── */
   .charts-row {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 16px; padding: 8px 24px 8px;
+    display: block; padding: 8px 24px 8px;
   }
+  .charts-row .chart-panel { margin-bottom: 0; }
   .chart-panel {
     background: var(--surface); border: 1px solid var(--text-10);
     border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card);
@@ -353,26 +353,15 @@
   </section>
 
   <section class="charts-row">
-    <div class="chart-panel">
-      <h3>🌡️ Temperatura · 24 horas</h3>
-      <div class="chart-wrap"><canvas id="chartTemp"></canvas></div>
-    </div>
-    <div class="chart-panel">
-      <h3>💧 Humedad · 24 horas</h3>
-      <div class="chart-wrap"><canvas id="chartHum"></canvas></div>
+    <div class="chart-panel" style="grid-column: 1 / -1;">
+      <h3>📈 Temperatura + Humedad · 24 horas</h3>
+      <div class="chart-wrap" style="height: 320px;"><canvas id="chartTemp"></canvas></div>
     </div>
   </section>
 
   <section class="bottom-row">
     <div class="status-panel">
       <h3>📊 Estado del ambiente</h3>
-      <div class="vpd-indicator ideal" id="vpdIndicator">
-        <div class="vpd-dot ideal" id="vpdDot">🌱</div>
-        <div class="vpd-info">
-          <strong id="vpdStatusLabel">Ideal</strong>
-          <span id="vpdStatusMsg">Condiciones óptimas para tus plantas</span>
-        </div>
-      </div>
       <div class="vpd-bar-wrap">
         <div class="vpd-bar-label-row">
           <span>0 kPa</span><span>1.0</span><span>2.0</span><span>3.0</span>
@@ -386,6 +375,13 @@
           <span class="vpd-zone id">Ideal</span>
           <span class="vpd-zone al">Alto</span>
           <span class="vpd-zone ma">Muy alto</span>
+        </div>
+      </div>
+      <div class="vpd-indicator ideal" id="vpdIndicator">
+        <div class="vpd-dot ideal" id="vpdDot">🌱</div>
+        <div class="vpd-info">
+          <strong id="vpdStatusLabel">Ideal</strong>
+          <span id="vpdStatusMsg">Condiciones óptimas para tus plantas</span>
         </div>
       </div>
     </div>
@@ -420,7 +416,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8Abmtcw_qL7_g
 const REFRESH_MS = 60000;
 const CIRCUMFERENCE = 2 * Math.PI * 52; // ~326.7
 
-let chartTemp = null, chartHum = null;
+let chartTemp = null;
 let lastData = null;
 
 const VPD_RANGES = {
@@ -531,64 +527,69 @@ function renderCharts(rows) {
   const temps  = data.map(r => parseFloat(r.temp));
   const hums   = data.map(r => parseFloat(r.hum));
 
-  const chartOptions = (label, color, max) => ({
-    responsive: true, maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: '#111B33', borderColor: 'rgba(255,255,255,0.08)',
-        borderWidth: 1, bodyColor: '#F8FAFC', titleColor: 'rgba(248,250,252,0.60)'
-      }
-    },
-    scales: {
-      x: {
-        ticks: { color: 'rgba(248,250,252,0.30)', maxTicksLimit: 8, font: { size: 10 } },
-        grid: { color: 'rgba(248,250,252,0.04)' }
-      },
-      y: {
-        min: max === 100 ? 0 : Math.min(...temps) - 5,
-        max: max === 100 ? 100 : Math.max(...temps) + 5,
-        ticks: { color: 'rgba(248,250,252,0.30)', font: { size: 10 }, callback: v => v + (max === 100 ? '%' : '°') },
-        grid: { color: 'rgba(248,250,252,0.04)' }
-      }
-    }
-  });
-
-  let ctx;
-
-  // Temp chart
-  ctx = document.getElementById('chartTemp');
+  const ctx = document.getElementById('chartTemp');
   if (chartTemp) chartTemp.destroy();
+
   chartTemp = new Chart(ctx, {
     type: 'line',
     data: {
       labels,
-      datasets: [{
-        data: temps,
-        borderColor: '#F43F5E',
-        backgroundColor: 'rgba(244,63,94,0.06)',
-        fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2
-      }]
+      datasets: [
+        {
+          label: 'Temperatura (°C)',
+          data: temps,
+          borderColor: '#F43F5E',
+          backgroundColor: 'rgba(244,63,94,0.08)',
+          fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Humedad (%)',
+          data: hums,
+          borderColor: '#38BDF8',
+          backgroundColor: 'rgba(56,189,248,0.05)',
+          fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
+          yAxisID: 'y1'
+        }
+      ]
     },
-    options: chartOptions('Temperatura', '#F43F5E', 50)
-  });
-
-  // Humidity chart
-  ctx = document.getElementById('chartHum');
-  if (chartHum) chartHum.destroy();
-  chartHum = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data: hums,
-        borderColor: '#38BDF8',
-        backgroundColor: 'rgba(56,189,248,0.06)',
-        fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2
-      }]
-    },
-    options: chartOptions('Humedad', '#38BDF8', 100)
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          align: 'end',
+          labels: {
+            color: '#F8FAFC',
+            font: { family: 'Inter', size: 12 },
+            boxWidth: 16, boxHeight: 3, usePointStyle: true
+          }
+        },
+        tooltip: {
+          backgroundColor: '#111B33', borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1, bodyColor: '#F8FAFC', titleColor: 'rgba(248,250,252,0.60)'
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: 'rgba(248,250,252,0.30)', maxTicksLimit: 8, font: { size: 10 } },
+          grid: { color: 'rgba(248,250,252,0.04)' }
+        },
+        y: {
+          type: 'linear', position: 'left',
+          title: { display: true, text: '°C', color: 'rgba(248,250,252,0.45)' },
+          ticks: { color: 'rgba(248,250,252,0.30)', font: { size: 10 } },
+          grid: { color: 'rgba(248,250,252,0.04)' }
+        },
+        y1: {
+          type: 'linear', position: 'right',
+          title: { display: true, text: '%', color: 'rgba(248,250,252,0.45)' },
+          ticks: { color: 'rgba(248,250,252,0.30)', font: { size: 10 } },
+          grid: { drawOnChartArea: false }
+        }
+      }
+    }
   });
 }
 
