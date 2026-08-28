@@ -553,16 +553,16 @@ function renderCharts(rows) {
         {
           label: 'Temperatura (°C)',
           data: temps,
-          borderColor: '#F43F5E',
-          backgroundColor: 'rgba(244,63,94,0.08)',
+          borderColor: tempColor(temps.length ? temps[temps.length-1] : 0),
+          backgroundColor: 'rgba(13,242,201,0.06)',
           fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
           yAxisID: 'y'
         },
         {
           label: 'Humedad (%)',
           data: hums,
-          borderColor: '#38BDF8',
-          backgroundColor: 'rgba(56,189,248,0.05)',
+          borderColor: humColor(hums.length ? hums[hums.length-1] : 0),
+          backgroundColor: 'rgba(13,242,201,0.04)',
           fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
           yAxisID: 'y1'
         }
