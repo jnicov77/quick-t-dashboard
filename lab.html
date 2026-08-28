@@ -167,34 +167,28 @@ body::after {
 }
 
 #zoro-sprite {
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   background: radial-gradient(circle at 40% 35%, var(--navy-light), var(--navy-dark));
   border: 3px solid var(--mint);
   box-shadow:
-    0 0 20px var(--mint-glow),
-    inset 0 0 30px rgba(13, 242, 201, 0.05);
+    0 0 30px var(--mint-glow),
+    0 0 60px rgba(13, 242, 201, 0.1),
+    inset 0 0 40px rgba(13, 242, 201, 0.04);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
   position: relative;
   animation: zoro-idle 3s ease-in-out infinite;
-  /* Placeholder — reemplazar con <img> del sprite sheet real */
   overflow: hidden;
-}
-
-#zoro-sprite::before {
-  content: '⚔️';
-  filter: grayscale(0.3) brightness(1.2);
 }
 
 /* ── Replace me: cuando Nicolás ponga un <img>, este estilo lo maneja ── */
 #zoro-sprite img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 50%;
 }
 
@@ -311,6 +305,50 @@ body::after {
   color: var(--text-dim);
   text-align: center;
   min-height: 1.2em;
+}
+
+/* ── Stats RPG Bar ── */
+.stats-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 4px;
+}
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stat-label {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  width: 20px;
+  text-align: right;
+}
+.stat-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.stat-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.stat-fill.hp { background: #F43F5E; box-shadow: 0 0 6px rgba(244,63,94,0.5); }
+.stat-fill.mp { background: #38BDF8; box-shadow: 0 0 6px rgba(56,189,248,0.5); }
+.stat-fill.xp { background: #F5B731; box-shadow: 0 0 6px rgba(245,183,49,0.5); }
+.stat-num {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  width: 44px;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ═══════════════════════════════════════════
@@ -478,8 +516,8 @@ body::after {
   }
 
   #zoro-sprite {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     font-size: 2.2rem;
   }
 
@@ -550,11 +588,29 @@ body::after {
     <!-- ── ZORO Sidebar ── -->
     <aside class="zoro-sidebar">
       <div id="zoro-sprite">
-        <!-- Reemplazar con: <img src="zoro-spritesheet.png" alt="ZORO"> -->
+        <img src="zoro-sprite.png" alt="ZORO">
       </div>
       <div>
         <div class="zoro-name">ZORO</div>
         <div class="zoro-class">Espadachín · NPC</div>
+      </div>
+      <!-- Stats RPG -->
+      <div class="stats-bar">
+        <div class="stat-row">
+          <span class="stat-label">HP</span>
+          <div class="stat-track"><div class="stat-fill hp" style="width:100%"></div></div>
+          <span class="stat-num">180/180</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">MP</span>
+          <div class="stat-track"><div class="stat-fill mp" style="width:90%"></div></div>
+          <span class="stat-num">90/90</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">XP</span>
+          <div class="stat-track"><div class="stat-fill xp" style="width:32%"></div></div>
+          <span class="stat-num">24</span>
+        </div>
       </div>
       <div class="speech-bubble" id="zoro-dialogue">
         ¿En qué trabajamos hoy, Nicolás?<span class="typing-cursor"></span>
