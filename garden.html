@@ -6,11 +6,11 @@
 <title>Quick-T Garden — Tu jardín, monitoreado</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg:         #0F172A;
+    --bg:         #0A1F44;
     --surface:    #1A1D23;
     --surface-alt:#22272E;
     --text:       #F8FAFC;
@@ -20,10 +20,10 @@
     --text-20:    rgba(248,250,252,0.20);
     --text-10:    rgba(248,250,252,0.10);
     --text-05:    rgba(248,250,252,0.05);
-    --accent:     #10B981;
-    --accent-hover:#059669;
-    --accent-25:  rgba(16,185,129,0.25);
-    --accent-15:  rgba(16,185,129,0.15);
+    --accent:     #0DF2C9;
+    --accent-hover:#00d4b0;
+    --accent-25:  rgba(13,242,201,0.25);
+    --accent-15:  rgba(13,242,201,0.15);
     --alert:      #F43F5E;
     --alert-25:   rgba(244,63,94,0.25);
     --alert-15:   rgba(244,63,94,0.15);
@@ -51,7 +51,7 @@
   }
 
   h1, h2, h3, .metric-value, .temp-big {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Quicksand', sans-serif;
     font-weight: 700; line-height: 1.15; letter-spacing: -0.01em;
   }
 
@@ -60,7 +60,7 @@
   /* ── Header ── */
   .site-header {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(15,23,42,0.88);
+    background: rgba(10,31,68,0.88);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--text-10);
@@ -72,7 +72,7 @@
   }
   .logo {
     display: flex; align-items: center; gap: 10px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Quicksand', sans-serif;
     font-weight: 700; font-size: 18px; color: var(--text);
   }
   .logo-mark {
@@ -92,7 +92,7 @@
   .status-dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 0 4px rgba(16,185,129,0.20);
+    box-shadow: 0 0 0 4px rgba(13,242,201,0.20);
     animation: pulse 2s infinite;
   }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -139,7 +139,7 @@
   .vpd-badge {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 8px 16px; border-radius: var(--radius-full);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px;
+    font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 14px;
     margin-top: 16px;
   }
   .vpd-badge.ideal  { background: var(--accent-15); color: var(--accent); }
@@ -171,7 +171,7 @@
   .reco-icon.bajo    { background: var(--sky-15); }
   .reco-icon.alto    { background: var(--warn-15); }
   .reco-icon.muyalto { background: var(--alert-15); }
-  .reco-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; margin-bottom: 4px; }
+  .reco-card h4 { font-family: 'Quicksand', sans-serif; font-size: 15px; margin-bottom: 4px; }
   .reco-card p { color: var(--text-60); font-size: 13px; line-height: 1.5; }
 
   .reco-highlight {
@@ -203,8 +203,7 @@
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
     <a href="/" class="logo">
-      <div class="logo-mark">🌿</div>
-      <span>Quick-T Garden</span>
+      <img src="quickt-logo-nav.png" alt="Quick-T" style="height: 36px; width: auto; display: block;" />
     </a>
     <div class="header-meta">Tu jardín, monitoreado</div>
     <div class="header-status">
@@ -344,8 +343,8 @@ function renderChart(rows) {
         {
           label: 'Temperatura (°C)',
           data: temps,
-          borderColor: '#10B981',
-          backgroundColor: 'rgba(16,185,129,0.10)',
+          borderColor: '#0DF2C9',
+          backgroundColor: 'rgba(13,242,201,0.10)',
           fill: true, tension: 0.35, pointRadius: 0,
           borderWidth: 2, yAxisID: 'y'
         },
