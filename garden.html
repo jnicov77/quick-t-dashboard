@@ -71,10 +71,6 @@
   }
   .logo { display: flex; align-items: center; }
   .logo img { height: 32px; width: auto; display: block; }
-  .header-title {
-    font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 15px;
-    color: var(--text-90); margin-left: 4px;
-  }
   .header-status { margin-left: auto; display: flex; align-items: center; gap: 12px; }
   .status-pill {
     display: inline-flex; align-items: center; gap: 7px;
@@ -257,7 +253,6 @@
   }
   @media (max-width: 600px) {
     .gauges-row { grid-template-columns: 1fr 1fr; }
-    .header-title { display: none; }
     .gauge-wrap { width: 90px; height: 90px; }
     .gauge-value { font-size: 24px; }
   }
@@ -270,7 +265,6 @@
     <a href="/" class="logo">
       <img src="quickt-logo-nav.png" alt="Quick-T">
     </a>
-    <span class="header-title">Quick-T Garden — Monitoreando tu jardín</span>
     <div class="header-status">
       <span class="status-pill"><span class="status-dot"></span>En vivo</span>
       <button class="btn-refresh" id="refreshBtn" aria-label="Actualizar">
@@ -419,12 +413,6 @@ let lastData = null;
 const urlParams = new URLSearchParams(window.location.search);
 const DEVICE_ID = urlParams.get('device') || 'quick-t-garden-v1'; // default: jardín de prueba
 
-// Mostrar el device en el header
-const deviceSpan = document.getElementById('headerDeviceName');
-if (deviceSpan) {
-  deviceSpan.textContent = ' — Monitoreando tu jardín';
-}
-// Actualizar el título de la página
 document.title = 'Quick-T Garden — ' + DEVICE_ID;
 
 const VPD_RANGES = {
