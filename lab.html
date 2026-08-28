@@ -10,14 +10,10 @@
 <style>
   :root {
     --mint:        #0DF2C9;
-    --mint-glow:   rgba(13,242,201,0.25);
-    --navy:        #0A1F44;
+    --mint-glow:   rgba(13,242,201,0.35);
     --navy-dark:   #06142E;
-    --charcoal:    #1A1D23;
     --text:        #E8ECF1;
     --text-dim:    #8B95A5;
-    --radius:      16px;
-    --transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
 
@@ -30,208 +26,208 @@
     overflow-x: hidden;
   }
 
-  /* ── RPG Grid Background ── */
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none;
-    background:
-      linear-gradient(rgba(13,242,201,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(13,242,201,0.04) 1px, transparent 1px),
-      radial-gradient(ellipse at 50% 0%, var(--navy) 0%, transparent 65%);
-    background-size: 80px 80px, 80px 80px, 100% 100%;
-  }
-
-  /* ── LAB MAP Container ── */
-  .lab-map {
-    position:relative; z-index:1;
-    width: 920px; max-width:98vw;
-    background: rgba(10,31,68,0.75);
-    border: 2px solid rgba(13,242,201,0.12);
+  /* ── MAPA DEL LAB ── */
+  .lab-wrapper {
+    position: relative; z-index:1;
+    width: 960px; max-width:98vw;
+    border: 2px solid rgba(13,242,201,0.15);
     border-radius: 24px;
-    padding: 36px 32px;
-    box-shadow: 0 0 80px rgba(13,242,201,0.06), inset 0 0 120px rgba(13,242,201,0.02);
+    box-shadow: 0 0 80px rgba(13,242,201,0.08);
+    overflow: hidden;
   }
 
-  /* ── Header ── */
-  .lab-header {
-    display:flex; align-items:center; gap:14px; margin-bottom:28px;
-    border-bottom:1px solid rgba(13,242,201,0.1); padding-bottom:18px;
+  .lab-bg {
+    display: block; width: 100%; height: auto;
+    image-rendering: pixelated;
   }
-  .lab-header img { height:38px; }
+
+  /* ── HEADER overlay ── */
+  .lab-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 24px;
+    background: linear-gradient(180deg, rgba(6,20,46,0.92) 40%, transparent);
+    border-radius: 24px 24px 0 0; z-index: 10;
+  }
+  .lab-header img { height: 32px; }
   .lab-header h1 {
-    font-family:'Quicksand',sans-serif; font-size:1.5rem; color:var(--mint);
-    text-shadow:0 0 20px rgba(13,242,201,0.2);
+    font-family: 'Quicksand', sans-serif; font-size: 1.2rem; color: var(--mint);
+    text-shadow: 0 0 14px rgba(13,242,201,0.25);
   }
   .lab-badge {
-    margin-left:auto; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em;
-    background:rgba(13,242,201,0.1); border:1px solid rgba(13,242,201,0.25); color:var(--mint);
-    padding:4px 12px; border-radius:20px;
+    margin-left: auto; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em;
+    background: rgba(13,242,201,0.12); border: 1px solid rgba(13,242,201,0.3);
+    color: var(--mint); padding: 4px 12px; border-radius: 20px;
   }
 
-  /* ── 3-Column layout: Stations | ZORO | Stations ── */
-  .stations-row {
-    display:grid; grid-template-columns: 1fr 200px 1fr; gap:24px; align-items:start;
-  }
-
-  /* ── Station Card ── */
+  /* ── Stations (floating on the map) ── */
   .station {
-    background: rgba(26,29,35,0.85); border:1px solid rgba(13,242,201,0.12);
-    border-radius:var(--radius); padding:18px 16px; backdrop-filter:blur(12px);
-    text-align:center; transition:var(--transition); margin-bottom:16px;
+    position: absolute; z-index: 5;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; text-decoration: none;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(13,242,201,0.3));
   }
   .station:hover {
-    transform:translateY(-3px); border-color:var(--mint);
-    box-shadow:0 0 25px var(--mint-glow);
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 20px var(--mint-glow));
   }
-  .station-icon { font-size:2.4rem; margin-bottom:10px; }
-  .station-name {
-    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1rem; color:var(--mint); margin-bottom:6px;
+  .station-icon-wrap {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(10,31,68,0.85); border: 2px solid rgba(13,242,201,0.4);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px); font-size: 1.6rem;
   }
-  .station-agent { font-size:0.7rem; color:var(--text-dim); margin-bottom:8px; }
-  .station-agent span { color:#0ab896; }
-  .station-subtitle { font-size:0.76rem; color:var(--text-dim); line-height:1.4; margin-bottom:8px; }
-  .station-stats { font-size:0.72rem; color:var(--text-dim); margin-bottom:12px; }
-  .station-link {
-    display:inline-block; padding:7px 18px; background:rgba(13,242,201,0.12);
-    border:1.5px solid var(--mint); border-radius:24px; color:var(--mint);
-    font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:600;
-    text-decoration:none; transition:var(--transition);
+  .station-label {
+    font-family: 'Quicksand', sans-serif; font-size: 0.6rem; font-weight: 700;
+    color: var(--mint); text-transform: uppercase; letter-spacing: 0.06em;
+    background: rgba(10,31,68,0.85); padding: 3px 10px;
+    border-radius: 10px; white-space: nowrap;
   }
-  .station-link:hover { background:var(--mint); color:var(--navy-dark); }
-
-  .placeholder {
-    opacity:0.7; cursor:default;
-  }
-  .placeholder .station-name { color:var(--text-dim); }
-  .placeholder .station-link {
-    background:rgba(242,162,13,0.1); border-color:rgba(242,162,13,0.3); color:#F2A20D;
+  .station-badge {
+    font-size: 0.5rem; background: rgba(242,162,13,0.2); color: #F2A20D;
+    padding: 1px 6px; border-radius: 8px; position: absolute; top: -6px; right: -10px;
   }
 
-  /* ── ZORO Center ── */
-  .zoro-center {
-    display:flex; flex-direction:column; align-items:center; gap:14px;
+  /* Positions — alineadas visualmente sobre el lab pixel art */
+  .station-garden    { bottom: 55%; left:  14%; }
+  .station-asistenc  { top:    40%; left:  36%; }
+  .station-food      { top:    26%; right:  18%; }
+  .station-metricas  { bottom: 12%; right:  24%; }
+  .station-zoro      { bottom: 50%; left:  48%; } /* centro */
+
+  .station-zoro .station-icon-wrap {
+    width: 72px; height: 72px; border-color: var(--mint);
+    box-shadow: 0 0 24px var(--mint-glow);
+    animation: zoro-pulse 2.5s ease-in-out infinite;
   }
-  .zoro-center img {
-    width:140px; height:auto; border-radius:50%;
-    border:2px solid var(--mint);
-    box-shadow:0 0 30px var(--mint-glow);
-    animation: zoro-idle 3s ease-in-out infinite;
+  .station-zoro .station-icon-wrap img {
+    width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
   }
-  @keyframes zoro-idle {
-    0%,100% { transform:translateY(0) }
-    50%      { transform:translateY(-7px) }
-  }
-  .zoro-center .zoro-name {
-    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1.15rem; color:var(--mint);
-  }
-  .zoro-center .zoro-class {
-    font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em;
+  @keyframes zoro-pulse {
+    0%,100% { box-shadow: 0 0 24px var(--mint-glow); }
+    50%     { box-shadow: 0 0 44px rgba(13,242,201,0.55); }
   }
 
-  /* ── Stats RPG Bar ── */
-  .stats-bar { width:100%; display:flex; flex-direction:column; gap:5px; }
-  .stat-row { display:flex; align-items:center; gap:8px; }
-  .stat-label { font-family:'Quicksand',sans-serif; font-weight:700; font-size:0.6rem; color:var(--text-dim); width:18px; text-align:right; }
-  .stat-track { flex:1; height:5px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
-  .stat-fill { height:100%; border-radius:3px; }
-  .stat-fill.hp { background:#F43F5E; box-shadow:0 0 5px rgba(244,63,94,0.5); }
-  .stat-fill.mp { background:#38BDF8; box-shadow:0 0 5px rgba(56,189,248,0.5); }
-  .stat-fill.xp { background:#F5B731; box-shadow:0 0 5px rgba(245,183,49,0.5); }
-  .stat-num { font-size:0.58rem; color:var(--text-dim); width:38px; font-variant-numeric:tabular-nums; }
+  /* ── Tooltip on hover ── */
+  .station-tooltip {
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    background: rgba(10,31,68,0.95); border: 1px solid var(--mint);
+    border-radius: 12px; padding: 14px 16px; white-space: nowrap;
+    font-size: 0.75rem; color: var(--text);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    margin-bottom: 16px; z-index: 20;
+  }
+  .station:hover .station-tooltip { opacity: 1; }
+  .station-tooltip strong { color: var(--mint); font-family: 'Quicksand', sans-serif; }
 
-  @media (max-width:800px) {
-   .stations-row { grid-template-columns:1fr; }
-   .lab-map { padding:20px; }
+  /* Legend bar */
+  .legend {
+    position: absolute; bottom: 0; left: 0; right:0; z-index:10;
+    display: flex; align-items: center; justify-content: center; gap: 20px;
+    padding: 12px 24px;
+    background: linear-gradient(0deg, rgba(6,20,46,0.9) 40%, transparent);
+    border-radius: 0 0 24px 24px;
+    font-size: 0.65rem; color: var(--text-dim);
+  }
+  .legend .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .legend .dot.active { backgrou : var(--mint); box-shadow: 0 0 5px var(--mint); }
+  .legend .dot.soon  { background: #F2A20D; }
+
+  .footer-legend {
+    position: absolute; bottom: 12px; left: 0; right: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    font-size: 0.6rem; color: var(--text-dim);
+  }
+  .footer-legend span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .dot.green { background: var(--mint); box-shadow: 0 0 4px var(--mint); }
+  .dot.amber { background: #F2A20D; box-shadow: 0 0 4px #F2A20D; }
+
+  @media (max-width: 768px) {
+    .station-icon-wrap { width: 38px; height: 38px; font-size: 1.15rem; }
+    .station-zoro .station-icon-wrap { width: 56px; height: 56px; }
+    .station-zoro .station-icon-wrap img { width: 44px; height: 44px; }
+    .station-label { font-size: 0.5rem; padding: 2px 7px; }
   }
 </style>
 </head>
 <body>
 
-<div class="lab-map">
+<div class="lab-wrapper">
 
+  <!-- MAPA DEL LABORATORIO (Nicolás pixel art) -->
+  <img class="lab-bg" src="lab-bg.png" alt="Quick-T Lab">
+
+  <!-- HEADER overlay -->
   <div class="lab-header">
     <img src="quickt-logo-nav.png" alt="Quick-T">
     <h1>Quick-T Lab</h1>
     <span class="lab-badge">v3.0 RPG</span>
   </div>
 
-  <div class="stations-row">
-
-    <!-- LEFT COLUMN -->
-    <div>
-
-      <!-- GARDEN -->
-      <a href="garden.html" class="station" style="display:block; text-decoration:none;">
-        <div class="station-icon">🌿</div>
-        <div class="station-name">GARDEN</div>
-        <div class="station-agent"><span>ZORO</span> · Orquestador</div>
-        <div class="station-subtitle">Termohigrómetro inteligente para plantas</div>
-        <div class="station-stats">24.8°C · 49% · VPD 1.59 ALTO</div>
-        <span class="station-link">Entrar →</span>
-      </a>
-
-      <!-- ASISTENC-IA -->
-      <a href="dashboard.html" class="station" style="display:block; text-decoration:none;">
-        <div class="station-icon">🏭</div>
-        <div class="station-name">ASISTENC-IA</div>
-        <div class="station-agent"><span>Mr. Wong</span> · Desarrollador</div>
-        <div class="station-subtitle">Control de asistencia con hardware NFC</div>
-        <div class="station-stats">24 presentes · ⚠ 1 alerta pendiente</div>
-        <span class="station-link">Entrar →</span>
-      </a>
-
+  <!-- ESTACIONES — posicionadas sobre el mapa -->
+  
+  <!-- GARDEN -->
+  <a href="garden.html" class="station station-garden">
+    <div class="station-icon-wrap">🌿</div>
+    <div class="station-label">GARDEN</div>
+    <div class="station-tooltip">
+      <strong>🌿 GARDEN</strong><br>
+      24.8°C · 49% · VPD 1.59<br>
+      ZORO — Orquestador
     </div>
+  </a>
 
-    <!-- CENTER: ZORO -->
-    <div class="zoro-center">
+  <!-- ASISTENC-IA -->
+  <a href="dashboard.html" class="station station-asistenc">
+    <div class="station-icon-wrap">🏭</div>
+    <div class="station-label">ASISTENC-IA</div>
+    <div class="station-tooltip">
+      <strong>🏭 ASISTENC-IA</strong><br>
+      24 presentes · ⚠ 1 alerta<br>
+      Mr. Wong — Developer
+    </div>
+  </a>
+
+  <!-- FOOD (pronto) -->
+  <div class="station station-food">
+    <div class="station-icon-wrap">🍽️</div>
+    <div class="station-label">FOOD</div>
+    <span class="station-badge">PRONTO</span>
+    <div class="station-tooltip">
+      <strong>🍽️ FOOD</strong><br>
+      Cartas NFC + pedidos a cocina<br>
+      Checho — Operaciones
+    </div>
+  </div>
+
+  <!-- MÉTRICAS (pronto) -->
+  <div class="station station-metricas">
+    <div class="station-icon-wrap">📊</div>
+    <div class="station-label">MÉTRICAS</div>
+    <span class="station-badge">PRONTO</span>
+    <div class="station-tooltip">
+      <strong>📊 MÉTRICAS</strong><br>
+      KPIs globales Quick‑T<br>
+      Dashboard — Global
+    </div>
+  </div>
+
+  <!-- ZORO (centro) -->
+  <div class="station station-zoro">
+    <div class="station-icon-wrap">
       <img src="zoro-sprite.png" alt="ZORO">
-      <div>
-        <div class="zoro-name">ZORO</div>
-        <div class="zoro-class">Espadachín · NPC</div>
-      </div>
-      <div class="stats-bar">
-        <div class="stat-row">
-          <span class="stat-label">HP</span>
-          <div class="stat-track"><div class="stat-fill hp" style="width:100%"></div></div>
-          <span class="stat-num">180/180</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">MP</span>
-          <div class="stat-track"><div class="stat-fill mp" style="width:90%"></div></div>
-          <span class="stat-num">90/90</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">XP</span>
-          <div class="stat-track"><div class="stat-fill xp" style="width:32%"></div></div>
-          <span class="stat-num">24</span>
-        </div>
-      </div>
     </div>
+    <div class="station-label" style="color:#FFF; font-size:0.72rem;">ZORO</div>
+  </div>
 
-    <!-- RIGHT COLUMN -->
-    <div>
-
-      <!-- FOOD -->
-      <div class="station placeholder">
-        <div class="station-icon">🍽️</div>
-        <div class="station-name">FOOD</div>
-        <div class="station-agent"><span>Checho</span> · Operaciones</div>
-        <div class="station-subtitle">Cartas digitales NFC + pedidos a cocina</div>
-        <div class="station-stats">🔧 En desarrollo</div>
-        <span class="station-link">PRONTO</span>
-      </div>
-
-      <!-- MÉTRICAS -->
-      <div class="station placeholder">
-        <div class="station-icon">📊</div>
-        <div class="station-name">MÉTRICAS</div>
-        <div class="station-agent"><span>Dashboard</span> · Global</div>
-        <div class="station-subtitle">KPIs de todos los proyectos Quick-T</div>
-        <div class="station-stats">🔧 En desarrollo</div>
-        <span class="station-link">PRONTO</span>
-      </div>
-
-    </div>
-
+  <!-- LEGEND -->
+  <div class="footer-legend">
+    <span><span class="dot green"></span> Activo</span>
+    <span><span class="dot amber"></span> Pronto</span>
+    <span>⚔ Click en estaciones para entrar</span>
   </div>
 
 </div>
