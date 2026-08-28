@@ -341,7 +341,7 @@
         <svg viewBox="0 0 120 120">
           <circle class="gauge-bg" cx="60" cy="60" r="52"/>
           <circle class="gauge-fill" id="gaugeVPD" cx="60" cy="60" r="52"
-            stroke="#0DF2C9" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+            stroke="#A855F7" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
         </svg>
         <div class="gauge-center">
           <div class="gauge-value" id="valVPD">—</div>
@@ -457,24 +457,15 @@ function setGauge(el, value, max, unit, colorMap) {
 }
 
 function tempColor(v) {
-  if (v < 15) return '#38BDF8';
-  if (v <= 28) return '#0DF2C9';
-  if (v <= 35) return '#F5B731';
-  return '#F43F5E';
+  return '#F43F5E'; // rojo
 }
 
 function humColor(v) {
-  if (v < 30) return '#F43F5E';
-  if (v <= 45) return '#F5B731';
-  if (v <= 80) return '#0DF2C9';
-  return '#38BDF8';
+  return '#38BDF8'; // azul
 }
 
 function vpdGaugeColor(v) {
-  if (v < 0.45) return '#38BDF8';
-  if (v <= 1.25) return '#0DF2C9';
-  if (v <= 1.60) return '#F5B731';
-  return '#F43F5E';
+  return '#A855F7'; // morado
 }
 
 function fmtTime(ts) {
@@ -541,6 +532,7 @@ function renderCharts(rows) {
   const labels = data.map(r => fmtTime(r.timestamp));
   const temps  = data.map(r => parseFloat(r.temp));
   const hums   = data.map(r => parseFloat(r.hum));
+  const vpds   = data.map(r => parseFloat(r.vpd));
 
   const ctx = document.getElementById('chartTemp');
   if (chartTemp) chartTemp.destroy();
@@ -553,18 +545,26 @@ function renderCharts(rows) {
         {
           label: 'Temperatura (°C)',
           data: temps,
-          borderColor: tempColor(temps.length ? temps[temps.length-1] : 0),
-          backgroundColor: 'rgba(13,242,201,0.06)',
+          borderColor: '#F43F5E',
+          backgroundColor: 'rgba(244,63,94,0.06)',
           fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
           yAxisID: 'y'
         },
         {
           label: 'Humedad (%)',
           data: hums,
-          borderColor: humColor(hums.length ? hums[hums.length-1] : 0),
-          backgroundColor: 'rgba(13,242,201,0.04)',
+          borderColor: '#38BDF8',
+          backgroundColor: 'rgba(56,189,248,0.06)',
           fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
           yAxisID: 'y1'
+        },
+        {
+          label: 'VPD (kPa)',
+          data: vpds,
+          borderColor: '#A855F7',
+          backgroundColor: 'rgba(168,85,247,0.06)',
+          fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
+          yAxisID: 'y2'
         }
       ]
     },
@@ -601,6 +601,12 @@ function renderCharts(rows) {
           type: 'linear', position: 'right',
           title: { display: true, text: '%', color: 'rgba(248,250,252,0.45)' },
           ticks: { color: 'rgba(248,250,252,0.30)', font: { size: 10 } },
+          grid: { drawOnChartArea: false }
+        },
+        y2: {
+          type: 'linear', position: 'right',
+          title: { display: true, text: 'kPa', color: 'rgba(248,250,252,0.45)' },
+          ticks: { color: 'rgba(168,85,247,0.30)', font: { size: 10 }, callback: v => v.toFixed(2) },
           grid: { drawOnChartArea: false }
         }
       }
