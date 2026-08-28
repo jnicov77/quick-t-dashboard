@@ -8,593 +8,186 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   QUICK-T LAB RPG — Torre de control tipo videojuego
-   Paleta: Mint #0DF2C9 + Navy #0A1F44 + Charcoal #1A1D23
-   ============================================================ */
+  :root {
+    --mint:        #0DF2C9;
+    --mint-glow:   rgba(13,242,201,0.25);
+    --navy:        #0A1F44;
+    --navy-dark:   #06142E;
+    --charcoal:    #1A1D23;
+    --text:        #E8ECF1;
+    --text-dim:    #8B95A5;
+    --radius:      16px;
+    --transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
-:root {
-  --mint:        #0DF2C9;
-  --mint-dim:    #0ab896;
-  --mint-glow:   rgba(13, 242, 201, 0.25);
-  --mint-glow-strong: rgba(13, 242, 201, 0.45);
-  --navy:        #0A1F44;
-  --navy-dark:   #06142E;
-  --navy-light:  #0D2A5C;
-  --charcoal:    #1A1D23;
-  --charcoal-light: #252830;
-  --charcoal-lighter: #2F333A;
-  --text:        #E8ECF1;
-  --text-dim:    #8B95A5;
-  --card-bg:     rgba(26, 29, 35, 0.85);
-  --card-border: rgba(13, 242, 201, 0.12);
-  --radius:      16px;
-  --radius-sm:   10px;
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
-  --transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--navy-dark);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* ── RPG Grid Background ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background:
-    /* Outer grid */
-    linear-gradient(rgba(13, 242, 201, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(13, 242, 201, 0.04) 1px, transparent 1px),
-    /* Inner grid */
-    linear-gradient(rgba(13, 242, 201, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(13, 242, 201, 0.015) 1px, transparent 1px),
-    /* Radial vignette */
-    radial-gradient(ellipse at 50% 0%, var(--navy-light) 0%, transparent 70%);
-  background-size:
-    80px 80px,
-    80px 80px,
-    16px 16px,
-    16px 16px,
-    100% 100%;
-  pointer-events: none;
-}
-
-/* ── Diagonal scanlines ── */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.03) 2px,
-    rgba(0,0,0,0.03) 4px
-  );
-  pointer-events: none;
-}
-
-/* ── Main Container ── */
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px 32px 48px;
-}
-
-/* ═══════════════════════════════════════════
-   HEADER
-   ═══════════════════════════════════════════ */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0 12px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid rgba(13, 242, 201, 0.1);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.header-logo {
-  height: 42px;
-  width: auto;
-  filter: drop-shadow(0 0 8px rgba(13, 242, 201, 0.3));
-}
-
-.header-title {
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--mint);
-  letter-spacing: 0.03em;
-  text-shadow: 0 0 20px rgba(13, 242, 201, 0.2);
-}
-
-.header-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  background: rgba(13, 242, 201, 0.1);
-  border: 1px solid rgba(13, 242, 201, 0.25);
-  color: var(--mint);
-  padding: 4px 12px;
-  border-radius: 20px;
-}
-
-/* ═══════════════════════════════════════════
-   MAIN LAYOUT — ZORO + Stations
-   ═══════════════════════════════════════════ */
-.main-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 32px;
-  align-items: start;
-  margin-top: 16px;
-}
-
-/* ── ZORO Sidebar ── */
-.zoro-sidebar {
-  position: sticky;
-  top: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 32px 24px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-card);
-}
-
-#zoro-sprite {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, var(--navy-light), var(--navy-dark));
-  border: 3px solid var(--mint);
-  box-shadow:
-    0 0 30px var(--mint-glow),
-    0 0 60px rgba(13, 242, 201, 0.1),
-    inset 0 0 40px rgba(13, 242, 201, 0.04);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  animation: zoro-idle 3s ease-in-out infinite;
-  overflow: hidden;
-}
-
-/* ── Replace me: cuando Nicolás ponga un <img>, este estilo lo maneja ── */
-#zoro-sprite img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 50%;
-}
-
-@keyframes zoro-idle {
-  0%, 100% { transform: translateY(0) scale(1);   box-shadow: 0 0 20px var(--mint-glow), inset 0 0 30px rgba(13, 242, 201, 0.05); }
-  50%      { transform: translateY(-6px) scale(1.04); box-shadow: 0 0 35px var(--mint-glow-strong), inset 0 0 45px rgba(13, 242, 201, 0.1); }
-}
-
-.zoro-name {
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
-  font-size: 1.3rem;
-  color: var(--mint);
-  text-align: center;
-}
-
-.zoro-class {
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-/* ── Speech Bubble ── */
-.speech-bubble {
-  position: relative;
-  background: var(--charcoal-lighter);
-  border: 1px solid rgba(13, 242, 201, 0.2);
-  border-radius: var(--radius-sm);
-  padding: 14px 18px;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  color: var(--text);
-  text-align: center;
-  max-width: 220px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-}
-
-.speech-bubble::after {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid var(--charcoal-lighter);
-}
-
-.speech-bubble .typing-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  background: var(--mint);
-  margin-left: 2px;
-  vertical-align: text-bottom;
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
-/* ── Voice Button ── */
-.voice-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 22px;
-  background: linear-gradient(135deg, rgba(13, 242, 201, 0.12), rgba(13, 242, 201, 0.04));
-  border: 1px solid var(--mint);
-  border-radius: 30px;
-  color: var(--mint);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-}
-
-.voice-btn:hover {
-  background: var(--mint);
-  color: var(--navy-dark);
-  box-shadow: 0 0 24px var(--mint-glow-strong);
-  transform: translateY(-1px);
-}
-
-.voice-btn:active {
-  transform: scale(0.97);
-}
-
-.voice-btn .mic-icon {
-  font-size: 1.1rem;
-}
-
-/* Listening pulse */
-.voice-btn.listening {
-  background: var(--mint);
-  color: var(--navy-dark);
-  animation: pulse-ring 1.2s ease-out infinite;
-}
-
-@keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(13, 242, 201, 0.6); }
-  70%  { box-shadow: 0 0 0 16px rgba(13, 242, 201, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(13, 242, 201, 0); }
-}
-
-.voice-status {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  text-align: center;
-  min-height: 1.2em;
-}
-
-/* ── Stats RPG Bar ── */
-.stats-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 0 4px;
-}
-.stat-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.stat-label {
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  width: 20px;
-  text-align: right;
-}
-.stat-track {
-  flex: 1;
-  height: 6px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.stat-fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.6s ease;
-}
-.stat-fill.hp { background: #F43F5E; box-shadow: 0 0 6px rgba(244,63,94,0.5); }
-.stat-fill.mp { background: #38BDF8; box-shadow: 0 0 6px rgba(56,189,248,0.5); }
-.stat-fill.xp { background: #F5B731; box-shadow: 0 0 6px rgba(245,183,49,0.5); }
-.stat-num {
-  font-size: 0.65rem;
-  color: var(--text-dim);
-  width: 44px;
-  text-align: left;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ═══════════════════════════════════════════
-   STATIONS GRID
-   ═══════════════════════════════════════════ */
-.stations {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.station-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 22px 28px;
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-card);
-  text-decoration: none;
-  color: var(--text);
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  align-items: center;
-  gap: 20px;
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-}
-
-.station-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 0% 50%, rgba(13, 242, 201, 0.04), transparent 60%);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.station-card:hover {
-  transform: scale(1.02) translateY(-2px);
-  border-color: var(--mint);
-  box-shadow:
-    0 0 30px var(--mint-glow),
-    0 8px 32px rgba(0,0,0,0.5);
-}
-
-.station-card:hover::before {
-  opacity: 1;
-}
-
-.station-card:active {
-  transform: scale(0.99);
-}
-
-.station-icon {
-  font-size: 2rem;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(13, 242, 201, 0.08);
-  border-radius: var(--radius-sm);
-  position: relative;
-  z-index: 1;
-}
-
-.station-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  position: relative;
-  z-index: 1;
-}
-
-.station-name {
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--mint);
-}
-
-.station-meta {
-  font-size: 0.82rem;
-  color: var(--text-dim);
-  line-height: 1.4;
-}
-
-.station-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.status-dot.online  { background: #0DF2C9; box-shadow: 0 0 6px rgba(13, 242, 201, 0.6); }
-.status-dot.warning { background: #F2A20D; box-shadow: 0 0 6px rgba(242, 162, 13, 0.5); }
-.status-dot.offline { background: #F2460D; box-shadow: 0 0 6px rgba(242, 70, 13, 0.4); }
-
-.station-arrow {
-  font-size: 1.2rem;
-  color: var(--text-dim);
-  transition: var(--transition);
-  position: relative;
-  z-index: 1;
-}
-
-.station-card:hover .station-arrow {
-  color: var(--mint);
-  transform: translateX(4px);
-}
-
-/* ── Placeholder card (no link) ── */
-.station-card.placeholder {
-  opacity: 0.65;
-  cursor: default;
-  filter: grayscale(0.4);
-}
-
-.station-card.placeholder:hover {
-  opacity: 0.85;
-  filter: grayscale(0.2);
-  transform: scale(1.01) translateY(-1px);
-}
-
-.station-card.placeholder .station-name {
-  color: var(--text-dim);
-}
-
-.station-badge {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  background: rgba(242, 162, 13, 0.15);
-  color: #F2A20D;
-  border: 1px solid rgba(242, 162, 13, 0.3);
-  padding: 2px 8px;
-  border-radius: 12px;
-  display: inline-block;
-  margin-left: 8px;
-}
-
-/* ═══════════════════════════════════════════
-   RESPONSIVE — Tablet
-   ═══════════════════════════════════════════ */
-@media (max-width: 900px) {
-  .main-grid {
-    grid-template-columns: 1fr;
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow-x: hidden;
   }
 
-  .zoro-sidebar {
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-    padding: 20px;
+  /* ── RPG Grid Background ── */
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none;
+    background:
+      linear-gradient(rgba(13,242,201,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(13,242,201,0.04) 1px, transparent 1px),
+      radial-gradient(ellipse at 50% 0%, var(--navy) 0%, transparent 65%);
+    background-size: 80px 80px, 80px 80px, 100% 100%;
   }
 
-  #zoro-sprite {
-    width: 100px;
-    height: 100px;
-    font-size: 2.2rem;
+  /* ── LAB MAP Container ── */
+  .lab-map {
+    position:relative; z-index:1;
+    width: 920px; max-width:98vw;
+    background: rgba(10,31,68,0.75);
+    border: 2px solid rgba(13,242,201,0.12);
+    border-radius: 24px;
+    padding: 36px 32px;
+    box-shadow: 0 0 80px rgba(13,242,201,0.06), inset 0 0 120px rgba(13,242,201,0.02);
   }
 
-  .speech-bubble {
-    max-width: 280px;
-    order: 3;
-    flex-basis: 100%;
+  /* ── Header ── */
+  .lab-header {
+    display:flex; align-items:center; gap:14px; margin-bottom:28px;
+    border-bottom:1px solid rgba(13,242,201,0.1); padding-bottom:18px;
+  }
+  .lab-header img { height:38px; }
+  .lab-header h1 {
+    font-family:'Quicksand',sans-serif; font-size:1.5rem; color:var(--mint);
+    text-shadow:0 0 20px rgba(13,242,201,0.2);
+  }
+  .lab-badge {
+    margin-left:auto; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em;
+    background:rgba(13,242,201,0.1); border:1px solid rgba(13,242,201,0.25); color:var(--mint);
+    padding:4px 12px; border-radius:20px;
   }
 
-  .speech-bubble::after {
-    top: -10px;
-    left: 50%;
+  /* ── 3-Column layout: Stations | ZORO | Stations ── */
+  .stations-row {
+    display:grid; grid-template-columns: 1fr 200px 1fr; gap:24px; align-items:start;
   }
 
-  .container {
-    padding: 16px 20px 36px;
+  /* ── Station Card ── */
+  .station {
+    background: rgba(26,29,35,0.85); border:1px solid rgba(13,242,201,0.12);
+    border-radius:var(--radius); padding:18px 16px; backdrop-filter:blur(12px);
+    text-align:center; transition:var(--transition); margin-bottom:16px;
+  }
+  .station:hover {
+    transform:translateY(-3px); border-color:var(--mint);
+    box-shadow:0 0 25px var(--mint-glow);
+  }
+  .station-icon { font-size:2.4rem; margin-bottom:10px; }
+  .station-name {
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1rem; color:var(--mint); margin-bottom:6px;
+  }
+  .station-agent { font-size:0.7rem; color:var(--text-dim); margin-bottom:8px; }
+  .station-agent span { color:#0ab896; }
+  .station-subtitle { font-size:0.76rem; color:var(--text-dim); line-height:1.4; margin-bottom:8px; }
+  .station-stats { font-size:0.72rem; color:var(--text-dim); margin-bottom:12px; }
+  .station-link {
+    display:inline-block; padding:7px 18px; background:rgba(13,242,201,0.12);
+    border:1.5px solid var(--mint); border-radius:24px; color:var(--mint);
+    font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:600;
+    text-decoration:none; transition:var(--transition);
+  }
+  .station-link:hover { background:var(--mint); color:var(--navy-dark); }
+
+  .placeholder {
+    opacity:0.7; cursor:default;
+  }
+  .placeholder .station-name { color:var(--text-dim); }
+  .placeholder .station-link {
+    background:rgba(242,162,13,0.1); border-color:rgba(242,162,13,0.3); color:#F2A20D;
   }
 
-  .station-card {
-    grid-template-columns: 40px 1fr auto;
-    padding: 16px 20px;
-    gap: 14px;
+  /* ── ZORO Center ── */
+  .zoro-center {
+    display:flex; flex-direction:column; align-items:center; gap:14px;
   }
-}
-
-@media (max-width: 500px) {
-  .header {
-    flex-wrap: wrap;
-    gap: 10px;
+  .zoro-center img {
+    width:140px; height:auto; border-radius:50%;
+    border:2px solid var(--mint);
+    box-shadow:0 0 30px var(--mint-glow);
+    animation: zoro-idle 3s ease-in-out infinite;
   }
-
-  .header-title {
-    font-size: 1.3rem;
+  @keyframes zoro-idle {
+    0%,100% { transform:translateY(0) }
+    50%      { transform:translateY(-7px) }
   }
-
-  .station-card {
-    grid-template-columns: 36px 1fr;
-    gap: 12px;
+  .zoro-center .zoro-name {
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1.15rem; color:var(--mint);
   }
-
-  .station-arrow {
-    display: none;
+  .zoro-center .zoro-class {
+    font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em;
   }
 
-  .voice-btn {
-    width: 100%;
-    justify-content: center;
+  /* ── Stats RPG Bar ── */
+  .stats-bar { width:100%; display:flex; flex-direction:column; gap:5px; }
+  .stat-row { display:flex; align-items:center; gap:8px; }
+  .stat-label { font-family:'Quicksand',sans-serif; font-weight:700; font-size:0.6rem; color:var(--text-dim); width:18px; text-align:right; }
+  .stat-track { flex:1; height:5px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
+  .stat-fill { height:100%; border-radius:3px; }
+  .stat-fill.hp { background:#F43F5E; box-shadow:0 0 5px rgba(244,63,94,0.5); }
+  .stat-fill.mp { background:#38BDF8; box-shadow:0 0 5px rgba(56,189,248,0.5); }
+  .stat-fill.xp { background:#F5B731; box-shadow:0 0 5px rgba(245,183,49,0.5); }
+  .stat-num { font-size:0.58rem; color:var(--text-dim); width:38px; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:800px) {
+   .stations-row { grid-template-columns:1fr; }
+   .lab-map { padding:20px; }
   }
-}
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="lab-map">
 
-  <!-- ═══ HEADER ═══ -->
-  <header class="header">
-    <div class="header-left">
-      <img class="header-logo" src="quickt-logo-nav.png" alt="Quick-T" onerror="this.style.display='none'">
-      <h1 class="header-title">Quick-T Lab</h1>
+  <div class="lab-header">
+    <img src="quickt-logo-nav.png" alt="Quick-T">
+    <h1>Quick-T Lab</h1>
+    <span class="lab-badge">v3.0 RPG</span>
+  </div>
+
+  <div class="stations-row">
+
+    <!-- LEFT COLUMN -->
+    <div>
+
+      <!-- GARDEN -->
+      <a href="garden.html" class="station" style="display:block; text-decoration:none;">
+        <div class="station-icon">🌿</div>
+        <div class="station-name">GARDEN</div>
+        <div class="station-agent"><span>ZORO</span> · Orquestador</div>
+        <div class="station-subtitle">Termohigrómetro inteligente para plantas</div>
+        <div class="station-stats">24.8°C · 49% · VPD 1.59 ALTO</div>
+        <span class="station-link">Entrar →</span>
+      </a>
+
+      <!-- ASISTENC-IA -->
+      <a href="dashboard.html" class="station" style="display:block; text-decoration:none;">
+        <div class="station-icon">🏭</div>
+        <div class="station-name">ASISTENC-IA</div>
+        <div class="station-agent"><span>Mr. Wong</span> · Desarrollador</div>
+        <div class="station-subtitle">Control de asistencia con hardware NFC</div>
+        <div class="station-stats">24 presentes · ⚠ 1 alerta pendiente</div>
+        <span class="station-link">Entrar →</span>
+      </a>
+
     </div>
-    <span class="header-badge">v3.0 RPG</span>
-  </header>
 
-  <!-- ═══ MAIN GRID: ZORO + Stations ═══ -->
-  <div class="main-grid">
-
-    <!-- ── ZORO Sidebar ── -->
-    <aside class="zoro-sidebar">
-      <div id="zoro-sprite">
-        <img src="zoro-sprite.png" alt="ZORO">
-      </div>
+    <!-- CENTER: ZORO -->
+    <div class="zoro-center">
+      <img src="zoro-sprite.png" alt="ZORO">
       <div>
         <div class="zoro-name">ZORO</div>
         <div class="zoro-class">Espadachín · NPC</div>
       </div>
-      <!-- Stats RPG -->
       <div class="stats-bar">
         <div class="stat-row">
           <span class="stat-label">HP</span>
@@ -612,194 +205,36 @@ body::after {
           <span class="stat-num">24</span>
         </div>
       </div>
-      <div class="speech-bubble" id="zoro-dialogue">
-        ¿En qué trabajamos hoy, Nicolás?<span class="typing-cursor"></span>
-      </div>
-      <button class="voice-btn" id="voice-btn" title="Hablar con ZORO">
-        <span class="mic-icon">🎤</span> Hablar
-      </button>
-      <div class="voice-status" id="voice-status"></div>
-    </aside>
+    </div>
 
-    <!-- ── STATIONS ── -->
-    <section class="stations">
+    <!-- RIGHT COLUMN -->
+    <div>
 
-      <!-- GARDEN -->
-      <a href="garden.html" class="station-card">
-        <div class="station-icon">🌿</div>
-        <div class="station-info">
-          <div class="station-name">GARDEN</div>
-          <div class="station-meta">23.4°C · 56% HR · VPD 0.8 kPa</div>
-          <div class="station-status">
-            <span class="status-dot online"></span>
-            <span style="font-size:0.75rem;color:var(--mint-dim)">VPD IDEAL</span>
-          </div>
-        </div>
-        <span class="station-arrow">→</span>
-      </a>
-
-      <!-- ASISTENC-IA -->
-      <a href="dashboard.html" class="station-card">
-        <div class="station-icon">🏭</div>
-        <div class="station-info">
-          <div class="station-name">ASISTENC-IA</div>
-          <div class="station-meta">24 colaboradores presentes</div>
-          <div class="station-status">
-            <span class="status-dot warning"></span>
-            <span style="font-size:0.75rem;color:#F2A20D">1 alerta pendiente</span>
-          </div>
-        </div>
-        <span class="station-arrow">→</span>
-      </a>
-
-      <!-- FOOD (placeholder) -->
-      <div class="station-card placeholder">
+      <!-- FOOD -->
+      <div class="station placeholder">
         <div class="station-icon">🍽️</div>
-        <div class="station-info">
-          <div class="station-name">FOOD <span class="station-badge">pronto</span></div>
-          <div class="station-meta">3 mesas activas · 2 pedidos en curso</div>
-          <div class="station-status">
-            <span class="status-dot online"></span>
-            <span style="font-size:0.75rem;color:var(--text-dim)">En desarrollo</span>
-          </div>
-        </div>
-        <span class="station-arrow">→</span>
+        <div class="station-name">FOOD</div>
+        <div class="station-agent"><span>Checho</span> · Operaciones</div>
+        <div class="station-subtitle">Cartas digitales NFC + pedidos a cocina</div>
+        <div class="station-stats">🔧 En desarrollo</div>
+        <span class="station-link">PRONTO</span>
       </div>
 
-      <!-- SERVICE (placeholder) -->
-      <div class="station-card placeholder">
-        <div class="station-icon">🏨</div>
-        <div class="station-info">
-          <div class="station-name">SERVICE <span class="station-badge">pronto</span></div>
-          <div class="station-meta">8 habitaciones · 2 activas</div>
-          <div class="station-status">
-            <span class="status-dot online"></span>
-            <span style="font-size:0.75rem;color:var(--text-dim)">En desarrollo</span>
-          </div>
-        </div>
-        <span class="station-arrow">→</span>
-      </div>
-
-      <!-- MÉTRICAS (placeholder) -->
-      <div class="station-card placeholder">
+      <!-- MÉTRICAS -->
+      <div class="station placeholder">
         <div class="station-icon">📊</div>
-        <div class="station-info">
-          <div class="station-name">MÉTRICAS <span class="station-badge">pronto</span></div>
-          <div class="station-meta">+12% actividad esta semana</div>
-          <div class="station-status">
-            <span class="status-dot online"></span>
-            <span style="font-size:0.75rem;color:var(--text-dim)">En desarrollo</span>
-          </div>
-        </div>
-        <span class="station-arrow">→</span>
+        <div class="station-name">MÉTRICAS</div>
+        <div class="station-agent"><span>Dashboard</span> · Global</div>
+        <div class="station-subtitle">KPIs de todos los proyectos Quick-T</div>
+        <div class="station-stats">🔧 En desarrollo</div>
+        <span class="station-link">PRONTO</span>
       </div>
 
-    </section>
+    </div>
 
-  </div><!-- /main-grid -->
+  </div>
 
-</div><!-- /container -->
-
-<!-- ═══════════════════════════════════════════
-     VOICE — Web Speech API
-     ═══════════════════════════════════════════ -->
-<script>
-(function() {
-  const voiceBtn   = document.getElementById('voice-btn');
-  const voiceStatus = document.getElementById('voice-status');
-  const dialogue   = document.getElementById('zoro-dialogue');
-
-  // Check browser support
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    voiceBtn.disabled = true;
-    voiceBtn.style.opacity = '0.5';
-    voiceBtn.title = 'Reconocimiento de voz no disponible en este navegador';
-    voiceStatus.textContent = 'Voz no disponible';
-    return;
-  }
-
-  const recognition = new SpeechRecognition();
-  recognition.lang = 'es-ES';
-  recognition.interimResults = false;
-  recognition.continuous = false;
-
-  let listening = false;
-
-  voiceBtn.addEventListener('click', function() {
-    if (listening) {
-      recognition.stop();
-      return;
-    }
-    try {
-      recognition.start();
-    } catch(e) {
-      voiceStatus.textContent = 'Error al iniciar';
-    }
-  });
-
-  recognition.addEventListener('start', function() {
-    listening = true;
-    voiceBtn.classList.add('listening');
-    voiceBtn.querySelector('.mic-icon').textContent = '🔴';
-    voiceBtn.childNodes[1] && (voiceBtn.childNodes[1].textContent = ' Escuchando...');
-    voiceStatus.textContent = 'Te escucho...';
-  });
-
-  recognition.addEventListener('end', function() {
-    listening = false;
-    voiceBtn.classList.remove('listening');
-    voiceBtn.querySelector('.mic-icon').textContent = '🎤';
-    voiceBtn.childNodes[1] && (voiceBtn.childNodes[1].textContent = ' Hablar');
-    if (!voiceStatus.textContent.includes('Dijiste')) {
-      voiceStatus.textContent = '';
-    }
-  });
-
-  recognition.addEventListener('result', function(event) {
-    const transcript = event.results[0][0].transcript.trim();
-    voiceStatus.textContent = 'Dijiste: «' + transcript + '»';
-
-    // Simple intent matching for demo
-    const lower = transcript.toLowerCase();
-    if (lower.includes('garden') || lower.includes('jardín') || lower.includes('planta')) {
-      dialogue.innerHTML = '¡Vamos al Garden! Las plantas te esperan 🌿<span class="typing-cursor"></span>';
-      setTimeout(function() { window.location.href = 'garden.html'; }, 1500);
-    } else if (lower.includes('asistenc') || lower.includes('asistencia') || lower.includes('empleado')) {
-      dialogue.innerHTML = 'Abriendo Asistenc-IA... verificando asistencias 🏭<span class="typing-cursor"></span>';
-      setTimeout(function() { window.location.href = 'dashboard.html'; }, 1500);
-    } else if (lower.includes('hola') || lower.includes('buen')) {
-      dialogue.innerHTML = '¡Hola, Nicolás! ¿Qué proyecto quieres revisar hoy?<span class="typing-cursor"></span>';
-    } else {
-      dialogue.innerHTML = 'Entendido: «' + transcript + '». ¿Vamos a alguna estación?<span class="typing-cursor"></span>';
-    }
-  });
-
-  recognition.addEventListener('error', function(event) {
-    voiceStatus.textContent = 'Error: ' + (event.error === 'no-speech' ? 'no te escuché' : event.error);
-    listening = false;
-    voiceBtn.classList.remove('listening');
-    voiceBtn.querySelector('.mic-icon').textContent = '🎤';
-    voiceBtn.childNodes[1] && (voiceBtn.childNodes[1].textContent = ' Hablar');
-  });
-
-  // Rotate dialogue messages
-  const messages = [
-    '¿En qué trabajamos hoy, Nicolás?',
-    '¡El Garden está en VPD ideal!',
-    'Revisa Asistenc-IA, hay una alerta.',
-    'Tus plantas te necesitan, Nicolás.',
-    '¿Probamos el nuevo dashboard?',
-    '¡Buen día para codear!'
-  ];
-  let msgIdx = 0;
-  setInterval(function() {
-    if (listening) return; // don't rotate while listening
-    msgIdx = (msgIdx + 1) % messages.length;
-    dialogue.innerHTML = messages[msgIdx] + '<span class="typing-cursor"></span>';
-  }, 8000);
-})();
-</script>
+</div>
 
 </body>
 </html>
