@@ -103,7 +103,7 @@
   /* ── Top bar ── */
   .top-bar {
     padding: 24px 24px 12px;
-    display: flex; justify-content: space-between; align-items: flex-end;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
   }
   .top-bar h1 { font-size: 28px; }
   .top-bar .location { color: var(--text-60); font-size: 13px; margin-top: 2px; }
@@ -274,7 +274,7 @@
     <a href="/" class="logo">
       <img src="quickt-logo-nav.png" alt="Quick-T">
     </a>
-    <span class="header-title">Quick-T Garden — Jardín principal</span>
+    <span class="header-title">Quick-T Garden — Monitoreando tu jardín</span>
     <div class="header-status">
       <span class="status-pill"><span class="status-dot"></span>En vivo</span>
       <button class="btn-refresh" id="refreshBtn" aria-label="Actualizar">
@@ -291,7 +291,7 @@
 
   <div class="top-bar">
     <div>
-      <h1>Jardín principal</h1>
+      <h1>Monitoreando tu jardín</h1>
       <div class="location">📍 Quick-T Garden · Monitoreo ambiental en tiempo real</div>
     </div>
     <div class="last-update" id="lastUpdate">Conectando…</div>
@@ -426,9 +426,7 @@ const DEVICE_ID = urlParams.get('device') || 'quick-t-garden-v1'; // default: ja
 // Mostrar el device en el header
 const deviceSpan = document.getElementById('headerDeviceName');
 if (deviceSpan) {
-  // Formatear: quick-t-garden-v1 → Jardín principal / GARDEN-A001 → Garden A001
-  const name = DEVICE_ID.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace('Quick T Garden V1', 'Jardín principal');
-  deviceSpan.textContent = '— ' + name;
+  deviceSpan.textContent = ' — Monitoreando tu jardín';
 }
 // Actualizar el título de la página
 document.title = 'Quick-T Garden — ' + DEVICE_ID;
