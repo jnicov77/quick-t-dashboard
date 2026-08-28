@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quick-T Garden — Tu jardín, monitoreado</title>
+<title>Quick-T Garden — Termohigrómetro Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
 <style>
   :root {
     --bg:         #0A1F44;
-    --surface:    #1A1D23;
-    --surface-alt:#22272E;
+    --surface:    #111B33;
+    --surface-alt:#162040;
     --text:       #F8FAFC;
     --text-90:    rgba(248,250,252,0.90);
     --text-60:    rgba(248,250,252,0.60);
@@ -24,33 +24,33 @@
     --accent-hover:#00d4b0;
     --accent-25:  rgba(13,242,201,0.25);
     --accent-15:  rgba(13,242,201,0.15);
+    --accent-10:  rgba(13,242,201,0.10);
     --alert:      #F43F5E;
-    --alert-25:   rgba(244,63,94,0.25);
     --alert-15:   rgba(244,63,94,0.15);
-    --warn:       #F59E0B;
-    --warn-15:    rgba(245,158,11,0.15);
+    --warn:       #F5B731;
+    --warn-15:    rgba(245,183,49,0.15);
     --sky:        #38BDF8;
     --sky-15:     rgba(56,189,248,0.15);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
-    --radius-xl: 20px;
+    --radius-xl: 24px;
     --radius-full: 999px;
-    --shadow-card: 0 1px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
-    --shadow-hover: 0 8px 30px rgba(0,0,0,0.35);
-    --max-width: 1120px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.30);
+    --shadow-hover: 0 8px 32px rgba(0,0,0,0.40);
+    --max-width: 1160px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 15px; font-weight: 400; line-height: 1.6;
+    font-size: 14px; font-weight: 400; line-height: 1.5;
     color: var(--text); background: var(--bg);
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, .metric-value, .temp-big {
+  h1, h2, h3, h4, .gauge-value, .metric-num {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700; line-height: 1.15; letter-spacing: -0.01em;
   }
@@ -60,156 +60,225 @@
   /* ── Header ── */
   .site-header {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(10,31,68,0.88);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(10,31,68,0.92);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--text-10);
   }
   .header-inner {
     max-width: var(--max-width); margin: 0 auto;
-    padding: 18px 24px;
-    display: flex; align-items: center; gap: 12px;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 14px;
   }
-  .logo {
-    display: flex; align-items: center; gap: 10px;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700; font-size: 18px; color: var(--text);
+  .logo { display: flex; align-items: center; }
+  .logo img { height: 32px; width: auto; display: block; }
+  .header-title {
+    font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 15px;
+    color: var(--text-90); margin-left: 4px;
   }
-  .logo-mark {
-    width: 40px; height: 40px; display: grid; place-items: center;
-    background: var(--accent-15); border-radius: var(--radius-sm);
-    font-size: 20px;
-  }
-  .header-meta { margin-left: 8px; font-size: 13px; color: var(--text-60); }
-  .header-status {
-    margin-left: auto; display: flex; align-items: center; gap: 12px;
-  }
+  .header-status { margin-left: auto; display: flex; align-items: center; gap: 12px; }
   .status-pill {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px; background: var(--accent-15);
-    border-radius: var(--radius-full); font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 14px; background: var(--accent-15);
+    border-radius: var(--radius-full); font-size: 12px; font-weight: 600;
   }
   .status-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 4px rgba(13,242,201,0.20);
+    width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(13,242,201,0.25);
     animation: pulse 2s infinite;
   }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  .icon-btn {
-    width: 40px; height: 40px; display: grid; place-items: center;
-    background: var(--accent); border-radius: var(--radius-sm);
-    border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  .btn-refresh {
+    width: 36px; height: 36px; display: grid; place-items: center;
+    background: var(--accent); border: none; border-radius: var(--radius-sm);
+    cursor: pointer; transition: transform 0.2s;
   }
-  .icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
-  .icon-btn svg { width: 18px; height: 18px; color: var(--bg); }
-  .icon-btn.reloading { animation: spin 0.6s linear infinite; }
+  .btn-refresh:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+  .btn-refresh svg { width: 16px; height: 16px; color: var(--bg); }
+  .btn-refresh.spinning { animation: spin 0.6s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
-  /* ── Hero ── */
-  .hero { padding: 32px 24px 8px; }
-  .hero h1 { font-size: 40px; margin-bottom: 6px; }
-  .hero .sub { color: var(--text-60); font-size: 16px; }
-
-  /* ── Métricas ── */
-  .metrics-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 16px; padding: 24px;
+  /* ── Top bar ── */
+  .top-bar {
+    padding: 24px 24px 12px;
+    display: flex; justify-content: space-between; align-items: flex-end;
   }
-  .metric-card {
+  .top-bar h1 { font-size: 28px; }
+  .top-bar .location { color: var(--text-60); font-size: 13px; margin-top: 2px; }
+  .top-bar .last-update { color: var(--text-40); font-size: 12px; }
+
+  .alert-banner {
+    background: var(--accent-15); border: 1px solid var(--accent-25);
+    border-radius: var(--radius-md); padding: 12px 20px; margin: 0 24px 12px;
+    font-size: 13px; font-weight: 500;
+    display: none;
+  }
+  .alert-banner.warn { background: var(--warn-15); border-color: rgba(245,183,49,0.25); display: block; }
+  .alert-banner.danger { background: var(--alert-15); border-color: rgba(244,63,94,0.25); display: block; }
+  .alert-banner.show { display: block; }
+
+  /* ── Gauges row ── */
+  .gauges-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; padding: 0 24px 8px;
+  }
+  .gauge-card {
     background: var(--surface); border: 1px solid var(--text-10);
-    border-radius: var(--radius-md); padding: 24px;
-    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-lg); padding: 28px 20px 24px;
+    text-align: center; box-shadow: var(--shadow-card);
     position: relative; overflow: hidden;
   }
-  .metric-card.hero-card { grid-column: span 3; text-align: center; padding: 40px 24px; }
-  .metric-label {
-    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-60); margin-bottom: 12px;
+  .gauge-card::before {
+    content: ''; position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+    width: 100px; height: 3px; background: var(--accent); border-radius: 0 0 50% 50%;
+    opacity: 0.15;
   }
-  .metric-value { font-size: 36px; }
-  .metric-value .unit { font-size: 20px; color: var(--text-60); font-weight: 600; margin-left: 2px; }
-  .temp-big { font-size: 72px; line-height: 1; }
-  .temp-big .unit { font-size: 32px; color: var(--text-60); }
-  .metric-hint { margin-top: 8px; font-size: 12px; color: var(--text-40); }
-
-  .vpd-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 16px; border-radius: var(--radius-full);
-    font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 14px;
-    margin-top: 16px;
+  .gauge-card .gauge-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-40); margin-bottom: 18px;
   }
-  .vpd-badge.ideal  { background: var(--accent-15); color: var(--accent); }
-  .vpd-badge.bajo   { background: var(--sky-15);    color: var(--sky); }
-  .vpd-badge.alto   { background: var(--warn-15);   color: var(--warn); }
-  .vpd-badge.muyalto{ background: var(--alert-15);  color: var(--alert); }
+  .gauge-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 16px; }
+  .gauge-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .gauge-bg { fill: none; stroke: var(--text-10); stroke-width: 8; }
+  .gauge-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+  .gauge-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+  }
+  .gauge-value { font-size: 34px; line-height: 1; }
+  .gauge-unit { font-size: 13px; color: var(--text-60); font-weight: 600; }
+  .gauge-delta { font-size: 11px; color: var(--text-40); margin-top: 3px; }
 
-  /* ── Paneles ── */
-  .panel {
+  .gauge-rings { position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; }
+  .gauge-rings circle { fill: none; stroke-width: 1; }
+
+  /* ── Charts row ── */
+  .charts-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; padding: 8px 24px 8px;
+  }
+  .chart-panel {
     background: var(--surface); border: 1px solid var(--text-10);
-    border-radius: var(--radius-lg); padding: 28px;
-    margin-bottom: 24px; box-shadow: var(--shadow-card);
+    border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card);
   }
-  .panel h2 { font-size: 22px; margin-bottom: 20px; }
-  .panel .chart-wrap { position: relative; height: 320px; }
+  .chart-panel h3 { font-size: 15px; color: var(--text-60); margin-bottom: 14px; }
+  .chart-wrap { position: relative; height: 240px; }
 
-  /* ── Recomendaciones ── */
-  .reco-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .reco-card {
-    display: flex; gap: 14px; align-items: flex-start;
-    background: var(--surface-alt); border: 1px solid var(--text-10);
-    border-radius: var(--radius-md); padding: 20px;
+  /* ── VPD Status + Table ── */
+  .bottom-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; padding: 8px 24px 24px;
   }
-  .reco-icon {
-    flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--radius-sm);
-    display: grid; place-items: center; font-size: 22px;
+  .status-panel {
+    background: var(--surface); border: 1px solid var(--text-10);
+    border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card);
   }
-  .reco-icon.ideal   { background: var(--accent-15); }
-  .reco-icon.bajo    { background: var(--sky-15); }
-  .reco-icon.alto    { background: var(--warn-15); }
-  .reco-icon.muyalto { background: var(--alert-15); }
-  .reco-card h4 { font-family: 'Quicksand', sans-serif; font-size: 15px; margin-bottom: 4px; }
-  .reco-card p { color: var(--text-60); font-size: 13px; line-height: 1.5; }
+  .status-panel h3 { font-size: 15px; color: var(--text-60); margin-bottom: 14px; }
+  .vpd-indicator {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    border-radius: var(--radius-md); margin-bottom: 17px;
+  }
+  .vpd-indicator.ideal  { background: var(--accent-15); }
+  .vpd-indicator.bajo   { background: var(--sky-15); }
+  .vpd-indicator.alto   { background: var(--warn-15); }
+  .vpd-indicator.muyalto{ background: var(--alert-15); }
+  .vpd-dot {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 20px; flex-shrink: 0;
+  }
+  .vpd-dot.ideal  { background: var(--accent-25); }
+  .vpd-dot.bajo   { background: var(--sky-15); }
+  .vpd-dot.alto   { background: var(--warn-15); }
+  .vpd-dot.muyalto{ background: var(--alert-15); }
+  .vpd-info strong { display: block; font-family: 'Quicksand', sans-serif; font-size: 16px; }
+  .vpd-info span { font-size: 12px; color: var(--text-60); }
 
-  .reco-highlight {
-    background: var(--accent-15); border: 1px solid var(--accent-25);
-    border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px;
-    font-size: 15px; color: var(--text);
+  .vpd-bar-wrap { margin-bottom: 16px; }
+  .vpd-bar-label-row { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-40); margin-bottom: 4px; }
+  .vpd-bar-track {
+    height: 6px; border-radius: 99px; background: var(--text-10);
+    position: relative; overflow: visible;
   }
-  .reco-highlight strong { color: var(--accent); }
+  .vpd-bar-fill {
+    position: absolute; height: 6px; border-radius: 99px;
+    background: linear-gradient(90deg, var(--sky), var(--accent) 50%, var(--warn) 80%, var(--alert));
+    top: 0; left: 0; right: 0;
+  }
+  .vpd-bar-knob {
+    position: absolute; top: -6px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #FFF; border: 3px solid var(--accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transform: translateX(-50%); transition: left 0.8s ease;
+  }
+  .vpd-zones { display: flex; justify-content: space-between; margin-top: 6px; }
+  .vpd-zone { font-size: 10px; font-weight: 600; }
+  .vpd-zone.ba { color: var(--sky); }
+  .vpd-zone.id { color: var(--accent); }
+  .vpd-zone.al { color: var(--warn); }
+  .vpd-zone.ma { color: var(--alert); }
+
+  /* ── Table ── */
+  .table-panel {
+    background: var(--surface); border: 1px solid var(--text-10);
+    border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card);
+  }
+  .table-panel h3 { font-size: 15px; color: var(--text-60); margin-bottom: 14px; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th {
+    text-align: left; padding: 8px 10px; font-weight: 600;
+    color: var(--text-40); font-size: 11px; letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--text-10);
+  }
+  .data-table td {
+    padding: 9px 10px; border-bottom: 1px solid var(--text-05);
+    color: var(--text-90);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table .status-badge {
+    display: inline-block; padding: 3px 10px; border-radius: var(--radius-full);
+    font-weight: 600; font-size: 11px;
+  }
+  .status-badge.ideal  { color: var(--accent); background: var(--accent-15); }
+  .status-badge.bajo   { color: var(--sky);    background: var(--sky-15); }
+  .status-badge.alto   { color: var(--warn);   background: var(--warn-15); }
+  .status-badge.muyalto{ color: var(--alert);  background: var(--alert-15); }
 
   /* ── Footer ── */
   .site-footer {
-    margin-top: 24px; padding: 24px 0;
-    border-top: 1px solid var(--text-10);
-    font-size: 12px; color: var(--text-60); text-align: center;
+    padding: 20px 24px; border-top: 1px solid var(--text-10);
+    font-size: 11px; color: var(--text-40); text-align: center;
   }
 
   /* ── Responsive ── */
-  @media (max-width: 768px) {
-    .metrics-grid { grid-template-columns: 1fr; }
-    .metric-card.hero-card { grid-column: span 1; }
-    .reco-list { grid-template-columns: 1fr; }
-    .temp-big { font-size: 56px; }
-    .header-meta { display: none; }
+  @media (max-width: 900px) {
+    .gauges-row { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .gauge-wrap { width: 100px; height: 100px; }
+    .gauge-value { font-size: 26px; }
+    .charts-row, .bottom-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .gauges-row { grid-template-columns: 1fr 1fr; }
+    .header-title { display: none; }
+    .gauge-wrap { width: 90px; height: 90px; }
+    .gauge-value { font-size: 24px; }
   }
 </style>
 </head>
 <body>
 
-<header class="site-header" id="siteHeader">
+<header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">
-      <img src="quickt-logo-nav.png" alt="Quick-T" style="height: 36px; width: auto; display: block;" />
+      <img src="quickt-logo-nav.png" alt="Quick-T">
     </a>
-    <div class="header-meta">Tu jardín, monitoreado</div>
+    <span class="header-title">Quick-T Garden — Jardín principal</span>
     <div class="header-status">
       <span class="status-pill"><span class="status-dot"></span>En vivo</span>
-      <button class="icon-btn" id="refreshBtn" aria-label="Actualizar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="btn-refresh" id="refreshBtn" aria-label="Actualizar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/>
           <path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/>
         </svg>
@@ -220,58 +289,145 @@
 
 <main class="container">
 
-  <section class="hero">
-    <h1>Jardin principal</h1>
-    <p class="sub" id="lastUpdate">Actualizando…</p>
+  <div class="top-bar">
+    <div>
+      <h1>Jardín principal</h1>
+      <div class="location">📍 Quick-T Garden · Monitoreo ambiental en tiempo real</div>
+    </div>
+    <div class="last-update" id="lastUpdate">Conectando…</div>
+  </div>
+
+  <div class="alert-banner" id="alertBanner"></div>
+
+  <section class="gauges-row">
+    <!-- TEMPERATURA -->
+    <div class="gauge-card">
+      <div class="gauge-label">🌡️ Temperatura</div>
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+          <circle class="gauge-fill" id="gaugeTemp" cx="60" cy="60" r="52"
+            stroke="#F43F5E" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-value" id="valTemp">—</div>
+          <div class="gauge-unit">°C</div>
+        </div>
+      </div>
+      <div class="gauge-delta" id="deltaTemp">—</div>
+    </div>
+
+    <!-- HUMEDAD -->
+    <div class="gauge-card">
+      <div class="gauge-label">💧 Humedad relativa</div>
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+          <circle class="gauge-fill" id="gaugeHum" cx="60" cy="60" r="52"
+            stroke="#38BDF8" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-value" id="valHum">—</div>
+          <div class="gauge-unit">%</div>
+        </div>
+      </div>
+      <div class="gauge-delta" id="deltaHum">—</div>
+    </div>
+
+    <!-- VPD -->
+    <div class="gauge-card">
+      <div class="gauge-label">📊 VPD</div>
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+          <circle class="gauge-fill" id="gaugeVPD" cx="60" cy="60" r="52"
+            stroke="#0DF2C9" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-value" id="valVPD">—</div>
+          <div class="gauge-unit">kPa</div>
+        </div>
+      </div>
+      <div class="gauge-delta" id="deltaVPD">—</div>
+    </div>
   </section>
 
-  <section class="metrics-grid">
-    <div class="metric-card hero-card">
-      <div class="metric-label">Temperatura</div>
-      <div class="temp-big" id="statTemp">—<span class="unit">°C</span></div>
+  <section class="charts-row">
+    <div class="chart-panel">
+      <h3>🌡️ Temperatura · 24 horas</h3>
+      <div class="chart-wrap"><canvas id="chartTemp"></canvas></div>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Humedad</div>
-      <div class="metric-value" id="statHum">—<span class="unit">%</span></div>
-      <div class="metric-hint">Humedad relativa</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">VPD</div>
-      <div class="metric-value" id="statVPD">—<span class="unit">kPa</span></div>
-      <div class="metric-hint">Déficit de presión de vapor</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">Estado del ambiente</div>
-      <div class="vpd-badge ideal" id="vpdBadge">—</div>
-      <div class="metric-hint" id="vpdHint">Condiciones para tus plantas</div>
+    <div class="chart-panel">
+      <h3>💧 Humedad · 24 horas</h3>
+      <div class="chart-wrap"><canvas id="chartHum"></canvas></div>
     </div>
   </section>
 
-  <section class="panel">
-    <h2>Últimas 24 horas</h2>
-    <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
-  </section>
+  <section class="bottom-row">
+    <div class="status-panel">
+      <h3>📊 Estado del ambiente</h3>
+      <div class="vpd-indicator ideal" id="vpdIndicator">
+        <div class="vpd-dot ideal" id="vpdDot">🌱</div>
+        <div class="vpd-info">
+          <strong id="vpdStatusLabel">Ideal</strong>
+          <span id="vpdStatusMsg">Condiciones óptimas para tus plantas</span>
+        </div>
+      </div>
+      <div class="vpd-bar-wrap">
+        <div class="vpd-bar-label-row">
+          <span>0 kPa</span><span>1.0</span><span>2.0</span><span>3.0</span>
+        </div>
+        <div class="vpd-bar-track">
+          <div class="vpd-bar-fill"></div>
+          <div class="vpd-bar-knob" id="vpdKnob" style="left: 50%;"></div>
+        </div>
+        <div class="vpd-zones">
+          <span class="vpd-zone ba">Bajo</span>
+          <span class="vpd-zone id">Ideal</span>
+          <span class="vpd-zone al">Alto</span>
+          <span class="vpd-zone ma">Muy alto</span>
+        </div>
+      </div>
+    </div>
 
-  <section class="panel">
-    <h2>Recomendaciones</h2>
-    <div class="reco-highlight" id="recoHighlight">—</div>
-    <div class="reco-list" id="recoList"></div>
+    <div class="table-panel">
+      <h3>📋 Últimos registros</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Temp</th>
+            <th>Hum</th>
+            <th>VPD</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="5" style="text-align:center;color:var(--text-40);">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
 </main>
 
-<footer class="site-footer">Quick-T Garden · Te avisamos lo que importa, cuando importa.</footer>
+<footer class="site-footer">
+  Quick-T Garden · Monitoreo inteligente para tus plantas · Datos actualizados cada 5 min
+</footer>
 
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8Abmtcw_qL7_gRersfAwJzgKKOuzbxozedmIACIn-3BvfLoBPXQqWER4qaMsM-yU/exec';
-const REFRESH_MS = 60000; // 1 min
-let chart = null;
+const REFRESH_MS = 60000;
+const CIRCUMFERENCE = 2 * Math.PI * 52; // ~326.7
+
+let chartTemp = null, chartHum = null;
+let lastData = null;
 
 const VPD_RANGES = {
-  'BAJO':    { color: 'bajo',    label: 'Bajo',    icon: '💧', msg: 'Riesgo de hongos. Reducí riego y ventilá el espacio.' },
-  'IDEAL':   { color: 'ideal',   label: 'Ideal',   icon: '🌱', msg: 'Condiciones óptimas para tus plantas. ¡Todo en orden!' },
-  'ALTO':    { color: 'alto',    label: 'Alto',    icon: '💨', msg: 'Ventilá un poco. Bueno para etapa vegetativa y crecimiento.' },
-  'MUY ALTO':{ color: 'muyalto', label: 'Muy alto',icon: '🚨', msg: '¡Estrés hídrico! Aumentá humedad o bajá la temperatura.' }
+  'BAJO':    { cls: 'bajo',    label: 'Bajo',    icon: '💧', msg: 'Riesgo de hongos. Reducí riego y ventilá.' },
+  'IDEAL':   { cls: 'ideal',   label: 'Ideal',   icon: '🌱', msg: 'Condiciones óptimas. ¡Todo en orden!' },
+  'ALTO':    { cls: 'alto',    label: 'Alto',    icon: '💨', msg: 'Ventilá. Bueno para etapa vegetativa.' },
+  'MUY ALTO':{ cls: 'muyalto', label: 'Muy alto',icon: '🚨', msg: '¡Estrés hídrico! Aumentá humedad o bajá temperatura.' }
 };
 
 function vpdStatus(vpd) {
@@ -281,18 +437,47 @@ function vpdStatus(vpd) {
   return 'MUY ALTO';
 }
 
+function setGauge(el, value, max, unit, colorMap) {
+  const offset = CIRCUMFERENCE * (1 - Math.min(value / max, 1));
+  el.setAttribute('stroke-dashoffset', offset);
+  // Color by threshold
+  if (colorMap) {
+    el.setAttribute('stroke', colorMap(value));
+  }
+}
+
+function tempColor(v) {
+  if (v < 15) return '#38BDF8';
+  if (v <= 28) return '#0DF2C9';
+  if (v <= 35) return '#F5B731';
+  return '#F43F5E';
+}
+
+function humColor(v) {
+  if (v < 30) return '#F43F5E';
+  if (v <= 45) return '#F5B731';
+  if (v <= 80) return '#0DF2C9';
+  return '#38BDF8';
+}
+
+function vpdGaugeColor(v) {
+  if (v < 0.45) return '#38BDF8';
+  if (v <= 1.25) return '#0DF2C9';
+  if (v <= 1.60) return '#F5B731';
+  return '#F43F5E';
+}
+
 function fmtTime(ts) {
   if (!ts) return '—';
   const t = String(ts);
-  const m = t.match(/(\d{2}:\d{2}:\d{2})$/);
-  return m ? m[1].slice(0,5) : t;
+  const m = t.match(/(\d{2}:\d{2})/);
+  return m ? m[1] : t.slice(11, 16);
 }
 
-function fmtDate(ts) {
+function fmtFull(ts) {
   if (!ts) return '—';
-  const t = String(ts);
-  const d = new Date(t.replace(' ', 'T'));
-  if (isNaN(d.getTime())) return t.slice(0, 16);
+  const d = new Date(String(ts).replace(' ', 'T'));
+  if (isNaN(d.getTime())) return String(ts).slice(0, 16);
   const dias = ['dom','lun','mar','mié','jue','vie','sáb'];
   return `${dias[d.getDay()]} ${d.getDate()} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
@@ -304,108 +489,129 @@ async function fetchJson(action) {
 }
 
 function renderLatest(obj) {
-  if (!obj || typeof obj.temp === 'undefined') {
-    document.getElementById('statTemp').innerHTML = '—<span class="unit">°C</span>';
-    document.getElementById('statHum').innerHTML = '—<span class="unit">%</span>';
-    document.getElementById('statVPD').innerHTML = '—<span class="unit">kPa</span>';
-    return;
-  }
+  if (!obj || typeof obj.temp === 'undefined') return;
   const t = parseFloat(obj.temp), h = parseFloat(obj.hum), v = parseFloat(obj.vpd);
-  document.getElementById('statTemp').innerHTML = t.toFixed(1) + '<span class="unit">°C</span>';
-  document.getElementById('statHum').innerHTML = h.toFixed(0) + '<span class="unit">%</span>';
-  document.getElementById('statVPD').innerHTML = v.toFixed(2) + '<span class="unit">kPa</span>';
+  lastData = { t, h, v, ts: obj.timestamp };
 
+  document.getElementById('valTemp').textContent = t.toFixed(1);
+  document.getElementById('valHum').textContent = h.toFixed(0);
+  document.getElementById('valVPD').textContent = v.toFixed(2);
+
+  setGauge(document.getElementById('gaugeTemp'), t, 50, '°C', tempColor);
+  setGauge(document.getElementById('gaugeHum'), h, 100, '%', humColor);
+  setGauge(document.getElementById('gaugeVPD'), v, 3, 'kPa', vpdGaugeColor);
+
+  // VPD status
   const st = vpdStatus(v);
   const r = VPD_RANGES[st];
-  const badge = document.getElementById('vpdBadge');
-  badge.textContent = r.icon + ' ' + r.label;
-  badge.className = 'vpd-badge ' + r.color;
+  const indicator = document.getElementById('vpdIndicator');
+  indicator.className = 'vpd-indicator ' + r.cls;
+  document.getElementById('vpdDot').className = 'vpd-dot ' + r.cls;
+  document.getElementById('vpdDot').textContent = r.icon;
+  document.getElementById('vpdStatusLabel').textContent = r.label;
+  document.getElementById('vpdStatusMsg').textContent = r.msg;
 
-  document.getElementById('vpdHint').textContent = r.msg;
-  document.getElementById('recoHighlight').innerHTML = '<strong>' + r.icon + ' ' + r.label + ':</strong> ' + r.msg;
-  document.getElementById('lastUpdate').textContent = 'Actualizado ' + fmtDate(obj.timestamp);
+  // VPD bar knob
+  document.getElementById('vpdKnob').style.left = Math.min(v / 3 * 100, 100) + '%';
+
+  // Alert banner
+  const banner = document.getElementById('alertBanner');
+  banner.className = 'alert-banner';
+  banner.textContent = r.label === 'Ideal' ? '✅ SISTEMA OK — Todas las variables dentro del rango óptimo' : r.icon + ' ' + r.msg;
+  if (st === 'BAJO' || st === 'ALTO') banner.classList.add('warn');
+  if (st === 'MUY ALTO') banner.classList.add('danger');
+  if (st === 'IDEAL') banner.classList.add('show');
+
+  document.getElementById('lastUpdate').textContent = '🕐 ' + fmtFull(obj.timestamp);
 }
 
-function renderChart(rows) {
-  const data = rows.slice(0, 288).reverse(); // últimas 288 (24h a 5min), orden cronológico
+function renderCharts(rows) {
+  const data = [...rows].reverse().slice(0, 288).reverse();
   const labels = data.map(r => fmtTime(r.timestamp));
   const temps  = data.map(r => parseFloat(r.temp));
   const hums   = data.map(r => parseFloat(r.hum));
 
-  const ctx = document.getElementById('tempChart');
-  if (chart) chart.destroy();
-
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Temperatura (°C)',
-          data: temps,
-          borderColor: '#0DF2C9',
-          backgroundColor: 'rgba(13,242,201,0.10)',
-          fill: true, tension: 0.35, pointRadius: 0,
-          borderWidth: 2, yAxisID: 'y'
-        },
-        {
-          label: 'Humedad (%)',
-          data: hums,
-          borderColor: '#38BDF8',
-          backgroundColor: 'rgba(56,189,248,0.06)',
-          fill: true, tension: 0.35, pointRadius: 0,
-          borderWidth: 2, yAxisID: 'y1'
-        }
-      ]
+  const chartOptions = (label, color, max) => ({
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#111B33', borderColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1, bodyColor: '#F8FAFC', titleColor: 'rgba(248,250,252,0.60)'
+      }
     },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: {
-          labels: { color: '#F8FAFC', font: { family: 'Inter', size: 12 } }
-        }
+    scales: {
+      x: {
+        ticks: { color: 'rgba(248,250,252,0.30)', maxTicksLimit: 8, font: { size: 10 } },
+        grid: { color: 'rgba(248,250,252,0.04)' }
       },
-      scales: {
-        x: {
-          ticks: { color: 'rgba(248,250,252,0.40)', maxTicksLimit: 12, font: { size: 10 } },
-          grid: { color: 'rgba(248,250,252,0.05)' }
-        },
-        y: {
-          title: { display: true, text: '°C', color: 'rgba(248,250,252,0.60)' },
-          ticks: { color: 'rgba(248,250,252,0.40)', font: { size: 10 } },
-          grid: { color: 'rgba(248,250,252,0.05)' }
-        },
-        y1: {
-          position: 'right',
-          title: { display: true, text: '%', color: 'rgba(248,250,252,0.60)' },
-          ticks: { color: 'rgba(248,250,252,0.40)', font: { size: 10 } },
-          grid: { drawOnChartArea: false }
-        }
+      y: {
+        min: max === 100 ? 0 : Math.min(...temps) - 5,
+        max: max === 100 ? 100 : Math.max(...temps) + 5,
+        ticks: { color: 'rgba(248,250,252,0.30)', font: { size: 10 }, callback: v => v + (max === 100 ? '%' : '°') },
+        grid: { color: 'rgba(248,250,252,0.04)' }
       }
     }
   });
+
+  let ctx;
+
+  // Temp chart
+  ctx = document.getElementById('chartTemp');
+  if (chartTemp) chartTemp.destroy();
+  chartTemp = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: temps,
+        borderColor: '#F43F5E',
+        backgroundColor: 'rgba(244,63,94,0.06)',
+        fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2
+      }]
+    },
+    options: chartOptions('Temperatura', '#F43F5E', 50)
+  });
+
+  // Humidity chart
+  ctx = document.getElementById('chartHum');
+  if (chartHum) chartHum.destroy();
+  chartHum = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: hums,
+        borderColor: '#38BDF8',
+        backgroundColor: 'rgba(56,189,248,0.06)',
+        fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2
+      }]
+    },
+    options: chartOptions('Humedad', '#38BDF8', 100)
+  });
 }
 
-function renderRecoList(st) {
-  const list = document.getElementById('recoList');
-  list.innerHTML = '';
-  Object.values(VPD_RANGES).forEach(r => {
-    const active = r.label.toUpperCase() === st || (r.label === 'Muy alto' && st === 'MUY ALTO') || (r.label === 'Alto' && st === 'ALTO') || (r.label === 'Ideal' && st === 'IDEAL') || (r.label === 'Bajo' && st === 'BAJO');
-    const card = document.createElement('div');
-    card.className = 'reco-card';
-    card.style.opacity = active ? '1' : '0.55';
-    if (active) card.style.borderColor = 'var(--accent-25)';
-    card.innerHTML =
-      '<div class="reco-icon ' + r.color + '">' + r.icon + '</div>' +
-      '<div><h4>' + r.label + '</h4><p>' + r.msg + '</p></div>';
-    list.appendChild(card);
-  });
+function renderTable(rows) {
+  const data = [...rows].reverse().slice(0, 10);
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = data.map(r => {
+    const t = parseFloat(r.temp), h = parseFloat(r.hum), v = parseFloat(r.vpd);
+    const st = vpdStatus(v);
+    const cls = VPD_RANGES[st].cls;
+    return `<tr>
+      <td>${fmtTime(r.timestamp)}</td>
+      <td>${t.toFixed(1)}°</td>
+      <td>${h.toFixed(0)}%</td>
+      <td>${v.toFixed(2)}</td>
+      <td><span class="status-badge ${cls}">${VPD_RANGES[st].label}</span></td>
+    </tr>`;
+  }).join('');
 }
 
 async function refresh() {
   const btn = document.getElementById('refreshBtn');
-  btn.classList.add('reloading');
+  btn.classList.add('spinning');
   try {
     const [latest, mediciones] = await Promise.all([
       fetchJson('ultima'),
@@ -413,18 +619,14 @@ async function refresh() {
     ]);
     renderLatest(latest);
     if (Array.isArray(mediciones) && mediciones.length) {
-      renderChart(mediciones);
-      const st = vpdStatus(parseFloat(latest.vpd) || 0);
-      renderRecoList(st);
-    } else {
-      document.getElementById('tempChart').getContext('2d');
-      renderRecoList('IDEAL');
+      renderCharts(mediciones);
+      renderTable(mediciones);
     }
   } catch (err) {
     console.warn('fetch failed:', err);
     document.getElementById('lastUpdate').textContent = 'Sin conexión con el sensor';
   }
-  btn.classList.remove('reloading');
+  btn.classList.remove('spinning');
 }
 
 refresh();
