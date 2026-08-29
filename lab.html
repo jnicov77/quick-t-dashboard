@@ -572,7 +572,7 @@ async function speak(text) {
         'Content-Type': 'application/json',
         'model': 's2.1-pro-free'
       },
-      body: JSON.stringify({ text: text, format: 'mp3', latency: 'normal' })
+      body: JSON.stringify({ text: text, format: 'mp3', latency: 'balanced', chunk_length: 100 })
     });
     if (!res.ok) throw new Error('TTS error ' + res.status);
     const blob = await res.blob();
@@ -661,24 +661,86 @@ function addMsg(who, text) {
   voiceLog.scrollTop = voiceLog.scrollHeight;
 }
 
-// Simple ZORO reply engine
-async function getZoroReply(text) {
-  const t = text.toLowerCase();
-  if (t.includes('garden') || t.includes('jardín') || t.includes('planta'))
-    return 'El Garden está en VPD ALTO — 24.8°C y 49% de humedad. ¿Querés que abra el dashboard? 🌿';
-  if (t.includes('asistenc') || t.includes('asistencia'))
-    return 'Asistenc-IA tiene 24 colaboradores presentes y 1 alerta pendiente. ¿Revisamos? 🏭';
-  if (t.includes('food') || t.includes('restaurante'))
-    return 'Food está en desarrollo. Checho está trabajando en los menús digitales. 🍽️';
-  if (t.includes('lab') || t.includes('laboratorio'))
-    return 'Estás en el Quick-T Lab. Cuatro estaciones activas. ¿A cuál vamos? 🎮';
-  if (t.includes('hola') || t.includes('buen día') || t.includes('buenas'))
-    return '¡Buen día, Nicolás! ¿En qué proyecto trabajamos hoy? ⚔️';
-  if (t.includes('gracias'))
-    return 'De nada, Nicolás. Para eso estoy. 🫡';
-  if (t.includes('métricas') || t.includes('metricas'))
-    return 'Métricas está en desarrollo. Pronto tendremos KPIs globales de todos los proyectos. 📊';
-  return 'Entendido. ¿Querés que abra alguna estación del Lab? ⚔️';
+// Simple ZORO reply engine (mucho más natural)
+const ZORO_PERSONA = 'Sos ZORO, un espadachín IA en un laboratorio RPG futurista. Respondé a Nicolás en español, con frases cortas y directas (máximo 2 oraciones). Usá emojis. Sé leal y con actitud de samurái. NUNCA menciones que sos un script o IA — sos un compañero de batalla.';
+
+const ZORO_KNOWLEDGE = {
+  garden: 'El Garden 🌿 monitorea plantas con termohigrómetro. Los datos vienen del ESP32 con SHT30. Última lectura: ~24.8°C con 49% humedad, VPD en nivel ALTO.',
+  asistencia: 'Asistenc-IA 🏭 es control de asistencia con hardware NFC. Registra entradas/salidas de empleados al instante.',
+  food: 'Food 🍽️ está en desarrollo. Serán cartas digitales NFC con pedidos a cocina y agente de voz.',
+  lab: 'El Quick-T Lab 🎮 es nuestra torre de control RPG. Cuatro estaciones: Garden, Asistenc-IA, Food y Métricas. ZORO en el centro.',
+  servicio: 'Service 🏨 será para hoteles boutique — concierge digital con NFC por habitación.',
+  case: 'Los cases los diseñamos en OpenSCAD e imprimimos en PETG en la Ender 3 V3 SE. La Monstera quedó espectacular en verde.',
+  quien: 'Soy ZORO ⚔️, tu espadachín de confianza. Orquesto los agentes del Quick-T Lab. Mr. Wong programa, Checho maneja operaciones.',
+  crear: 'Para crear un proyecto nuevo definimos la arquitectura, documentamos en Obsidian, y si necesita código llamamos a Mr. Wong.',
+  gracias: 'De nada, Nicolás 🫡. Para eso estamos.',
+};
+
+function getZoroReply(text) {
+  const t = _normalize(text);
+  
+  // Buscar coincidencia con conocimiento
+  for (const [topic, reply] of Object.entries(ZORO_KNOWLEDGE)) {
+    if (t.includes(topic)) return reply;
+  }
+  
+  // Saludos
+  if (_matchAny(t, ['hola','buen dia','buenas','saludos','hey','qué tal','como va','como estas'])) {
+    const h = new Date().getHours();
+    const saludo = h < 12 ? 'Buen día' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+    const frases = [
+      saludo + ', Nicolás. ¿En qué proyecto trabajamos hoy? ⚔️',
+      saludo + '. El Lab está operativo. ¿A qué estación vamos? 🎮',
+      '¡' + saludo + '! Garden y Asistenc-IA están online. 🟢',
+      saludo + ', capitán. ¿Revisamos los dashboards?',
+    ];
+    return frases[Math.floor(Math.random() * frases.length)];
+  }
+  
+  // Preguntas sobre estado / cómo va
+  if (_matchAny(t, ['como va','como estamos','qué hay','qué pasa','novedades','estado','cómo anda','todo bien'])) {
+    return 'Todo en orden. Garden operativo 🌿, Asistenc-IA online 🏭, Food y Service en desarrollo. ¿Revisamos algo en particular?';
+  }
+  
+  // Preguntas sobre proyectos
+  if (_matchAny(t, ['proyecto','proyectos','qué hacemos','qué hacer','siguiente'])) {
+    return 'Tenemos varios frentes abiertos: el Lab RPG 🎮, los dashboards de Garden y Asistenc-IA, y el case Monstera. ¿Por dónde seguimos?';
+  }
+  
+  // Ayuda / qué podés hacer
+  if (_matchAny(t, ['ayuda','ayudar','qué puedes','qué podés','qué haces','capacidad','funcionalidad'])) {
+    return 'Puedo abrir cualquier estación del Lab, darte datos de Garden y Asistenc-IA, diseñar cases 3D, programar con Mr. Wong, y documentar en Obsidian. Decime qué necesitás. ⚔️';
+  }
+  
+  // Repetir / no entendí
+  if (_matchAny(t, ['repetir','repite','no entendí','no entiendo','otra vez','cómo','perdón','disculpa'])) {
+    return 'Tranquilo. Decime de nuevo lo que necesitás y te ayudo. ⚔️';
+  }
+  
+  // Despedida
+  if (_matchAny(t, ['chau','adiós','nos vemos','hasta luego','hasta mañana','me voy'])) {
+    return '¡Hasta luego, Nicolás! Quedo en guardia en el Lab. 🫡⚔️';
+  }
+
+  // Default — variado, no siempre lo mismo
+  const defaults = [
+    'Entendido. ¿Querés que abra alguna estación del Lab? 🎮',
+    'Recibido. ¿Vamos a Garden, Asistenc-IA, o seguimos con otra cosa?',
+    'Afirmativo. Decime qué sigue y voy. ⚔️',
+    'Ok, Nicolás. Estoy listo — ¿cuál es el plan?',
+    'Perfecto. ¿Necesitás que revise algo en particular?',
+  ];
+  return defaults[Math.floor(Math.random() * defaults.length)];
+}
+
+function _normalize(s) {
+  return s.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
+    .replace(/[^a-z0-9áéíóúñ ]/g, ' ') // solo letras
+    .replace(/\s+/g, ' ').trim();
+}
+function _matchAny(text, words) {
+  return words.some(w => text.includes(_normalize(w)));
 }
 </script>
 </body>
