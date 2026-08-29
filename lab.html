@@ -317,39 +317,41 @@
     border: 1px solid rgba(13,242,201,0.2);
     color: var(--mint);
   }
-  .voice-bar {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+  .voice-btn-talk, .voice-status-text, @keyframes voice-pulse { display: none; /* removed — chat mode */ }
+  .chat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(13,242,201,0.2);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    padding: 12px 16px;
+    outline: none;
+    transition: 0.2s;
   }
-  .voice-btn-talk {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: 2px solid var(--mint);
+  .chat-input:focus { border-color: var(--mint); box-shadow: 0 0 12px rgba(13,242,201,0.12); }
+  .chat-input::placeholder { color: var(--text-dim); }
+  .chat-send-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1.5px solid var(--mint);
     background: rgba(13,242,201,0.1);
     color: var(--mint);
-    font-size: 1.3rem;
+    font-size: 1rem;
     cursor: pointer;
     display: grid;
     place-items: center;
     transition: 0.2s;
     flex-shrink: 0;
   }
-  .voice-btn-talk:hover { background: rgba(13,242,201,0.2); }
-  .voice-btn-talk.listening {
-    background: var(--mint);
-    color: var(--navy-dark);
-    animation: voice-pulse 1.2s ease-out infinite;
-  }
-  @keyframes voice-pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(13,242,201,0.6); }
-    70%  { box-shadow: 0 0 0 20px rgba(13,242,201,0); }
-    100% { box-shadow: 0 0 0 0 rgba(13,242,201,0); }
-  }
-  .voice-status-text {
-    font-size: 0.72rem;
-    color: var(--text-dim);
+  .chat-send-btn:hover { background: var(--mint); color: var(--navy-dark); }
+
+  .voice-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
   /* Sombra de pie en el suelo */
   .zoro-avatar::after {
@@ -546,11 +548,11 @@
       <button class="voice-panel-close" id="voiceClose">✕</button>
     </div>
     <div class="voice-log" id="voiceLog">
-      <div class="msg zoro">⚔️ Hola Nicolás. Hablame o escribime.</div>
+      <div class="msg zoro">⚔️ Hola Nicolás. Escribime para interactuar.</div>
     </div>
     <div class="voice-bar">
-      <button class="voice-btn-talk" id="voiceTalk" title="Hablar">🎤</button>
-      <span class="voice-status-text" id="voiceStatus">Presioná el micrófono para hablar</span>
+      <input type="text" class="chat-input" id="chatInput" placeholder="Escribí tu mensaje..." autocomplete="off">
+      <button class="chat-send-btn" id="chatSend">▶</button>
     </div>
   </div>
 
@@ -558,98 +560,37 @@
 
 <script>
 // ═══════════════════════════════════════════
-// FISH AUDIO TTS — ZORO voice
-// ═══════════════════════════════════════════
-const FISH_KEY = 'sk-fish-h7ACGp17hEDd7H-TwyQmjG_1cN-kcb2WDMvyLb_EVXM';
-let audioEl = null;
-
-async function speak(text) {
-  try {
-    const res = await fetch('https://api.fish.audio/v1/tts', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + FISH_KEY,
-        'Content-Type': 'application/json',
-        'model': 's2.1-pro-free'
-      },
-      body: JSON.stringify({ text: text, format: 'mp3', latency: 'balanced', chunk_length: 100, reference_id: '79d0bd3e4e5444b18f7b6d89b5927bf1' })
-    });
-    if (!res.ok) throw new Error('TTS error ' + res.status);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    if (audioEl) { audioEl.pause(); URL.revokeObjectURL(audioEl.src); }
-    audioEl = new Audio(url);
-    audioEl.play();
-  } catch(e) {
-    console.warn('Fish TTS fallback:', e);
-    // Fallback: browser TTS
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = 'es-ES';
-    utter.rate = 0.95;
-    speechSynthesis.speak(utter);
-  }
-}
-
-// ═══════════════════════════════════════════
-// VOICE PANEL — open/close, STT, TTS
+// LAB CHAT — solo texto, sin voz
 // ═══════════════════════════════════════════
 const voicePanel = document.getElementById('voicePanel');
-const voiceLog = document.getElementById('voiceLog');
-const voiceTalk = document.getElementById('voiceTalk');
-const voiceStatus = document.getElementById('voiceStatus');
+const voiceLog   = document.getElementById('voiceLog');
+const chatInput  = document.getElementById('chatInput');
+const chatSend   = document.getElementById('chatSend');
 const zoroAvatar = document.querySelector('.zoro-avatar');
 
 // ZORO click → toggle panel
 zoroAvatar.addEventListener('click', function() {
   voicePanel.classList.toggle('open');
+  if (voicePanel.classList.contains('open')) setTimeout(() => chatInput.focus(), 400);
 });
 
+// Close button
 document.getElementById('voiceClose').addEventListener('click', function() {
   voicePanel.classList.remove('open');
 });
 
-// Web Speech API
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition = null;
-if (SpeechRecognition) {
-  recognition = new SpeechRecognition();
-  recognition.lang = 'es-ES';
-  recognition.interimResults = false;
-  recognition.continuous = false;
-
-  recognition.addEventListener('start', function() {
-    voiceTalk.classList.add('listening');
-    voiceStatus.textContent = 'Escuchando...';
-  });
-  recognition.addEventListener('end', function() {
-    voiceTalk.classList.remove('listening');
-    voiceStatus.textContent = 'Presioná el micrófono para hablar';
-  });
-  recognition.addEventListener('result', async function(event) {
-    const text = event.results[0][0].transcript.trim();
-    addMsg('nicolas', text);
-    voiceStatus.textContent = 'ZORO está pensando...';
-    const reply = await getZoroReply(text);
-    addMsg('zoro', reply);
-    await speak(reply);
-    voiceStatus.textContent = 'Presioná el micrófono para hablar';
-  });
-  recognition.addEventListener('error', function(e) {
-    voiceTalk.classList.remove('listening');
-    voiceStatus.textContent = 'Error: ' + (e.error === 'no-speech' ? 'no te escuché' : e.error);
-  });
+// Send message
+function sendMsg() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addMsg('nicolas', text);
+  chatInput.value = '';
+  const reply = getZoroReply(text);
+  setTimeout(() => addMsg('zoro', reply), 300);
 }
-
-voiceTalk.addEventListener('click', function() {
-  if (!recognition) {
-    voiceStatus.textContent = 'Voz no disponible en este navegador';
-    return;
-  }
-  if (voiceTalk.classList.contains('listening')) {
-    recognition.stop();
-    return;
-  }
-  try { recognition.start(); } catch(e) {}
+chatSend.addEventListener('click', sendMsg);
+chatInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendMsg();
 });
 
 // Chat log
@@ -661,83 +602,70 @@ function addMsg(who, text) {
   voiceLog.scrollTop = voiceLog.scrollHeight;
 }
 
-// Simple ZORO reply engine (mucho más natural)
-const ZORO_PERSONA = 'Sos ZORO, un espadachín IA en un laboratorio RPG futurista. Respondé a Nicolás en español, con frases cortas y directas (máximo 2 oraciones). Usá emojis. Sé leal y con actitud de samurái. NUNCA menciones que sos un script o IA — sos un compañero de batalla.';
-
+// ═══════════════════════════════════════════
+// ZORO REPLY ENGINE — consola rápida del Lab
+// ═══════════════════════════════════════════
 const ZORO_KNOWLEDGE = {
-  garden: 'El Garden 🌿 monitorea plantas con termohigrómetro. Los datos vienen del ESP32 con SHT30. Última lectura: ~24.8°C con 49% humedad, VPD en nivel ALTO.',
-  asistencia: 'Asistenc-IA 🏭 es control de asistencia con hardware NFC. Registra entradas/salidas de empleados al instante.',
-  food: 'Food 🍽️ está en desarrollo. Serán cartas digitales NFC con pedidos a cocina y agente de voz.',
-  lab: 'El Quick-T Lab 🎮 es nuestra torre de control RPG. Cuatro estaciones: Garden, Asistenc-IA, Food y Métricas. ZORO en el centro.',
-  servicio: 'Service 🏨 será para hoteles boutique — concierge digital con NFC por habitación.',
-  case: 'Los cases los diseñamos en OpenSCAD e imprimimos en PETG en la Ender 3 V3 SE. La Monstera quedó espectacular en verde.',
-  quien: 'Soy ZORO ⚔️, tu espadachín de confianza. Orquesto los agentes del Quick-T Lab. Mr. Wong programa, Checho maneja operaciones.',
-  crear: 'Para crear un proyecto nuevo definimos la arquitectura, documentamos en Obsidian, y si necesita código llamamos a Mr. Wong.',
-  gracias: 'De nada, Nicolás 🫡. Para eso estamos.',
+  garden: 'El Garden 🌿 monitorea plantas con termohigrómetro. Última lectura: ~24.8°C, 49% humedad, VPD ALTO.',
+  asistencia: 'Asistenc-IA 🏭 — control de asistencia con hardware NFC. 24 presentes, 1 alerta.',
+  food: 'Food 🍽️ está en desarrollo. Cartas digitales NFC + pedidos a cocina + agente de voz.',
+  lab: 'Quick-T Lab 🎮 — torre de control RPG. Cuatro estaciones activas.',
+  servicio: 'Service 🏨 — hoteles boutique con concierge digital NFC. En desarrollo.',
+  case: 'Cases 3D en OpenSCAD, impresos en PETG. La Monstera quedó espectacular 🌿.',
+  quien: 'Soy ZORO ⚔️, tu espadachín. Orquesto agentes. Mr. Wong programa, Checho opera.',
+  abrir: '¿Cuál estación abro? Garden 🌿, Asistenc-IA 🏭, Food 🍽️, Métricas 📊.',
+  métricas: 'Métricas 📊 está en desarrollo. KPIs globales próximamente.',
 };
 
 function getZoroReply(text) {
   const t = _normalize(text);
-  
-  // Buscar coincidencia con conocimiento
+
+  // Abrir estaciones directamente
+  if (_matchAny(t, ['abrir garden','ver garden','ir a garden','garden'])) {
+    setTimeout(() => window.open('garden.html', '_blank'), 800);
+    return 'Abriendo Garden 🌿 en otra pestaña...';
+  }
+  if (_matchAny(t, ['abrir asistenc','ver asistenc','ir a asistenc','dashboard'])) {
+    setTimeout(() => window.open('dashboard.html', '_blank'), 800);
+    return 'Abriendo Asistenc-IA 🏭 en otra pestaña...';
+  }
+
+  // Conocimiento
   for (const [topic, reply] of Object.entries(ZORO_KNOWLEDGE)) {
     if (t.includes(topic)) return reply;
   }
-  
+
   // Saludos
   if (_matchAny(t, ['hola','buen dia','buenas','saludos','hey','qué tal','como va','como estas'])) {
     const h = new Date().getHours();
     const saludo = h < 12 ? 'Buen día' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
     const frases = [
-      saludo + ', Nicolás. ¿En qué proyecto trabajamos hoy? ⚔️',
+      saludo + ', Nicolás. ¿En qué proyecto trabajamos? ⚔️',
       saludo + '. El Lab está operativo. ¿A qué estación vamos? 🎮',
-      '¡' + saludo + '! Garden y Asistenc-IA están online. 🟢',
-      saludo + ', capitán. ¿Revisamos los dashboards?',
+      '¡' + saludo + '! Garden y Asistenc-IA online 🟢',
+      saludo + ', capitán. ¿Revisamos dashboards?',
     ];
     return frases[Math.floor(Math.random() * frases.length)];
   }
-  
-  // Preguntas sobre estado / cómo va
-  if (_matchAny(t, ['como va','como estamos','qué hay','qué pasa','novedades','estado','cómo anda','todo bien'])) {
-    return 'Todo en orden. Garden operativo 🌿, Asistenc-IA online 🏭, Food y Service en desarrollo. ¿Revisamos algo en particular?';
-  }
-  
-  // Preguntas sobre proyectos
-  if (_matchAny(t, ['proyecto','proyectos','qué hacemos','qué hacer','siguiente'])) {
-    return 'Tenemos varios frentes abiertos: el Lab RPG 🎮, los dashboards de Garden y Asistenc-IA, y el case Monstera. ¿Por dónde seguimos?';
-  }
-  
-  // Ayuda / qué podés hacer
-  if (_matchAny(t, ['ayuda','ayudar','qué puedes','qué podés','qué haces','capacidad','funcionalidad'])) {
-    return 'Puedo abrir cualquier estación del Lab, darte datos de Garden y Asistenc-IA, diseñar cases 3D, programar con Mr. Wong, y documentar en Obsidian. Decime qué necesitás. ⚔️';
-  }
-  
-  // Repetir / no entendí
-  if (_matchAny(t, ['repetir','repite','no entendí','no entiendo','otra vez','cómo','perdón','disculpa'])) {
-    return 'Tranquilo. Decime de nuevo lo que necesitás y te ayudo. ⚔️';
-  }
-  
-  // Despedida
-  if (_matchAny(t, ['chau','adiós','nos vemos','hasta luego','hasta mañana','me voy'])) {
-    return '¡Hasta luego, Nicolás! Quedo en guardia en el Lab. 🫡⚔️';
-  }
 
-  // Default — variado, no siempre lo mismo
+  if (_matchAny(t, ['gracias'])) return 'De nada, Nicolás. Para eso estamos. 🫡';
+  if (_matchAny(t, ['chau','adiós','nos vemos','hasta luego','me voy'])) return '¡Hasta luego! Quedo en guardia en el Lab. 🫡⚔️';
+  if (_matchAny(t, ['cómo va','cómo estamos','novedades','estado','todo bien']))
+    return 'Todo en orden. Garden 🌿 y Asistenc-IA 🏭 operativos. Food y Service en desarrollo. ¿Revisamos algo?';
+  if (_matchAny(t, ['ayuda','qué podés','qué puedes','qué haces']))
+    return 'Soy la consola rápida del Lab. Puedo abrir estaciones, darte datos de los proyectos, y comandos. Para trabajo profundo usá Telegram ⚔️';
+
   const defaults = [
-    'Entendido. ¿Querés que abra alguna estación del Lab? 🎮',
-    'Recibido. ¿Vamos a Garden, Asistenc-IA, o seguimos con otra cosa?',
-    'Afirmativo. Decime qué sigue y voy. ⚔️',
-    'Ok, Nicolás. Estoy listo — ¿cuál es el plan?',
-    'Perfecto. ¿Necesitás que revise algo en particular?',
+    'Entendido. ¿Abrimos alguna estación? 🎮',
+    'Recibido. ¿Vamos a Garden, Asistenc-IA, o seguimos?',
+    'Afirmativo. Decime qué sigue. ⚔️',
+    'Ok, Nicolás. Estoy listo.',
   ];
   return defaults[Math.floor(Math.random() * defaults.length)];
 }
 
 function _normalize(s) {
-  return s.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
-    .replace(/[^a-z0-9áéíóúñ ]/g, ' ') // solo letras
-    .replace(/\s+/g, ' ').trim();
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9áéíóúñ ]/g,' ').replace(/\s+/g,' ').trim();
 }
 function _matchAny(text, words) {
   return words.some(w => text.includes(_normalize(w)));
