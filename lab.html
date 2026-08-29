@@ -219,7 +219,7 @@
     bottom: 20%;
     left: 39%;
     z-index: 4;
-    pointer-events: none;
+    cursor: pointer;
   }
   .zoro-avatar img {
     display: block;
@@ -228,6 +228,128 @@
     image-rendering: pixelated;
     filter: drop-shadow(0 8px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 12px rgba(13,242,201,0.2));
     animation: zoro-float 3s ease-in-out infinite;
+    transition: filter 0.3s;
+  }
+  .zoro-avatar:hover img {
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(13,242,201,0.5));
+  }
+  /* ── Voice Communication Panel ── */
+  .voice-panel {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 640px;
+    max-width: 90%;
+    background: rgba(6,20,46,0.95);
+    border: 2px solid var(--mint);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 40px rgba(13,242,201,0.2);
+    z-index: 20;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px 24px 24px;
+  }
+  .voice-panel.open { transform: translateX(-50%) translateY(0); }
+  .voice-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .voice-panel-header .zoro-mini {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--mint);
+    overflow: hidden;
+  }
+  .voice-panel-header .zoro-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .voice-panel-header h3 {
+    font-family: 'Quicksand', sans-serif;
+    color: var(--mint);
+    font-size: 1rem;
+    flex: 1;
+  }
+  .voice-panel-close {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+  }
+  .voice-panel-close:hover {
+    background: var(--alert);
+    border-color: var(--alert);
+    color: #FFF;
+  }
+  .voice-log {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+  .voice-log .msg {
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    max-width: 85%;
+  }
+  .voice-log .msg.nicolas {
+    background: rgba(56,189,248,0.12);
+    border: 1px solid rgba(56,189,248,0.2);
+    color: #38BDF8;
+    margin-left: auto;
+    text-align: right;
+  }
+  .voice-log .msg.zoro {
+    background: rgba(13,242,201,0.08);
+    border: 1px solid rgba(13,242,201,0.2);
+    color: var(--mint);
+  }
+  .voice-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .voice-btn-talk {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--mint);
+    background: rgba(13,242,201,0.1);
+    color: var(--mint);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: 0.2s;
+    flex-shrink: 0;
+  }
+  .voice-btn-talk:hover { background: rgba(13,242,201,0.2); }
+  .voice-btn-talk.listening {
+    background: var(--mint);
+    color: var(--navy-dark);
+    animation: voice-pulse 1.2s ease-out infinite;
+  }
+  @keyframes voice-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(13,242,201,0.6); }
+    70%  { box-shadow: 0 0 0 20px rgba(13,242,201,0); }
+    100% { box-shadow: 0 0 0 0 rgba(13,242,201,0); }
+  }
+  .voice-status-text {
+    font-size: 0.72rem;
+    color: var(--text-dim);
   }
   /* Sombra de pie en el suelo */
   .zoro-avatar::after {
@@ -416,7 +538,148 @@
     <span>⚔ Click en estaciones para entrar</span>
   </div>
 
+<!-- VOICE COMMUNICATION PANEL -->
+  <div class="voice-panel" id="voicePanel">
+    <div class="voice-panel-header">
+      <div class="zoro-mini"><img src="zoro-fullbody.png" alt="ZORO"></div>
+      <h3>Comunicación con ZORO</h3>
+      <button class="voice-panel-close" id="voiceClose">✕</button>
+    </div>
+    <div class="voice-log" id="voiceLog">
+      <div class="msg zoro">⚔️ Hola Nicolás. Hablame o escribime.</div>
+    </div>
+    <div class="voice-bar">
+      <button class="voice-btn-talk" id="voiceTalk" title="Hablar">🎤</button>
+      <span class="voice-status-text" id="voiceStatus">Presioná el micrófono para hablar</span>
+    </div>
+  </div>
+
 </div>
 
+<script>
+// ═══════════════════════════════════════════
+// FISH AUDIO TTS — ZORO voice
+// ═══════════════════════════════════════════
+const FISH_KEY = 'sk-fish-h7ACGp17hEDd7H-TwyQmjG_1cN-kcb2WDMvyLb_EVXM';
+let audioEl = null;
+
+async function speak(text) {
+  try {
+    const res = await fetch('https://api.fish.audio/v1/tts', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + FISH_KEY,
+        'Content-Type': 'application/json',
+        'model': 's2.1-pro-free'
+      },
+      body: JSON.stringify({ text: text, format: 'mp3', latency: 'normal' })
+    });
+    if (!res.ok) throw new Error('TTS error ' + res.status);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    if (audioEl) { audioEl.pause(); URL.revokeObjectURL(audioEl.src); }
+    audioEl = new Audio(url);
+    audioEl.play();
+  } catch(e) {
+    console.warn('Fish TTS fallback:', e);
+    // Fallback: browser TTS
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'es-ES';
+    utter.rate = 0.95;
+    speechSynthesis.speak(utter);
+  }
+}
+
+// ═══════════════════════════════════════════
+// VOICE PANEL — open/close, STT, TTS
+// ═══════════════════════════════════════════
+const voicePanel = document.getElementById('voicePanel');
+const voiceLog = document.getElementById('voiceLog');
+const voiceTalk = document.getElementById('voiceTalk');
+const voiceStatus = document.getElementById('voiceStatus');
+const zoroAvatar = document.querySelector('.zoro-avatar');
+
+// ZORO click → toggle panel
+zoroAvatar.addEventListener('click', function() {
+  voicePanel.classList.toggle('open');
+});
+
+document.getElementById('voiceClose').addEventListener('click', function() {
+  voicePanel.classList.remove('open');
+});
+
+// Web Speech API
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.lang = 'es-ES';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  recognition.addEventListener('start', function() {
+    voiceTalk.classList.add('listening');
+    voiceStatus.textContent = 'Escuchando...';
+  });
+  recognition.addEventListener('end', function() {
+    voiceTalk.classList.remove('listening');
+    voiceStatus.textContent = 'Presioná el micrófono para hablar';
+  });
+  recognition.addEventListener('result', async function(event) {
+    const text = event.results[0][0].transcript.trim();
+    addMsg('nicolas', text);
+    voiceStatus.textContent = 'ZORO está pensando...';
+    const reply = await getZoroReply(text);
+    addMsg('zoro', reply);
+    await speak(reply);
+    voiceStatus.textContent = 'Presioná el micrófono para hablar';
+  });
+  recognition.addEventListener('error', function(e) {
+    voiceTalk.classList.remove('listening');
+    voiceStatus.textContent = 'Error: ' + (e.error === 'no-speech' ? 'no te escuché' : e.error);
+  });
+}
+
+voiceTalk.addEventListener('click', function() {
+  if (!recognition) {
+    voiceStatus.textContent = 'Voz no disponible en este navegador';
+    return;
+  }
+  if (voiceTalk.classList.contains('listening')) {
+    recognition.stop();
+    return;
+  }
+  try { recognition.start(); } catch(e) {}
+});
+
+// Chat log
+function addMsg(who, text) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  voiceLog.appendChild(div);
+  voiceLog.scrollTop = voiceLog.scrollHeight;
+}
+
+// Simple ZORO reply engine
+async function getZoroReply(text) {
+  const t = text.toLowerCase();
+  if (t.includes('garden') || t.includes('jardín') || t.includes('planta'))
+    return 'El Garden está en VPD ALTO — 24.8°C y 49% de humedad. ¿Querés que abra el dashboard? 🌿';
+  if (t.includes('asistenc') || t.includes('asistencia'))
+    return 'Asistenc-IA tiene 24 colaboradores presentes y 1 alerta pendiente. ¿Revisamos? 🏭';
+  if (t.includes('food') || t.includes('restaurante'))
+    return 'Food está en desarrollo. Checho está trabajando en los menús digitales. 🍽️';
+  if (t.includes('lab') || t.includes('laboratorio'))
+    return 'Estás en el Quick-T Lab. Cuatro estaciones activas. ¿A cuál vamos? 🎮';
+  if (t.includes('hola') || t.includes('buen día') || t.includes('buenas'))
+    return '¡Buen día, Nicolás! ¿En qué proyecto trabajamos hoy? ⚔️';
+  if (t.includes('gracias'))
+    return 'De nada, Nicolás. Para eso estoy. 🫡';
+  if (t.includes('métricas') || t.includes('metricas'))
+    return 'Métricas está en desarrollo. Pronto tendremos KPIs globales de todos los proyectos. 📊';
+  return 'Entendido. ¿Querés que abra alguna estación del Lab? ⚔️';
+}
+</script>
 </body>
 </html>
