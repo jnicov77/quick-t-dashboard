@@ -213,6 +213,45 @@
     50%     { transform: translateY(-6px); }
   }
 
+  /* ── ZORO integrado al suelo del lab ── */
+  .zoro-avatar {
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    pointer-events: none;
+  }
+  .zoro-avatar img {
+    display: block;
+    height: 130px;
+    width: auto;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 8px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 12px rgba(13,242,201,0.2));
+    animation: zoro-float 3s ease-in-out infinite;
+  }
+  /* Sombra de pie en el suelo */
+  .zoro-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 8px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: shadow-pulse 3s ease-in-out infinite;
+  }
+  @keyframes shadow-pulse {
+    0%,100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+    50%     { transform: translateX(-50%) scale(0.85); opacity: 0.35; }
+  }
+  @keyframes zoro-float {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-5px); }
+  }
+
   /* ── Tooltip on hover ── */
   .station-tooltip {
     position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
@@ -364,13 +403,12 @@
     </div>
   </div>
 
-  <!-- ZORO (centro) -->
-  <div class="station station-zoro">
-    <div class="station-icon-wrap">
-      <img src="zoro-fullbody.png" alt="ZORO" style="image-rendering:pixelated;">
-    </div>
-    <div class="station-label" style="color:#FFF; font-size:0.72rem;">ZORO</div>
+  <!-- ZORO — avatar integrado al suelo del laboratorio -->
+  <div class="zoro-avatar">
+    <img src="zoro-fullbody.png" alt="ZORO">
   </div>
+
+  <!-- LABEL ZORO -->
 
   <!-- LEGEND -->
   <div class="footer-legend">
