@@ -198,16 +198,19 @@
   .agent-checho .agent-name { color: #F5B731; }
 
   .station-zoro .station-icon-wrap {
-    width: 72px; height: 72px; border-color: var(--mint);
-    box-shadow: 0 0 24px var(--mint-glow);
-    animation: zoro-pulse 2.5s ease-in-out infinite;
+    width: 120px; height: 120px;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    animation: zoro-float 3s ease-in-out infinite;
   }
   .station-zoro .station-icon-wrap img {
-    width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+    width: 100%; height: 100%; object-fit: contain;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 16px rgba(13,242,201,0.3));
   }
-  @keyframes zoro-pulse {
-    0%,100% { box-shadow: 0 0 24px var(--mint-glow); }
-    50%     { box-shadow: 0 0 44px rgba(13,242,201,0.55); }
+  @keyframes zoro-float {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-6px); }
   }
 
   /* ── Tooltip on hover ── */
@@ -248,8 +251,8 @@
 
   @media (max-width: 768px) {
     .station-icon-wrap { width: 38px; height: 38px; font-size: 1.15rem; }
-    .station-zoro .station-icon-wrap { width: 56px; height: 56px; }
-    .station-zoro .station-icon-wrap img { width: 44px; height: 44px; }
+    .station-zoro .station-icon-wrap { width: 90px; height: 90px; }
+    .station-zoro .station-icon-wrap img { width: 100%; height: 100%; }
     .station-label { font-size: 0.5rem; padding: 2px 7px; }
     .agent { width: 36px; }
   }
@@ -364,7 +367,7 @@
   <!-- ZORO (centro) -->
   <div class="station station-zoro">
     <div class="station-icon-wrap">
-      <img src="zoro-sprite.png" alt="ZORO">
+      <img src="zoro-fullbody.png" alt="ZORO" style="image-rendering:pixelated;">
     </div>
     <div class="station-label" style="color:#FFF; font-size:0.72rem;">ZORO</div>
   </div>
