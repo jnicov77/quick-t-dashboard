@@ -572,7 +572,7 @@ async function speak(text) {
         'Content-Type': 'application/json',
         'model': 's2.1-pro-free'
       },
-      body: JSON.stringify({ text: text, format: 'mp3', latency: 'balanced', chunk_length: 100 })
+      body: JSON.stringify({ text: text, format: 'mp3', latency: 'balanced', chunk_length: 100, reference_id: '79d0bd3e4e5444b18f7b6d89b5927bf1' })
     });
     if (!res.ok) throw new Error('TTS error ' + res.status);
     const blob = await res.blob();
