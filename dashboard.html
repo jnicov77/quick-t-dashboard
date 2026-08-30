@@ -900,7 +900,14 @@
     }
     function formatHoraStr(ts) {
       if (!ts) return '—';
-      // ts is "2026-07-31 14:00:00" or ISO "2026-07-31T14:00:00"
+      try {
+        // Convert to Colombia time (UTC-5) if ISO timestamp
+        const d = new Date(ts);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+      } catch(e) {}
+      // Fallback: extract HH:MM via regex
       const m = /(\d{2}):(\d{2})/.exec(ts);
       return m ? `${m[1]}:${m[2]}` : '—';
     }
@@ -917,7 +924,7 @@
       // Step 1: get all unique employees (all time) as master list
       const empMap = new Map(); // id -> {nombre, identificacion}
       for (const r of registros) {
-        const id = r.identificacion || '';
+        const id = r.identificacion || r.nombre || '';
         const nom = r.nombre || '';
         if (id && !empMap.has(id)) {
           empMap.set(id, { nombre: nom, identificacion: id });
@@ -936,7 +943,7 @@
         (ts && validDatePattern.test(ts) && ts.startsWith(today) && validTimePattern.test(ts)) ? ts : '';
 
       for (const r of registros) {
-        const id = r.identificacion || '';
+        const id = r.identificacion || r.nombre || '';
         if (!id) continue;
 
         const action = (r.action || '').toUpperCase();
