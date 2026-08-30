@@ -23,9 +23,11 @@
        ========================================================= */
     :root {
       /* ── Superficies ── */
-      --bg:         #0A1F44;  /* Navy — fondo de página */
-      --surface:    #1A1D23;  /* Quick Charcoal — tarjetas, paneles, cards */
-      --surface-alt:#22272E;  /* Charcoal más claro — hover, filas alternas */
+      --bg:         #0D2A5C;  /* Azul más claro e iluminado */
+      --bg-gradient: radial-gradient(ellipse at 50% 0%, rgba(13,242,201,0.08) 0%, transparent 60%),
+                     linear-gradient(180deg, #0E2F66 0%, #0A1F44 100%);
+      --surface:    rgba(26,29,35,0.78);  /* Charcoal semi-transparente */
+      --surface-alt:rgba(34,39,46,0.88);  /* Charcoal claro hover */
 
       /* ── Texto ── */
       --text:       #F8FAFC;  /* Cloud White — texto principal, headings */
@@ -71,9 +73,11 @@
     html, body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       color: var(--text);
-      background: var(--bg);
+      background: var(--bg-gradient);
+      background-attachment: fixed;
       -webkit-font-smoothing: antialiased;
       line-height: 1.5;
+      min-height: 100vh;
     }
 
     h1, h2, .metric-value, .heading-display {
@@ -96,10 +100,10 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(10,31,68,0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(13,42,92,0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(13,242,201,0.1);
     }
     .header-inner {
       max-width: 1280px;
