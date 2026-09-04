@@ -579,15 +579,46 @@ document.getElementById('voiceClose').addEventListener('click', function() {
   voicePanel.classList.remove('open');
 });
 
-// Send message
-function sendMsg() {
-  const text = chatInput.value.trim();
-  if (!text) return;
-  addMsg('nicolas', text);
-  chatInput.value = '';
-  const reply = getZoroReply(text);
-  setTimeout(() => addMsg('zoro', reply), 300);
-}
+// ── Fish Audio TTS ──
+  const FISH_KEY = 'sk-fish-h7ACGp17hEDd7H-TwyQmjG_1cN-kcb2WDMvyLb_EVXM';
+  let audioEl = null;
+
+  async function speak(text) {
+    try {
+      const res = await fetch('https://api.fish.audio/v1/tts', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + FISH_KEY,
+          'Content-Type': 'application/json',
+          'model': 's2.1-pro-free'
+        },
+        body: JSON.stringify({ text, format: 'mp3', latency: 'balanced', chunk_length: 100, reference_id: '79d0bd3e4e5455b18f7b6d89b5927bf1' })
+      });
+      if (!res.ok) throw new Error('TTS ' + res.status);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      if (audioEl) { audioEl.pause(); URL.revokeObjectURL(audioEl.src); }
+      audioEl = new Audio(url);
+      audioEl.play();
+    } catch(e) {
+      console.warn('Fish TTS fallback:', e);
+      if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'es-ES'; u.rate = 0.95;
+        speechSynthesis.speak(u);
+      }
+    }
+  }
+
+  // Send message — now with voice
+  function sendMsg() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    addMsg('nicolas', text);
+    chatInput.value = '';
+    const reply = getZoroReply(text);
+    setTimeout(() => { addMsg('zoro', reply); speak(reply); }, 300);
+  }
 chatSend.addEventListener('click', sendMsg);
 chatInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') sendMsg();
