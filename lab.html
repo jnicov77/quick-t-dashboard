@@ -168,7 +168,33 @@
   .station-garden    { bottom: 55%; left:  14%; }
   .station-asistenc  { top:    12%; left:  43%; }
   .station-food      { top:    26%; right:  18%; }
-  .station-metricas  { bottom: 12%; right:  24%; }
+  .station-child { font-size: 0.65rem; color: var(--gray); }
+  .station-child strong { color: var(--text); }
+
+  /* ── Menú desplegable ASISTENC-IA ── */
+  .asistenc-menu {
+    position: absolute; z-index: 10;
+    top: 12%; left: 43%;
+    margin-top: 90px; margin-left: -10px;
+    display: none; flex-direction: column; gap: 2px;
+    background: var(--surface);
+    border: 1.5px solid var(--mint);
+    border-radius: 10px;
+    box-shadow: 0 0 24px var(--mint-glow);
+    overflow: hidden;
+    min-width: 150px;
+  }
+  .asistenc-menu.open { display: flex; }
+  .asistenc-menu-item {
+    padding: 10px 16px;
+    color: var(--text); text-decoration: none;
+    font-family: 'Quicksand', sans-serif; font-size: 0.8rem;
+    transition: 0.15s;
+  }
+  .asistenc-menu-item:hover {
+    background: rgba(13,242,201,0.12);
+    color: var(--mint);
+  }
   .station-zoro      { bottom: 45%; left:  50%; } /* centro */
 
   /* ── Agente miniature (sin tooltip, solo pulso) ── */
@@ -491,8 +517,8 @@
     </div>
   </a>
 
-  <!-- ASISTENC-IA -->
-  <a href="dashboard.html" class="station station-asistenc">
+  <!-- ASISTENC-IA (menú interactivo) -->
+  <div class="station station-asistenc" id="stationAsistenc">
     <img src="letrero-asistencIA.png" alt="ASISTENC-IA" style="width:80px; height:auto; image-rendering:pixelated;">
     <div class="station-label">ASISTENC-IA</div>
     <div class="station-tooltip">
@@ -500,7 +526,13 @@
       24 presentes · ⚠ 1 alerta<br>
       Mr. Wong — Developer
     </div>
-  </a>
+  </div>
+  <!-- Menú ASISTENC-IA -->
+  <div class="asistenc-menu" id="asistencMenu">
+    <a href="dashboard.html" class="asistenc-menu-item">📊 Dashboard</a>
+    <a href="landing.html" class="asistenc-menu-item">🌐 Landing</a>
+    <a href="dashboard.html" class="asistenc-menu-item">👥 Clientes</a>
+  </div>
 
   <!-- FOOD (pronto) -->
   <div class="station station-food">
@@ -567,6 +599,20 @@ const voiceLog   = document.getElementById('voiceLog');
 const chatInput  = document.getElementById('chatInput');
 const chatSend   = document.getElementById('chatSend');
 const zoroAvatar = document.querySelector('.zoro-avatar');
+
+// ── Menú ASISTENC-IA ──
+const stationAsistenc = document.getElementById('stationAsistenc');
+const asistencMenu    = document.getElementById('asistencMenu');
+
+stationAsistenc.addEventListener('click', function(e) {
+  e.stopPropagation();
+  asistencMenu.classList.toggle('open');
+});
+
+// Cerrar menú al hacer clic fuera
+document.addEventListener('click', function() {
+  asistencMenu.classList.remove('open');
+});
 
 // ZORO click → toggle panel
 zoroAvatar.addEventListener('click', function() {
