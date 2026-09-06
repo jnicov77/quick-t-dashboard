@@ -449,9 +449,116 @@
   @keyframes p-float1 { 0%,100%{transform:translate(0,0) scale(1);opacity:1} 33%{transform:translate(30px,-40px) scale(1.5);opacity:0.3} 66%{transform:translate(-20px,-80px) scale(0.8);opacity:0.8} }
   @keyframes p-float2 { 0%,100%{transform:translate(0,0) scale(1);opacity:1} 50%{transform:translate(-40px,-60px) scale(0.5);opacity:0.2} }
   @keyframes p-float3 { 0%,100%{transform:translate(0,0) scale(1);opacity:1} 25%{transform:translate(-20px,-30px) scale(1.8);opacity:0.4} 75%{transform:translate(20px,-70px) scale(0.6);opacity:0.6} }
+/* ── ENTRANCE OVERLAY ── */
+  .entrance-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: #020C1A;
+    transition: opacity 0.8s, visibility 0.8s;
+  }
+  .entrance-overlay.unlocked {
+    opacity: 0; visibility: hidden; pointer-events: none;
+  }
+  .entrance-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(13,242,201,0.06) 0%, transparent 70%);
+  }
+  .entrance-scan {
+    position: absolute; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--mint), transparent);
+    animation: entranceScanLine 2s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--mint-glow);
+  }
+  @keyframes entranceScanLine {
+    0%   { top: 0%; opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .entrance-hud {
+    position: absolute; inset: 0;
+    border: 2px solid rgba(13,242,201,0.1);
+    box-shadow: inset 0 0 100px rgba(13,242,201,0.03);
+    pointer-events: none;
+  }
+  .entrance-lock {
+    position: relative; z-index: 2;
+    text-align: center;
+    background: rgba(6,20,46,0.9);
+    border: 2px solid var(--mint);
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 360px; max-width: 90vw;
+    box-shadow: 0 0 60px var(--mint-glow);
+    animation: entrancePulse 3s ease-in-out infinite;
+  }
+  @keyframes entrancePulse {
+    0%,100% { box-shadow: 0 0 40px var(--mint-glow); }
+    50%     { box-shadow: 0 0 80px rgba(13,242,201,0.5); }
+  }
+  .entrance-icon {
+    font-size: 2.2rem; margin-bottom: 10px;
+    animation: entranceLockBob 2s ease-in-out infinite;
+  }
+  @keyframes entranceLockBob {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-4px); }
+  }
+  .entrance-title {
+    font-family: 'Quicksand', sans-serif; font-size: 1.8rem;
+    font-weight: 700; color: var(--mint); margin-bottom: 4px;
+  }
+  .entrance-sub {
+    font-size: 0.8rem; color: var(--text-dim); margin-bottom: 24px;
+  }
+  .entrance-input {
+    width: 100%; padding: 14px 18px;
+    background: rgba(13,242,201,0.05);
+    border: 2px solid rgba(13,242,201,0.3);
+    border-radius: 12px; outline: none;
+    font-family: 'Quicksand', sans-serif; font-size: 1.2rem;
+    color: var(--mint); text-align: center; letter-spacing: 12px;
+    transition: 0.2s;
+  }
+  .entrance-input:focus {
+    border-color: var(--mint);
+    box-shadow: 0 0 20px var(--mint-glow);
+  }
+  .entrance-error {
+    color: #F43F5E; font-size: 0.75rem; margin-top: 8px; min-height: 18px;
+  }
+  .entrance-error.shake {
+    animation: shake 0.4s ease-in-out;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%     { transform: translateX(-8px); }
+    75%     { transform: translateX(8px); }
+  }
+  .entrance-hint {
+    margin-top: 14px; font-size: 0.7rem; color: var(--text-dim);
+  }
+
 </style>
 </head>
 <body>
+
+<!-- ENTRANCE OVERLAY -->
+<div class="entrance-overlay" id="entranceOverlay">
+  <div class="entrance-bg">
+    <div class="entrance-scan"></div>
+    <div class="entrance-hud"></div>
+  </div>
+  <div class="entrance-lock">
+    <div class="entrance-icon">🔒</div>
+    <h2 class="entrance-title">QUICK-T LAB</h2>
+    <p class="entrance-sub">Ingreso restringido — Nivel 4</p>
+    <input type="password" class="entrance-input" id="entrancePass" placeholder="Código de acceso" maxlength="8" autocomplete="off">
+    <div class="entrance-error" id="entranceError"></div>
+    <div class="entrance-hint">⚔️ Solo personal autorizado</div>
+  </div>
+</div>
 
 <div class="lab-wrapper">
 
@@ -576,15 +683,14 @@
   <div class="voice-panel" id="voicePanel">
     <div class="voice-panel-header">
       <div class="zoro-mini"><img src="zoro-fullbody.png" alt="ZORO"></div>
-      <h3>Comunicación con ZORO</h3>
+      <h3>⚔️ Comunicación Directa — ZORO</h3>
       <button class="voice-panel-close" id="voiceClose">✕</button>
     </div>
     <div class="voice-log" id="voiceLog">
-      <div class="msg zoro">⚔️ Hola Nicolás. Escribime para interactuar.</div>
+      <iframe id="telegramFrame" allow="clipboard-read; clipboard-write" style="width:100%; height:420px; border:none; border-radius:8px;"></iframe>
     </div>
-    <div class="voice-bar">
-      <input type="text" class="chat-input" id="chatInput" placeholder="Escribí tu mensaje..." autocomplete="off">
-      <button class="chat-send-btn" id="chatSend">▶</button>
+    <div class="voice-bar" style="justify-content:center;">
+      <button class="chat-send-btn" id="chatSend" style="width:auto; padding:8px 20px; border-radius:8px; font-size:0.8rem;">🔗 Abrir Telegram Web</button>
     </div>
   </div>
 
@@ -592,15 +698,58 @@
 
 <script>
 // ═══════════════════════════════════════════
-// LAB CHAT — solo texto, sin voz
+// ENTRANCE — Animación de acceso al laboratorio
+// ═══════════════════════════════════════════
+const entranceOverlay = document.getElementById('entranceOverlay');
+const entrancePass    = document.getElementById('entrancePass');
+const entranceError   = document.getElementById('entranceError');
+const telegramFrame   = document.getElementById('telegramFrame');
+
+entrancePass.focus();
+
+entrancePass.addEventListener('input', function() {
+  entranceError.textContent = '';
+  entranceError.classList.remove('shake');
+  const val = entrancePass.value.replace(/\D/g, '');
+  if (val === '0319') {
+    entranceError.textContent = '⚔️ Acceso concedido. Bienvenido, Nicolás.';
+    entranceError.style.color = 'var(--mint)';
+    setTimeout(function() {
+      entranceOverlay.classList.add('unlocked');
+    }, 600);
+  } else if (val.length >= 4) {
+    entranceError.textContent = '⛔ Código incorrecto';
+    entranceError.style.color = '#F43F5E';
+    entranceError.classList.add('shake');
+    setTimeout(function() { entrancePass.value = ''; entranceError.textContent = ''; entranceError.classList.remove('shake'); entranceError.style.color = ''; }, 600);
+  }
+});
+
+// ═══════════════════════════════════════════
+// ZORO → Telegram iframe
 // ═══════════════════════════════════════════
 const voicePanel = document.getElementById('voicePanel');
-const voiceLog   = document.getElementById('voiceLog');
-const chatInput  = document.getElementById('chatInput');
-const chatSend   = document.getElementById('chatSend');
 const zoroAvatar = document.querySelector('.zoro-avatar');
+const chatSend   = document.getElementById('chatSend');
 
-// ── Menú ASISTENC-IA ──
+zoroAvatar.addEventListener('click', function() {
+  voicePanel.classList.toggle('open');
+  if (voicePanel.classList.contains('open') && !telegramFrame.src) {
+    telegramFrame.src = 'https://web.telegram.org/k/';
+  }
+});
+
+document.getElementById('voiceClose').addEventListener('click', function() {
+  voicePanel.classList.remove('open');
+});
+
+chatSend.addEventListener('click', function() {
+  window.open('https://web.telegram.org/k/', '_blank');
+});
+
+// ═══════════════════════════════════════════
+// Menú ASISTENC-IA
+// ═══════════════════════════════════════════
 const stationAsistenc = document.getElementById('stationAsistenc');
 const asistencMenu    = document.getElementById('asistencMenu');
 
@@ -609,144 +758,9 @@ stationAsistenc.addEventListener('click', function(e) {
   asistencMenu.classList.toggle('open');
 });
 
-// Cerrar menú al hacer clic fuera
 document.addEventListener('click', function() {
   asistencMenu.classList.remove('open');
 });
-
-// ZORO click → toggle panel
-zoroAvatar.addEventListener('click', function() {
-  voicePanel.classList.toggle('open');
-  if (voicePanel.classList.contains('open')) setTimeout(() => chatInput.focus(), 400);
-});
-
-// Close button
-document.getElementById('voiceClose').addEventListener('click', function() {
-  voicePanel.classList.remove('open');
-});
-
-// ── Fish Audio TTS ──
-  const FISH_KEY = 'sk-fish-h7ACGp17hEDd7H-TwyQmjG_1cN-kcb2WDMvyLb_EVXM';
-  let audioEl = null;
-
-  async function speak(text) {
-    try {
-      const res = await fetch('https://api.fish.audio/v1/tts', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + FISH_KEY,
-          'Content-Type': 'application/json',
-          'model': 's2.1-pro-free'
-        },
-        body: JSON.stringify({ text, format: 'mp3', latency: 'balanced', chunk_length: 100, reference_id: '79d0bd3e4e5455b18f7b6d89b5927bf1' })
-      });
-      if (!res.ok) throw new Error('TTS ' + res.status);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      if (audioEl) { audioEl.pause(); URL.revokeObjectURL(audioEl.src); }
-      audioEl = new Audio(url);
-      audioEl.play();
-    } catch(e) {
-      console.warn('Fish TTS fallback:', e);
-      if ('speechSynthesis' in window) {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'es-ES'; u.rate = 0.95;
-        speechSynthesis.speak(u);
-      }
-    }
-  }
-
-  // Send message — now with voice
-  function sendMsg() {
-    const text = chatInput.value.trim();
-    if (!text) return;
-    addMsg('nicolas', text);
-    chatInput.value = '';
-    const reply = getZoroReply(text);
-    setTimeout(() => { addMsg('zoro', reply); speak(reply); }, 300);
-  }
-chatSend.addEventListener('click', sendMsg);
-chatInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') sendMsg();
-});
-
-// Chat log
-function addMsg(who, text) {
-  const div = document.createElement('div');
-  div.className = 'msg ' + who;
-  div.textContent = text;
-  voiceLog.appendChild(div);
-  voiceLog.scrollTop = voiceLog.scrollHeight;
-}
-
-// ═══════════════════════════════════════════
-// ZORO REPLY ENGINE — consola rápida del Lab
-// ═══════════════════════════════════════════
-const ZORO_KNOWLEDGE = {
-  garden: 'El Garden 🌿 monitorea plantas con termohigrómetro. Última lectura: ~24.8°C, 49% humedad, VPD ALTO.',
-  asistencia: 'Asistenc-IA 🏭 — control de asistencia con hardware NFC. 24 presentes, 1 alerta.',
-  food: 'Food 🍽️ está en desarrollo. Cartas digitales NFC + pedidos a cocina + agente de voz.',
-  lab: 'Quick-T Lab 🎮 — torre de control RPG. Cuatro estaciones activas.',
-  servicio: 'Service 🏨 — hoteles boutique con concierge digital NFC. En desarrollo.',
-  case: 'Cases 3D en OpenSCAD, impresos en PETG. La Monstera quedó espectacular 🌿.',
-  quien: 'Soy ZORO ⚔️, tu espadachín. Orquesto agentes. Mr. Wong programa, Checho opera.',
-  abrir: '¿Cuál estación abro? Garden 🌿, Asistenc-IA 🏭, Food 🍽️, Métricas 📊.',
-  métricas: 'Métricas 📊 está en desarrollo. KPIs globales próximamente.',
-};
-
-function getZoroReply(text) {
-  const t = _normalize(text);
-
-  // Abrir estaciones directamente
-  if (_matchAny(t, ['abrir garden','ver garden','ir a garden','garden'])) {
-    setTimeout(() => window.open('garden.html', '_blank'), 800);
-    return 'Abriendo Garden 🌿 en otra pestaña...';
-  }
-  if (_matchAny(t, ['abrir asistenc','ver asistenc','ir a asistenc','dashboard'])) {
-    setTimeout(() => window.open('dashboard.html', '_blank'), 800);
-    return 'Abriendo Asistenc-IA 🏭 en otra pestaña...';
-  }
-
-  // Conocimiento
-  for (const [topic, reply] of Object.entries(ZORO_KNOWLEDGE)) {
-    if (t.includes(topic)) return reply;
-  }
-
-  // Saludos
-  if (_matchAny(t, ['hola','buen dia','buenas','saludos','hey','qué tal','como va','como estas'])) {
-    const h = new Date().getHours();
-    const saludo = h < 12 ? 'Buen día' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
-    const frases = [
-      saludo + ', Nicolás. ¿En qué proyecto trabajamos? ⚔️',
-      saludo + '. El Lab está operativo. ¿A qué estación vamos? 🎮',
-      '¡' + saludo + '! Garden y Asistenc-IA online 🟢',
-      saludo + ', capitán. ¿Revisamos dashboards?',
-    ];
-    return frases[Math.floor(Math.random() * frases.length)];
-  }
-
-  if (_matchAny(t, ['gracias'])) return 'De nada, Nicolás. Para eso estamos. 🫡';
-  if (_matchAny(t, ['chau','adiós','nos vemos','hasta luego','me voy'])) return '¡Hasta luego! Quedo en guardia en el Lab. 🫡⚔️';
-  if (_matchAny(t, ['cómo va','cómo estamos','novedades','estado','todo bien']))
-    return 'Todo en orden. Garden 🌿 y Asistenc-IA 🏭 operativos. Food y Service en desarrollo. ¿Revisamos algo?';
-  if (_matchAny(t, ['ayuda','qué podés','qué puedes','qué haces']))
-    return 'Soy la consola rápida del Lab. Puedo abrir estaciones, darte datos de los proyectos, y comandos. Para trabajo profundo usá Telegram ⚔️';
-
-  const defaults = [
-    'Entendido. ¿Abrimos alguna estación? 🎮',
-    'Recibido. ¿Vamos a Garden, Asistenc-IA, o seguimos?',
-    'Afirmativo. Decime qué sigue. ⚔️',
-    'Ok, Nicolás. Estoy listo.',
-  ];
-  return defaults[Math.floor(Math.random() * defaults.length)];
-}
-
-function _normalize(s) {
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9áéíóúñ ]/g,' ').replace(/\s+/g,' ').trim();
-}
-function _matchAny(text, words) {
-  return words.some(w => text.includes(_normalize(w)));
-}
 </script>
 </body>
 </html>
