@@ -59,8 +59,9 @@
 
   /* ── Energy ring pulse around ZORO center ── */
   .energy-rings {
-    position: absolute; bottom: 21%; left: 39%; z-index: 3;
-    width: 100px; height: 100px;
+    position: absolute; bottom: -6px; left: 50%; z-index: -1;
+    width: 110%; height: 22px; transform: translateX(-50%);
+    animation: energy-swell 7s ease-in-out infinite;
     pointer-events: none;
   }
   .energy-rings::before,
@@ -71,7 +72,8 @@
   }
   .energy-rings::after { animation-delay: 1.25s; }
   @keyframes ring-grow {
-    0%   { transform: scale(0.6); opacity: 0.7; }
+    0%   { transform: scale(0.6); opacity: 0.25; }
+    25%  { opacity: 0.7; }
     100% { transform: scale(1.8); opacity: 0; }
   }
 
@@ -91,7 +93,7 @@
   /* ── Equipment status dot ── */
   .equip-dot {
     position: absolute; z-index: 6; pointer-events: none;
-    width: 5px; height: 5px; border-radius: 50%;
+    width: 5px; height: 5px; border-radius: 50%; background: currentColor;
     animation: dot-pulse 2s ease-in-out infinite;
   }
   @keyframes dot-pulse {
@@ -122,7 +124,7 @@
     display: flex; align-items: center; gap: 12px;
     padding: 14px 24px;
     background: linear-gradient(180deg, rgba(6,20,46,0.92) 40%, transparent);
-    border-radius: 24px 24px 0 0; z-index: 10;
+    border-radius: 24px 24px 0 0; z-index: 10; pointer-events: none;
   }
   .lab-header img { height: 32px; }
   .lab-header h1 {
@@ -141,12 +143,9 @@
     display: flex; flex-direction: column; align-items: center; gap: 4px;
     cursor: pointer; text-decoration: none;
     transition: transform 0.3s ease, filter 0.3s ease;
-    filter: drop-shadow(0 0 8px rgba(13,242,201,0.3));
+    color: var(--text);
   }
-  .station:hover {
-    transform: scale(1.12);
-    filter: drop-shadow(0 0 20px var(--mint-glow));
-  }
+  .station:hover, .station:focus-within { z-index: 12; }
   .station-icon-wrap {
     width: 52px; height: 52px; border-radius: 50%;
     background: rgba(10,31,68,0.85); border: 2px solid rgba(13,242,201,0.4);
@@ -165,19 +164,18 @@
   }
 
   /* Positions — alineadas visualmente sobre el lab pixel art */
-  .station-garden    { bottom: 55%; left:  14%; }
-  .station-asistenc  { top:    12%; left:  43%; }
-  .station-food      { top:    26%; right:  18%; }
-  .station-child { font-size: 0.65rem; color: var(--gray); }
-  .station-child strong { color: var(--text); }
+  .station-garden   { bottom: 20%; left: 8%; width: 6.7%; min-width: 36px; }
+  .station-asistenc { top: 12%; left: 43%; width: 6.7%; min-width: 36px; }
+  .station-food     { top: 26%; right: 18%; width: 5.35%; min-width: 24px; }
+  .station-metricas { bottom: 17%; right: 5%; }
+
 
   /* ── Menú desplegable ASISTENC-IA ── */
   .asistenc-menu {
-    position: absolute; z-index: 10;
-    top: 12%; left: 43%;
-    margin-top: 90px; margin-left: -10px;
+    position: absolute; z-index: 30;
+    top: 0; left: 0; margin: 0; max-width: calc(100% - 16px);
     display: none; flex-direction: column; gap: 2px;
-    background: var(--surface);
+    background: rgba(6,20,46,.97);
     border: 1.5px solid var(--mint);
     border-radius: 10px;
     box-shadow: 0 0 24px var(--mint-glow);
@@ -195,212 +193,41 @@
     background: rgba(13,242,201,0.12);
     color: var(--mint);
   }
-  .station-zoro      { bottom: 45%; left:  50%; } /* centro */
 
-  /* ── Agente miniature (sin tooltip, solo pulso) ── */
-  .agent {
-    position: absolute; z-index: 3;
-    width: 56px; height: auto;
-    border: 2px solid rgba(13,242,201,0.35);
-    border-radius: 10px;
-    box-shadow: 0 0 14px rgba(13,242,201,0.25);
-    animation: agent-idle 2.5s ease-in-out infinite;
-    overflow: hidden;
-    background: rgba(10,31,68,0.7);
+  /* Actores: posición en el suelo afuera, paso/balanceo adentro. */
+  .actor {
+    position: absolute; z-index: 4; width: 56px;
+    color: var(--text); text-decoration: none; cursor: pointer;
+    transition: left 2s ease-in-out, top 2s ease-in-out;
   }
-  .agent img { width: 100%; height: auto; display: block; }
-  @keyframes agent-idle {
-    0%,100% { transform: translateY(0); box-shadow: 0 0 14px rgba(13,242,201,0.25); }
-    50%     { transform: translateY(-4px); box-shadow: 0 0 22px rgba(13,242,201,0.45); }
+  .actor.positioned { bottom: auto; right: auto; transform: translate(-50%, -100%); }
+  .actor img {
+    display: block; width: 100%; height: auto; image-rendering: pixelated;
+    filter: drop-shadow(2px 5px 3px rgba(0,0,0,.5));
+    transform-origin: 50% 100%; animation: actor-breathe 3.2s ease-in-out infinite;
   }
+  .actor.walking img { animation: actor-step .32s ease-in-out infinite; }
+  .actor::after {
+    content: ''; position: absolute; bottom: -3px; left: 18%; width: 64%; height: 8px;
+    background: radial-gradient(ellipse, rgba(0,0,0,.65), transparent 70%);
+    border-radius: 50%; z-index: -1; pointer-events: none;
+  }
+  .actor.walking::after { animation: foot-shadow .32s ease-in-out infinite; }
+  .agent-wong { top: 24%; left: 34%; }
   .agent-checho { top: 34%; right: 10%; width: 72px; }
-  .agent-wong { top: 20%; left: 32%; }
+  .zoro-avatar { bottom: 20%; left: 39%; width: 108px; }
   .agent-name {
-    position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-    font-family: 'Quicksand', sans-serif; font-size: 0.55rem; font-weight: 700;
-    white-space: nowrap;
+    position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%);
+    font: 700 .55rem 'Quicksand', sans-serif; white-space: nowrap;
+    color: var(--mint); text-shadow: 0 1px 3px #020C1A;
   }
-  .agent-wong .agent-name { color: var(--mint); }
   .agent-checho .agent-name { color: #F5B731; }
-
-  .station-zoro .station-icon-wrap {
-    width: 120px; height: 120px;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-    animation: zoro-float 3s ease-in-out infinite;
+  @keyframes actor-breathe { 50% { transform: scaleY(1.015); } }
+  @keyframes actor-step {
+    0%,100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-3px) rotate(1.5deg); }
   }
-  .station-zoro .station-icon-wrap img {
-    width: 100%; height: 100%; object-fit: contain;
-    filter: drop-shadow(0 6px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 16px rgba(13,242,201,0.3));
-  }
-  @keyframes zoro-float {
-    0%,100% { transform: translateY(0); }
-    50%     { transform: translateY(-6px); }
-  }
-
-  /* ── ZORO integrado al suelo del lab ── */
-  .zoro-avatar {
-    position: absolute;
-    bottom: 20%;
-    left: 39%;
-    z-index: 4;
-    cursor: pointer;
-  }
-  .zoro-avatar img {
-    display: block;
-    height: 130px;
-    width: auto;
-    image-rendering: pixelated;
-    filter: drop-shadow(0 8px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 12px rgba(13,242,201,0.2));
-    animation: zoro-float 3s ease-in-out infinite;
-    transition: filter 0.3s;
-  }
-  .zoro-avatar:hover img {
-    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(13,242,201,0.5));
-  }
-  /* ── Voice Communication Panel ── */
-  .voice-panel {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(100%);
-    width: 640px;
-    max-width: 90%;
-    background: rgba(6,20,46,0.95);
-    border: 2px solid var(--mint);
-    border-radius: 16px 16px 0 0;
-    box-shadow: 0 -8px 40px rgba(13,242,201,0.2);
-    z-index: 20;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 20px 24px 24px;
-  }
-  .voice-panel.open { transform: translateX(-50%) translateY(0); }
-  .voice-panel-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .voice-panel-header .zoro-mini {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 2px solid var(--mint);
-    overflow: hidden;
-  }
-  .voice-panel-header .zoro-mini img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .voice-panel-header h3 {
-    font-family: 'Quicksand', sans-serif;
-    color: var(--mint);
-    font-size: 1rem;
-    flex: 1;
-  }
-  .voice-panel-close {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    color: var(--text-dim);
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: 0.2s;
-  }
-  .voice-panel-close:hover {
-    background: var(--alert);
-    border-color: var(--alert);
-    color: #FFF;
-  }
-  .voice-log {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 12px;
-    font-size: 0.82rem;
-    line-height: 1.5;
-  }
-  .voice-log .msg {
-    padding: 8px 12px;
-    border-radius: 10px;
-    margin-bottom: 6px;
-    max-width: 85%;
-  }
-  .voice-log .msg.nicolas {
-    background: rgba(56,189,248,0.12);
-    border: 1px solid rgba(56,189,248,0.2);
-    color: #38BDF8;
-    margin-left: auto;
-    text-align: right;
-  }
-  .voice-log .msg.zoro {
-    background: rgba(13,242,201,0.08);
-    border: 1px solid rgba(13,242,201,0.2);
-    color: var(--mint);
-  }
-  .voice-btn-talk, .voice-status-text, @keyframes voice-pulse { display: none; /* removed — chat mode */ }
-  .chat-input {
-    flex: 1;
-    background: rgba(255,255,255,0.05);
-    border: 1.5px solid rgba(13,242,201,0.2);
-    border-radius: 12px;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
-    padding: 12px 16px;
-    outline: none;
-    transition: 0.2s;
-  }
-  .chat-input:focus { border-color: var(--mint); box-shadow: 0 0 12px rgba(13,242,201,0.12); }
-  .chat-input::placeholder { color: var(--text-dim); }
-  .chat-send-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: 1.5px solid var(--mint);
-    background: rgba(13,242,201,0.1);
-    color: var(--mint);
-    font-size: 1rem;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    transition: 0.2s;
-    flex-shrink: 0;
-  }
-  .chat-send-btn:hover { background: var(--mint); color: var(--navy-dark); }
-
-  .voice-bar {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  /* Sombra de pie en el suelo */
-  .zoro-avatar::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 8px;
-    background: radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%);
-    border-radius: 50%;
-    animation: shadow-pulse 3s ease-in-out infinite;
-  }
-  @keyframes shadow-pulse {
-    0%,100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-    50%     { transform: translateX(-50%) scale(0.85); opacity: 0.35; }
-  }
-  @keyframes zoro-float {
-    0%,100% { transform: translateY(0); }
-    50%     { transform: translateY(-5px); }
-  }
-
+  @keyframes foot-shadow { 50% { transform: scaleX(.82); opacity: .6; } }
   /* ── Tooltip on hover ── */
   .station-tooltip {
     position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
@@ -414,23 +241,10 @@
   .station:hover .station-tooltip { opacity: 1; }
   .station-tooltip strong { color: var(--mint); font-family: 'Quicksand', sans-serif; }
 
-  /* Legend bar */
-  .legend {
-    position: absolute; bottom: 0; left: 0; right:0; z-index:10;
-    display: flex; align-items: center; justify-content: center; gap: 20px;
-    padding: 12px 24px;
-    background: linear-gradient(0deg, rgba(6,20,46,0.9) 40%, transparent);
-    border-radius: 0 0 24px 24px;
-    font-size: 0.65rem; color: var(--text-dim);
-  }
-  .legend .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-  .legend .dot.active { background: var(--mint); box-shadow: 0 0 5px var(--mint); }
-  .legend .dot.soon  { background: #F2A20D; }
-
   .footer-legend {
     position: absolute; bottom: 12px; left: 0; right: 0; z-index: 10;
     display: flex; align-items: center; justify-content: center; gap: 18px;
-    font-size: 0.6rem; color: var(--text-dim);
+    font-size: 0.6rem; color: var(--text); background: rgba(6,20,46,.7);
   }
   .footer-legend span { display: flex; align-items: center; gap: 5px; }
   .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
@@ -439,8 +253,6 @@
 
   @media (max-width: 768px) {
     .station-icon-wrap { width: 38px; height: 38px; font-size: 1.15rem; }
-    .station-zoro .station-icon-wrap { width: 90px; height: 90px; }
-    .station-zoro .station-icon-wrap img { width: 100%; height: 100%; }
     .station-label { font-size: 0.5rem; padding: 2px 7px; }
     .agent { width: 36px; }
   }
@@ -540,6 +352,118 @@
     margin-top: 14px; font-size: 0.7rem; color: var(--text-dim);
   }
 
+  /* Escenografía: postes, ménsulas y sombras, no tarjetas flotantes. */
+  .scene-sign {
+    display: block; width: 100%; height: auto; image-rendering: pixelated;
+    filter: drop-shadow(3px 5px 1px rgba(0,0,0,.55));
+    transform: translate(var(--parallax-x, 0px), var(--parallax-y, 0px));
+    transition: transform .25s ease-out;
+  }
+  .station-garden::before {
+    content: ''; position: absolute; width: 10%; height: 30%; left: 45%; bottom: -22%;
+    background: linear-gradient(90deg,#07182a,#314553 45%,#102234);
+    border-bottom: 4px solid #020c1a; z-index: -1;
+  }
+  .station-garden::after {
+    content: ''; position: absolute; bottom: -25%; left: -10%; width: 120%; height: 14%;
+    background: radial-gradient(ellipse,rgba(0,0,0,.65),transparent 70%); z-index: -2;
+  }
+  .station-asistenc::before, .station-food::before {
+    content: ''; position: absolute; bottom: -4px; left: 8%; right: -3%; height: 7px;
+    background: #071221; box-shadow: 2px 3px 2px rgba(0,0,0,.4); z-index: -1;
+  }
+  .station-garden > .station-label, .station-asistenc > .station-label,
+  .station-food > .station-label { display: none; }
+  .station-metricas .station-icon-wrap {
+    border: 0; border-bottom: 5px solid #071221; border-radius: 3px;
+    background: #102839; box-shadow: 4px 5px 2px rgba(0,0,0,.4);
+    width: 38px; height: 30px; font-size: 1.1rem;
+  }
+  .screen-glow {
+    position: absolute; inset: 45% -35% -50%; z-index: -2;
+    background: radial-gradient(ellipse,rgba(13,242,201,.3),transparent 70%);
+    opacity: 0; pointer-events: none;
+  }
+  .station.active .screen-glow, .station.visited .screen-glow { animation: screen-breathe 4.6s ease-in-out infinite; }
+  .station.visited .screen-glow { background: radial-gradient(ellipse,rgba(13,242,201,.55),transparent 70%); }
+  .ceiling-led {
+    position: absolute; width: 5px; height: 3px; border-radius: 2px; z-index: 2;
+    background: #c0fff3; box-shadow: 0 0 9px var(--mint); pointer-events: none;
+    animation: ceiling-flicker 6.4s linear var(--delay) infinite;
+  }
+  .ambient-dust {
+    position: absolute; width: 5px; height: 5px; z-index: 6; border-radius: 50%;
+    background: #c5edec; filter: blur(1px); pointer-events: none;
+    animation: dust-drift var(--duration) ease-in-out var(--delay) infinite;
+  }
+  @keyframes energy-swell { 0%,100% { opacity: .35; } 45% { opacity: 1; } 70% { opacity: .6; } }
+  @keyframes ceiling-flicker { 0%,100% { opacity:.3; } 14%,18%,60% { opacity:.85; } 16%,63% { opacity:.2; } 80% { opacity:.6; } }
+  @keyframes dust-drift { 0%,100% { opacity:.08; transform:translate(0,0); } 45% { opacity:.32; transform:translate(15px,-24px); } 70% { opacity:.2; transform:translate(-12px,-40px); } }
+  @keyframes screen-breathe { 0%,100% { opacity:.35; } 50% { opacity:.9; } }
+  .actor:hover, .actor:focus { z-index: 14; }
+  .agent-dialogue {
+    position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+    background: rgba(6,20,46,.96); border: 1px solid rgba(13,242,201,.5);
+    color: var(--text); padding: 8px 10px; border-radius: 9px 9px 9px 2px;
+    width: max-content; max-width: 150px; font: 500 .7rem/1.4 'Quicksand',sans-serif;
+    opacity: 0; pointer-events: none; transition: opacity .18s;
+    box-shadow: 2px 4px 0 rgba(0,0,0,.3);
+  }
+  .agent-checho .agent-dialogue { left: auto; right: 0; transform: none; }
+  .actor:hover .agent-dialogue, .actor:focus .agent-dialogue { opacity: 1; }
+  .actor:focus-visible, .station:focus-visible, #motionToggle:focus-visible { outline: 2px solid var(--mint); outline-offset: 5px; }
+  .station:focus-within .station-tooltip { opacity: 1; }
+  .station-tooltip { white-space: normal; width: 180px; max-width: 65vw; padding: 10px; }
+  .station-garden .station-tooltip { left: 0; transform: none; }
+  .station-asistenc .station-tooltip { bottom: auto; top: 100%; margin-top: 14px; }
+  .station-food .station-tooltip, .station-metricas .station-tooltip { left: auto; right: 0; transform: none; }
+  #motionToggle {
+    font: 600 .65rem 'Inter',sans-serif; color: var(--text); cursor: pointer; pointer-events: auto;
+    background: #102839; border: 1px solid #345568; padding: 6px 9px; border-radius: 6px;
+  }
+  .motion-paused *, .motion-paused::before, .motion-paused *::before,
+  .motion-paused *::after { animation-play-state: paused !important; }
+  @media (max-width: 1024px) {
+    .lab-header { padding: 10px 16px; gap: 8px; }
+    .zoro-avatar { width: 90px; }
+    .agent-checho { width: 60px; }
+  }
+  @media (max-width: 768px) {
+    .lab-wrapper { border-radius: 14px; }
+    .lab-header h1 { font-size: .95rem; }
+    .lab-header img { height: 24px; }
+    .lab-badge { font-size: .5rem; padding: 4px 7px; }
+    .zoro-avatar { width: 66px; }
+    .agent-checho { width: 42px; }
+    .agent-dialogue { font-size: .6rem; padding: 5px 7px; max-width: 110px; }
+    .footer-legend { bottom: 6px; gap: 10px; font-size: .5rem; }
+    .asistenc-menu-item { padding: 7px 10px; font-size: .72rem; }
+  }
+  @media (max-width: 480px) {
+    .lab-header { padding: 5px 8px; gap: 5px; }
+    .station-asistenc { top: 16%; }
+    .lab-header h1 { font-size: .75rem; }
+    .lab-header img { height: 19px; }
+    .lab-badge { font-size: .4rem; padding: 3px 4px; }
+    #motionToggle { font-size: .5rem; padding: 5px; }
+    .agent-wong { width: 20px; }
+    .agent-checho { width: 28px; }
+    .zoro-avatar { width: 42px; }
+    .agent-name { font-size: .42rem; bottom: -10px; }
+    .station-label, .station-badge { font-size: .4rem; }
+    .station-metricas .station-icon-wrap { width: 24px; height: 22px; font-size: .8rem; }
+    .footer-legend { font-size: .4rem; gap: 7px; bottom: 4px; }
+    .station-tooltip { font-size: .6rem; width: 140px; }
+    .station-food .station-tooltip { bottom: auto; top: 100%; margin-top: 8px; }
+    .ceiling-led { width: 3px; height: 2px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lab-wrapper *, .lab-wrapper::before, .lab-wrapper *::before,
+    .lab-wrapper *::after { animation: none !important; }
+    .scene-sign { transform: none; transition: none; }
+    .screen-glow { opacity: .3; }
+  }
+
 </style>
 </head>
 <body>
@@ -562,60 +486,48 @@
 
 <div class="lab-wrapper">
 
-  <!-- ═══ LAB ANIMATIONS ═══ -->
-  <!-- Energy rings around ZORO -->
-  <div class="energy-rings"></div>
-
-  <!-- Vents (blinking indicators) -->
   <div class="vent" style="top:18%; left:22%;"></div>
   <div class="vent" style="top:18%; left:24%;"></div>
   <div class="vent" style="top:55%; right:20%; height:16px;"></div>
   <div class="vent" style="top:55%; right:22%; height:16px;"></div>
 
-  <!-- Equipment status dots -->
   <div class="equip-dot" style="top:22%; left:16%; color:#0DF2C9;"></div>
   <div class="equip-dot" style="top:58%; right:17%; color:#38BDF8;"></div>
   <div class="equip-dot" style="bottom:28%; left:34%; color:#F5B731;"></div>
   <div class="equip-dot" style="top:32%; right:32%; color:#0DF2C9; animation-delay:0.8s;"></div>
 
-  <!-- Gas vents -->
   <div class="gas" style="top:12%; left:28%;"></div>
   <div class="gas" style="top:12%; left:56%; animation-delay:1.5s;"></div>
   <div class="gas" style="top:12%; right:18%; animation-delay:0.7s; width:10px;"></div>
 
-  <!-- Floating data particles -->
   <div class="particle" style="top:30%; left:12%; width:3px; height:3px; background:#0DF2C9; animation:p-float1 6s ease-in-out infinite;"></div>
   <div class="particle" style="top:45%; right:14%; width:2px; height:2px; background:#38BDF8; animation:p-float2 7s ease-in-out infinite;"></div>
   <div class="particle" style="top:20%; left:44%; width:2px; height:2px; background:#F5B731; animation:p-float3 5s ease-in-out infinite;"></div>
   <div class="particle" style="bottom:30%; right:30%; width:3px; height:3px; background:#0DF2C9; animation:p-float1 8s ease-in-out 2s infinite;"></div>
 
-  <!-- Mr. Wong — zona ASISTENC-IA -->
-  <div class="agent agent-wong">
+  <div class="actor agent agent-wong" tabindex="0">
     <img src="mrwong-sprite.png" alt="Mr. Wong">
     <div class="agent-name">Mr. Wong</div>
+    <span class="agent-dialogue">Sistema operativo</span>
   </div>
 
-  <!-- Checho — zona FOOD -->
-  <div class="agent agent-checho">
+  <div class="actor agent agent-checho" tabindex="0">
     <img src="checho-sprite.png" alt="Checho">
     <div class="agent-name">Checho</div>
+    <span class="agent-dialogue">Todo en orden</span>
   </div>
 
-  <!-- MAPA DEL LABORATORIO (Nicolás pixel art) -->
   <img class="lab-bg" src="lab-bg.png" alt="Quick-T Lab">
 
-  <!-- HEADER overlay -->
   <div class="lab-header">
     <img src="quickt-logo-nav.png" alt="Quick-T">
     <h1>Quick-T Lab</h1>
-    <span class="lab-badge">v3.0 RPG</span>
+    <span class="lab-badge">LAB VIVO</span>
+    <button type="button" id="motionToggle" aria-pressed="false" aria-label="Pausar movimiento del mapa">Pausar</button>
   </div>
 
-  <!-- ESTACIONES — posicionadas sobre el mapa -->
-  
-  <!-- HOME (menú interactivo) -->
-  <div class="station station-garden" id="stationHome">
-    <img src="home-sign.png" alt="HOME" style="width:80px; height:auto; image-rendering:pixelated;">
+  <div class="station station-garden active" id="stationHome" role="button" tabindex="0" aria-expanded="false" aria-controls="homeMenu">
+    <img src="home-sign.png" alt="HOME" class="scene-sign">
     <div class="station-label">HOME</div>
     <div class="station-tooltip">
       <strong>🏠 HOME</strong><br>
@@ -623,15 +535,14 @@
       Quick‑T Hub
     </div>
   </div>
-  <!-- Menú HOME -->
-  <div class="asistenc-menu" id="homeMenu" style="top:auto; bottom:55%; left:14%; margin-top:0; margin-bottom:100px;">
+
+  <div class="asistenc-menu" id="homeMenu" aria-label="Opciones HOME">
     <a href="garden.html" class="asistenc-menu-item">🌿 Garden</a>
     <a href="garden.html?view=clientes" class="asistenc-menu-item">👥 Clientes</a>
   </div>
 
-  <!-- ASISTENC-IA (menú interactivo) -->
-  <div class="station station-asistenc" id="stationAsistenc">
-    <img src="letrero-asistencIA.png" alt="ASISTENC-IA" style="width:80px; height:auto; image-rendering:pixelated;">
+  <div class="station station-asistenc active" id="stationAsistenc" role="button" tabindex="0" aria-expanded="false" aria-controls="asistencMenu">
+    <img src="letrero-asistencIA.png" alt="ASISTENC-IA" class="scene-sign">
     <div class="station-label">ASISTENC-IA</div>
     <div class="station-tooltip">
       <strong>🏭 ASISTENC-IA</strong><br>
@@ -639,16 +550,15 @@
       Mr. Wong — Developer
     </div>
   </div>
-  <!-- Menú ASISTENC-IA -->
+
   <div class="asistenc-menu" id="asistencMenu">
     <a href="dashboard.html" class="asistenc-menu-item">📊 Dashboard</a>
     <a href="landing.html" class="asistenc-menu-item">🌐 Landing</a>
     <a href="dashboard.html" class="asistenc-menu-item">👥 Clientes</a>
   </div>
 
-  <!-- FOOD (pronto) -->
-  <div class="station station-food">
-    <img src="letrero-food.png" alt="FOOD" style="width:64px; height:auto; image-rendering:pixelated;">
+  <div class="station station-food" tabindex="0">
+    <img src="letrero-food.png" alt="FOOD" class="scene-sign">
     <div class="station-label">FOOD</div>
     <span class="station-badge">PRONTO</span>
     <div class="station-tooltip">
@@ -658,8 +568,7 @@
     </div>
   </div>
 
-  <!-- MÉTRICAS (pronto) -->
-  <div class="station station-metricas">
+  <div class="station station-metricas" tabindex="0">
     <div class="station-icon-wrap">📊</div>
     <div class="station-label">MÉTRICAS</div>
     <span class="station-badge">PRONTO</span>
@@ -670,35 +579,17 @@
     </div>
   </div>
 
-  <!-- ZORO — avatar integrado al suelo del laboratorio -->
-  <div class="zoro-avatar">
+  <a class="actor zoro-avatar" href="https://web.telegram.org/k/" target="_blank" rel="noopener noreferrer" aria-label="ZORO — Abrir Telegram en una pestaña nueva">
+    <span class="energy-rings" aria-hidden="true"></span>
     <img src="zoro-fullbody.png" alt="ZORO">
-  </div>
+    <span class="agent-name">ZORO</span>
+    <span class="agent-dialogue">¿Qué necesitas, Nicolás?</span>
+  </a>
 
-  <!-- LABEL ZORO -->
-
-  <!-- LEGEND -->
   <div class="footer-legend">
     <span><span class="dot green"></span> Activo</span>
     <span><span class="dot amber"></span> Pronto</span>
     <span>⚔ Click en estaciones para entrar</span>
-  </div>
-
-<!-- VOICE COMMUNICATION PANEL -->
-  <div class="voice-panel" id="voicePanel">
-    <div class="voice-panel-header">
-      <div class="zoro-mini"><img src="zoro-fullbody.png" alt="ZORO"></div>
-      <h3>⚔️ Comunicación Directa — ZORO</h3>
-      <button class="voice-panel-close" id="voiceClose">✕</button>
-    </div>
-    <div class="voice-log" id="voiceLog" style="text-align:center; padding:40px 20px;">
-      <div style="font-size:2.2rem; margin-bottom:8px;">⚔️</div>
-      <p style="color:var(--text); font-size:0.9rem; margin-bottom:4px; font-weight:600;">Canal directo con ZORO</p>
-      <p style="color:var(--text-dim); font-size:0.75rem; margin-bottom:20px;">Se abrirá en una pestaña nueva</p>
-      <div>
-        <a href="https://web.telegram.org/k/" target="_blank" rel="noopener" class="chat-send-btn" style="display:inline-block; width:auto; padding:14px 32px; border-radius:12px; font-size:0.9rem; text-decoration:none; font-weight:700; background:var(--mint); color:var(--navy-dark);">Abrir Telegram Web</a>
-      </div>
-    </div>
   </div>
 
 </div>
@@ -733,46 +624,202 @@ entrancePass.addEventListener('input', function() {
 });
 
 // ═══════════════════════════════════════════
-// ZORO → Telegram iframe
-// ═══════════════════════════════════════════
-const voicePanel = document.getElementById('voicePanel');
-const zoroAvatar = document.querySelector('.zoro-avatar');
-
-zoroAvatar.addEventListener('click', function() {
-  window.open('https://web.telegram.org/k/', '_blank');
+// Interacciones de las estaciones
+// Menús accesibles, ajustados al mapa incluso en pantallas pequeñas.
+const menuPairs = [
+  [document.getElementById('stationHome'), document.getElementById('homeMenu')],
+  [document.getElementById('stationAsistenc'), document.getElementById('asistencMenu')]
+];
+function placeMenu(station, menu) {
+  const map = station.parentElement;
+  const x = Math.max(8, Math.min(station.offsetLeft, map.clientWidth - menu.offsetWidth - 8));
+  let y = station.offsetTop + station.offsetHeight + 12;
+  if (y + menu.offsetHeight > map.clientHeight - 8) y = station.offsetTop - menu.offsetHeight - 12;
+  menu.style.left = x + 'px'; menu.style.top = Math.max(8, y) + 'px';
+}
+function closeMenus() {
+  menuPairs.forEach(([s,m]) => { m.classList.remove('open'); s.setAttribute('aria-expanded','false'); });
+}
+menuPairs.forEach(([station,menu]) => {
+  function toggle(e) {
+    e.stopPropagation();
+    const open = !menu.classList.contains('open');
+    closeMenus();
+    if (open) { menu.classList.add('open'); station.setAttribute('aria-expanded','true'); placeMenu(station,menu); }
+  }
+  station.addEventListener('click',toggle);
+  station.addEventListener('keydown',e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(e); }
+  });
 });
+document.addEventListener('click',e => { if (!e.target.closest('.asistenc-menu')) closeMenus(); });
+document.addEventListener('keydown',e => { if (e.key === 'Escape') closeMenus(); });
+window.addEventListener('resize', () => menuPairs.forEach(([s,m]) => {
+  if (m.classList.contains('open')) placeMenu(s,m);
+}));
 
-document.getElementById('voiceClose').addEventListener('click', function() {
-  voicePanel.classList.remove('open');
-});
+// Locomoción: coordenadas del pie, pasillos y estados independientes.
+(function () {
+  const map = document.querySelector('.lab-wrapper');
+  const random = (min, max) => min + Math.random() * (max - min);
+  const configs = [
+    {selector: '.zoro-avatar', zone: [35,39,76,85], visits: [
+      {station: '.station-garden', path: [[36,84],[34,92],[14,92],[12,84]]},
+      {station: '.station-asistenc', path: [[36,64],[37,44],[40,34]]}
+    ]},
+    {selector: '.agent-wong', zone: [29,38,44,56], visits: [
+      {station: '.station-garden', path: [[36,60],[36,84],[34,92],[14,92],[12,84]]}
+    ]},
+    {selector: '.agent-checho', zone: [86,92,48,61], visits: [
+      {station: '.station-food', path: [[88,56],[82,62]]},
+      {station: '.station-metricas', path: [[90,66],[92,80]]}
+    ]}
+  ];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const toggle = document.getElementById('motionToggle');
+  let actors = [], clock = 0, last = 0, paused = false, userPaused = false;
+  function syncMotion() {
+    const stop = document.hidden || reduced.matches || userPaused || !entranceOverlay.classList.contains('unlocked');
+    toggle.disabled = reduced.matches;
+    toggle.textContent = reduced.matches ? 'Sin movimiento' : (userPaused ? 'Reanudar' : 'Pausar');
+    toggle.setAttribute('aria-pressed', String(userPaused || reduced.matches));
+    toggle.setAttribute('aria-label', (userPaused ? 'Reanudar' : 'Pausar') + ' movimiento del mapa');
+    if (stop === paused) return;
+    paused = stop; map.classList.toggle('motion-paused', stop);
+    actors.forEach(a => {
+      if (stop) {
+        const style = getComputedStyle(a.el);
+        const x = parseFloat(style.left) / map.clientWidth * 100;
+        const y = parseFloat(style.top) / map.clientHeight * 100;
+        a.el.style.transition = 'none';
+        a.el.style.left = x + '%'; a.el.style.top = y + '%';
+      } else if (a.moving) {
+        a.el.offsetWidth;
+        const time = Math.max(0, a.end - clock) + 'ms';
+        a.el.style.transition = 'left ' + time + ' ease-in-out, top ' + time + ' ease-in-out';
+        a.el.style.left = a.point[0] + '%'; a.el.style.top = a.point[1] + '%';
+      } else a.el.style.transition = '';
+    });
+  }
+  toggle.addEventListener('click', () => { userPaused = !userPaused; syncMotion(); });
+  document.addEventListener('visibilitychange', syncMotion);
+  if (reduced.addEventListener) reduced.addEventListener('change', syncMotion);
+  else reduced.addListener(syncMotion);
 
-// ═══════════════════════════════════════════
-// Menús del Lab (declarados primero)
-// ═══════════════════════════════════════════
-const stationHome     = document.getElementById('stationHome');
-const homeMenu        = document.getElementById('homeMenu');
-const stationAsistenc = document.getElementById('stationAsistenc');
-const asistencMenu    = document.getElementById('asistencMenu');
+  function phase(a, value) { a.phase = value; a.el.dataset.phase = value; }
+  function move(a, point) {
+    a.el.style.transition = '';
+    a.point = point;
+    a.el.style.left = point[0] + '%';
+    a.el.style.top = point[1] + '%';
+    a.el.classList.add('walking');
+    a.end = clock + 2000;
+    a.moving = true;
+  }
+  function visit(a) {
+    const route = a.visits[a.visitIndex++ % a.visits.length];
+    a.origin = a.point.slice();
+    a.path = route.path;
+    a.queue = route.path.slice();
+    a.station = route.station;
+    a.el.dataset.station = route.station.replace('.station-', '');
+    phase(a, 'outbound');
+  }
+  function advance(a) {
+    if (a.moving) {
+      if (clock < a.end) return;
+      a.moving = false;
+      a.el.classList.remove('walking');
+    }
+    if (clock < a.next) return;
+    if (a.phase === 'roaming') {
+      if (clock >= a.nextVisit) visit(a);
+      else {
+        const z = a.zone;
+        move(a, [random(z[0],z[1]), random(z[2],z[3])]);
+        a.next = clock + random(3000,5000);
+        return;
+      }
+    }
+    if (a.phase === 'visiting') {
+      phase(a, 'returning');
+      a.queue = a.path.slice(0,-1).reverse().concat([a.origin]);
+    }
+    if (a.queue.length) {
+      move(a, a.queue.shift());
+      a.next = a.end;
+    } else if (a.phase === 'outbound') {
+      phase(a, 'visiting');
+      a.next = clock + 3000;
+    } else if (a.phase === 'returning') {
+      phase(a, 'roaming');
+      delete a.el.dataset.station;
+      a.next = clock + random(1000,2000);
+      a.nextVisit = clock + random(8000,12000);
+    }
+  }
+  function tick(now) {
+    const dt = last ? Math.min(now - last, 100) : 0;
+    last = now;
+    syncMotion();
+    if (!paused) {
+      clock += dt;
+      actors.forEach(advance);
+      map.querySelectorAll('.station').forEach(station => {
+        station.classList.toggle('visited', actors.some(a =>
+          a.phase === 'visiting' && station.matches(a.station)));
+      });
+    }
+    requestAnimationFrame(tick);
+  }
+  function init() {
+    // Luces de techo, polvo lento y reflejos de pantallas: solo decoración.
+    [17,30,55,69,88].forEach((x,i) => {
+      const led = document.createElement('span'); led.className = 'ceiling-led';
+      led.setAttribute('aria-hidden','true');
+      led.style.cssText = 'left:' + x + '%;top:' + (8 + i % 3 * 3) + '%;--delay:' + (-i * 1.3) + 's';
+      map.appendChild(led);
+    });
+    for (let i = 0; i < 12; i++) {
+      const dust = document.createElement('span'); dust.className = 'ambient-dust';
+      dust.setAttribute('aria-hidden','true');
+      dust.style.cssText = 'left:' + random(7,93) + '%;top:' + random(30,90) + '%;--duration:' + random(14,24) + 's;--delay:' + random(-24,0) + 's';
+      map.appendChild(dust);
+    }
+    map.querySelectorAll('.station').forEach(s => {
+      const glow = document.createElement('span'); glow.className = 'screen-glow';
+      glow.setAttribute('aria-hidden','true'); s.appendChild(glow);
+    });
+    actors = configs.map((a,i) => {
+      a.el = map.querySelector(a.selector);
+      const el = a.el, width = map.clientWidth, height = map.clientHeight;
+      const x = (el.offsetLeft + el.offsetWidth / 2) / width * 100;
+      const y = (el.offsetTop + el.offsetHeight) / height * 100;
+      el.style.transition = 'none';
+      el.style.left = x + '%'; el.style.top = y + '%';
+      el.classList.add('positioned');
+      el.offsetWidth; // Anclar antes de habilitar la transición, sin salto inicial.
+      el.style.transition = '';
+      a.point = [x,y]; a.next = 400 + i * 600;
+      a.nextVisit = random(8000,12000); a.visitIndex = 0;
+      phase(a, 'roaming');
+      return a;
+    });
+    requestAnimationFrame(tick);
+  }
+  map.addEventListener('mousemove', e => {
+    if (reduced.matches || !window.matchMedia('(hover: hover)').matches) return;
+    const r = map.getBoundingClientRect();
+    map.style.setProperty('--parallax-x', ((.5 - (e.clientX - r.left) / r.width) * 5) + 'px');
+    map.style.setProperty('--parallax-y', ((.5 - (e.clientY - r.top) / r.height) * 5) + 'px');
+  });
+  map.addEventListener('mouseleave', () => {
+    map.style.setProperty('--parallax-x','0px'); map.style.setProperty('--parallax-y','0px');
+  });
+  if (document.readyState === 'complete') init();
+  else window.addEventListener('load', init, {once: true});
+})();
 
-// ── HOME ──
-stationHome.addEventListener('click', function(e) {
-  e.stopPropagation();
-  homeMenu.classList.toggle('open');
-  asistencMenu.classList.remove('open');
-});
-
-// ── ASISTENC-IA ──
-stationAsistenc.addEventListener('click', function(e) {
-  e.stopPropagation();
-  asistencMenu.classList.toggle('open');
-  homeMenu.classList.remove('open');
-});
-
-// Cerrar ambos menús al hacer clic fuera
-document.addEventListener('click', function() {
-  asistencMenu.classList.remove('open');
-  homeMenu.classList.remove('open');
-});
 </script>
 </body>
 </html>
