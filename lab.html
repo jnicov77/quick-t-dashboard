@@ -613,16 +613,21 @@
 
   <!-- ESTACIONES — posicionadas sobre el mapa -->
   
-  <!-- GARDEN -->
-  <a href="garden.html" class="station station-garden">
-    <img src="letrero-garden.png" alt="GARDEN" style="width:64px; height:auto; image-rendering:pixelated;">
-    <div class="station-label">GARDEN</div>
+  <!-- HOME (menú interactivo) -->
+  <div class="station station-garden" id="stationHome">
+    <img src="home-sign.png" alt="HOME" style="width:80px; height:auto; image-rendering:pixelated;">
+    <div class="station-label">HOME</div>
     <div class="station-tooltip">
-      <strong>🌿 GARDEN</strong><br>
-      24.8°C · 49% · VPD 1.59<br>
-      ZORO — Orquestador
+      <strong>🏠 HOME</strong><br>
+      Garden · Asistenc-IA · Food<br>
+      Quick‑T Hub
     </div>
-  </a>
+  </div>
+  <!-- Menú HOME -->
+  <div class="asistenc-menu" id="homeMenu" style="top:auto; bottom:55%; left:14%; margin-top:0; margin-bottom:100px;">
+    <a href="garden.html" class="asistenc-menu-item">🌿 Garden</a>
+    <a href="garden.html?view=clientes" class="asistenc-menu-item">👥 Clientes</a>
+  </div>
 
   <!-- ASISTENC-IA (menú interactivo) -->
   <div class="station station-asistenc" id="stationAsistenc">
@@ -742,6 +747,18 @@ document.getElementById('voiceClose').addEventListener('click', function() {
 });
 
 // ═══════════════════════════════════════════
+// Menú HOME
+// ═══════════════════════════════════════════
+const stationHome = document.getElementById('stationHome');
+const homeMenu    = document.getElementById('homeMenu');
+
+stationHome.addEventListener('click', function(e) {
+  e.stopPropagation();
+  homeMenu.classList.toggle('open');
+  asistencMenu.classList.remove('open');
+});
+
+// ═══════════════════════════════════════════
 // Menú ASISTENC-IA
 // ═══════════════════════════════════════════
 const stationAsistenc = document.getElementById('stationAsistenc');
@@ -750,10 +767,13 @@ const asistencMenu    = document.getElementById('asistencMenu');
 stationAsistenc.addEventListener('click', function(e) {
   e.stopPropagation();
   asistencMenu.classList.toggle('open');
+  homeMenu.classList.remove('open');
 });
 
+// Cerrar ambos menús al hacer clic fuera
 document.addEventListener('click', function() {
   asistencMenu.classList.remove('open');
+  homeMenu.classList.remove('open');
 });
 </script>
 </body>
