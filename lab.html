@@ -747,23 +747,21 @@ document.getElementById('voiceClose').addEventListener('click', function() {
 });
 
 // ═══════════════════════════════════════════
-// Menú HOME
+// Menús del Lab (declarados primero)
 // ═══════════════════════════════════════════
-const stationHome = document.getElementById('stationHome');
-const homeMenu    = document.getElementById('homeMenu');
+const stationHome     = document.getElementById('stationHome');
+const homeMenu        = document.getElementById('homeMenu');
+const stationAsistenc = document.getElementById('stationAsistenc');
+const asistencMenu    = document.getElementById('asistencMenu');
 
+// ── HOME ──
 stationHome.addEventListener('click', function(e) {
   e.stopPropagation();
   homeMenu.classList.toggle('open');
   asistencMenu.classList.remove('open');
 });
 
-// ═══════════════════════════════════════════
-// Menú ASISTENC-IA
-// ═══════════════════════════════════════════
-const stationAsistenc = document.getElementById('stationAsistenc');
-const asistencMenu    = document.getElementById('asistencMenu');
-
+// ── ASISTENC-IA ──
 stationAsistenc.addEventListener('click', function(e) {
   e.stopPropagation();
   asistencMenu.classList.toggle('open');
