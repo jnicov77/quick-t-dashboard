@@ -72,8 +72,23 @@
     display: flex; align-items: center; gap: 14px;
     overflow: visible;
   }
-  .logo { display: flex; align-items: center; flex-shrink: 0; }
-  .logo img { height: 40px; width: auto; display: block; max-width: none; }
+  .logo { display: flex; align-items: baseline; gap: 6px; flex-shrink: 0; text-decoration: none; }
+  .logo-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 1.3rem;
+    color: #566B3A; letter-spacing: 0.02em;
+  }
+  .logo-dot {
+    width: 6px; height: 6px;
+    background: #C96B4B; border-radius: 50%;
+    display: inline-block; align-self: center;
+  }
+  .logo-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500; font-size: 0.8rem;
+    color: #C96B4B; letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
   .header-status { margin-left: auto; display: flex; align-items: center; gap: 12px; }
   .status-pill {
     display: inline-flex; align-items: center; gap: 7px;
@@ -266,7 +281,9 @@
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">
-      <img src="quickt-garden-logo.png" alt="QUICK-T Garden">
+      <span class="logo-text">QUICK-T</span>
+      <span class="logo-dot"></span>
+      <span class="logo-sub">Garden</span>
     </a>
     <div class="header-status">
       <span class="status-pill"><span class="status-dot"></span>En vivo</span>
