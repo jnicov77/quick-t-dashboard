@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROXS Lab Garden — Termohigrómetro Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:         #1A0A2E;
+    --surface:    #1E1038;
+    --surface-alt:#281A45;
+    --text:       #F8FAFC;
+    --text-90:    rgba(248,250,252,0.90);
+    --text-60:    rgba(248,250,252,0.60);
+    --text-40:    rgba(248,250,252,0.40);
+    --text-20:    rgba(248,250,252,0.20);
+    --text-10:    rgba(248,250,252,0.10);
+    --text-05:    rgba(248,250,252,0.05);
+    --accent:     #FFC100;
+    --accent-hover:#E6AE00;
+    --accent-25:  rgba(81,12,130,0.25);
+    --accent-15:  rgba(81,12,130,0.15);
+    --accent-10:  rgba(81,12,130,0.10);
+    --alert:      #C0392B;
+    --alert-15:   rgba(244,63,94,0.15);
+    --warn:       #F5B731;
+    --warn-15:    rgba(245,183,49,0.15);
+    --sky:        #38BDF8;
+    --sky-15:     rgba(56,189,248,0.15);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 999px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.30);
+    --shadow-hover: 0 8px 32px rgba(0,0,0,0.40);
+    --max-width: 1160px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px; font-weight: 400; line-height: 1.5;
+    color: var(--text); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, .gauge-value, .metric-num {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700; line-height: 1.15; letter-spacing: -0.01em;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Header ── */
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(26,10,46,0.92);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--text-10);
+  }
+  .header-inner {
+    max-width: var(--max-width); margin: 0 auto;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .logo { display: flex; align-items: center; }
+  .logo img { height: 32px; width: auto; display: block; }
+  .header-status { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 14px; background: var(--accent-15);
+    border-radius: var(--radius-full); font-size: 12px; font-weight: 600;
+  }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(81,12,130,0.25);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .btn-refresh {
+    width: 36px; height: 36px; display: grid; place-items: center;
+    background: var(--accent); border: none; border-radius: var(--radius-sm);
+    cursor: pointer; transition: transform 0.2s;
+  }
+  .btn-refresh:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+  .btn-refresh svg { width: 16px; height: 16px; color: var(--bg); }
+  .btn-refresh.spinning { animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+
+  /* ── Top bar ── */
+  .top-bar {
+    padding: 24px 24px 12px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .top-bar h1 { font-size: 28px; }
+  .top-bar .location { color: var(--text-60); font-size: 13px; margin-top: 2px; }
+  .top-bar .last-update { color: var(--text-40); font-size: 12px; }
+
+  .alert-banner {
+    background: var(--accent-15); border: 1px solid var(--accent-25);
+    border-radius: var(--radius-md); padding: 12px 20px; margin: 0 24px 12px;
+    font-size: 13px; font-weight: 500;
+    display: none;
+  }
+  .alert-banner.warn { background: var(--warn-15); border-color: rgba(245,183,49,0.25); display: block; }
+  .alert-banner.danger { background: var(--alert-15); border-color: rgba(244,63,94,0.25); display: block; }
+  .alert-banner.show { display: block; }
+
+  /* ── Gauges row (sin fondo, solo círculos) ── */
+  .gauges-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; padding: 0 24px 8px;
+  }
+  .gauge-card {
+    background: transparent; border: none;
+    border-radius: var(--radius-lg); padding: 28px 20px 24px;
+    text-align: center; box-shadow: none;
+    position: relative; overflow: visible;
+  }
+  .gauge-card::before { display: none; }
+  .gauge-card .gauge-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-40); margin-bottom: 18px;
+  }
+  .gauge-bg { fill: none; stroke: var(--text-10); stroke-width: 12; }
+  .gauge-fill { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+  .gauge-wrap { position: relative; width: 160px; height: 160px; margin: 0 auto 16px; }
+  .gauge-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .gauge-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+  }
+  .gauge-value { font-size: 34px; line-height: 1; }
+  .gauge-unit { font-size: 13px; color: var(--text-60); font-weight: 600; }
+  .gauge-delta { font-size: 11px; color: var(--text-40); margin-top: 3px; }
+
+  .gauge-rings { position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; }
+  .gauge-rings circle { fill: none; stroke-width: 1; }
+
+  /* ── Charts row ── */
+  .charts-row {
+    display: block; padding: 8px 24px 8px;
+  }
+  .charts-row .chart-panel { margin-bottom: 0; }
+  .chart-panel {
+    background: var(--surface); border: 1px solid var(--text-10);
+    border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card);
+  }
+  .chart-panel h3 { font-size: 15px; color: var(--text-60); margin-bottom: 14px; }
+  .chart-wrap { position: relative; height: 240px; }
+
+  /* ── VPD Status + Table ── */
+  .bottom-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; padding: 8px 24px 24px;
+  }
+  .status-panel {
+    background: var(--surface); border: 1px solid var(--text-10);
+    border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card);
+  }
+  .status-panel h3 { font-size: 15px; color: var(--text-60); margin-bottom: 14px; }
+  .vpd-indicator {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    border-radius: var(--radius-md); margin-bottom: 17px;
+  }
+  .vpd-indicator.ideal  { background: var(--accent-15); }
+  .vpd-indicator.bajo   { background: var(--sky-15); }
+  .vpd-indicator.alto   { background: var(--warn-15); }
+  .vpd-indicator.muyalto{ background: var(--alert-15); }
+  .vpd-dot {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 20px; flex-shrink: 0;
+  }
+  .vpd-dot.ideal  { background: var(--accent-25); }
+  .vpd-dot.bajo   { background: var(--sky-15); }
+  .vpd-dot.alto   { background: var(--warn-15); }
+  .vpd-dot.muyalto{ background: var(--alert-15); }
+  .vpd-info strong { display: block; font-family: 'Quicksand', sans-serif; font-size: 16px; }
+  .vpd-info span { font-size: 12px; color: var(--text-60); }
+
+  .vpd-bar-wrap { margin-bottom: 16px; }
+  .vpd-bar-label-row { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-40); margin-bottom: 4px; }
+  .vpd-bar-track {
+    height: 6px; border-radius: 99px; background: var(--text-10);
+    position: relative; overflow: visible;
+  }
+  .vpd-bar-fill {
+    position: absolute; height: 6px; border-radius: 99px;
+    background: linear-gradient(90deg, var(--sky), var(--accent) 50%, var(--warn) 80%, var(--alert));
+    top: 0; left: 0; right: 0;
+  }
+  .vpd-bar-knob {
+    position: absolute; top: -6px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #FFF; border: 3px solid var(--accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transform: translateX(-50%); transition: left 0.8s ease;
+  }
+  .vpd-zones { display: flex; justify-content: space-between; margin-top: 6px; }
+  .vpd-zone { font-size: 10px; font-weight: 600; }
+  .vpd-zone.ba { color: var(--sky); }
+  .vpd-zone.id { color: var(--accent); }
+  .vpd-zone.al { color: var(--warn); }
+  .vpd-zone.ma { color: var(--alert); }
+
+  /* ── Table ── */
+  .table-panel {
+    background: var(--surface); border: 1px solid var(--text-10);
+    border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card);
+  }
+  .table-panel h3 { font-size: 15px; color: var(--text-60); margin-bottom: 14px; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th {
+    text-align: left; padding: 8px 10px; font-weight: 600;
+    color: var(--text-40); font-size: 11px; letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--text-10);
+  }
+  .data-table td {
+    padding: 9px 10px; border-bottom: 1px solid var(--text-05);
+    color: var(--text-90);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table .status-badge {
+    display: inline-block; padding: 3px 10px; border-radius: var(--radius-full);
+    font-weight: 600; font-size: 11px;
+  }
+  .status-badge.ideal  { color: var(--accent); background: var(--accent-15); }
+  .status-badge.bajo   { color: var(--sky);    background: var(--sky-15); }
+  .status-badge.alto   { color: var(--warn);   background: var(--warn-15); }
+  .status-badge.muyalto{ color: var(--alert);  background: var(--alert-15); }
+
+  /* ── Footer ── */
+  .site-footer {
+    padding: 20px 24px; border-top: 1px solid var(--text-10);
+    font-size: 11px; color: var(--text-40); text-align: center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .gauges-row { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .gauge-wrap { width: 100px; height: 100px; }
+    .gauge-value { font-size: 26px; }
+    .charts-row, .bottom-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .gauges-row { grid-template-columns: 1fr 1fr; }
+    .gauge-wrap { width: 90px; height: 90px; }
+    .gauge-value { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <img src="roxs-lab-logo.png" alt="Quick-T">
+    </a>
+    <div class="header-status">
+      <span class="status-pill"><span class="status-dot"></span>En vivo</span>
+      <button class="btn-refresh" id="refreshBtn" aria-label="Actualizar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/>
+          <path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="top-bar">
+    <div>
+      <h1>Monitoreando tu jardín</h1>
+      <div class="location">📍 ROXS Lab Garden · Monitoreo ambiental en tiempo real</div>
+    </div>
+    <div class="last-update" id="lastUpdate">Conectando…</div>
+  </div>
+
+  <div class="alert-banner" id="alertBanner"></div>
+
+  <section class="gauges-row">
+    <!-- TEMPERATURA -->
+    <div class="gauge-card">
+      <div class="gauge-label">🌡️ Temperatura</div>
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+          <circle class="gauge-fill" id="gaugeTemp" cx="60" cy="60" r="52"
+            stroke="#C0392B" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-value" id="valTemp">—</div>
+          <div class="gauge-unit">°C</div>
+        </div>
+      </div>
+      <div class="gauge-delta" id="deltaTemp">—</div>
+    </div>
+
+    <!-- HUMEDAD -->
+    <div class="gauge-card">
+      <div class="gauge-label">💧 Humedad relativa</div>
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+          <circle class="gauge-fill" id="gaugeHum" cx="60" cy="60" r="52"
+            stroke="#38BDF8" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-value" id="valHum">—</div>
+          <div class="gauge-unit">%</div>
+        </div>
+      </div>
+      <div class="gauge-delta" id="deltaHum">—</div>
+    </div>
+
+    <!-- VPD -->
+    <div class="gauge-card">
+      <div class="gauge-label">📊 VPD</div>
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+          <circle class="gauge-fill" id="gaugeVPD" cx="60" cy="60" r="52"
+            stroke="#A855F7" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-value" id="valVPD">—</div>
+          <div class="gauge-unit">kPa</div>
+        </div>
+      </div>
+      <div class="gauge-delta" id="deltaVPD">—</div>
+    </div>
+  </section>
+
+  <section class="charts-row">
+    <div class="chart-panel" style="grid-column: 1 / -1;">
+      <h3>📈 Temperatura + Humedad · 24 horas</h3>
+      <div class="chart-wrap" style="height: 320px;"><canvas id="chartTemp"></canvas></div>
+    </div>
+  </section>
+
+  <section class="bottom-row">
+    <div class="status-panel">
+      <h3>📊 Estado del ambiente</h3>
+      <div class="vpd-bar-wrap">
+        <div class="vpd-bar-label-row">
+          <span>0 kPa</span><span>1.0</span><span>2.0</span><span>3.0</span>
+        </div>
+        <div class="vpd-bar-track">
+          <div class="vpd-bar-fill"></div>
+          <div class="vpd-bar-knob" id="vpdKnob" style="left: 50%;"></div>
+        </div>
+        <div class="vpd-zones">
+          <span class="vpd-zone ba">Bajo</span>
+          <span class="vpd-zone id">Ideal</span>
+          <span class="vpd-zone al">Alto</span>
+          <span class="vpd-zone ma">Muy alto</span>
+        </div>
+      </div>
+      <div class="vpd-indicator ideal" id="vpdIndicator">
+        <div class="vpd-dot ideal" id="vpdDot">🌱</div>
+        <div class="vpd-info">
+          <strong id="vpdStatusLabel">Ideal</strong>
+          <span id="vpdStatusMsg">Condiciones óptimas para tus plantas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-panel">
+      <h3>📋 Últimos registros</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Temp</th>
+            <th>Hum</th>
+            <th>VPD</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="5" style="text-align:center;color:var(--text-40);">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  ROXS Lab Garden · Monitoreo inteligente para tus plantas · Datos actualizados cada 5 min
+</footer>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8Abmtcw_qL7_gRersfAwJzgKKOuzbxozedmIACIn-3BvfLoBPXQqWER4qaMsM-yU/exec';
+const REFRESH_MS = 60000;
+const CIRCUMFERENCE = 2 * Math.PI * 52; // ~326.7
+
+let chartTemp = null;
+let lastData = null;
+
+// ── Multi-cliente: leer ?device= de la URL ──
+const urlParams = new URLSearchParams(window.location.search);
+const DEVICE_ID = urlParams.get('device') || 'quick-t-garden-v1'; // default: jardín de prueba
+
+document.title = 'ROXS Lab Garden — ' + DEVICE_ID;
+
+const VPD_RANGES = {
+  'BAJO':    { cls: 'bajo',    label: 'Bajo',    icon: '💧', msg: 'Riesgo de hongos. Reducí riego y ventilá.' },
+  'IDEAL':   { cls: 'ideal',   label: 'Ideal',   icon: '🌱', msg: 'Condiciones óptimas. ¡Todo en orden!' },
+  'ALTO':    { cls: 'alto',    label: 'Alto',    icon: '💨', msg: 'Ventilá. Bueno para etapa vegetativa.' },
+  'MUY ALTO':{ cls: 'muyalto', label: 'Muy alto',icon: '🚨', msg: '¡Estrés hídrico! Aumentá humedad o bajá temperatura.' }
+};
+
+function vpdStatus(vpd) {
+  if (vpd < 0.45) return 'BAJO';
+  if (vpd <= 1.25) return 'IDEAL';
+  if (vpd <= 1.60) return 'ALTO';
+  return 'MUY ALTO';
+}
+
+function setGauge(el, value, max, unit, colorMap) {
+  const offset = CIRCUMFERENCE * (1 - Math.min(value / max, 1));
+  el.setAttribute('stroke-dashoffset', offset);
+  // Color by threshold
+  if (colorMap) {
+    el.setAttribute('stroke', colorMap(value));
+  }
+}
+
+function tempColor(v) {
+  return '#C0392B'; // rojo
+}
+
+function humColor(v) {
+  return '#38BDF8'; // azul
+}
+
+function vpdGaugeColor(v) {
+  return '#A855F7'; // morado
+}
+
+function fmtTime(ts) {
+  if (!ts) return '—';
+  const t = String(ts);
+  const m = t.match(/(\d{2}:\d{2})/);
+  return m ? m[1] : t.slice(11, 16);
+}
+
+function fmtFull(ts) {
+  if (!ts) return '—';
+  const d = new Date(String(ts).replace(' ', 'T'));
+  if (isNaN(d.getTime())) return String(ts).slice(0, 16);
+  const dias = ['dom','lun','mar','mié','jue','vie','sáb'];
+  return `${dias[d.getDay()]} ${d.getDate()} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+async function fetchJson(action) {
+  const url = APPS_SCRIPT_URL + '?action=' + action + '&device=' + encodeURIComponent(DEVICE_ID);
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+function renderLatest(obj) {
+  if (!obj || typeof obj.temp === 'undefined') return;
+  const t = parseFloat(obj.temp), h = parseFloat(obj.hum), v = parseFloat(obj.vpd);
+  lastData = { t, h, v, ts: obj.timestamp };
+
+  document.getElementById('valTemp').textContent = t.toFixed(1);
+  document.getElementById('valHum').textContent = h.toFixed(0);
+  document.getElementById('valVPD').textContent = v.toFixed(2);
+
+  setGauge(document.getElementById('gaugeTemp'), t, 50, '°C', tempColor);
+  setGauge(document.getElementById('gaugeHum'), h, 100, '%', humColor);
+  setGauge(document.getElementById('gaugeVPD'), v, 3, 'kPa', vpdGaugeColor);
+
+  // VPD status
+  const st = vpdStatus(v);
+  const r = VPD_RANGES[st];
+  const indicator = document.getElementById('vpdIndicator');
+  indicator.className = 'vpd-indicator ' + r.cls;
+  document.getElementById('vpdDot').className = 'vpd-dot ' + r.cls;
+  document.getElementById('vpdDot').textContent = r.icon;
+  document.getElementById('vpdStatusLabel').textContent = r.label;
+  document.getElementById('vpdStatusMsg').textContent = r.msg;
+
+  // VPD bar knob
+  document.getElementById('vpdKnob').style.left = Math.min(v / 3 * 100, 100) + '%';
+
+  // Alert banner
+  const banner = document.getElementById('alertBanner');
+  banner.className = 'alert-banner';
+  banner.textContent = r.label === 'Ideal' ? '✅ SISTEMA OK — Todas las variables dentro del rango óptimo' : r.icon + ' ' + r.msg;
+  if (st === 'BAJO' || st === 'ALTO') banner.classList.add('warn');
+  if (st === 'MUY ALTO') banner.classList.add('danger');
+  if (st === 'IDEAL') banner.classList.add('show');
+
+  document.getElementById('lastUpdate').textContent = '🕐 ' + fmtFull(obj.timestamp);
+}
+
+function renderCharts(rows) {
+  const data = [...rows].reverse().slice(0, 288).reverse();
+  const labels = data.map(r => fmtTime(r.timestamp));
+  const temps  = data.map(r => parseFloat(r.temp));
+  const hums   = data.map(r => parseFloat(r.hum));
+  const vpds   = data.map(r => parseFloat(r.vpd));
+
+  const ctx = document.getElementById('chartTemp');
+  if (chartTemp) chartTemp.destroy();
+
+  chartTemp = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Temperatura (°C)',
+          data: temps,
+          borderColor: '#C0392B',
+          backgroundColor: 'rgba(244,63,94,0.06)',
+          fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Humedad (%)',
+          data: hums,
+          borderColor: '#38BDF8',
+          backgroundColor: 'rgba(56,189,248,0.06)',
+          fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
+          yAxisID: 'y1'
+        },
+        {
+          label: 'VPD (kPa)',
+          data: vpds,
+          borderColor: '#A855F7',
+          backgroundColor: 'rgba(168,85,247,0.06)',
+          fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
+          yAxisID: 'y2'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          align: 'end',
+          labels: {
+            color: '#F8FAFC',
+            font: { family: 'Inter', size: 12 },
+            boxWidth: 16, boxHeight: 3, usePointStyle: true
+          }
+        },
+        tooltip: {
+          backgroundColor: '#111B33', borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1, bodyColor: '#F8FAFC', titleColor: 'rgba(248,250,252,0.60)'
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: 'rgba(248,250,252,0.30)', maxTicksLimit: 8, font: { size: 10 } },
+          grid: { color: 'rgba(248,250,252,0.04)' }
+        },
+        y: {
+          type: 'linear', position: 'left',
+          title: { display: true, text: '°C', color: 'rgba(248,250,252,0.45)' },
+          ticks: { color: 'rgba(248,250,252,0.30)', font: { size: 10 } },
+          grid: { color: 'rgba(248,250,252,0.04)' }
+        },
+        y1: {
+          type: 'linear', position: 'right',
+          title: { display: true, text: '%', color: 'rgba(248,250,252,0.45)' },
+          ticks: { color: 'rgba(248,250,252,0.30)', font: { size: 10 } },
+          grid: { drawOnChartArea: false }
+        },
+        y2: {
+          type: 'linear', position: 'right',
+          title: { display: true, text: 'kPa', color: 'rgba(248,250,252,0.45)' },
+          ticks: { color: 'rgba(168,85,247,0.30)', font: { size: 10 }, callback: v => v.toFixed(2) },
+          grid: { drawOnChartArea: false }
+        }
+      }
+    }
+  });
+}
+
+function renderTable(rows) {
+  const data = [...rows].reverse().slice(0, 10);
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = data.map(r => {
+    const t = parseFloat(r.temp), h = parseFloat(r.hum), v = parseFloat(r.vpd);
+    const st = vpdStatus(v);
+    const cls = VPD_RANGES[st].cls;
+    return `<tr>
+      <td>${fmtTime(r.timestamp)}</td>
+      <td>${t.toFixed(1)}°</td>
+      <td>${h.toFixed(0)}%</td>
+      <td>${v.toFixed(2)}</td>
+      <td><span class="status-badge ${cls}">${VPD_RANGES[st].label}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+async function refresh() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  try {
+    const [latest, mediciones] = await Promise.all([
+      fetchJson('ultima'),
+      fetchJson('mediciones')
+    ]);
+    renderLatest(latest);
+    if (Array.isArray(mediciones) && mediciones.length) {
+      renderCharts(mediciones);
+      renderTable(mediciones);
+    }
+  } catch (err) {
+    console.warn('fetch failed:', err);
+    document.getElementById('lastUpdate').textContent = 'Sin conexión con el sensor';
+  }
+  btn.classList.remove('spinning');
+}
+
+refresh();
+setInterval(refresh, REFRESH_MS);
+document.getElementById('refreshBtn').addEventListener('click', refresh);
+</script>
+</body>
+</html>
