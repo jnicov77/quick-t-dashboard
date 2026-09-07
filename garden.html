@@ -64,15 +64,16 @@
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--text-10);
     box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    overflow: visible;
   }
   .header-inner {
     max-width: var(--max-width); margin: 0 auto;
-    padding: 14px 24px;
+    padding: 12px 24px;
     display: flex; align-items: center; gap: 14px;
     overflow: visible;
   }
-  .logo { display: flex; align-items: center; }
-  .logo img { height: 48px; width: auto; display: block; }
+  .logo { display: flex; align-items: center; flex-shrink: 0; }
+  .logo img { height: 40px; width: auto; display: block; max-width: none; }
   .header-status { margin-left: auto; display: flex; align-items: center; gap: 12px; }
   .status-pill {
     display: inline-flex; align-items: center; gap: 7px;
