@@ -3,41 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quick-T Garden — Termohigrómetro Pro</title>
+<title>QUICK-T Garden — Tu jardín, con datos. Cero fricción.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg:         #0A1F44;
-    --surface:    #111B33;
-    --surface-alt:#162040;
-    --text:       #F8FAFC;
-    --text-90:    rgba(248,250,252,0.90);
-    --text-60:    rgba(248,250,252,0.60);
-    --text-40:    rgba(248,250,252,0.40);
-    --text-20:    rgba(248,250,252,0.20);
-    --text-10:    rgba(248,250,252,0.10);
-    --text-05:    rgba(248,250,252,0.05);
-    --accent:     #0DF2C9;
-    --accent-hover:#00d4b0;
-    --accent-25:  rgba(13,242,201,0.25);
-    --accent-15:  rgba(13,242,201,0.15);
-    --accent-10:  rgba(13,242,201,0.10);
-    --alert:      #F43F5E;
-    --alert-15:   rgba(244,63,94,0.15);
-    --warn:       #F5B731;
-    --warn-15:    rgba(245,183,49,0.15);
-    --sky:        #38BDF8;
-    --sky-15:     rgba(56,189,248,0.15);
+    --bg:         #F4EFE6;
+    --surface:    #FFFFFF;
+    --surface-alt:#F0EBE0;
+    --text:       #2D2A26;
+    --text-90:    rgba(45,42,38,0.90);
+    --text-60:    rgba(45,42,38,0.60);
+    --text-40:    rgba(45,42,38,0.40);
+    --text-20:    rgba(45,42,38,0.20);
+    --text-10:    rgba(45,42,38,0.10);
+    --text-05:    rgba(45,42,38,0.05);
+    --accent:     #566B3A;
+    --accent-hover:#4A5E32;
+    --accent-25:  rgba(86,107,58,0.25);
+    --accent-15:  rgba(86,107,58,0.15);
+    --accent-10:  rgba(86,107,58,0.10);
+    --alert:      #C96B4B;
+    --alert-15:   rgba(201,107,75,0.15);
+    --warn:       #C96B4B;
+    --warn-15:    rgba(201,107,75,0.15);
+    --sky:        #8FA36A;
+    --sky-15:     rgba(143,163,106,0.15);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-full: 999px;
-    --shadow-card: 0 2px 8px rgba(0,0,0,0.30);
-    --shadow-hover: 0 8px 32px rgba(0,0,0,0.40);
+    --shadow-card: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 32px rgba(0,0,0,0.10);
     --max-width: 1160px;
   }
 
@@ -51,7 +51,7 @@
   }
 
   h1, h2, h3, h4, .gauge-value, .metric-num {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-weight: 700; line-height: 1.15; letter-spacing: -0.01em;
   }
 
@@ -60,17 +60,18 @@
   /* ── Header ── */
   .site-header {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(10,31,68,0.92);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--text-10);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
   }
   .header-inner {
     max-width: var(--max-width); margin: 0 auto;
     padding: 14px 24px;
-    display: flex; align-items: center; gap: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
   }
   .logo { display: flex; align-items: center; }
-  .logo img { height: 32px; width: auto; display: block; }
+  .logo img { height: 48px; width: auto; display: block; }
   .header-status { margin-left: auto; display: flex; align-items: center; gap: 12px; }
   .status-pill {
     display: inline-flex; align-items: center; gap: 7px;
@@ -263,7 +264,7 @@
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">
-      <img src="quickt-logo-nav.png" alt="Quick-T">
+      <img src="quickt-garden-logo.png" alt="QUICK-T Garden">
     </a>
     <div class="header-status">
       <span class="status-pill"><span class="status-dot"></span>En vivo</span>
@@ -282,7 +283,7 @@
   <div class="top-bar">
     <div>
       <h1>Monitoreando tu jardín</h1>
-      <div class="location">📍 Quick-T Garden · Monitoreo ambiental en tiempo real</div>
+      <div class="location">📍 QUICK-T Garden · Monitoreo ambiental en tiempo real</div>
     </div>
     <div class="last-update" id="lastUpdate">Conectando…</div>
   </div>
@@ -297,7 +298,7 @@
         <svg viewBox="0 0 120 120">
           <circle class="gauge-bg" cx="60" cy="60" r="52"/>
           <circle class="gauge-fill" id="gaugeTemp" cx="60" cy="60" r="52"
-            stroke="#F43F5E" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+            stroke="#C96B4B" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
         </svg>
         <div class="gauge-center">
           <div class="gauge-value" id="valTemp">—</div>
@@ -314,7 +315,7 @@
         <svg viewBox="0 0 120 120">
           <circle class="gauge-bg" cx="60" cy="60" r="52"/>
           <circle class="gauge-fill" id="gaugeHum" cx="60" cy="60" r="52"
-            stroke="#38BDF8" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+            stroke="#8FA36A" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
         </svg>
         <div class="gauge-center">
           <div class="gauge-value" id="valHum">—</div>
@@ -398,7 +399,7 @@
 </main>
 
 <footer class="site-footer">
-  Quick-T Garden · Monitoreo inteligente para tus plantas · Datos actualizados cada 5 min
+  QUICK-T Garden · Monitoreo inteligente para tus plantas · Datos actualizados cada 5 min
 </footer>
 
 <script>
@@ -413,7 +414,7 @@ let lastData = null;
 const urlParams = new URLSearchParams(window.location.search);
 const DEVICE_ID = urlParams.get('device') || 'quick-t-garden-v1'; // default: jardín de prueba
 
-document.title = 'Quick-T Garden — ' + DEVICE_ID;
+document.title = 'QUICK-T Garden — ' + DEVICE_ID;
 
 const VPD_RANGES = {
   'BAJO':    { cls: 'bajo',    label: 'Bajo',    icon: '💧', msg: 'Riesgo de hongos. Reducí riego y ventilá.' },
@@ -438,16 +439,11 @@ function setGauge(el, value, max, unit, colorMap) {
   }
 }
 
-function tempColor(v) {
-  return '#F43F5E'; // rojo
-}
-
-function humColor(v) {
-  return '#38BDF8'; // azul
-}
+function tempColor(v) { return '#C96B4B'; } // Terracota
+function humColor(v)  { return '#8FA36A'; } // Verde Salvia
 
 function vpdGaugeColor(v) {
-  return '#A855F7'; // morado
+  return '#566B3A'; // Verde Oliva
 }
 
 function fmtTime(ts) {
@@ -527,24 +523,24 @@ function renderCharts(rows) {
         {
           label: 'Temperatura (°C)',
           data: temps,
-          borderColor: '#F43F5E',
-          backgroundColor: 'rgba(244,63,94,0.06)',
+          borderColor: '#C96B4B',
+          backgroundColor: 'rgba(201,107,75,0.08)',
           fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
           yAxisID: 'y'
         },
         {
           label: 'Humedad (%)',
           data: hums,
-          borderColor: '#38BDF8',
-          backgroundColor: 'rgba(56,189,248,0.06)',
+          borderColor: '#8FA36A',
+          backgroundColor: 'rgba(143,163,106,0.08)',
           fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
           yAxisID: 'y1'
         },
         {
           label: 'VPD (kPa)',
           data: vpds,
-          borderColor: '#A855F7',
-          backgroundColor: 'rgba(168,85,247,0.06)',
+          borderColor: '#566B3A',
+          backgroundColor: 'rgba(86,107,58,0.08)',
           fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2,
           yAxisID: 'y2'
         }
@@ -564,8 +560,8 @@ function renderCharts(rows) {
           }
         },
         tooltip: {
-          backgroundColor: '#111B33', borderColor: 'rgba(255,255,255,0.08)',
-          borderWidth: 1, bodyColor: '#F8FAFC', titleColor: 'rgba(248,250,252,0.60)'
+          backgroundColor: '#FFFFFF', borderColor: 'rgba(0,0,0,0.06)',
+          borderWidth: 1, bodyColor: '#2D2A26', titleColor: 'rgba(45,42,38,0.60)'
         }
       },
       scales: {
