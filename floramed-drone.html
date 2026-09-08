@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLORAMED — Drone View</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root {
+    --bg:#0D1A0F;
+    --surface:#122016;
+    --text:#E8ECF1;
+    --text-dim:rgba(232,236,241,0.55);
+    --green:#4ADE80;
+    --green-glow:rgba(74,222,128,0.35);
+    --olive:#566B3A;
+    --warn:#F59E0B;
+    --radius:14px;
+  }
+  body {
+    font-family:'Inter',sans-serif; background:var(--bg); color:var(--text);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  }
+  /* ── HEADER ── */
+  .drone-header {
+    width:100%; max-width:1300px; padding:20px 28px 0;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; flex-wrap:wrap;
+  }
+  .drone-title {
+    font-family:'Space Grotesk',sans-serif; font-size:1.4rem; font-weight:700;
+    color:var(--green); letter-spacing:0.02em;
+  }
+  .drone-title span { color:var(--text); font-weight:500; }
+  .drone-status {
+    display:flex; align-items:center; gap:10px;
+    background:var(--surface); padding:8px 16px; border-radius:var(--radius);
+    border:1px solid rgba(255,255,255,0.06); font-size:0.85rem;
+  }
+  .drone-status .dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:blink 1.5s infinite; }
+  @keyframes blink { 50%{opacity:.3} }
+  /* ── MAPA ── */
+  .drone-map {
+    position:relative; width:100%; max-width:1300px; margin:20px 28px;
+    background:radial-gradient(ellipse at 40% 50%, rgba(74,222,128,0.04) 0%, transparent 70%), var(--surface);
+    border-radius:20px; border:1px solid rgba(255,255,255,0.06);
+    overflow:hidden;
+    aspect-ratio:16/10; min-height:520px;
+  }
+  /* ── Grid sutil ── */
+  .drone-map::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size:40px 40px;
+    pointer-events:none;
+  }
+  /* ── Zona base: rectángulo con glow interno ── */
+  .drone-zone {
+    position:absolute; border-radius:12px;
+    border:2px solid rgba(74,222,128,0.5);
+    background:rgba(74,222,128,0.06);
+    box-shadow:inset 0 0 40px rgba(74,222,128,0.12), 0 0 0 0 transparent;
+    cursor:pointer;
+    transition:box-shadow .3s, border-color .3s, transform .2s;
+  }
+  .drone-zone:hover {
+    border-color:var(--green-glow);
+    box-shadow:inset 0 0 60px rgba(74,222,128,0.25), 0 0 30px var(--green-glow);
+    transform:scale(1.015);
+    z-index:5;
+  }
+  .drone-zone-label {
+    position:absolute; top:8px; left:12px;
+    font-family:'Space Grotesk',sans-serif; font-size:0.75rem; font-weight:600;
+    color:var(--green); text-shadow:0 0 8px var(--green-glow);
+    pointer-events:none;
+  }
+  /* ── Nave interna ── */
+  .drone-nave {
+    position:absolute; border-radius:8px;
+    border:1px dashed rgba(74,222,128,0.3);
+    background:rgba(74,222,128,0.03);
+    pointer-events:none;
+  }
+  .drone-nave-label {
+    position:absolute; bottom:4px; left:8px;
+    font-size:0.6rem; color:var(--text-dim); pointer-events:none;
+  }
+  /* ── Panel lateral (tooltip al click) ── */
+  .zone-panel {
+    position:fixed; top:50%; right:28px; transform:translateY(-50%);
+    width:340px; max-width:calc(100vw - 56px);
+    background:var(--surface); border:2px solid var(--green-glow);
+    border-radius:var(--radius); padding:20px;
+    z-index:20; display:none;
+    box-shadow:0 0 40px rgba(74,222,128,0.2);
+  }
+  .zone-panel.open { display:block; }
+  .zone-panel h3 {
+    font-family:'Space Grotesk',sans-serif; font-size:1.1rem; color:var(--green); margin-bottom:4px;
+  }
+  .zone-panel .close {
+    position:absolute; top:12px; right:14px; background:none; border:none;
+    color:var(--text-dim); font-size:1.2rem; cursor:pointer;
+  }
+  .zone-metric {
+    display:flex; justify-content:space-between; padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.85rem;
+  }
+  .zone-metric span:last-child { font-weight:600; color:var(--green); }
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .drone-map { aspect-ratio:4/5; }
+    .zone-panel { right:10px; width:280px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="drone-header">
+  <div>
+    <div class="drone-title">🚁 FLORAMED <span>· Drone View</span></div>
+    <div style="font-size:0.75rem;color:var(--text-dim);margin-top:2px">Monitoreo inteligente de cultivos</div>
+  </div>
+  <div class="drone-status">
+    <div class="dot"></div> En vivo
+  </div>
+</div>
+
+<div class="drone-map" id="droneMap">
+  <!-- G1 — Invernadero 1 -->
+  <div class="drone-zone" id="zoneG1" style="top:12%;left:8%;width:46%;height:70%;">
+    <div class="drone-zone-label">G1 · INVERNADERO 1</div>
+    <!-- Naves internas -->
+    <div class="drone-nave" style="top:6%;left:4%;width:28%;height:88%;">
+      <div class="drone-nave-label">N1 · 93×9m</div>
+    </div>
+    <div class="drone-nave" style="top:6%;left:34%;width:34%;height:88%;">
+      <div class="drone-nave-label">N2 · 93×16m</div>
+    </div>
+    <div class="drone-nave" style="top:6%;left:70%;width:26%;height:88%;">
+      <div class="drone-nave-label">N3 · 93×18m</div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL LATERAL -->
+<div class="zone-panel" id="zonePanel">
+  <button class="close" id="panelClose">✕</button>
+  <h3 id="panelTitle">G1 — Invernadero 1</h3>
+  <div id="panelContent">
+    <div class="zone-metric"><span>🌡️ Temperatura</span><span id="mTemp">—</span></div>
+    <div class="zone-metric"><span>💧 Humedad</span><span id="mHum">—</span></div>
+    <div class="zone-metric"><span>📊 VPD</span><span id="mVpd">—</span></div>
+    <div class="zone-metric"><span>🌱 Plantas activas</span><span id="mPlantas">—</span></div>
+    <div class="zone-metric"><span>🧪 pH Fertilizante</span><span id="mPh">—</span></div>
+    <div class="zone-metric"><span>⚡ Electroconductividad</span><span id="mEc">—</span></div>
+    <div class="zone-metric"><span>🛡️ Fitosanitario</span><span id="mFito">—</span></div>
+  </div>
+</div>
+
+<script>
+const panel = document.getElementById('zonePanel');
+document.getElementById('zoneG1').addEventListener('click', function() {
+  panel.classList.add('open');
+});
+document.getElementById('panelClose').addEventListener('click', function() {
+  panel.classList.remove('open');
+});
+// Cerrar click fuera
+document.getElementById('droneMap').addEventListener('click', function(e) {
+  if (e.target === this) panel.classList.remove('open');
+});
+</script>
+
+</body>
+</html>
