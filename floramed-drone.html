@@ -43,7 +43,9 @@
   .zone-alt { animation:zpulse-alt 3s ease-in-out infinite; }
 
   .nave { position:absolute; border-radius:8px; border:1.5px solid rgba(45,106,79,0.20); cursor:pointer; transition:box-shadow .35s,border-color .35s; }
-  .nlabel { position:absolute; bottom:3px; left:6px; right:4px; font-size:0.52rem; font-weight:500; color:var(--text); pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .nlabel { position:absolute; top:50%; left:6px; right:4px; font-size:0.52rem; font-weight:600; color:var(--text); pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center; transform:translateY(-50%); }
+  .zone-alt .nlabel { color:var(--earth); font-size:0.48rem; }
+  .zone-proc .nlabel { font-size:0.47rem; }
 
   /* ── G1: colores de fondo por nave ── */
   .n1 { background:rgba(45,106,79,0.10); border-color:rgba(45,106,79,0.35); }
