@@ -75,6 +75,19 @@
   .nC { border-color:rgba(150,150,150,0.3); cursor:pointer; }
   .nC:hover,.nC.on { border-color:rgba(188,108,37,0.5); box-shadow:inset 0 0 20px rgba(188,108,37,0.10),0 0 8px rgba(188,108,37,0.10); }
 
+  /* B1 — naves de procesamiento */
+  .nP { border-color:rgba(30,80,120,0.30); cursor:pointer; }
+  .nP:hover,.nP.on { border-color:rgba(30,80,120,0.7); box-shadow:inset 0 0 22px rgba(30,80,120,0.15),0 0 10px rgba(30,80,120,0.15); }
+
+  /* ── Zona procesamiento ── */
+  .zone-proc { border:2px solid rgba(30,80,120,0.30); background:rgba(30,80,120,0.04); }
+  .zone-proc .zlabel { color:rgba(30,80,120,0.7); }
+  .zone-proc .ztotal { color:rgba(30,80,120,0.7); }
+  @keyframes zpulse-proc { 0%,100%{box-shadow:inset 0 0 30px rgba(30,80,120,0.04),var(--shadow)} 50%{box-shadow:inset 0 0 50px rgba(30,80,120,0.10),0 0 16px rgba(30,80,120,0.06),var(--shadow)} }
+  .zone-proc { animation:zpulse-proc 3s ease-in-out infinite; }
+  .ms-proc .ms-title{color:rgba(30,80,120,0.8);border-bottom-color:rgba(30,80,120,0.10)}
+  .ms-proc .mcv{color:rgba(30,80,120,0.9)}
+
   /* ═══════════════ MODAL ═══════════════ */
   .overlay { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.25); backdrop-filter:blur(4px); display:none; align-items:flex-end; justify-content:center; }
   .overlay.on { display:flex; }
@@ -156,6 +169,14 @@
     <div class="nave nC" data-id="g2" style="top:26%;left:8%;width:84%;height:60%;"><div class="nlabel">G2 55×20m 🚧</div></div>
   </div>
 
+  <!-- B1 — ÁREA DE PROCESAMIENTO (poscosecha, trimeado, almacenamiento) -->
+  <div class="zone zone-proc" style="bottom:4%;right:4%;width:34%;height:26%;">
+    <div class="zlabel">B1 · POSCOSECHA</div>
+    <div class="ztotal">📦 1,200 kg</div>
+    <div class="nave nP" data-id="b1" style="top:22%;left:8%;width:40%;height:64%;"><div class="nlabel">Trimeado ✂️</div></div>
+    <div class="nave nP" data-id="b1a" style="top:22%;left:52%;width:40%;height:64%;"><div class="nlabel">Almacén 📦</div></div>
+  </div>
+
 </div>
 
 <!-- MODAL -->
@@ -198,6 +219,16 @@
       <div id="checklistContent"></div>
     </div>
 
+    <div class="ms ms-proc" id="msProc" style="display:none;">
+      <div class="ms-title">📦 Procesamiento · Poscosecha</div>
+      <div class="ms-grid">
+        <div class="mc"><div class="mcv" id="mVp1">—</div><div class="mcl">Trimeado (kg/día)</div></div>
+        <div class="mc"><div class="mcv" id="mVp2">—</div><div class="mcl">Capacidad almacén</div></div>
+        <div class="mc"><div class="mcv" id="mVp3">—</div><div class="mcl">Inventario actual</div></div>
+        <div class="mc"><div class="mcv" id="mVp4">—</div><div class="mcl">Lotes procesados</div></div>
+      </div>
+    </div>
+
     <div class="ms ms-fot">
       <div class="ms-title">📸 Fotos · Estado visual</div>
       <div class="ms-grid">
@@ -213,7 +244,9 @@ const DATA = {
   n2: { title:'N2 · Invernadero 1 — 3,200 plantas', dim:'93×16m', v1:'28.4°C', v2:'47.3%', v3:'1.82 kPa', v4:'3,200', v5:'5.8', v6:'2.1 mS/cm', v7:'🐛 Cochinilla 1.5% · Trips 3.1% · Gusano 0.1%', v8:'⚠️ Leve decoloración en hojas inferiores' },
   n3: { title:'N3 · Invernadero 1 — 3,123 plantas', dim:'93×18m', v1:'29.1°C', v2:'44.0%', v3:'1.98 kPa', v4:'3,123', v5:'6.0', v6:'1.9 mS/cm', v7:'🐛 Cochinilla 2.3% · Trips 4.5% · Gusano 0.3%', v8:'✅ Sin novedades' },
   g0: { title:'G0 · Plantas Madres — 305 plantas', dim:'40×60m', v1:'27.2°C', v2:'61.5%', v3:'0.98 kPa', v4:'305', v5:'6.5', v6:'1.2 mS/cm', v7:'🟢 Sin plagas detectadas', v8:'✅ Óptimo — brotes activos' },
-  g2: { title:'G2 · En construcción — 55×20m', dim:'55×20m', constr:true, checklist:'<div class="chkl"><div class="chk pend">!</div><div class="chl">Nivelación del suelo</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Sistema de drenajes</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Instalación de malla</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk done">✓</div><div class="chl">Estructura metálica</div><div class="chs">Completado</div></div>' }
+  g2: { title:'G2 · En construcción — 55×20m', dim:'55×20m', constr:true, checklist:'<div class="chkl"><div class="chk pend">!</div><div class="chl">Nivelación del suelo</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Sistema de drenajes</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Instalación de malla</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk done">✓</div><div class="chl">Estructura metálica</div><div class="chs">Completado</div></div>' },
+  b1: { title:'B1 · Trimeado — Poscosecha', dim:'Área de procesamiento', proc:true, vp1:'180 kg/día', vp2:'2,500 kg', vp3:'1,200 kg', vp4:'4 lotes/semana' },
+  b1a:{ title:'B1 · Almacén — Poscosecha', dim:'Área de procesamiento', proc:true, vp1:'—', vp2:'2,500 kg', vp3:'1,200 kg', vp4:'4 lotes/semana' }
 };
 
 const overlay = document.getElementById('overlay');
@@ -235,14 +268,21 @@ document.querySelectorAll('.nave').forEach(n => {
     mTitle.textContent = d.title;
     document.getElementById('mDim').textContent = d.dim;
 
-    // Construcción vs operativo — toggle sections
+    // Construcción vs operativo vs procesamiento — toggle sections
     const isConstr = !!d.constr;
+    const isProc   = !!d.proc;
     document.getElementById('msConstr').style.display = isConstr ? 'block' : 'none';
+    document.getElementById('msProc').style.display = isProc ? 'block' : 'none';
     // Show/hide normal sections
     var secs = document.querySelectorAll('.ms-amb, .ms-fer, .ms-mip, .ms-fot');
-    secs.forEach(function(s) { s.style.display = isConstr ? 'none' : ''; });
+    secs.forEach(function(s) { s.style.display = (isConstr || isProc) ? 'none' : ''; });
     if (isConstr) {
       document.getElementById('checklistContent').innerHTML = d.checklist || '';
+    } else if (isProc) {
+      document.getElementById('mVp1').textContent = d.vp1 || '—';
+      document.getElementById('mVp2').textContent = d.vp2 || '—';
+      document.getElementById('mVp3').textContent = d.vp3 || '—';
+      document.getElementById('mVp4').textContent = d.vp4 || '—';
     } else {
       document.getElementById('mV1').textContent = d.v1;
       document.getElementById('mV2').textContent = d.v2;
