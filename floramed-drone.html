@@ -56,6 +56,25 @@
   .n0 { border-color:rgba(188,108,37,0.35); }
   .n0:hover,.n0.on { border-color:#BC6C25; box-shadow:inset 0 0 24px rgba(188,108,37,0.18),0 0 12px rgba(188,108,37,0.20); }
 
+  /* ── Zona en construcción ── */
+  .zone-constr { border:2px dashed rgba(150,150,150,0.45); background:rgba(150,150,150,0.04); animation:none; box-shadow:inset 0 0 30px rgba(0,0,0,0.02), var(--shadow); }
+  .zone-constr .zlabel { color:rgba(150,150,150,0.7); }
+  .zone-constr .ztotal { color:rgba(150,150,150,0.7); }
+  .zone-constr:hover { border-color:rgba(188,108,37,0.5); box-shadow:inset 0 0 50px rgba(188,108,37,0.08), 0 0 20px rgba(188,108,37,0.1); }
+
+  .ms-constr .ms-title { color:#999; border-bottom-color:rgba(0,0,0,0.04); }
+  .ms-constr .mc { background:#FAFAFA; }
+  .chkl { display:flex; align-items:center; gap:8px; padding:6px 0; font-size:0.78rem; border-bottom:1px solid rgba(0,0,0,0.04); }
+  .chkl .chk { width:18px; height:18px; border-radius:4px; border:2px solid rgba(0,0,0,0.15); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.65rem; }
+  .chkl .chk.done { border-color:#2D6A4F; background:#2D6A4F; color:#FFF; }
+  .chkl .chk.pend { border-color:#E07A3D; background:rgba(224,122,61,0.08); color:#E07A3D; }
+  .chkl .chl { color:var(--text); }
+  .chkl .chs { color:var(--text-dim); font-size:0.68rem; }
+
+  /* G2 nave — construcción: muted, no glow */
+  .nC { border-color:rgba(150,150,150,0.3); cursor:pointer; }
+  .nC:hover,.nC.on { border-color:rgba(188,108,37,0.5); box-shadow:inset 0 0 20px rgba(188,108,37,0.10),0 0 8px rgba(188,108,37,0.10); }
+
   /* ═══════════════ MODAL ═══════════════ */
   .overlay { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.25); backdrop-filter:blur(4px); display:none; align-items:flex-end; justify-content:center; }
   .overlay.on { display:flex; }
@@ -121,13 +140,20 @@
   </div>
 
   <!-- G1 — INVERNADERO 1 -->
-  <div class="zone" style="top:10%;left:6%;width:50%;height:72%;">
+  <div class="zone" style="top:8%;left:6%;width:50%;height:58%;">
     <div class="zlabel">G1 · INVERNADERO 1</div>
     <div class="ztotal">🌱 7,872</div>
 
     <div class="nave n1" data-id="n1" style="top:6%;left:4%;width:28%;height:88%;"><div class="nlabel">N1 1,549🌱</div></div>
     <div class="nave n2" data-id="n2" style="top:6%;left:34%;width:34%;height:88%;"><div class="nlabel">N2 3,200🌱</div></div>
     <div class="nave n3" data-id="n3" style="top:6%;left:70%;width:26%;height:88%;"><div class="nlabel">N3 3,123🌱</div></div>
+  </div>
+
+  <!-- G2 — INVERNADERO 2 (en construcción: 55×20m) -->
+  <div class="zone zone-constr" style="bottom:4%;left:15%;width:42%;height:18%;">
+    <div class="zlabel">G2 · INVERNADERO 2</div>
+    <div class="ztotal">🚧 En construcción</div>
+    <div class="nave nC" data-id="g2" style="top:26%;left:8%;width:84%;height:60%;"><div class="nlabel">G2 55×20m 🚧</div></div>
   </div>
 
 </div>
@@ -167,6 +193,11 @@
       </div>
     </div>
 
+    <div class="ms ms-constr" id="msConstr" style="display:none;">
+      <div class="ms-title">🚧 Avance de construcción</div>
+      <div id="checklistContent"></div>
+    </div>
+
     <div class="ms ms-fot">
       <div class="ms-title">📸 Fotos · Estado visual</div>
       <div class="ms-grid">
@@ -181,7 +212,8 @@ const DATA = {
   n1: { title:'N1 · Invernadero 1 — 1,549 plantas', dim:'93×9m', v1:'31.1°C', v2:'39.1%', v3:'2.76 kPa', v4:'1,549', v5:'6.3', v6:'3.2 mS/cm', v7:'🐛 Cochinilla 2.0% · Trips 4.3% · Gusano 0.2%', v8:'✅ Sin novedades' },
   n2: { title:'N2 · Invernadero 1 — 3,200 plantas', dim:'93×16m', v1:'28.4°C', v2:'47.3%', v3:'1.82 kPa', v4:'3,200', v5:'5.8', v6:'2.1 mS/cm', v7:'🐛 Cochinilla 1.5% · Trips 3.1% · Gusano 0.1%', v8:'⚠️ Leve decoloración en hojas inferiores' },
   n3: { title:'N3 · Invernadero 1 — 3,123 plantas', dim:'93×18m', v1:'29.1°C', v2:'44.0%', v3:'1.98 kPa', v4:'3,123', v5:'6.0', v6:'1.9 mS/cm', v7:'🐛 Cochinilla 2.3% · Trips 4.5% · Gusano 0.3%', v8:'✅ Sin novedades' },
-  g0: { title:'G0 · Plantas Madres — 305 plantas', dim:'40×60m', v1:'27.2°C', v2:'61.5%', v3:'0.98 kPa', v4:'305', v5:'6.5', v6:'1.2 mS/cm', v7:'🟢 Sin plagas detectadas', v8:'✅ Óptimo — brotes activos' }
+  g0: { title:'G0 · Plantas Madres — 305 plantas', dim:'40×60m', v1:'27.2°C', v2:'61.5%', v3:'0.98 kPa', v4:'305', v5:'6.5', v6:'1.2 mS/cm', v7:'🟢 Sin plagas detectadas', v8:'✅ Óptimo — brotes activos' },
+  g2: { title:'G2 · En construcción — 55×20m', dim:'55×20m', constr:true, checklist:'<div class="chkl"><div class="chk pend">!</div><div class="chl">Nivelación del suelo</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Sistema de drenajes</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Instalación de malla</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk done">✓</div><div class="chl">Estructura metálica</div><div class="chs">Completado</div></div>' }
 };
 
 const overlay = document.getElementById('overlay');
@@ -202,13 +234,24 @@ document.querySelectorAll('.nave').forEach(n => {
 
     mTitle.textContent = d.title;
     document.getElementById('mDim').textContent = d.dim;
-    document.getElementById('mV1').textContent = d.v1;
-    document.getElementById('mV2').textContent = d.v2;
-    document.getElementById('mV3').textContent = d.v3;
-    document.getElementById('mV5').textContent = d.v5;
-    document.getElementById('mV6').textContent = d.v6;
-    document.getElementById('mV7').textContent = d.v7;
-    document.getElementById('mV8').textContent = d.v8;
+
+    // Construcción vs operativo — toggle sections
+    const isConstr = !!d.constr;
+    document.getElementById('msConstr').style.display = isConstr ? 'block' : 'none';
+    // Show/hide normal sections
+    var secs = document.querySelectorAll('.ms-amb, .ms-fer, .ms-mip, .ms-fot');
+    secs.forEach(function(s) { s.style.display = isConstr ? 'none' : ''; });
+    if (isConstr) {
+      document.getElementById('checklistContent').innerHTML = d.checklist || '';
+    } else {
+      document.getElementById('mV1').textContent = d.v1;
+      document.getElementById('mV2').textContent = d.v2;
+      document.getElementById('mV3').textContent = d.v3;
+      document.getElementById('mV5').textContent = d.v5;
+      document.getElementById('mV6').textContent = d.v6;
+      document.getElementById('mV7').textContent = d.v7;
+      document.getElementById('mV8').textContent = d.v8;
+    }
 
     overlay.classList.add('on');
   });
