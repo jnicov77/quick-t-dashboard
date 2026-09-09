@@ -119,7 +119,10 @@
 <div class="overlay" id="overlay">
   <div class="modal" id="modal">
     <div class="mhead">
-      <h2 id="mTitle">N1 — Invernadero 1</h2>
+      <div>
+        <h2 id="mTitle">N1 — Invernadero 1</h2>
+        <div style="font-size:0.72rem;color:var(--text-dim);">🌱 <span id="mPlantasSub">1,549</span> plantas activas</div>
+      </div>
       <button class="mclose" id="mClose">&times;</button>
     </div>
 
@@ -182,6 +185,7 @@ document.querySelectorAll('.nave').forEach(n => {
 
     // Llenar modal
     mTitle.textContent = d.title;
+    document.getElementById('mPlantasSub').textContent = d.v4;
     document.getElementById('mV1').textContent = d.v1;
     document.getElementById('mV2').textContent = d.v2;
     document.getElementById('mV3').textContent = d.v3;
