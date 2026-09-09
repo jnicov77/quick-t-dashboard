@@ -204,6 +204,10 @@
         <div class="mc"><div class="mcv" id="mV2">39.1%</div><div class="mcl">Humedad</div></div>
         <div class="mc"><div class="mcv" id="mV3">2.76</div><div class="mcl">VPD (kPa)</div></div>
       </div>
+      <div class="vpd-rec" id="vpdRec" style="margin-top:8px; padding:10px 12px; border-radius:var(--radius-sm); font-size:0.78rem; line-height:1.4; display:none;">
+        <span style="font-weight:700;" id="vpdLabel">—</span>
+        <span style="color:var(--text-dim);" id="vpdMsg"></span>
+      </div>
     </div>
 
     <div class="ms ms-fer">
@@ -301,6 +305,7 @@ document.querySelectorAll('.nave').forEach(n => {
     const isProc   = !!d.proc;
     document.getElementById('msConstr').style.display = isConstr ? 'block' : 'none';
     document.getElementById('msProc').style.display = isProc ? 'block' : 'none';
+    document.getElementById('vpdRec').style.display = (isConstr || isProc) ? 'none' : '';
     // Show/hide normal sections
     var secs = document.querySelectorAll('.ms-amb, .ms-fer, .ms-mip, .ms-fot');
     secs.forEach(function(s) { s.style.display = (isConstr || isProc) ? 'none' : ''; });
@@ -345,6 +350,30 @@ document.querySelectorAll('.nave').forEach(n => {
       document.getElementById('mV6').textContent = d.v6;
       document.getElementById('mV7').textContent = d.v7;
       document.getElementById('mV8').textContent = d.v8;
+
+      // VPD recomendación
+      var vpdVal = parseFloat(d.v3);
+      var vr = document.getElementById('vpdRec');
+      var vl = document.getElementById('vpdLabel');
+      var vm = document.getElementById('vpdMsg');
+      if (!isNaN(vpdVal)) {
+        vr.style.display = 'block';
+        if (vpdVal < 0.45) {
+          vr.style.background = 'rgba(0,180,160,0.10)'; vl.style.color = '#00B4A0';
+          vl.textContent = '💧 BAJO'; vm.textContent = ' — Riesgo de hongos. Reducí riego y ventilá.';
+        } else if (vpdVal < 1.25) {
+          vr.style.background = 'rgba(45,106,79,0.10)'; vl.style.color = '#2D6A4F';
+          vl.textContent = '✅ IDEAL'; vm.textContent = ' — Condiciones óptimas para tus plantas.';
+        } else if (vpdVal < 1.60) {
+          vr.style.background = 'rgba(245,158,11,0.10)'; vl.style.color = '#D97706';
+          vl.textContent = '⚡ ALTO'; vm.textContent = ' — Ventilá un poco. Bueno para etapa vegetativa.';
+        } else {
+          vr.style.background = 'rgba(224,122,61,0.12)'; vl.style.color = '#E07A3D';
+          vl.textContent = '🔴 MUY ALTO'; vm.textContent = ' — ¡Estrés hídrico! Aumentá humedad o bajá temperatura.';
+        }
+      } else {
+        vr.style.display = 'none';
+      }
     }
 
     overlay.classList.add('on');
