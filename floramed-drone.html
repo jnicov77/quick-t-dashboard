@@ -138,7 +138,7 @@
     <div class="mhead">
       <div>
         <h2 id="mTitle">N1 — Invernadero 1</h2>
-        <div style="font-size:0.72rem;color:var(--text-dim);">🌱 <span id="mPlantasSub">1,549</span> plantas activas</div>
+        <div style="font-size:0.72rem;color:var(--text-dim);">📐 <span id="mDim">93×9m</span></div>
       </div>
       <button class="mclose" id="mClose">&times;</button>
     </div>
@@ -178,10 +178,10 @@
 
 <script>
 const DATA = {
-  n1: { title:'N1 · 93×9m — Invernadero 1', v1:'31.1°C', v2:'39.1%', v3:'2.76 kPa', v4:'1,549', v5:'6.3', v6:'3.2 mS/cm', v7:'🐛 Cochinilla 2.0% · Trips 4.3% · Gusano 0.2%', v8:'✅ Sin novedades' },
-  n2: { title:'N2 · 93×16m — Invernadero 1', v1:'28.4°C', v2:'47.3%', v3:'1.82 kPa', v4:'3,200', v5:'5.8', v6:'2.1 mS/cm', v7:'🐛 Cochinilla 1.5% · Trips 3.1% · Gusano 0.1%', v8:'⚠️ Leve decoloración en hojas inferiores' },
-  n3: { title:'N3 · 93×18m — Invernadero 1', v1:'29.1°C', v2:'44.0%', v3:'1.98 kPa', v4:'3,123', v5:'6.0', v6:'1.9 mS/cm', v7:'🐛 Cochinilla 2.3% · Trips 4.5% · Gusano 0.3%', v8:'✅ Sin novedades' },
-  g0: { title:'G0 · 40×60m — Plantas Madres', v1:'27.2°C', v2:'61.5%', v3:'0.98 kPa', v4:'305', v5:'6.5', v6:'1.2 mS/cm', v7:'🟢 Sin plagas detectadas', v8:'✅ Óptimo — brotes activos' }
+  n1: { title:'N1 · Invernadero 1 — 1,549 plantas', dim:'93×9m', v1:'31.1°C', v2:'39.1%', v3:'2.76 kPa', v4:'1,549', v5:'6.3', v6:'3.2 mS/cm', v7:'🐛 Cochinilla 2.0% · Trips 4.3% · Gusano 0.2%', v8:'✅ Sin novedades' },
+  n2: { title:'N2 · Invernadero 1 — 3,200 plantas', dim:'93×16m', v1:'28.4°C', v2:'47.3%', v3:'1.82 kPa', v4:'3,200', v5:'5.8', v6:'2.1 mS/cm', v7:'🐛 Cochinilla 1.5% · Trips 3.1% · Gusano 0.1%', v8:'⚠️ Leve decoloración en hojas inferiores' },
+  n3: { title:'N3 · Invernadero 1 — 3,123 plantas', dim:'93×18m', v1:'29.1°C', v2:'44.0%', v3:'1.98 kPa', v4:'3,123', v5:'6.0', v6:'1.9 mS/cm', v7:'🐛 Cochinilla 2.3% · Trips 4.5% · Gusano 0.3%', v8:'✅ Sin novedades' },
+  g0: { title:'G0 · Plantas Madres — 305 plantas', dim:'40×60m', v1:'27.2°C', v2:'61.5%', v3:'0.98 kPa', v4:'305', v5:'6.5', v6:'1.2 mS/cm', v7:'🟢 Sin plagas detectadas', v8:'✅ Óptimo — brotes activos' }
 };
 
 const overlay = document.getElementById('overlay');
@@ -201,7 +201,7 @@ document.querySelectorAll('.nave').forEach(n => {
     activeNave = this;
 
     mTitle.textContent = d.title;
-    document.getElementById('mPlantasSub').textContent = d.v4;
+    document.getElementById('mDim').textContent = d.dim;
     document.getElementById('mV1').textContent = d.v1;
     document.getElementById('mV2').textContent = d.v2;
     document.getElementById('mV3').textContent = d.v3;
