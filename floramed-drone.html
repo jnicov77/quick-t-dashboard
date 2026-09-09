@@ -106,10 +106,11 @@
   <!-- G1 -->
   <div class="zone" style="top:10%;left:6%;width:50%;height:72%;">
     <div class="zlabel">G1 · INVERNADERO 1</div>
+    <div class="total-plantas" style="position:absolute;top:6px;right:10px;font-family:'Space Grotesk',sans-serif;font-size:0.65rem;font-weight:700;color:var(--green);background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:8px;pointer-events:none;">🌱 7,872</div>
 
-    <div class="nave n1" data-id="n1" style="top:6%;left:4%;width:28%;height:88%;"><div class="nlabel">N1</div></div>
-    <div class="nave n2" data-id="n2" style="top:6%;left:34%;width:34%;height:88%;"><div class="nlabel">N2</div></div>
-    <div class="nave n3" data-id="n3" style="top:6%;left:70%;width:26%;height:88%;"><div class="nlabel">N3</div></div>
+    <div class="nave n1" data-id="n1" style="top:6%;left:4%;width:28%;height:88%;"><div class="nlabel">N1 · 1,549 🌱</div></div>
+    <div class="nave n2" data-id="n2" style="top:6%;left:34%;width:34%;height:88%;"><div class="nlabel">N2 · 3,200 🌱</div></div>
+    <div class="nave n3" data-id="n3" style="top:6%;left:70%;width:26%;height:88%;"><div class="nlabel">N3 · 3,123 🌱</div></div>
   </div>
 
 </div>
@@ -158,9 +159,9 @@
 
 <script>
 const DATA = {
-  n1: { title:'N1 · 93×9m — Invernadero 1', v1:'31.1°C', v2:'39.1%', v3:'2.76', v4:'1,240', v5:'6.2', v6:'1.8 mS/cm', v7:'🟡 Monitoreo activo', v8:'✅ Sin novedades' },
-  n2: { title:'N2 · 93×16m — Invernadero 1', v1:'—', v2:'—', v3:'—', v4:'—', v5:'—', v6:'—', v7:'—', v8:'—' },
-  n3: { title:'N3 · 93×18m — Invernadero 1', v1:'—', v2:'—', v3:'—', v4:'—', v5:'—', v6:'—', v7:'—', v8:'—' }
+  n1: { title:'N1 · 93×9m — Invernadero 1', v1:'31.1°C', v2:'39.1%', v3:'2.76 kPa', v4:'1,549', v5:'6.2', v6:'1.8 mS/cm', v7:'🐛 Cochinilla 2.0% · Trips 4.3% · Gusano 0.2%', v8:'✅ Sin novedades' },
+  n2: { title:'N2 · 93×16m — Invernadero 1', v1:'28.4°C', v2:'47.3%', v3:'1.82 kPa', v4:'3,200', v5:'5.8', v6:'2.1 mS/cm', v7:'🐛 Cochinilla 1.5% · Trips 3.1% · Gusano 0.1%', v8:'⚠️ Leve decoloración en hojas inferiores' },
+  n3: { title:'N3 · 93×18m — Invernadero 1', v1:'29.1°C', v2:'44.0%', v3:'1.98 kPa', v4:'3,123', v5:'6.0', v6:'1.9 mS/cm', v7:'🐛 Cochinilla 2.3% · Trips 4.5% · Gusano 0.3%', v8:'✅ Sin novedades' }
 };
 
 const overlay = document.getElementById('overlay');
