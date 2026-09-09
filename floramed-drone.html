@@ -226,12 +226,7 @@
     <div class="ms ms-proc" id="msProc" style="display:none;">
       <div class="ms-title" id="msProcTitle">📦 Poscosecha · Trazabilidad</div>
 
-      <div class="ms-grid">
-        <div class="mc"><div class="mcv" id="mVp1">—</div><div class="mcl">Lotes presentes</div></div>
-        <div class="mc"><div class="mcv" id="mVp2">—</div><div class="mcl">Temp · Hum ambiente</div></div>
-      </div>
-
-      <div style="margin-top:10px;">
+      <div style="margin-top:4px;">
         <div class="chkl proc-secado"><div class="chk">📊</div><div class="chl">Secando</div><div class="chs" id="mVpS">—</div></div>
         <div class="chkl proc-secado"><div class="chk">🔻</div><div class="chl">Descolgado / Despalillado</div><div class="chs" id="mVpD">—</div></div>
         <div class="chkl proc-trimado"><div class="chk">✂️</div><div class="chl">Trimando</div><div class="chs" id="mVpT">—</div></div>
@@ -241,7 +236,8 @@
         <div class="chkl proc-almacen"><div class="chk">📦✅</div><div class="chl">Cajas lista exportación</div><div class="chs" id="mVpC">—</div></div>
       </div>
 
-      <div class="ms-grid" style="margin-top:12px;">
+      <div class="ms-grid" style="margin-top:14px;">
+        <div class="mc"><div class="mcv" id="mVp2">—</div><div class="mcl">Temp · Hum ambiente</div></div>
         <div class="mc"><div class="mcv" id="mVpF">—</div><div class="mcl">Humedad flor x lote</div></div>
         <div class="mc"><div class="mcv" id="mVpAw">—</div><div class="mcl">Actividad de agua (Aw)</div></div>
         <div class="mc"><div class="mcv" id="mVpThc">—</div><div class="mcl">THC / CBD</div></div>
@@ -318,7 +314,6 @@ document.querySelectorAll('.nave').forEach(n => {
       document.querySelectorAll('.proc-trimado').forEach(function(el){el.style.display = (pt==='trimado')?'flex':'none';});
       document.querySelectorAll('.proc-almacen').forEach(function(el){el.style.display = (pt==='almacen')?'flex':'none';});
 
-      document.getElementById('mVp1').textContent = d.vp1 || '—';
       document.getElementById('mVp2').textContent = d.vp2 || '—';
       if (pt==='secado'){
         document.getElementById('mVpS').textContent = d.vpS || '—';
