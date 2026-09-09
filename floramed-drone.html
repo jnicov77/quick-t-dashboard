@@ -42,19 +42,20 @@
   @keyframes zpulse-alt { 0%,100%{box-shadow:inset 0 0 30px rgba(188,108,37,0.04),var(--shadow)} 50%{box-shadow:inset 0 0 50px rgba(188,108,37,0.10),0 0 16px rgba(188,108,37,0.06),var(--shadow)} }
   .zone-alt { animation:zpulse-alt 3s ease-in-out infinite; }
 
-  .nave { position:absolute; border-radius:8px; border:1px dashed rgba(45,106,79,0.15); background:rgba(45,106,79,0.03); cursor:pointer; transition:box-shadow .35s,border-color .35s; }
-  .nlabel { position:absolute; bottom:3px; left:4px; font-size:0.5rem; color:var(--text-dim); pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100% - 4px); }
+  .nave { position:absolute; border-radius:8px; border:1.5px solid rgba(45,106,79,0.20); cursor:pointer; transition:box-shadow .35s,border-color .35s; }
+  .nlabel { position:absolute; bottom:3px; left:6px; right:4px; font-size:0.52rem; font-weight:500; color:var(--text); pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  .n1 { border-color:rgba(45,106,79,0.35); }
-  .n1:hover,.n1.on { border-color:#2D6A4F; box-shadow:inset 0 0 24px rgba(45,106,79,0.18),0 0 12px rgba(45,106,79,0.20); }
-  .n2 { border-color:rgba(0,180,160,0.35); }
-  .n2:hover,.n2.on { border-color:#00B4A0; box-shadow:inset 0 0 24px rgba(0,180,160,0.18),0 0 12px rgba(0,180,160,0.20); }
-  .n3 { border-color:rgba(188,108,37,0.35); }
-  .n3:hover,.n3.on { border-color:#BC6C25; box-shadow:inset 0 0 24px rgba(188,108,37,0.18),0 0 12px rgba(188,108,37,0.20); }
+  /* ── G1: colores de fondo por nave ── */
+  .n1 { background:rgba(45,106,79,0.10); border-color:rgba(45,106,79,0.35); }
+  .n1:hover,.n1.on { border-color:#2D6A4F; background:rgba(45,106,79,0.18); box-shadow:inset 0 0 24px rgba(45,106,79,0.10),0 0 12px rgba(45,106,79,0.14); }
+  .n2 { background:rgba(0,180,160,0.10); border-color:rgba(0,180,160,0.35); }
+  .n2:hover,.n2.on { border-color:#00B4A0; background:rgba(0,180,160,0.18); box-shadow:inset 0 0 24px rgba(0,180,160,0.10),0 0 12px rgba(0,180,160,0.14); }
+  .n3 { background:rgba(188,108,37,0.10); border-color:rgba(188,108,37,0.35); }
+  .n3:hover,.n3.on { border-color:#BC6C25; background:rgba(188,108,37,0.18); box-shadow:inset 0 0 24px rgba(188,108,37,0.10),0 0 12px rgba(188,108,37,0.14); }
 
-  /* G0 nave única — borde dorado */
-  .n0 { border-color:rgba(188,108,37,0.35); }
-  .n0:hover,.n0.on { border-color:#BC6C25; box-shadow:inset 0 0 24px rgba(188,108,37,0.18),0 0 12px rgba(188,108,37,0.20); }
+  /* ── G0: naves tierra ── */
+  .n0 { background:rgba(188,108,37,0.10); border-color:rgba(188,108,37,0.35); }
+  .n0:hover,.n0.on { border-color:#BC6C25; background:rgba(188,108,37,0.18); box-shadow:inset 0 0 24px rgba(188,108,37,0.10),0 0 12px rgba(188,108,37,0.14); }
 
   /* ── Zona en construcción ── */
   .zone-constr { border:2px dashed rgba(150,150,150,0.45); background:rgba(150,150,150,0.04); animation:none; box-shadow:inset 0 0 30px rgba(0,0,0,0.02), var(--shadow); }
@@ -71,13 +72,13 @@
   .chkl .chl { color:var(--text); }
   .chkl .chs { color:var(--text-dim); font-size:0.68rem; }
 
-  /* G2 nave — construcción: muted, no glow */
-  .nC { border-color:rgba(150,150,150,0.3); cursor:pointer; }
-  .nC:hover,.nC.on { border-color:rgba(188,108,37,0.5); box-shadow:inset 0 0 20px rgba(188,108,37,0.10),0 0 8px rgba(188,108,37,0.10); }
+  /* G2 nave — construcción: card gris */
+  .nC { background:rgba(150,150,150,0.08); border-color:rgba(150,150,150,0.30); }
+  .nC:hover,.nC.on { border-color:rgba(188,108,37,0.5); background:rgba(188,108,37,0.10); box-shadow:inset 0 0 16px rgba(188,108,37,0.08),0 0 8px rgba(188,108,37,0.08); }
 
-  /* B1 — naves de procesamiento */
-  .nP { border-color:rgba(30,80,120,0.30); cursor:pointer; }
-  .nP:hover,.nP.on { border-color:rgba(30,80,120,0.7); box-shadow:inset 0 0 22px rgba(30,80,120,0.15),0 0 10px rgba(30,80,120,0.15); }
+  /* B1 — naves de procesamiento — cards azul acero */
+  .nP { background:rgba(30,80,120,0.10); border-color:rgba(30,80,120,0.30); }
+  .nP:hover,.nP.on { border-color:rgba(30,80,120,0.7); background:rgba(30,80,120,0.18); box-shadow:inset 0 0 20px rgba(30,80,120,0.10),0 0 10px rgba(30,80,120,0.12); }
 
   /* ── Zona procesamiento ── */
   .zone-proc { border:2px solid rgba(30,80,120,0.30); background:rgba(30,80,120,0.04); }
