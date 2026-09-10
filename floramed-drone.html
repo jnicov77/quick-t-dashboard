@@ -461,7 +461,50 @@ function loadMIPE(naveId) {
     });
 }
 
-// ── GARDEN: cargar datos reales del sensor SHT30 en Nave 1 ──\nfunction loadGarden(naveId) {\n  // Solo Nave 1 tiene el sensor físico\n  if (naveId !== 'n1') return;\n\n  var mV1 = document.getElementById('mV1');\n  var mV2 = document.getElementById('mV2');\n  var mV3 = document.getElementById('mV3');\n\n  mV1.textContent = '…°C'; mV2.textContent = '…%'; mV3.textContent = '…';\n\n  fetch(GARDEN_URL)\n    .then(function(r) { return r.json(); })\n    .then(function(d) {\n      mV1.textContent = d.temp + '°C';\n      mV2.textContent = d.hum + '%';\n      mV3.textContent = d.vpd + ' kPa';\n\n      // VPD rec actualización\n      var vr = document.getElementById('vpdRec');\n      var vl = document.getElementById('vpdLabel');\n      var vm = document.getElementById('vpdMsg');\n      if (vr) {\n        vr.style.display = 'block';\n        if (d.vpd < 0.45) {\n          vr.style.background = 'rgba(0,180,160,0.10)'; vl.style.color = '#00B4A0';\n          vl.textContent = '💧 BAJO'; vm.textContent = ' — Riesgo de hongos. Reducí riego y ventilá.';\n        } else if (d.vpd < 1.25) {\n          vr.style.background = 'rgba(45,106,79,0.10)'; vl.style.color = '#2D6A4F';\n          vl.textContent = '✅ IDEAL'; vm.textContent = ' — Condiciones óptimas para tus plantas.';\n        } else if (d.vpd < 1.60) {\n          vr.style.background = 'rgba(245,158,11,0.10)'; vl.style.color = '#D97706';\n          vl.textContent = '⚡ ALTO'; vm.textContent = ' — Ventilá un poco. Bueno para etapa vegetativa.';\n        } else {\n          vr.style.background = 'rgba(224,122,61,0.12)'; vl.style.color = '#E07A3D';\n          vl.textContent = '🔴 MUY ALTO'; vm.textContent = ' — ¡Estrés hídrico! Aumentá humedad o bajá temperatura.';\n        }\n      }\n    })\n    .catch(function(err) {\n      mV1.textContent = '⛔';\n      console.error('Garden fetch error:', err);\n    });\n}\n</script>
+// ── GARDEN: cargar datos reales del sensor SHT30 en Nave 1 ──
+function loadGarden(naveId) {
+  if (naveId !== 'n1') return;
+
+  var mV1 = document.getElementById('mV1');
+  var mV2 = document.getElementById('mV2');
+  var mV3 = document.getElementById('mV3');
+
+  mV1.textContent = '…°C'; mV2.textContent = '…%'; mV3.textContent = '…';
+
+  fetch(GARDEN_URL)
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      mV1.textContent = d.temp + '°C';
+      mV2.textContent = d.hum + '%';
+      mV3.textContent = d.vpd + ' kPa';
+
+      var vr = document.getElementById('vpdRec');
+      var vl = document.getElementById('vpdLabel');
+      var vm = document.getElementById('vpdMsg');
+      if (vr) {
+        vr.style.display = 'block';
+        if (d.vpd < 0.45) {
+          vr.style.background = 'rgba(0,180,160,0.10)'; vl.style.color = '#00B4A0';
+          vl.textContent = '💧 BAJO'; vm.textContent = ' — Riesgo de hongos. Reducí riego y ventilá.';
+        } else if (d.vpd < 1.25) {
+          vr.style.background = 'rgba(45,106,79,0.10)'; vl.style.color = '#2D6A4F';
+          vl.textContent = '✅ IDEAL'; vm.textContent = ' — Condiciones óptimas para tus plantas.';
+        } else if (d.vpd < 1.60) {
+          vr.style.background = 'rgba(245,158,11,0.10)'; vl.style.color = '#D97706';
+          vl.textContent = '⚡ ALTO'; vm.textContent = ' — Ventilá un poco. Bueno para etapa vegetativa.';
+        } else {
+          vr.style.background = 'rgba(224,122,61,0.12)'; vl.style.color = '#E07A3D';
+          vl.textContent = '🔴 MUY ALTO'; vm.textContent = ' — ¡Estrés hídrico! Aumentá humedad o bajá temperatura.';
+        }
+      }
+    })
+    .catch(function(err) {
+      mV1.textContent = '⛔';
+      console.error('Garden fetch error:', err);
+    });
+}
+
+</script>
 
 </body>
 </html>
