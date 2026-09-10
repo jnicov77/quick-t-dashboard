@@ -288,7 +288,7 @@ const DATA = {
 const overlay = document.getElementById('overlay');
 const modal   = document.getElementById('modal');
 const mTitle  = document.getElementById('mTitle');
-const MIPE_URL = 'https://script.google.com/macros/s/AKfycbz4ycTON0F7QsWYTwrfpg7XW1h_u23Cj-OcapCWPoh0soNZ1auHz__V8opdzN9LRlM/exec?action=mipe';
+const MIPE_URL = 'https://script.google.com/macros/s/AKfycbyeR_tOKhiWtY6HdyKIYvB-xdo9wbYIvFywG0dqd-xSzROrcAHuBhhCKYV-9b1uTw0/exec?action=mipe';
 let activeNave = null;
 
 document.querySelectorAll('.nave').forEach(n => {
@@ -417,13 +417,26 @@ function loadMIPE(naveId) {
     .then(function(d) {
       if (d.error) { mV7.textContent = '⛔ ' + d.error; return; }
 
-      var s = d.severidad || {};
-      mV7.textContent  = (s.cochinilla || '—') + '%';
-      mV7a.textContent = (s.trips || '—') + '%';
-      mV7b.textContent = (s.otros || '—') + '%';
+      // Formato nuevo (severidad) vs viejo (resumen)
+      var s, al;
+      if (d.severidad) {
+        s = d.severidad || {};
+        mV7.textContent  = (s.cochinilla || '—') + '%';
+        mV7a.textContent = (s.trips || '—') + '%';
+        mV7b.textContent = (s.otros || '—') + '%';
+        al = d.alertas || {};
+      } else if (d.resumen) {
+        s = d.resumen || {};
+        mV7.textContent  = (s.cochinilla || '—') + ' ptos';
+        mV7a.textContent = (s.trips || '—') + ' ptos';
+        mV7b.textContent = (s.bloquesConPlaga || '—') + '/' + (d.totalBloques || '?');
+        al = s.alertas || {};
+      } else {
+        mV7.textContent = '⛔ Sin datos';
+        return;
+      }
 
       // Alerta de estado general
-      var al = d.alertas || {};
       var estado = al['Alto'] > 0 ? '⚠️ ALERTA ACTIVA' : (al['Moderado'] > 3 ? '🟡 MONITOREO' : '🟢 CONTROLADO');
       mA.style.display = 'block';
       mA.style.background = al['Alto'] > 0 ? 'rgba(224,122,61,0.12)' : (al['Moderado'] > 3 ? 'rgba(245,158,11,0.10)' : 'rgba(45,106,79,0.10)');
