@@ -400,8 +400,9 @@ function closeModal() {
 
 // ── MIPE: cargar datos reales desde Google Sheets ──
 function loadMIPE(naveId) {
-  // Solo para Nave 3 (n3) — donde está el sensor de MIPE
-  if (naveId !== 'n3') return;
+  // Solo para naves de G1 con datos MIPE (n1, n3)
+  if (['n1','n3'].indexOf(naveId) === -1) return;
+  var naveNum = naveId === 'n1' ? '1' : '3';
 
   var mV7  = document.getElementById('mV7');
   var mV7a = document.getElementById('mV7a');
@@ -412,7 +413,7 @@ function loadMIPE(naveId) {
   mV7.textContent = '…'; mV7a.textContent = '…'; mV7b.textContent = '…';
   mA.style.display = 'none'; mObs.innerHTML = '';
 
-  fetch(MIPE_URL)
+  fetch(MIPE_URL + '&nave=' + naveNum)
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (d.error) { mV7.textContent = '⛔ ' + d.error; return; }
