@@ -219,13 +219,14 @@
     </div>
 
     <div class="ms ms-mip" id="msMipeSection">
-          <div class="ms-title">🐛 MIPE · Monitoreo de plagas y enfermedades</div>
-          <div class="ms-grid">
-            <div class="mc"><div class="mcv" id="mV7">—</div><div class="mcl">Total bloques / Estado</div></div>
-            <div class="mc"><div class="mcv" id="mV7a">—</div><div class="mcl">Cochinilla total</div></div>
-            <div class="mc"><div class="mcv" id="mV7b">—</div><div class="mcl">Trips / Mosca Blanca</div></div>
-            <div class="mc"><div class="mcv" id="mV7c">—</div><div class="mcl">Bloques con plaga</div></div>
-          </div>
+      <div class="ms-title">🐛 MIPE · Monitoreo de plagas y enfermedades</div>
+      <div class="ms-grid">
+        <div class="mc"><div class="mcv" id="mV7">—</div><div class="mcl">Cochinilla</div></div>
+        <div class="mc"><div class="mcv" id="mV7a">—</div><div class="mcl">Trips / Mosca Blanca</div></div>
+        <div class="mc"><div class="mcv" id="mV7b">—</div><div class="mcl">Otras plagas</div></div>
+      </div>
+      <div class="vpd-rec" id="mipeAlert" style="margin-top:8px; padding:10px 12px; border-radius:var(--radius-sm); font-size:0.78rem; text-align:center; display:none;"></div>
+      <div id="mipeObs" style="margin-top:8px; font-size:0.72rem; color:var(--text-dim); line-height:1.4;"></div>
     </div>
 
     <div class="ms ms-constr" id="msConstr" style="display:none;">
@@ -402,32 +403,42 @@ function loadMIPE(naveId) {
   // Solo para naves de G1 (n1, n2, n3)
   if (['n1','n2','n3'].indexOf(naveId) === -1) return;
 
-  var mV7 = document.getElementById('mV7');
+  var mV7  = document.getElementById('mV7');
   var mV7a = document.getElementById('mV7a');
   var mV7b = document.getElementById('mV7b');
-  var mV7c = document.getElementById('mV7c');
+  var mA   = document.getElementById('mipeAlert');
+  var mObs = document.getElementById('mipeObs');
 
-  mV7.textContent = 'Cargando...';
-  mV7a.textContent = '';
-  mV7b.textContent = '';
-  mV7c.textContent = '';
+  mV7.textContent = '…'; mV7a.textContent = '…'; mV7b.textContent = '…';
+  mA.style.display = 'none'; mObs.innerHTML = '';
 
   fetch(MIPE_URL)
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (d.error) { mV7.textContent = '⛔ ' + d.error; return; }
 
-      var m = d.metadata || {};
-      var res = d.resumen || {};
-      var nav = (m.invernadero || '').replace('G1 - ','');
+      var s = d.severidad || {};
+      mV7.textContent  = (s.cochinilla || '—') + '%';
+      mV7a.textContent = (s.trips || '—') + '%';
+      mV7b.textContent = (s.otros || '—') + '%';
 
-      mV7.textContent = d.totalBloques + ' bloques · ' + nav;
-      mV7a.textContent = res.cochinilla + ' ptos';
-      mV7b.textContent = res.trips + ' ptos';
-      mV7c.textContent = res.bloquesConPlaga + '/' + d.totalBloques;
+      // Alerta de estado general
+      var al = d.alertas || {};
+      var estado = al['Alto'] > 0 ? '⚠️ ALERTA ACTIVA' : (al['Moderado'] > 3 ? '🟡 MONITOREO' : '🟢 CONTROLADO');
+      mA.style.display = 'block';
+      mA.style.background = al['Alto'] > 0 ? 'rgba(224,122,61,0.12)' : (al['Moderado'] > 3 ? 'rgba(245,158,11,0.10)' : 'rgba(45,106,79,0.10)');
+      mA.style.color = al['Alto'] > 0 ? '#E07A3D' : (al['Moderado'] > 3 ? '#D97706' : '#2D6A4F');
+      mA.textContent = estado + ' · ' + d.totalBloques + ' bloques · ' +
+        'Alto:' + (al['Alto']||0) + ' Mod:' + (al['Moderado']||0) + ' Lev:' + (al['Leve']||0);
+
+      // Observaciones
+      var obs = d.observaciones || [];
+      if (obs.length) {
+        mObs.innerHTML = obs.map(function(o) { return '📝 ' + o; }).join('<br>');
+      }
     })
     .catch(function(err) {
-      mV7.textContent = '⛔ Error al cargar';
+      mV7.textContent = '⛔ Error';
       console.error('MIPE fetch error:', err);
     });
 }
