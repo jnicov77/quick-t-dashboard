@@ -261,10 +261,13 @@
       </div>
     </div>
 
-    <div class="ms ms-fot">
+    <div class="ms ms-fot" id="msFotSection">
       <div class="ms-title">📸 Fotos · Estado visual</div>
-      <div class="ms-grid">
-        <div class="mc" style="grid-column:1/-1"><div class="mcv" id="mV8">—</div><div class="mcl">Inspección visual del cultivo</div></div>
+      <div id="fotosGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+        <div class="mc" style="grid-column:1/-1; text-align:center; padding:16px;">
+          <div class="mcv" style="font-size:1.5rem;">📷</div>
+          <div class="mcl" id="fotosPlaceholder">Subí fotos a Drive → G1‑N1</div>
+        </div>
       </div>
     </div>
   </div>
@@ -290,6 +293,7 @@ const modal   = document.getElementById('modal');
 const mTitle  = document.getElementById('mTitle');
 const MIPE_URL = 'https://script.google.com/macros/s/AKfycbxP_bCv9HxDPg_f0bKgH34kvZyhe-r7tnYek2wMHdmvDeP00NfeiBuEctRKZ0TneDk/exec?action=mipe';
 const GARDEN_URL = 'https://script.google.com/macros/s/AKfycby8Abmtcw_qL7_gRersfAwJzgKKOuzbxozedmIACIn-3BvfLoBPXQqWER4qaMsM-yU/exec?action=ultima&device=quick-t-garden-v1';
+const FOTOS_URL = 'https://script.google.com/macros/s/AKfycby8Abmtcw_qL7_gRersfAwJzgKKOuzbxozedmIACIn-3BvfLoBPXQqWER4qaMsM-yU/exec?action=fotos';
 let activeNave = null;
 
 document.querySelectorAll('.nave').forEach(n => {
@@ -362,6 +366,9 @@ document.querySelectorAll('.nave').forEach(n => {
 
       // Cargar datos reales de Garden (temp/hum/VPD) desde el sensor SHT30
       loadGarden(id);
+
+      // Cargar fotos desde Drive
+      loadFotos(id);
 
       // VPD recomendación
       var vpdVal = parseFloat(d.v3);
@@ -502,6 +509,39 @@ function loadGarden(naveId) {
     .catch(function(err) {
       mV1.textContent = '⛔';
       console.error('Garden fetch error:', err);
+    });
+}
+
+
+// ── FOTOS: cargar galería desde Google Drive ──
+function loadFotos(naveId) {
+  var NAVES2 = {n1:'1', n2:'2', n3:'3', g0:'0', g0m:'0', g0l:'0'};
+  var nav = NAVES2[naveId];
+  if (!nav) return;
+
+  var grid = document.getElementById('fotosGrid');
+  var ph   = document.getElementById('fotosPlaceholder');
+  if (!grid) return;
+
+  grid.innerHTML = '<div class="mc" style="grid-column:1/-1; text-align:center; padding:16px;"><div class="mcl">Cargando fotos…</div></div>';
+
+  fetch(FOTOS_URL + '&nave=' + nav)
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.error || !d.fotos || !d.fotos.length) {
+        grid.innerHTML = '<div class="mc" style="grid-column:1/-1; text-align:center; padding:16px;"><div class="mcv" style="font-size:1.5rem;">📷</div><div class="mcl">Sin fotos en ' + (d.carpeta || nav) + '</div></div>';
+        return;
+      }
+
+      var html = '';
+      d.fotos.forEach(function(f) {
+        html += '<div class="mc" style="padding:4px; overflow:hidden;"><img src="' + f.src + '" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="window.open(this.src)" title="' + f.nombre + '"></div>';
+      });
+      grid.innerHTML = html;
+    })
+    .catch(function(err) {
+      grid.innerHTML = '<div class="mc" style="grid-column:1/-1; text-align:center; padding:16px;"><div class="mcl">⛔ Error al cargar fotos</div></div>';
+      console.error('Fotos fetch error:', err);
     });
 }
 
