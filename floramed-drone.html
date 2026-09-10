@@ -400,8 +400,8 @@ function closeModal() {
 
 // ── MIPE: cargar datos reales desde Google Sheets ──
 function loadMIPE(naveId) {
-  // Solo para naves de G1 (n1, n2, n3)
-  if (['n1','n2','n3'].indexOf(naveId) === -1) return;
+  // Solo para Nave 3 (n3) — donde está el sensor de MIPE
+  if (naveId !== 'n3') return;
 
   var mV7  = document.getElementById('mV7');
   var mV7a = document.getElementById('mV7a');
