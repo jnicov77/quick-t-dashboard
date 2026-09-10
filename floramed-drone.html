@@ -525,7 +525,6 @@ function loadFotos(naveId) {
   if (!nav) return;
 
   var grid = document.getElementById('fotosGrid');
-  var ph   = document.getElementById('fotosPlaceholder');
   if (!grid) return;
 
   grid.innerHTML = '<div class="mc" style="grid-column:1/-1; text-align:center; padding:16px;"><div class="mcl">Cargando fotos…</div></div>';
@@ -540,9 +539,23 @@ function loadFotos(naveId) {
 
       var html = '';
       d.fotos.forEach(function(f) {
-        html += '<div class="mc" style="padding:4px; overflow:hidden;"><img src="' + f.src + '" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="document.getElementById('lbImg').src=this.src;document.getElementById('lbOverlay').classList.add('on')" title="' + f.nombre + '"></div>';
+        html += '<div class="mc fot-card" style="padding:4px; overflow:hidden;">' +
+                '<img src="' + f.src + '"' +
+                ' data-full="' + f.src + '"' +
+                ' title="' + f.nombre + '"' +
+                ' style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px; cursor:pointer;">' +
+                '</div>';
       });
       grid.innerHTML = html;
+
+      // Asignar click a cada foto DESPUÉS de insertarlas en el DOM
+      var imgs = grid.querySelectorAll('img');
+      for (var i = 0; i < imgs.length; i++) {
+        imgs[i].onclick = function() {
+          document.getElementById('lbImg').src = this.getAttribute('data-full');
+          document.getElementById('lbOverlay').classList.add('on');
+        };
+      }
     })
     .catch(function(err) {
       grid.innerHTML = '<div class="mc" style="grid-column:1/-1; text-align:center; padding:16px;"><div class="mcl">⛔ Error al cargar fotos</div></div>';
