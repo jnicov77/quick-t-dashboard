@@ -116,6 +116,12 @@
   .ms-fot .ms-title{color:#00B4A0;border-bottom-color:rgba(0,180,160,0.12)}
   .ms-fot .mcv{color:#00B4A0}
 
+  /* ── LIGHTBOX ── */
+  .lb-overlay { position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.92); display:none; align-items:center; justify-content:center; padding:24px; }
+  .lb-overlay.on { display:flex; }
+  .lb-overlay img { max-width:100%; max-height:90vh; border-radius:12px; box-shadow:0 0 60px rgba(45,106,79,0.2); cursor:default; }
+  .lb-close { position:absolute; top:16px; right:24px; background:rgba(255,255,255,0.12); border:none; color:#fff; font-size:1.4rem; width:44px; height:44px; border-radius:50%; cursor:pointer; }
+
   /* ═══════════════ DESKTOP ═══════════════ */
   @media(min-width:900px){
     body{align-items:center}
@@ -534,7 +540,7 @@ function loadFotos(naveId) {
 
       var html = '';
       d.fotos.forEach(function(f) {
-        html += '<div class="mc" style="padding:4px; overflow:hidden;"><img src="' + f.src + '" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="window.open(this.src)" title="' + f.nombre + '"></div>';
+        html += '<div class="mc" style="padding:4px; overflow:hidden;"><img src="' + f.src + '" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="document.getElementById('lbImg').src=this.src;document.getElementById('lbOverlay').classList.add('on')" title="' + f.nombre + '"></div>';
       });
       grid.innerHTML = html;
     })
@@ -545,6 +551,12 @@ function loadFotos(naveId) {
 }
 
 </script>
+
+<!-- LIGHTBOX -->
+<div class="lb-overlay" id="lbOverlay" onclick="this.classList.remove('on')">
+  <button class="lb-close" onclick="document.getElementById('lbOverlay').classList.remove('on')">&times;</button>
+  <img id="lbImg" src="" alt="Foto ampliada">
+</div>
 
 </body>
 </html>
