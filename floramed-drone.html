@@ -218,11 +218,14 @@
       </div>
     </div>
 
-    <div class="ms ms-mip">
-      <div class="ms-title">🐛 MIPE · Monitoreo de plagas y enfermedades</div>
-      <div class="ms-grid">
-        <div class="mc" style="grid-column:1/-1"><div class="mcv" id="mV7">—</div><div class="mcl">Estado fitosanitario</div></div>
-      </div>
+    <div class="ms ms-mip" id="msMipeSection">
+          <div class="ms-title">🐛 MIPE · Monitoreo de plagas y enfermedades</div>
+          <div class="ms-grid">
+            <div class="mc"><div class="mcv" id="mV7">—</div><div class="mcl">Total bloques / Estado</div></div>
+            <div class="mc"><div class="mcv" id="mV7a">—</div><div class="mcl">Cochinilla total</div></div>
+            <div class="mc"><div class="mcv" id="mV7b">—</div><div class="mcl">Trips / Mosca Blanca</div></div>
+            <div class="mc"><div class="mcv" id="mV7c">—</div><div class="mcl">Bloques con plaga</div></div>
+          </div>
     </div>
 
     <div class="ms ms-constr" id="msConstr" style="display:none;">
@@ -284,6 +287,7 @@ const DATA = {
 const overlay = document.getElementById('overlay');
 const modal   = document.getElementById('modal');
 const mTitle  = document.getElementById('mTitle');
+const MIPE_URL = 'https://script.google.com/macros/s/AKfycbz4ycTON0F7QsWYTwrfpg7XW1h_u23Cj-OcapCWPoh0soNZ1auHz__V8opdzN9LRlM/exec?action=mipe';
 let activeNave = null;
 
 document.querySelectorAll('.nave').forEach(n => {
@@ -351,6 +355,9 @@ document.querySelectorAll('.nave').forEach(n => {
       document.getElementById('mV7').textContent = d.v7;
       document.getElementById('mV8').textContent = d.v8;
 
+      // Cargar datos reales de MIPE desde Google Sheets
+      loadMIPE(id);
+
       // VPD recomendación
       var vpdVal = parseFloat(d.v3);
       var vr = document.getElementById('vpdRec');
@@ -388,6 +395,41 @@ overlay.addEventListener('click', function(e) {
 function closeModal() {
   overlay.classList.remove('on');
   if (activeNave) { activeNave.classList.remove('on'); activeNave = null; }
+}
+
+// ── MIPE: cargar datos reales desde Google Sheets ──
+function loadMIPE(naveId) {
+  // Solo para naves de G1 (n1, n2, n3)
+  if (['n1','n2','n3'].indexOf(naveId) === -1) return;
+
+  var mV7 = document.getElementById('mV7');
+  var mV7a = document.getElementById('mV7a');
+  var mV7b = document.getElementById('mV7b');
+  var mV7c = document.getElementById('mV7c');
+
+  mV7.textContent = 'Cargando...';
+  mV7a.textContent = '';
+  mV7b.textContent = '';
+  mV7c.textContent = '';
+
+  fetch(MIPE_URL)
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.error) { mV7.textContent = '⛔ ' + d.error; return; }
+
+      var m = d.metadata || {};
+      var res = d.resumen || {};
+      var nav = (m.invernadero || '').replace('G1 - ','');
+
+      mV7.textContent = d.totalBloques + ' bloques · ' + nav;
+      mV7a.textContent = res.cochinilla + ' ptos';
+      mV7b.textContent = res.trips + ' ptos';
+      mV7c.textContent = res.bloquesConPlaga + '/' + d.totalBloques;
+    })
+    .catch(function(err) {
+      mV7.textContent = '⛔ Error al cargar';
+      console.error('MIPE fetch error:', err);
+    });
 }
 </script>
 
