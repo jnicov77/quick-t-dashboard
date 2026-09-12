@@ -214,6 +214,7 @@
         <span style="font-weight:700;" id="vpdLabel">—</span>
         <span style="color:var(--text-dim);" id="vpdMsg"></span>
       </div>
+      <div id="notaAmbiental" style="margin-top:6px; padding:6px 10px; background:rgba(245,158,11,0.08); border-radius:8px; font-size:0.65rem; color:var(--text-dim); line-height:1.3;"></div>
     </div>
 
     <div class="ms ms-fer">
@@ -286,12 +287,12 @@
 
 <script>
 const DATA = {
-  n1: { title:'N1 · Invernadero 1 — NUROVERA 1,549 plantas', dim:'93×9m', v1:'—', v2:'—', v3:'—', v4:'1,549', v5:'6.3', v6:'3.2 mS/cm', v7:'Cargando MIPE…', v8:'—' },
-  n2: { title:'N2 · Invernadero 1 — NUROVERA 3,200 plantas', dim:'93×16m', v1:'—', v2:'—', v3:'—', v4:'3,200', v5:'6.2', v6:'1.7 mS/cm', v7:'Cargando MIPE…', v8:'—' },
-  n3: { title:'N3 · Invernadero 1 — NUROVERA 3,123 plantas', dim:'93×18m', v1:'—', v2:'—', v3:'—', v4:'3,123', v5:'6.2', v6:'2.8 mS/cm', v7:'Cargando MIPE…', v8:'—' },
-  g0: { title:'G0 · Plantas Madres — NUROVERA', dim:'40×60m', v1:'—', v2:'—', v3:'—', v4:'102', v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—' },
-  g0m:{ title:'G0 · Plantas Madres — MACHINA',  dim:'40×60m', v1:'—', v2:'—', v3:'—', v4:'98',  v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—' },
-  g0l:{ title:'G0 · Plantas Madres — LALALAND', dim:'40×60m', v1:'—', v2:'—', v3:'—', v4:'105', v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—' },
+  n1: { title:'N1 · Invernadero 1 — NUROVERA 1,549 plantas', dim:'93×9m', v1:'35°C', v2:'48%', v3:'1.84 kPa', v4:'1,549', v5:'6.3', v6:'3.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  n2: { title:'N2 · Invernadero 1 — NUROVERA 3,200 plantas', dim:'93×16m', v1:'37°C', v2:'50%', v3:'2.14 kPa', v4:'3,200', v5:'6.2', v6:'1.7 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  n3: { title:'N3 · Invernadero 1 — NUROVERA 3,123 plantas', dim:'93×18m', v1:'36°C', v2:'48%', v3:'1.98 kPa', v4:'3,123', v5:'6.2', v6:'2.8 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  g0: { title:'G0 · Plantas Madres — NUROVERA', dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'102', v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  g0m:{ title:'G0 · Plantas Madres — MACHINA',  dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'98',  v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  g0l:{ title:'G0 · Plantas Madres — LALALAND', dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'105', v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
   g2: { title:'G2 · En construcción — 55×20m', dim:'55×20m', constr:true, checklist:'<div class="chkl"><div class="chk pend">!</div><div class="chl">Nivelación del suelo</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Sistema de drenajes</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Instalación de malla</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk done">✓</div><div class="chl">Estructura metálica</div><div class="chs">Completado</div></div>' },
   b1s1:{ title:'B1 · Secado 1 — Poscosecha', dim:'Área de secado', procType:'secado', proc:true, vp1:'16 lotes', vp2:'22.4°C · 58%', vpS:'4 lotes', vpD:'3 lotes', vpT:'—', vpA:'—', vpDe:'—', vpV:'—', vpC:'—', vpF:'10.5%', vpAw:'0.62', vpThc:'24-26% / <1%', vpMic:'✅ APTO — < 10 UFC/g', vpPes:'✅ No detectado', vpMet:'✅ < Límite (Pb, Cd, As, Hg)' },
   b1s2:{ title:'B1 · Secado 2 — Poscosecha', dim:'Área de secado', procType:'secado', proc:true, vp1:'16 lotes', vp2:'22.1°C · 57%', vpS:'3 lotes', vpD:'2 lotes', vpT:'—', vpA:'—', vpDe:'—', vpV:'—', vpC:'—', vpF:'10.5%', vpAw:'0.62', vpThc:'24-26% / <1%', vpMic:'✅ APTO — < 10 UFC/g', vpPes:'✅ No detectado', vpMet:'✅ < Límite (Pb, Cd, As, Hg)' },
@@ -385,6 +386,11 @@ document.querySelectorAll('.nave').forEach(n => {
       var vr = document.getElementById('vpdRec');
       var vl = document.getElementById('vpdLabel');
       var vm = document.getElementById('vpdMsg');
+
+      // Nota ambiental (ej: equipo retirado)
+      var notaEl = document.getElementById('notaAmbiental');
+      if (notaEl) { notaEl.textContent = d.nota || ''; notaEl.style.display = d.nota ? '' : 'none'; }
+
       if (!isNaN(vpdVal)) {
         vr.style.display = 'block';
         if (vpdVal < 0.45) {
