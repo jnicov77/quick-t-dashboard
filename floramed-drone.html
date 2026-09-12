@@ -233,7 +233,7 @@
       </div>
       <div class="vpd-rec" id="mipeAlert" style="margin-top:8px; padding:10px 12px; border-radius:var(--radius-sm); font-size:0.78rem; text-align:center; display:none;"></div>
       <div id="mipeObs" style="margin-top:8px; font-size:0.72rem; color:var(--text-dim); line-height:1.4;"></div>
-      <div style="margin-top:10px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+      <div style="margin-top:10px; display:none; gap:6px; flex-wrap:wrap; align-items:center;" id="mipeLinkRow">
         <a href="https://docs.google.com/spreadsheets/d/1GF4MMDDW7C4OspugCOynr861-fmSGZugxGtiEQrL6QI/edit" target="_blank" rel="noopener" style="text-decoration:none; background:var(--green); color:#fff; padding:6px 14px; border-radius:8px; font-size:0.72rem; font-weight:600; display:inline-flex; align-items:center; gap:4px;">📥 Descargar formato</a>
         <span style="font-size:0.6rem; color:var(--text-dim);">🔧 URL App Script:</span>
         <code id="mipeScriptUrl" style="font-size:0.55rem; background:var(--bg); padding:3px 6px; border-radius:4px; word-break:break-all; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" title="Click para copiar" onclick="navigator.clipboard.writeText(this.textContent);this.style.background='#2D6A4F';this.style.color='#fff';setTimeout(()=>{this.style.background='';this.style.color=''},800)"></code>
