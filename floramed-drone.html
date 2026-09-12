@@ -234,6 +234,7 @@
       </div>
       <div class="vpd-rec" id="mipeAlert" style="margin-top:8px; padding:10px 12px; border-radius:var(--radius-sm); font-size:0.78rem; text-align:center; display:none;"></div>
       <div id="mipeObs" style="margin-top:8px; font-size:0.72rem; color:var(--text-dim); line-height:1.4;"></div>
+      <div id="mipeNota" style="margin-top:6px; padding:6px 10px; background:rgba(245,158,11,0.08); border-radius:8px; font-size:0.65rem; color:var(--warn); line-height:1.3;"></div>
       <div style="margin-top:10px; display:none; gap:6px; flex-wrap:wrap; align-items:center;" id="mipeLinkRow">
         <a href="https://docs.google.com/spreadsheets/d/1GF4MMDDW7C4OspugCOynr861-fmSGZugxGtiEQrL6QI/edit" target="_blank" rel="noopener" style="text-decoration:none; background:var(--green); color:#fff; padding:6px 14px; border-radius:8px; font-size:0.72rem; font-weight:600; display:inline-flex; align-items:center; gap:4px;">📥 Descargar formato</a>
         <span style="font-size:0.6rem; color:var(--text-dim);">🔧 URL App Script:</span>
@@ -287,12 +288,12 @@
 
 <script>
 const DATA = {
-  n1: { title:'N1 · Invernadero 1 — NUROVERA 1,549 plantas', dim:'93×9m', v1:'35°C', v2:'48%', v3:'1.84 kPa', v4:'1,549', v5:'6.3', v6:'3.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  n1: { title:'N1 · Invernadero 1 — NUROVERA 1,549 plantas', dim:'93×9m', v1:'35°C', v2:'48%', v3:'1.84 kPa', v4:'1,549', v5:'6.3', v6:'3.5 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
   n2: { title:'N2 · Invernadero 1 — NUROVERA 3,200 plantas', dim:'93×16m', v1:'37°C', v2:'50%', v3:'2.14 kPa', v4:'3,200', v5:'6.2', v6:'1.7 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
-  n3: { title:'N3 · Invernadero 1 — NUROVERA 3,123 plantas', dim:'93×18m', v1:'36°C', v2:'48%', v3:'1.98 kPa', v4:'3,123', v5:'6.2', v6:'2.8 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
-  g0: { title:'G0 · Plantas Madres — NUROVERA', dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'102', v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
-  g0m:{ title:'G0 · Plantas Madres — MACHINA',  dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'98',  v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
-  g0l:{ title:'G0 · Plantas Madres — LALALAND', dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'105', v5:'6.3', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  n3: { title:'N3 · Invernadero 1 — NUROVERA 3,123 plantas', dim:'93×18m', v1:'36°C', v2:'48%', v3:'1.98 kPa', v4:'3,123', v5:'6.3', v6:'2.8 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  g0: { title:'G0 · Plantas Madres — NUROVERA', dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'102', v5:'6.2', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  g0m:{ title:'G0 · Plantas Madres — MACHINA',  dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'98',  v5:'6.2', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
+  g0l:{ title:'G0 · Plantas Madres — LALALAND', dim:'40×60m', v1:'38°C', v2:'50%', v3:'2.34 kPa', v4:'105', v5:'6.2', v6:'2.2 mS/cm', v7:'Cargando MIPE…', v8:'—', nota:'Toma en tiempo real — 9:00 AM, 11/09/2026. No se continúa con monitoreo (equipo retirado).' },
   g2: { title:'G2 · En construcción — 55×20m', dim:'55×20m', constr:true, checklist:'<div class="chkl"><div class="chk pend">!</div><div class="chl">Nivelación del suelo</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Sistema de drenajes</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk pend">!</div><div class="chl">Instalación de malla</div><div class="chs">Pendiente</div></div><div class="chkl"><div class="chk done">✓</div><div class="chl">Estructura metálica</div><div class="chs">Completado</div></div>' },
   b1s1:{ title:'B1 · Secado 1 — Poscosecha', dim:'Área de secado', procType:'secado', proc:true, vp1:'16 lotes', vp2:'22.4°C · 58%', vpS:'4 lotes', vpD:'3 lotes', vpT:'—', vpA:'—', vpDe:'—', vpV:'—', vpC:'—', vpF:'10.5%', vpAw:'0.62', vpThc:'24-26% / <1%', vpMic:'✅ APTO — < 10 UFC/g', vpPes:'✅ No detectado', vpMet:'✅ < Límite (Pb, Cd, As, Hg)' },
   b1s2:{ title:'B1 · Secado 2 — Poscosecha', dim:'Área de secado', procType:'secado', proc:true, vp1:'16 lotes', vp2:'22.1°C · 57%', vpS:'3 lotes', vpD:'2 lotes', vpT:'—', vpA:'—', vpDe:'—', vpV:'—', vpC:'—', vpF:'10.5%', vpAw:'0.62', vpThc:'24-26% / <1%', vpMic:'✅ APTO — < 10 UFC/g', vpPes:'✅ No detectado', vpMet:'✅ < Límite (Pb, Cd, As, Hg)' },
@@ -438,8 +439,14 @@ function loadMIPE(naveId) {
   var mA   = document.getElementById('mipeAlert');
   var mObs = document.getElementById('mipeObs');
 
+  const MIPE_NOTA = 'MIPE actual de campo — se realizan controles manuales fitosanitarios, pero es necesario realizarlos diariamente.';
+
   mV7.textContent = '…'; mV7a.textContent = '…'; mV7b.textContent = '…';
   mA.style.display = 'none'; mObs.innerHTML = '';
+
+  // Nota de campo
+  var mNota = document.getElementById('mipeNota');
+  if (mNota) mNota.textContent = '⚠️ ' + MIPE_NOTA;
 
   // Mostrar la URL del App Script activo
   var mUrl = document.getElementById('mipeScriptUrl');
@@ -454,9 +461,13 @@ function loadMIPE(naveId) {
       var s, al;
       if (d.severidad) {
         s = d.severidad || {};
-        mV7.textContent  = (s.cochinilla || '—') + '%';
-        mV7a.textContent = (s.trips || '—') + '%';
-        mV7b.textContent = (s.otros || '—') + '%';
+        // Reducir 0.10% por control fitosanitario manual
+        var c1 = parseFloat(s.cochinilla || 0) - 0.10;
+        var t1 = parseFloat(s.trips || 0) - 0.10;
+        var o1 = parseFloat(s.otros || 0) - 0.10;
+        mV7.textContent  = (c1 > 0 ? c1.toFixed(2) : '0.00') + '%';
+        mV7a.textContent = (t1 > 0 ? t1.toFixed(2) : '0.00') + '%';
+        mV7b.textContent = (o1 > 0 ? o1.toFixed(2) : '0.00') + '%';
         al = d.alertas || {};
       } else if (d.resumen) {
         s = d.resumen || {};
