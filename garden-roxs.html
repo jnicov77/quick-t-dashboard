@@ -90,8 +90,8 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
       <div class="mc-date" id="liveDate">---</div>
     </div>
     <div class="online" id="statusDot">EN LÍNEA</div>
-    <div class="vpd-rec-box" id="vpdRecBox" style="background:rgba(0,230,118,.10); color:var(--green); padding:6px 12px; border-radius:20px; font-size:10px; font-weight:500; max-width:200px; text-align:center; display:none;"></div>
   </div>
+  <div class="vpd-banner" id="vpdBanner" style="grid-column:1/4; padding:14px 20px; border-radius:var(--radius); font-size:14px; font-weight:600; text-align:center; display:none; margin-top:0;"></div>
 
   <!-- TEMP -->
   <div class="gauge-panel temp">
@@ -183,7 +183,7 @@ async function fetchData() {
     sd.style.background = 'rgba(0,230,118,.12)';
     sd.style.color = '#00E676';
     // VPD recomendación
-    var vpdBox = document.getElementById('vpdRecBox');
+    var vpdBox = document.getElementById('vpdBanner');
     if (v < 0.5) { vpdBox.style.display='block'; vpdBox.style.background='rgba(0,212,212,.12)'; vpdBox.style.color='#00D4D4'; vpdBox.textContent='💧 VPD bajo — Reducí riego, ventilá'; }
     else if (v <= 1.2) { vpdBox.style.display='block'; vpdBox.style.background='rgba(0,230,118,.10)'; vpdBox.style.color='#00E676'; vpdBox.textContent='✅ VPD ideal — Condiciones óptimas'; }
     else if (v <= 1.6) { vpdBox.style.display='block'; vpdBox.style.background='rgba(249,168,37,.12)'; vpdBox.style.color='#F9A825'; vpdBox.textContent='💨 VPD alto — Ventilá, bueno para vegetación'; }
@@ -212,7 +212,7 @@ async function fetchData() {
       sd2.style.background = 'rgba(255,82,82,.12)';
       sd2.style.color = '#FF5252';
     }
-    var vpdBox2 = document.getElementById('vpdRecBox');
+    var vpdBox2 = document.getElementById('vpdBanner');
     vpdBox2.style.display = 'none';
   }
 }
