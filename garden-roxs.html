@@ -10,7 +10,7 @@
 body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--fg); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; }
 .dash { display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:auto auto auto; gap:12px; max-width:1100px; width:100%; }
 /* ── TITLE BAR ── */
-.title-bar { grid-column:1/4; display:flex; align-items:center; justify-content:center; gap:20px; }
+.title-bar { grid-column:1/4; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 
   .mini-clock { background:var(--panel); border:1px solid rgba(179,136,255,.15); border-radius:var(--radius); padding:10px 16px; text-align:center; box-shadow:0 0 20px rgba(179,136,255,.10); }
   .mc-time { font-size:20px; font-weight:600; color:var(--purple); letter-spacing:.03em; }
