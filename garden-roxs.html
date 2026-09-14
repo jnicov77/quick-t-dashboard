@@ -28,6 +28,12 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 .gauge-panel .mini-chart { margin-top:12px; height:50px; opacity:.5; }
 .gauge-panel .status-row { display:flex; align-items:center; gap:12px; margin-top:10px; }
 .gauge-panel .status-badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:10px; }
+
+  .gauge-big { width:100px; height:100px; margin:8px auto 0; }
+  .gauge-big svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .gauge-big .bg-ring { fill:none; stroke:rgba(255,255,255,.04); stroke-width:8; }
+  .gauge-big .fill-ring { fill:none; stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .8s; }
+
 .gauge-panel .mini-gauge { width:48px; height:48px; margin-left:auto; }
 .gauge-panel .mini-gauge svg { width:100%; height:100%; transform:rotate(-90deg); }
 .gauge-panel .mini-gauge .bg { fill:none; stroke:rgba(255,255,255,.06); stroke-width:5; }
@@ -77,10 +83,9 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
     <div class="icon">🌡️</div>
     <div class="val" id="vTemp">--<span class="unit">°C</span></div>
     <div class="label">Temperatura</div>
-    <div class="mini-chart"><svg viewBox="0 0 200 50" style="width:100%;height:50px"><polyline id="chartTemp" fill="none" stroke="#00D4D4" stroke-width="1.5" points=""/></svg></div>
+    <div class="gauge-big"><svg viewBox="0 0 120 120"><circle class="bg-ring" cx="60" cy="60" r="52"/><circle class="fill-ring" id="gTemp" cx="60" cy="60" r="52" stroke="#00D4D4" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg></div>
     <div class="status-row">
       <div class="status-badge" id="sTemp">--</div>
-      <div class="mini-gauge"><svg viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="25"/><circle class="arc" id="gTemp" cx="30" cy="30" r="25" stroke="#00D4D4" stroke-dasharray="157" stroke-dashoffset="157"/></svg></div>
     </div>
   </div>
 
@@ -89,10 +94,9 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
     <div class="icon">💧</div>
     <div class="val" id="vHum">--<span class="unit">%</span></div>
     <div class="label">Humedad Relativa</div>
-    <div class="mini-chart"><svg viewBox="0 0 200 50" style="width:100%;height:50px"><polyline id="chartHum" fill="none" stroke="#00E676" stroke-width="1.5" points=""/></svg></div>
+    <div class="gauge-big"><svg viewBox="0 0 120 120"><circle class="bg-ring" cx="60" cy="60" r="52"/><circle class="fill-ring" id="gHum" cx="60" cy="60" r="52" stroke="#00E676" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg></div>
     <div class="status-row">
       <div class="status-badge" id="sHum">--</div>
-      <div class="mini-gauge"><svg viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="25"/><circle class="arc" id="gHum" cx="30" cy="30" r="25" stroke="#00E676" stroke-dasharray="157" stroke-dashoffset="157"/></svg></div>
     </div>
   </div>
 
@@ -101,10 +105,9 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
     <div class="icon">📊</div>
     <div class="val" id="vVPD">--<span class="unit">kPa</span></div>
     <div class="label">VPD — Déficit de Presión de Vapor</div>
-    <div class="mini-chart"><svg viewBox="0 0 200 50" style="width:100%;height:50px"><polyline id="chartVPD" fill="none" stroke="#B388FF" stroke-width="1.5" points=""/></svg></div>
+    <div class="gauge-big"><svg viewBox="0 0 120 120"><circle class="bg-ring" cx="60" cy="60" r="52"/><circle class="fill-ring" id="gVPD" cx="60" cy="60" r="52" stroke="#B388FF" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg></div>
     <div class="status-row">
       <div class="status-badge" id="sVPD">--</div>
-      <div class="mini-gauge"><svg viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="25"/><circle class="arc" id="gVPD" cx="30" cy="30" r="25" stroke="#B388FF" stroke-dasharray="157" stroke-dashoffset="157"/></svg></div>
     </div>
   </div>
 
@@ -130,7 +133,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 <script>
 const API = 'https://script.google.com/macros/s/AKfycby8Abmtcw_qL7_gRersfAwJzgKKOuzbxozedmIACIn-3BvfLoBPXQqWER4qaMsM-yU/exec';
 const DEV = new URLSearchParams(location.search).get('device')||'quick-t-garden-v1';
-const C157 = 2*Math.PI*25; // mini gauge circumference
+const C157 = 2*Math.PI*52; // big gauge circumference
 let calOffset = 0, history = [];
 
 // ── CLOCK ──
@@ -143,10 +146,7 @@ tick(); setInterval(tick,1000);
 
 // ── GAUGES ──
 function setMiniGauge(id,val,max){ document.getElementById(id).setAttribute('stroke-dashoffset',C157*(1-Math.min(val/max,1))); }
-function drawMiniChart(id, data, key) {
-  var pts = data.slice(-30).map(function(r,i){ return (i*200/29).toFixed(1)+','+(50-parseFloat(r[key])*1.3).toFixed(1); }).join(' ');
-  document.getElementById(id).setAttribute('points', pts);
-}
+// mini charts removed — using big gauge rings instead
 async function fetchData() {
   try {
     var r = await fetch(API+'?action=ultima&device='+DEV,{cache:'no-store'}), d = await r.json();
@@ -164,11 +164,9 @@ async function fetchData() {
     var sV=document.getElementById('sVPD');
     if(v>=0.8&&v<=1.2){sV.textContent='NORMAL — Rango óptimo 0.8-1.2';sV.style.background='rgba(0,230,118,.12)';sV.style.color='#00E676';}
     else{sV.textContent=v<0.5?'BAJO':'ALTO';sV.style.background='rgba(249,168,37,.15)';sV.style.color='#F9A825';}
+    // history for future use
     history.push({t,h,v});
     if(history.length>60)history.shift();
-    drawMiniChart('chartTemp',history,'t');
-    drawMiniChart('chartHum',history,'h');
-    drawMiniChart('chartVPD',history,'v');
   }catch(e){console.warn(e)}
 }
 fetchData(); setInterval(fetchData,60000);
