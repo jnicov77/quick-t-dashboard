@@ -61,6 +61,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 .cal-grid .d { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:4px; cursor:pointer; }
 .cal-grid .d:hover { background:rgba(255,255,255,.04); }
 .cal-grid .d.today { background:var(--cyan); color:#000; font-weight:700; }
+.cal-grid .d.event::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 4px var(--green); }
 /* ── RESPONSIVE ── */
 @media(max-width:700px) {
   .dash { grid-template-columns:1fr; gap:10px; max-width:100%; padding:0 8px; }
@@ -247,7 +248,10 @@ function renderCal() {
   for(var i=0;i<fd;i++)h+='<div class="d"></div>';
   for(var d=1;d<=dim;d++){
     var isToday=(calOffset===0&&d===today);
-    h+='<div class="d'+(isToday?' today':'')+'">'+d+'</div>';
+    var ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var evs=getEvs();
+    var hasEv=evs.some(function(e){return e.date===ds;});
+    h+='<div class="d'+(isToday?' today':'')+(hasEv?' event':'')+'" style="position:relative">'+d+'</div>';
   }
   document.getElementById('calGridDD').innerHTML=h;
 }
