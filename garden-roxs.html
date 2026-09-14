@@ -90,6 +90,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
       <div class="mc-date" id="liveDate">---</div>
     </div>
     <div class="online" id="statusDot">EN LÍNEA</div>
+    <div class="vpd-rec-box" id="vpdRecBox" style="background:rgba(0,230,118,.10); color:var(--green); padding:6px 12px; border-radius:20px; font-size:10px; font-weight:500; max-width:200px; text-align:center; display:none;"></div>
   </div>
 
   <!-- TEMP -->
@@ -169,10 +170,24 @@ tick(); setInterval(tick,1000);
 // ── GAUGES ──
 function setMiniGauge(id,val,max){ document.getElementById(id).setAttribute('stroke-dashoffset',C157*(1-Math.min(val/max,1))); }
 // mini charts removed — using big gauge rings instead
+let offlineCount = 0;
 async function fetchData() {
   try {
     var r = await fetch(API+'?action=ultima&device='+DEV,{cache:'no-store'}), d = await r.json();
+    if (!d || d.temp===undefined) throw new Error('no data');
     var t=parseFloat(d.temp), h=parseFloat(d.hum), v=parseFloat(d.vpd);
+    // Online
+    offlineCount = 0;
+    var sd = document.getElementById('statusDot');
+    sd.textContent = 'EN LÍNEA';
+    sd.style.background = 'rgba(0,230,118,.12)';
+    sd.style.color = '#00E676';
+    // VPD recomendación
+    var vpdBox = document.getElementById('vpdRecBox');
+    if (v < 0.5) { vpdBox.style.display='block'; vpdBox.style.background='rgba(0,212,212,.12)'; vpdBox.style.color='#00D4D4'; vpdBox.textContent='💧 VPD bajo — Reducí riego, ventilá'; }
+    else if (v <= 1.2) { vpdBox.style.display='block'; vpdBox.style.background='rgba(0,230,118,.10)'; vpdBox.style.color='#00E676'; vpdBox.textContent='✅ VPD ideal — Condiciones óptimas'; }
+    else if (v <= 1.6) { vpdBox.style.display='block'; vpdBox.style.background='rgba(249,168,37,.12)'; vpdBox.style.color='#F9A825'; vpdBox.textContent='💨 VPD alto — Ventilá, bueno para vegetación'; }
+    else { vpdBox.style.display='block'; vpdBox.style.background='rgba(255,82,82,.12)'; vpdBox.style.color='#FF5252'; vpdBox.textContent='🚨 VPD muy alto — ¡Estrés hídrico! Aumentá humedad'; }
     document.getElementById('vTemp').innerHTML = t.toFixed(1)+'<span class="unit">°C</span>';
     document.getElementById('vHum').innerHTML = h.toFixed(0)+'<span class="unit">%</span>';
     document.getElementById('vVPD').innerHTML = v.toFixed(2)+'<span class="unit">kPa</span>';
@@ -189,7 +204,17 @@ async function fetchData() {
     // history for future use
     history.push({t,h,v});
     if(history.length>60)history.shift();
-  }catch(e){console.warn(e)}
+  }catch(e){console.warn(e);
+    offlineCount++;
+    var sd2 = document.getElementById('statusDot');
+    if (offlineCount >= 3) {
+      sd2.textContent = 'SIN CONEXIÓN';
+      sd2.style.background = 'rgba(255,82,82,.12)';
+      sd2.style.color = '#FF5252';
+    }
+    var vpdBox2 = document.getElementById('vpdRecBox');
+    vpdBox2.style.display = 'none';
+  }
 }
 fetchData(); setInterval(fetchData,60000);
 
