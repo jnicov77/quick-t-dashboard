@@ -247,7 +247,7 @@ function showDayInfo(dateStr) {
   }
   var h = '<div style="font-size:11px;color:var(--cyan);margin-bottom:6px;">📅 '+dateStr+'</div>';
   evs.forEach(function(e,i){
-    var all=getEvs(), realIdx=all.indexOf(all.find(function(x){return x.date===e.date&&x.variety===e.variety&&x.stage===e.stage;});
+    var all=getEvs(), realIdx=all.indexOf(all.find(function(x){return x.date===e.date&&x.variety===e.variety&&x.stage===e.stage;}));
     h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;margin:2px 0;background:rgba(255,255,255,.04);border-radius:6px;"><span>'+e.stage+' — <b>'+e.variety+'</b></span><span onclick="delEv('+realIdx+');showDayInfo(\''+dateStr+'\');" style="cursor:pointer;color:#f44;font-size:14px;">✕</span></div>';
   });
   list.innerHTML = h;
