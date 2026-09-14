@@ -63,11 +63,16 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 .cal-grid .d.today { background:var(--cyan); color:#000; font-weight:700; }
 /* ── RESPONSIVE ── */
 @media(max-width:700px) {
-  .dash { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
-  .title-bar { grid-column:1/3; }
-  .gauge-panel { grid-column:span 1; }
-  .clock-box, .cal-box { grid-column:1/4; }
-  .gauge-panel .val { font-size:32px; }
+  .dash { grid-template-columns:1fr; gap:10px; max-width:100%; padding:0 8px; }
+  .title-bar { grid-column:1; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+  .title-box, .mini-clock, .online { width:100%; text-align:center; }
+  .title-box h1 { font-size:26px; }
+  .gauge-panel { grid-column:1 !important; }
+  .gauge-panel .val { font-size:36px; }
+  .gauge-big { width:100px; height:100px; margin:8px auto 0; }
+  .cal-box { grid-column:1 !important; }
+  .clock-box { display:none; }
+  .mc-time { font-size:20px; }
 }
 </style>
 </head>
