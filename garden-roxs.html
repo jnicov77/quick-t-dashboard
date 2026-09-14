@@ -172,6 +172,54 @@
   .status-badge.muyalto { color: var(--alert); background: var(--alert-15); }
   .site-footer { padding: 22px 24px; border-top: 1px solid var(--text-10); font-size: 11px; color: var(--text-40); text-align: center; }
 
+
+  /* ── CALENDARIO DE CULTIVO ── */
+  .cal-section { padding: 0 0 32px; }
+  .cal-panel {
+    background: var(--surface); border: none; border-radius: var(--radius-lg);
+    padding: 26px; box-shadow: var(--shadow-card); min-width: 0;
+  }
+  .cal-panel h3 { font-size: 16px; color: var(--text); margin-bottom: 18px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 16px; }
+  .cal-day-header { font-size: 10px; font-weight: 600; color: var(--text-60); text-align: center; padding: 4px 0; text-transform: uppercase; }
+  .cal-cell {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; border-radius: var(--radius-sm); cursor: pointer;
+    background: var(--surface-alt); color: var(--text-60); transition: .15s;
+  }
+  .cal-cell:hover { background: var(--accent-15); color: var(--green); }
+  .cal-cell.today { background: var(--purple); color: #FFF; font-weight: 700; }
+  .cal-cell.event { position: relative; color: var(--text); font-weight: 600; }
+  .cal-cell.event::after { content: ''; position: absolute; bottom: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  .cal-cell.empty { background: transparent; cursor: default; }
+  .cal-add-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .cal-add-row input, .cal-add-row select {
+    padding: 8px 12px; border: 1px solid var(--text-20); border-radius: var(--radius-sm);
+    font-family: inherit; font-size: 13px; background: var(--surface); color: var(--text);
+  }
+  .cal-add-row input { flex: 1; min-width: 120px; }
+  .cal-add-row select { min-width: 100px; }
+  .cal-btn {
+    padding: 8px 16px; background: var(--purple); color: #FFF; border: none;
+    border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; font-size: 13px;
+    transition: opacity .15s;
+  }
+  .cal-btn:hover { opacity: .85; }
+  .cal-events { margin-top: 12px; }
+  .cal-event-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: var(--accent-10); border-radius: var(--radius-sm);
+    margin-bottom: 4px; font-size: 13px;
+  }
+  .cal-event-item .del-btn {
+    background: none; border: none; color: var(--alert); cursor: pointer; font-size: 16px; padding: 0 4px;
+  }
+  .cal-alert {
+    margin-top: 12px; padding: 10px 14px; background: var(--warn-15); border-radius: var(--radius-sm);
+    font-size: 12px; color: #806000; display: none;
+  }
+  .cal-alert.show { display: block; }
+
   @media (max-width: 900px) {
     .gauges-row { gap: 28px; padding-inline: 8px; }
     .gauge-value { font-size: 38px; }
@@ -362,6 +410,26 @@
         </tbody>
       </table>
       </div>
+    </div>
+  </section>
+
+
+  <section class="cal-section">
+    <div class="cal-panel">
+      <h3>📅 Calendario de cultivo</h3>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-add-row">
+        <input type="date" id="calDate">
+        <input type="text" id="calVariety" placeholder="Variedad (ej: NUROVERA)">
+        <select id="calStage">
+          <option value="Siembra">🌱 Siembra</option>
+          <option value="Poda">✂️ Poda</option>
+          <option value="Cosecha">🚜 Cosecha</option>
+        </select>
+        <button class="cal-btn" onclick="addCalEvent()">+ Agregar</button>
+      </div>
+      <div class="cal-alert" id="calAlert"></div>
+      <div class="cal-events" id="calEvents"></div>
     </div>
   </section>
 
@@ -605,6 +673,79 @@ async function refresh() {
 
 refresh();
 setInterval(refresh, REFRESH_MS);
+
+// ── CALENDARIO DE CULTIVO (localStorage) ──
+function getCalEvents() {
+  try { return JSON.parse(localStorage.getItem('roxs_cal') || '[]'); } catch(e) { return []; }
+}
+function saveCalEvents(evts) { localStorage.setItem('roxs_cal', JSON.stringify(evts)); }
+
+function renderCalendar() {
+  var now = new Date(); var y = now.getFullYear(); var m = now.getMonth();
+  var firstDay = new Date(y, m, 1).getDay();
+  var daysInMonth = new Date(y, m+1, 0).getDate();
+  var today = now.getDate();
+  var events = getCalEvents();
+  var grid = document.getElementById('calGrid');
+  var headers = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var html = headers.map(function(h){ return '<div class="cal-day-header">'+h+'</div>'; }).join('');
+  for (var i = 0; i < firstDay; i++) html += '<div class="cal-cell empty"></div>';
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dateStr = y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var hasEvent = events.some(function(e){ return e.date === dateStr; });
+    var cls = 'cal-cell';
+    if (d === today) cls += ' today';
+    if (hasEvent) cls += ' event';
+    html += '<div class="'+cls+'" title="'+dateStr+'">'+d+'</div>';
+  }
+  grid.innerHTML = html;
+  renderCalEvents();
+}
+
+function addCalEvent() {
+  var date = document.getElementById('calDate').value;
+  var variety = document.getElementById('calVariety').value.trim();
+  var stage = document.getElementById('calStage').value;
+  if (!date || !variety) return alert('Completá fecha y variedad');
+  var events = getCalEvents();
+  events.push({ date: date, variety: variety, stage: stage });
+  saveCalEvents(events);
+  document.getElementById('calVariety').value = '';
+  renderCalendar();
+}
+
+function delCalEvent(idx) {
+  var events = getCalEvents();
+  events.splice(idx, 1);
+  saveCalEvents(events);
+  renderCalendar();
+}
+
+function renderCalEvents() {
+  var events = getCalEvents();
+  events.sort(function(a,b){ return a.date.localeCompare(b.date); });
+  var container = document.getElementById('calEvents');
+  var alertEl = document.getElementById('calAlert');
+  var now = new Date(); var today = now.toISOString().slice(0,10);
+  var upcoming = events.filter(function(e){ return e.date >= today; });
+  var html = '';
+  events.forEach(function(e, i){
+    html += '<div class="cal-event-item"><span>'+e.date+' — '+e.stage+' — <strong>'+e.variety+'</strong></span><button class="del-btn" onclick="delCalEvent('+i+')">✕</button></div>';
+  });
+  container.innerHTML = html || '<div style="color:var(--text-40);font-size:12px;">Sin eventos. Agregá fechas de siembra, poda o cosecha.</div>';
+
+  if (upcoming.length) {
+    var next = upcoming[0];
+    var days = Math.ceil((new Date(next.date) - now) / 86400000);
+    if (days <= 7) {
+      alertEl.className = 'cal-alert show';
+      alertEl.textContent = '⏰ ' + next.stage + ' de ' + next.variety + (days === 0 ? ' — ¡HOY!' : ' en ' + days + ' día' + (days>1?'s':''));
+    } else { alertEl.className = 'cal-alert'; }
+  }
+}
+
+renderCalendar();
+
 document.getElementById('refreshBtn').addEventListener('click', refresh);
 </script>
 </body>
