@@ -46,13 +46,13 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 14px; font-weight: 400; line-height: 1.5;
     color: var(--text); -webkit-font-smoothing: antialiased;
-    background: linear-gradient(135deg, #3A0A5C 0%, #510C82 40%, #6B1FA8 100%);
+    background: radial-gradient(ellipse at 50% 50%, #510C82 0%, #3A0A5C 40%, #1A0530 100%);
     background-attachment: fixed;
   }
   body::before {
     content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 30% 20%, rgba(255,193,0,.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 70% 80%, rgba(11,132,87,.06) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 30% 20%, rgba(255,193,0,.10) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(11,132,87,.08) 0%, transparent 50%);
   }
   body > * { position: relative; z-index: 1; }
   h1, h2, h3, h4, .gauge-value, .metric-num {
@@ -107,10 +107,11 @@
   .gauge-card { --metric: #510C82; --metric-rgb: 81,12,130; text-align: center; background: none; border: 0; min-width: 0; }
   .gauge-card.temp { --metric: #C0392B; --metric-rgb: 192,57,43; }
   .gauge-card.hum { --metric: #0B8457; --metric-rgb: 11,132,87; }
-  .gauge-wrap {
+    .gauge-wrap {
     position: relative; width: min(100%,240px); aspect-ratio: 1; margin: 0 auto 20px;
     border-radius: 50%; background: var(--surface); isolation: isolate;
-    box-shadow: 0 12px 30px rgba(var(--metric-rgb),.075), 0 0 18px rgba(var(--metric-rgb),.045);
+    box-shadow: 0 12px 30px rgba(var(--metric-rgb),.075), 0 0 18px rgba(var(--metric-rgb),.045),
+                0 0 10px rgba(var(--metric-rgb),.15), 0 0 40px rgba(var(--metric-rgb),.06);
   }
   .gauge-wrap::before {
     content: ''; position: absolute; inset: -7px; border: 1px solid rgba(var(--metric-rgb),.17);
@@ -142,9 +143,11 @@
   .gauge-delta { font-size: 11px; color: var(--text-40); }
 
   .charts-row { padding: 0 0 20px; }
-  .chart-panel, .status-panel, .cal-panel {
-    background: var(--surface); border: none; border-radius: var(--radius-lg);
-    padding: 26px; box-shadow: var(--shadow-card); min-width: 0;
+    .chart-panel, .status-panel, .cal-panel {
+    background: var(--surface); border: 1px solid rgba(255,193,0,.12);
+    border-radius: var(--radius-lg); padding: 26px;
+    box-shadow: 0 0 20px rgba(81,12,130,.15), 0 0 60px rgba(81,12,130,.05),
+                0 12px 30px rgba(0,0,0,.08); min-width: 0;
   }
   .chart-panel h3, .status-panel h3, .table-panel h3 { font-size: 16px; color: var(--text); margin-bottom: 22px; }
   .chart-wrap { position: relative; height: 320px; }
