@@ -184,10 +184,28 @@ async function fetchData() {
     sd.style.color = '#00E676';
     // VPD recomendación
     var vpdBox = document.getElementById('vpdBanner');
-    if (v < 0.5) { vpdBox.style.display='block'; vpdBox.style.background='rgba(0,212,212,.12)'; vpdBox.style.color='#00D4D4'; vpdBox.textContent='💧 VPD bajo — Reducí riego, ventilá'; }
-    else if (v <= 1.2) { vpdBox.style.display='block'; vpdBox.style.background='rgba(0,230,118,.10)'; vpdBox.style.color='#00E676'; vpdBox.textContent='✅ VPD ideal — Condiciones óptimas'; }
-    else if (v <= 1.6) { vpdBox.style.display='block'; vpdBox.style.background='rgba(249,168,37,.12)'; vpdBox.style.color='#F9A825'; vpdBox.textContent='💨 VPD alto — Ventilá, bueno para vegetación'; }
-    else { vpdBox.style.display='block'; vpdBox.style.background='rgba(255,82,82,.12)'; vpdBox.style.color='#FF5252'; vpdBox.textContent='🚨 VPD muy alto — ¡Estrés hídrico! Aumentá humedad'; }
+    vpdBox.style.display = 'block';
+    vpdBox.style.fontSize = '12px';
+    vpdBox.style.lineHeight = '1.5';
+    if (v < 0.40) {
+      vpdBox.style.background='rgba(0,212,212,.12)'; vpdBox.style.color='#00D4D4'; vpdBox.style.border='1px solid rgba(0,212,212,.25)';
+      vpdBox.innerHTML='<b>💧 VPD CRÍTICAMENTE BAJO</b> — Sin transpiración. Riesgo de hongos (<i>Botrytis</i>, Oídio).<br>→ Subí temp +1.5°C, reducí riego, aumentá ventilación.';
+    } else if (v <= 0.80) {
+      vpdBox.style.background='rgba(0,200,220,.10)'; vpdBox.style.color='#00C8DC'; vpdBox.style.border='1px solid rgba(0,200,220,.20)';
+      vpdBox.innerHTML='<b>💧 VPD BAJO</b> — Óptimo para enraizamiento y clones.<br>En vegetativo/floración: reducí HR con deshumidificador.';
+    } else if (v <= 1.10) {
+      vpdBox.style.background='rgba(0,230,118,.12)'; vpdBox.style.color='#00E676'; vpdBox.style.border='1px solid rgba(0,230,118,.25)';
+      vpdBox.innerHTML='<b>✅ VPD ÓPTIMO VEGETATIVO</b> — Máxima fotosíntesis y crecimiento.<br>→ Inyectá CO₂ (800-1200 ppm), mantené riegos frecuentes.';
+    } else if (v <= 1.30) {
+      vpdBox.style.background='rgba(139,195,74,.14)'; vpdBox.style.color='#8BC34A'; vpdBox.style.border='1px solid rgba(139,195,74,.25)';
+      vpdBox.innerHTML='<b>🌿 VPD ÓPTIMO FLORACIÓN</b> — Alta producción de cannabinoides y terpenos.<br>→ Balance K/Ca en fertirriego, monitoreá humedad del sustrato.';
+    } else if (v <= 1.60) {
+      vpdBox.style.background='rgba(249,168,37,.12)'; vpdBox.style.color='#F9A825'; vpdBox.style.border='1px solid rgba(249,168,37,.25)';
+      vpdBox.innerHTML='<b>💨 VPD ALTO — FLORACIÓN TARDÍA</b> — Compactación de flor, inhibe <i>Botrytis</i>.<br>→ Mantené HR 35-45% en precosecha. Si estás en vegetativo: humidificá.';
+    } else {
+      vpdBox.style.background='rgba(255,82,82,.12)'; vpdBox.style.color='#FF5252'; vpdBox.style.border='1px solid rgba(255,82,82,.25)';
+      vpdBox.innerHTML='<b>🚨 VPD CRÍTICAMENTE ALTO</b> — Estrés hídrico severo. Marchitamiento y pérdida de terpenos.<br>→ Reducí temp YA, inyectá humedad, bajá intensidad de luz, regá con agua limpia.';
+    }
     document.getElementById('vTemp').innerHTML = t.toFixed(1)+'<span class="unit">°C</span>';
     document.getElementById('vHum').innerHTML = h.toFixed(0)+'<span class="unit">%</span>';
     document.getElementById('vVPD').innerHTML = v.toFixed(2)+'<span class="unit">kPa</span>';
