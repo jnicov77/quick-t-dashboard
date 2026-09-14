@@ -16,7 +16,8 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
   .mc-time { font-size:20px; font-weight:600; color:var(--purple); letter-spacing:.03em; }
   .mc-date { font-size:9px; color:var(--dim); margin-top:2px; }
 
-.title-box { border:1.5px solid; border-image:linear-gradient(90deg,var(--cyan),var(--purple))1; border-radius:20px; padding:10px 18px; box-shadow: 0 0 30px rgba(0,212,212,.15), 0 0 60px rgba(179,136,255,.12); }
+.title-box-wrap { border-radius:20px; background:linear-gradient(90deg,var(--cyan),var(--purple)); padding:2px; box-shadow: 0 0 30px rgba(0,212,212,.15), 0 0 60px rgba(179,136,255,.12); }
+.title-box { background:var(--bg); border-radius:18px; padding:10px 18px; text-align:center; }
 .title-box h1 { font-size:32px; font-weight:700; background:linear-gradient(90deg,var(--cyan),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .title-box .sub { font-size:10px; color:var(--dim); letter-spacing:.05em; }
 .online { background:rgba(0,230,118,.12); color:var(--green); padding:8px 16px; border-radius:20px; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 0 25px rgba(0,230,118,.25), 0 0 40px rgba(0,230,118,.10); }
@@ -66,7 +67,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 @media(max-width:700px) {
   .dash { grid-template-columns:1fr; gap:10px; max-width:100%; padding:0 8px; }
   .title-bar { grid-column:1; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
-  .title-box, .mini-clock, .online { width:100%; text-align:center; }
+  .title-box-wrap, .title-box, .mini-clock, .online { width:100%; text-align:center; }
   .title-box h1 { font-size:26px; }
   .gauge-panel { grid-column:1 !important; }
   .gauge-panel .val { font-size:36px; }
@@ -82,9 +83,11 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 
   <!-- TITLE (CENTERED) -->
   <div class="title-bar">
-    <div class="title-box" style="text-align:center;">
-      <img src="roxs-logo.png" alt="ROXS" style="height:80px; max-width:100%; object-fit:contain;">
-      <div class="sub" style="margin-top:6px;">Monitoreo ambiental y seguimiento inteligente de tus cultivos</div>
+    <div class="title-box-wrap">
+      <div class="title-box">
+        <img src="roxs-logo.png" alt="ROXS" style="height:80px; max-width:100%; object-fit:contain;">
+        <div class="sub" style="margin-top:6px;">Monitoreo ambiental y seguimiento inteligente de tus cultivos</div>
+      </div>
     </div>
     <div class="mini-clock">
       <div class="mc-time" id="liveTime">--:--:--</div>
