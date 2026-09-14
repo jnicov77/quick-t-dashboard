@@ -136,6 +136,18 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
       <button onclick="calShift(1)">›</button>
     </div>
     <div class="cal-grid" id="calGridDD"></div>
+    <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+      <input type="date" id="evDate" style="flex:1; min-width:100px; padding:8px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:8px; color:#fff; font-size:11px;">
+      <input type="text" id="evVariety" placeholder="Variedad" style="flex:1; min-width:80px; padding:8px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:8px; color:#fff; font-size:11px;">
+      <select id="evStage" style="padding:8px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:8px; color:#fff; font-size:11px;">
+        <option value="Siembra">🌱 Siembra</option>
+        <option value="Poda">✂️ Poda</option>
+        <option value="Cosecha">🚜 Cosecha</option>
+      </select>
+      <button onclick="addEvent()" style="padding:8px 14px; background:var(--cyan); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:11px;">+</button>
+    </div>
+    <div id="evList" style="margin-top:10px; font-size:11px; color:var(--dim);"></div>
+    <div id="evAlert" style="margin-top:8px; padding:8px 12px; border-radius:8px; font-size:11px; display:none;"></div>
   </div>
 
 </div>
