@@ -198,6 +198,38 @@ function renderCal() {
 }
 function calShift(n){calOffset+=n;renderCal();}
 renderCal();
+
+// ── CALENDAR EVENTS (localStorage) ──
+function getEvs(){try{return JSON.parse(localStorage.getItem('roxs_ev')||'[]');}catch(e){return[];}}
+function saveEvs(e){localStorage.setItem('roxs_ev',JSON.stringify(e));}
+function addEvent(){
+  var d=document.getElementById('evDate').value,v=document.getElementById('evVariety').value.trim(),s=document.getElementById('evStage').value;
+  if(!d||!v)return;
+  var evs=getEvs(); evs.push({date:d,variety:v,stage:s});
+  saveEvs(evs); document.getElementById('evVariety').value=''; renderCal();
+}
+function delEv(i){var evs=getEvs();evs.splice(i,1);saveEvs(evs);renderCal();}
+function renderEvs(){
+  var evs=getEvs(); evs.sort(function(a,b){return a.date.localeCompare(b.date);});
+  var now=new Date(), today=now.toISOString().slice(0,10);
+  var upcoming=evs.filter(function(e){return e.date>=today;});
+  var h='';
+  evs.forEach(function(e,i){h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;margin:2px 0;background:rgba(255,255,255,.03);border-radius:6px;"><span>'+e.date+' — '+e.stage+' — <b>'+e.variety+'</b></span><span onclick="delEv('+i+')" style="cursor:pointer;color:#f44;font-size:14px;">✕</span></div>';});
+  document.getElementById('evList').innerHTML=h||'Sin eventos — agregá fechas de cultivo';
+  var al=document.getElementById('evAlert');
+  if(upcoming.length){
+    var nx=upcoming[0], days=Math.ceil((new Date(nx.date)-now)/86400000);
+    if(days<=7){al.style.display='block';al.style.background='rgba(249,168,37,.15)';al.style.color='#F9A825';al.textContent='⏰ '+nx.stage+' de '+nx.variety+(days===0?' — ¡HOY!':' en '+days+' día'+(days>1?'s':''));}
+    else{al.style.display='none';}
+  }else{al.style.display='none';}
+}
+
+// Override renderCal to also show events
+var _renderCalOrig = renderCal;
+renderCal = function(){
+  _renderCalOrig();
+  renderEvs();
+};
 </script>
 </body>
 </html>
