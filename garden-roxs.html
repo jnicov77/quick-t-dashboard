@@ -12,7 +12,8 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 /* ── TITLE BAR ── */
 .title-bar { grid-column:1/4; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 
-  .mini-clock { background:var(--panel); border:1px solid rgba(179,136,255,.15); border-radius:var(--radius); padding:10px 16px; text-align:center; box-shadow:0 0 20px rgba(179,136,255,.10); }
+  .last-update { font-size:9px; color:var(--dim); white-space:nowrap; }
+.mini-clock { background:var(--panel); border:1px solid rgba(179,136,255,.15); border-radius:var(--radius); padding:10px 16px; text-align:center; box-shadow:0 0 20px rgba(179,136,255,.10); }
   .mc-time { font-size:20px; font-weight:600; color:var(--purple); letter-spacing:.03em; }
   .mc-date { font-size:9px; color:var(--dim); margin-top:2px; }
 
@@ -94,6 +95,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
       <div class="mc-date" id="liveDate">---</div>
     </div>
     <div class="online" id="statusDot">EN LÍNEA</div>
+    <div class="last-update" id="lastUpdate" style="font-size:9px; color:var(--dim); text-align:right;"></div>
   </div>
   <div class="vpd-banner" id="vpdBanner" style="grid-column:1/4; padding:14px 20px; border-radius:var(--radius); font-size:14px; font-weight:600; text-align:center; display:none; margin-top:0;"></div>
 
@@ -184,6 +186,8 @@ async function fetchData() {
     offlineCount = 0;
     var sd = document.getElementById('statusDot');
     sd.textContent = 'EN LÍNEA';
+    var lu = document.getElementById('lastUpdate');
+    if (lu && d.timestamp) { var ts = String(d.timestamp); lu.textContent = '🕐 '+ts.slice(0,16).replace('T',' '); } else if (lu) { lu.textContent = ''; }
     sd.style.background = 'rgba(0,230,118,.12)';
     sd.style.color = '#00E676';
     // VPD recomendación
@@ -231,6 +235,7 @@ async function fetchData() {
     var sd2 = document.getElementById('statusDot');
     if (offlineCount >= 3) {
       sd2.textContent = 'SIN CONEXIÓN';
+      var lu2 = document.getElementById('lastUpdate'); if (lu2) lu2.textContent = '';
       sd2.style.background = 'rgba(255,82,82,.12)';
       sd2.style.color = '#FF5252';
     }
