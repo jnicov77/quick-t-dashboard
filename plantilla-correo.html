@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUICK-T — Plantilla de correo</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #0D0D0D; color: #fff; padding: 30px; }
+  .editor { max-width: 800px; margin: 0 auto; }
+  label { display: block; font-size: 12px; color: #888; margin: 12px 0 4px; }
+  input, textarea { width: 100%; padding: 10px; border: 1px solid #333; border-radius: 8px; background: #1a1a1a; color: #fff; font-size: 14px; }
+  textarea { height: 120px; resize: vertical; }
+  .preview { margin-top: 30px; padding: 20px; background: #1a1a1a; border-radius: 12px; }
+  .preview h3 { margin: 0 0 15px; color: #B388FF; font-size: 14px; }
+  .preview iframe { width: 100%; height: 500px; border: 1px solid #333; border-radius: 8px; background: #fff; }
+  button { margin-top: 20px; padding: 12px 30px; background: #510C82; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  button:hover { background: #6A1B9A; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-copy { background: #333; }
+  .btn-copy:hover { background: #444; }
+  #copied { display: none; color: #00E676; font-size: 12px; margin-left: 10px; }
+</style>
+</head>
+<body>
+<div class="editor">
+  <h2 style="color:#B388FF;">📧 Plantilla de correo QUICK-T</h2>
+  <p style="color:#888;font-size:13px;">Llená los campos y copiá el HTML generado. Pegalo en tu cliente de correo.</p>
+
+  <label>🏢 Nombre de la empresa</label>
+  <input id="empresa" value="[Nombre de la Empresa]" oninput="update()">
+
+  <label>👤 Nombre del contacto (opcional)</label>
+  <input id="contacto" value="" placeholder="Ej: Daniel, Keyla..." oninput="update()">
+
+  <label>✉️ Mensaje principal</label>
+  <textarea id="mensaje" oninput="update">Somos QUICK-T, una empresa colombiana que diseña y fabrica sistemas de monitoreo inteligente para operaciones en tiempo real.
+
+Nuestros productos — IoT Monitoreo, Asistenc-IA y Perspective — ya están ayudando a empresas del sector a reducir pérdidas, automatizar procesos y tomar decisiones basadas en datos reales.
+
+¿Podemos agendar 15 minutos esta semana para mostrarte cómo funciona?</textarea>
+
+  <label>📞 Datos de contacto</label>
+  <input id="firma" value="Nicolás Valencia | QUICK-T | +57 300 000 0000 | hola@quick-t.co" oninput="update()">
+
+  <div class="preview">
+    <h3>👁️ Vista previa</h3>
+    <iframe id="preview"></iframe>
+  </div>
+
+  <div style="margin-top:15px;padding:12px;background:#2d1a3d;border-radius:8px;border:1px solid #510C82;">
+    <strong>📧 Cómo enviar el correo:</strong><br>
+    <span style="color:#aaa;font-size:12px;">1. Hacé clic en <b>"Abrir en navegador"</b> → se abre el correo formateado<br>
+    2. Seleccioná todo (Ctrl+A) y copiá (Ctrl+C)<br>
+    3. Pegá en Gmail/Outlook — el diseno se mantiene</span>
+  </div>
+  <div class="btn-row">
+    <button onclick="copiar()">📋 Copiar HTML</button>
+    <button class="btn-copy" onclick="abrirEnNavegador()">🌐 Abrir en navegador</button>
+    <span id="copied">✅ ¡Copiado!</span>
+  </div>
+</div>
+
+<script>
+const PLANTILLA = `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#0D0D0D;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0D0D0D;padding:30px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#121212;border-radius:12px;overflow:hidden;border:1px solid #222;">
+
+  <!-- HEADER -->
+  <tr><td style="background:linear-gradient(135deg,#510C82,#B388FF);padding:25px 30px;text-align:center;">
+    <h1 style="margin:0;font-size:28px;color:#fff;letter-spacing:-.02em;">⚡ QUICK-T</h1>
+    <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,.7);">Monitoreo inteligente en tiempo real</p>
+  </td></tr>
+
+  <!-- SALUDO -->
+  <tr><td style="padding:25px 30px;">
+    <p style="margin:0 0 10px;font-size:16px;color:#fff;">Hola{{CONTACTO}},</p>
+    <p style="margin:0 0 20px;font-size:15px;color:#ccc;line-height:1.6;">{{MENSAJE}}</p>
+  </td></tr>
+
+  <!-- PRODUCTOS -->
+  <tr><td style="padding:0 30px 20px;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td style="background:#1a1a1a;border-radius:8px;padding:12px;text-align:center;border:1px solid #2a2a2a;">
+        <p style="margin:0;font-size:20px;">🌡️</p>
+        <p style="margin:4px 0 0;font-size:12px;color:#00D4D4;font-weight:600;">IoT Monitoreo</p>
+      </td>
+      <td width="8"></td>
+      <td style="background:#1a1a1a;border-radius:8px;padding:12px;text-align:center;border:1px solid #2a2a2a;">
+        <p style="margin:0;font-size:20px;">🧠</p>
+        <p style="margin:4px 0 0;font-size:12px;color:#00E676;font-weight:600;">Asistenc-IA</p>
+      </td>
+      <td width="8"></td>
+      <td style="background:#1a1a1a;border-radius:8px;padding:12px;text-align:center;border:1px solid #2a2a2a;">
+        <p style="margin:0;font-size:20px;">📊</p>
+        <p style="margin:4px 0 0;font-size:12px;color:#B388FF;font-weight:600;">Perspective</p>
+      </td>
+    </tr>
+    </table>
+  </td></tr>
+
+  <!-- CTA -->
+  <tr><td style="padding:0 30px 25px;text-align:center;">
+    <a href="https://quick-t.co" style="display:inline-block;background:#510C82;color:#fff;text-decoration:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:600;">Agendar una demo →</a>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="border-top:1px solid #222;padding:15px 30px;text-align:center;">
+    <p style="margin:0;font-size:11px;color:#666;">{{FIRMA}}</p>
+    <p style="margin:4px 0 0;font-size:10px;color:#444;">© 2026 QUICK-T — Diseñamos, fabricamos y operamos sistemas de monitoreo</p>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+
+function update() {
+  var e = document.getElementById('empresa').value || '[Empresa]';
+  var c = document.getElementById('contacto').value.trim();
+  var m = document.getElementById('mensaje').value.replace(/\n/g,'<br>');
+  var f = document.getElementById('firma').value;
+
+  var html = PLANTILLA;
+  html = html.replace('Hola{{CONTACTO}}', c ? 'Hola ' + c + ',' : 'Hola,');
+  html = html.replace('{{MENSAJE}}', m);
+  html = html.replace('{{FIRMA}}', f);
+
+  var iframe = document.getElementById('preview');
+  iframe.srcdoc = html;
+  iframe.dataset.html = html;
+}
+
+function copiar() {
+  var html = document.getElementById('preview').dataset.html;
+  navigator.clipboard.writeText(html).then(function() {
+    var c = document.getElementById('copied');
+    c.style.display = 'inline';
+    setTimeout(function() { c.style.display = 'none'; }, 2000);
+  });
+}
+
+function abrirEnNavegador() {
+  var html = document.getElementById('preview').dataset.html;
+  var w = window.open('', '_blank', 'width=650,height=700');
+  w.document.write(html);
+  w.document.close();
+}
+
+update();
+</script>
+</body>
+</html>
