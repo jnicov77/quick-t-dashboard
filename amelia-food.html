@@ -1,151 +1,253 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-CO">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amelia — QUICK-T Food</title>
-<meta name="description" content="Menú digital de Amelia — Desde 1991. Fondue, Fagottos y más.">
-<link rel="manifest" href="data:application/json,{}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0D0D0D">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Amelia">
+<meta name="application-name" content="Amelia · QUICK-T Food">
+<meta name="description" content="Amelia, fondue y fagottos desde 1991. Explora la carta, descubre maridajes y prepara tu pedido por WhatsApp con QUICK-T Food.">
+<title>Amelia · Fondue & Fagottos | QUICK-T Food</title>
+<link id="app-manifest" rel="manifest">
+<link id="app-icon" rel="icon">
+<link id="apple-icon" rel="apple-touch-icon">
 <style>
-:root{--bg:#0D0D0D;--gold:#D4A843;--cream:#FFF8E7;--dark:#1A1A1A;--dim:#888;--card:#121212;--accent:#B388FF}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:#fff;min-height:100vh}
-.container{max-width:480px;margin:0 auto;padding:16px}
-.header{text-align:center;padding:24px 0 16px;position:sticky;top:0;background:var(--bg);z-index:10}
-.header .brand{font-size:10px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
-.header h1{font-size:32px;font-weight:700;color:var(--gold);letter-spacing:-.02em}
-.header .since{font-size:12px;color:var(--dim);margin-top:4px}
-.cats{display:flex;gap:8px;overflow-x:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.cats::-webkit-scrollbar{display:none}
-.cat{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--card);color:var(--dim);border:1px solid transparent;transition:.2s}
-.cat.active{background:rgba(212,168,67,.12);color:var(--gold);border-color:rgba(212,168,67,.25)}
-.section-title{font-size:18px;font-weight:700;color:var(--gold);margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
-.item{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:12px}
-.item-info{flex:1}
-.item-info h3{font-size:15px;font-weight:600;margin-bottom:2px}
-.item-info p{font-size:12px;color:var(--dim);line-height:1.4}
-.item-price{font-size:15px;font-weight:700;color:var(--gold);white-space:nowrap;padding-top:2px}
-.item-price small{font-size:11px;color:var(--dim);display:block;font-weight:400}
-.note{font-size:11px;color:var(--dim);font-style:italic;margin-top:8px;padding:8px 12px;background:var(--card);border-radius:8px;border-left:2px solid var(--gold)}
-.footer{text-align:center;padding:32px 16px;color:var(--dim);font-size:11px}
-.footer span{color:var(--accent)}
+:root{--bg:#0D0D0D;--surface:#181715;--surface2:#211f1a;--gold:#D4A843;--cream:#f7f1e5;--muted:#b9b2a5;--purple:#B388FF;--line:#ffffff15;--green:#65df91;--radius:18px;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:142px}body{margin:0;background:var(--bg);color:var(--cream);font-size:14px;line-height:1.5}button,input,select,textarea{font:inherit}button,a,input,textarea{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}a{color:inherit}button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--purple);outline-offset:4px}button{color:inherit}svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.app{max-width:480px;min-height:100dvh;margin:auto;background:var(--bg);box-shadow:0 0 100px #d4a84306}.skip{position:fixed;top:-100px;z-index:1000;background:var(--gold);color:var(--bg);padding:12px}.skip:focus{top:0}.topbar{height:64px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:9px;letter-spacing:.08em;font-size:12px;font-weight:800}.brand-mark{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--gold);border-radius:8px;color:var(--gold);font-size:18px}.brand span:last-child{font-weight:400;color:var(--gold);letter-spacing:.03em}.top-note{color:var(--muted);font-size:10px;letter-spacing:.09em;text-transform:uppercase}.hero{position:relative;min-height:390px;display:flex;align-items:flex-end;padding:30px 24px;isolation:isolate;overflow:hidden}.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 47%;z-index:-3}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 0%,#0d0d0dbc 36%,#0d0d0d10 90%);z-index:-2}.hero:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 20% 90%,#d4a84316,transparent 60%);z-index:-1}.eyebrow{text-transform:uppercase;letter-spacing:.23em;font-size:10px;font-weight:650;color:var(--gold);margin:0 0 10px}.hero h1{font-size:68px;line-height:1;font-weight:300;letter-spacing:-.065em;margin:0 0 10px}.hero .since{display:flex;align-items:center;gap:10px;color:var(--gold);font-size:11px;letter-spacing:.2em;text-transform:uppercase}.since:before{content:"";width:28px;height:1px;background:var(--gold)}.hero p:last-child{font-size:14px;font-weight:300;max-width:250px;margin:15px 0 0;color:#e3d9c8}.experience{margin:0 20px 22px;padding:15px 0;border-top:1px solid #d4a84330;border-bottom:1px solid #d4a84330;display:flex;gap:12px;align-items:center}.experience svg{color:var(--purple)}.experience strong{font-size:12px;font-weight:600}.experience p{font-size:11px;color:var(--muted);margin:3px 0 0}.experience summary{cursor:pointer;list-style:none}.experience summary::-webkit-details-marker{display:none}.experience details>p{font-size:12px;line-height:1.6;max-width:355px}.nav-wrap{position:sticky;top:0;z-index:20;background:#0d0d0df5;border-bottom:1px solid var(--line);padding:13px 0 10px}.nav-label{display:flex;justify-content:space-between;padding:0 22px 9px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}.nav-label span:last-child{color:var(--gold)}.tabs{display:flex;gap:7px;overflow:auto;padding:0 20px 3px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{flex-shrink:0;text-decoration:none;padding:11px 17px;border-radius:100px;min-height:44px;border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:600;transition:background .2s,color .2s}.tab[aria-current="true"]{background:var(--gold);color:#17130a;border-color:var(--gold);box-shadow:0 2px 18px #d4a84316}.menu{padding:0 20px}.category{padding-top:32px;scroll-margin-top:112px}.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:16px}.section-heading h2{font-size:28px;letter-spacing:-.045em;font-weight:500;margin:0}.section-heading .count{font-size:11px;color:var(--muted)}.gallery{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#d4a84340 transparent;padding-bottom:8px;margin:0 -20px 18px;padding-left:20px;padding-right:20px}.gallery figure{position:relative;margin:0;flex:0 0 76%;height:177px;border-radius:14px;overflow:hidden;scroll-snap-align:center;background:var(--surface)}.gallery img{width:100%;height:100%;object-fit:cover}.gallery figcaption{position:absolute;inset:auto 0 0;padding:27px 13px 10px;background:linear-gradient(transparent,#000c);font-size:11px;letter-spacing:.03em}.gallery-empty{color:var(--muted);font-size:12px;background:var(--surface);border:1px dashed #d4a84335;border-radius:14px;padding:18px;margin-bottom:20px}.gallery-empty span{font-size:22px;margin-right:8px}.story{font-size:13px;line-height:1.85;color:#c8c0b0;margin:8px 0 15px;text-wrap:pretty}.group-title{font-size:12px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin:24px 0 8px;font-weight:650}.category-note{font-size:11px;line-height:1.7;color:var(--muted);padding:10px 0 15px;border-bottom:1px solid var(--line);margin:0}.dish{padding:18px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:76px minmax(0,1fr);gap:13px}.dish-media{height:82px;position:relative;border-radius:12px;overflow:hidden;background:var(--surface2);display:grid;place-items:center;align-self:start}.dish-media img{position:absolute;width:100%;height:100%;object-fit:cover}.dish-media .emoji{font-size:29px}.dish h4{font-size:15px;font-weight:550;line-height:1.35;letter-spacing:-.01em;margin:0 0 5px;overflow-wrap:anywhere}.description{font-size:11px;color:var(--muted);line-height:1.65;margin:0 0 8px}.pairing{color:var(--purple);display:inline-flex;align-items:flex-start;gap:5px;padding:5px 7px;background:#b388ff0b;border:1px solid #b388ff23;border-radius:7px;font-size:10px;line-height:1.5;margin:2px 0 7px;max-width:100%;text-align:left}.pairing b{font-weight:650;white-space:nowrap}.purchase-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:49px}.price{color:var(--gold);font-weight:600;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}.variant{display:block;font-weight:400;font-size:10px;color:var(--muted);white-space:normal}.add{width:44px;height:44px;flex-shrink:0;border:1px solid #d4a84355;border-radius:50%;background:#d4a8430d;color:var(--gold);font-size:24px;line-height:1;transition:transform .15s,background .15s}.add:hover{background:#d4a84326}.add:active{transform:scale(.9)}.closing{padding:44px 20px 30px;text-align:center}.closing p{max-width:275px;margin:0 auto 20px;font-size:21px;line-height:1.6;font-weight:300;color:#dfd0b0}.closing small{display:block;font-size:10px;line-height:1.8;color:var(--muted)}.closing .powered{margin-top:20px;letter-spacing:.09em;color:var(--gold)}footer{padding-bottom:130px}.floating{position:fixed;z-index:30;bottom:calc(18px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),448px);display:flex;align-items:center;gap:10px}.cart-toggle{display:flex;align-items:center;gap:11px;flex:1;min-width:0;min-height:60px;padding:12px 16px;background:var(--gold);color:#171207;border:1px solid #f2cb7040;border-radius:18px;box-shadow:0 5px 30px #d4a84326,0 8px 25px #0008;font-weight:650;text-align:left}.cart-copy{flex:1;display:flex;flex-direction:column;line-height:1.45}.cart-copy small{font-size:10px;font-weight:450}.cart-count{font-size:11px;background:#19130d;color:var(--gold);min-width:24px;height:24px;display:grid;place-items:center;border-radius:50%}.wa-float{display:flex;align-items:center;justify-content:center;width:60px;height:60px;flex-shrink:0;text-decoration:none;border-radius:18px;background:#173622;border:1px solid #65df9160;color:var(--green);box-shadow:0 7px 24px #0007}.wa-float svg{width:28px;height:28px}.toast{position:fixed;left:50%;bottom:calc(94px + env(safe-area-inset-bottom));transform:translate(-50%,12px);background:#29251d;color:var(--cream);font-size:12px;padding:12px 18px;border:1px solid #d4a84350;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;z-index:80;max-width:calc(100% - 40px);text-align:center;width:max-content}.toast.visible{opacity:1;transform:translate(-50%,0)}.status{font-size:11px;padding:10px 20px;background:#302717;color:#f0d69d}.status[hidden]{display:none}.sheet{position:fixed;inset:auto 0 0;margin:0 auto;padding:0;width:100%;max-width:480px;max-height:90dvh;overflow:auto;border:1px solid #d4a84335;border-bottom:0;border-radius:26px 26px 0 0;background:#181715;color:var(--cream);overscroll-behavior:contain;box-shadow:0 -12px 70px #0008}.sheet::backdrop{background:#000b}.sheet[open]{animation:slide-up .28s cubic-bezier(.2,.7,.3,1)}@keyframes slide-up{from{transform:translateY(100%);opacity:.5}to{transform:translateY(0);opacity:1}}.handle{height:4px;width:38px;border-radius:6px;background:#ffffff30;margin:12px auto 0}.sheet-header{position:sticky;top:0;z-index:2;background:#181715;padding:15px 22px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}.sheet-header h2{font-size:23px;letter-spacing:-.04em;margin:0;font-weight:550}.sheet-header p{font-size:11px;color:var(--muted);margin:3px 0 0}.icon-button{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:transparent;border:1px solid var(--line);font-size:22px}.sheet-body{padding:8px 22px 22px}.empty-cart{text-align:center;padding:35px 0}.empty-cart svg{width:42px;height:42px;color:var(--gold)}.empty-cart h3{font-weight:500;font-size:19px}.empty-cart p{font-size:13px;color:var(--muted)}.cart-line{padding:15px 0;border-bottom:1px solid var(--line)}.cart-line-top{display:flex;justify-content:space-between;align-items:start;gap:15px}.cart-line h3{font-size:13px;margin:0;font-weight:550}.cart-line small{font-size:10px;color:var(--muted)}.cart-line-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:8px}.stepper{display:flex;align-items:center;gap:11px}.stepper button{width:44px;height:44px;border-radius:12px;border:1px solid #d4a84340;background:#d4a8430a;color:var(--gold);font-size:22px}.stepper output{font-size:13px;min-width:20px;text-align:center;font-variant-numeric:tabular-nums}.remove{font-size:11px;background:none;border:0;text-decoration:underline;color:var(--muted);padding:12px 0 12px 12px;min-height:44px}.order-fields{margin-top:20px}.field-label{display:block;font-size:12px;margin:14px 0 7px;color:var(--muted)}input,textarea{width:100%;border:1px solid #ffffff25;border-radius:10px;background:#0d0d0d;color:var(--cream);padding:12px;font-size:16px}textarea{resize:vertical;min-height:78px}.totals{display:flex;justify-content:space-between;align-items:center;margin:20px 0 3px;font-size:18px}.totals strong{color:var(--gold);font-variant-numeric:tabular-nums}.fineprint{font-size:10px;color:var(--muted);line-height:1.7;margin:7px 0 14px}.primary{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--gold);color:#171207;font-weight:650;min-height:52px;border:0;border-radius:12px;text-decoration:none;width:100%;padding:12px 18px}.secondary{background:none;border:1px solid #d4a84350;color:var(--gold);border-radius:12px;padding:12px;min-height:48px;width:100%;margin-top:10px}.checkout{padding:16px 0 calc(8px + env(safe-area-inset-bottom))}.checkout h3{font-size:16px;font-weight:550}.checkout textarea{font-size:12px;line-height:1.65;min-height:180px;margin-bottom:10px}.checkout a{background:var(--green);color:#112119}.warning{color:#ead19b;background:#d4a8430e;padding:10px 12px;border-radius:8px;font-size:11px;line-height:1.6}.noscript{margin:20px;padding:20px;border:1px solid var(--gold);border-radius:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}[hidden]{display:none!important}
+@media(min-width:600px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}@media(max-width:350px){.topbar{padding:0 16px}.top-note{font-size:9px}.hero h1{font-size:59px}.dish{grid-template-columns:60px minmax(0,1fr);gap:10px}.dish-media{height:70px}.menu{padding:0 16px}.pairing{font-size:9px}.floating{width:calc(100% - 24px)}.cart-toggle{padding:10px 12px}.cart-copy{font-size:13px}.gallery{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <div class="brand">QUICK-T Food</div>
-    <h1>Amelia</h1>
-    <div class="since">El original — Desde 1991</div>
-  </div>
-
-  <div class="cats" id="cats">
-    <div class="cat active" data-cat="fondue">🧀 Fondue</div>
-    <div class="cat" data-cat="fagottos">🌯 Fagottos</div>
-    <div class="cat" data-cat="adiciones">🥗 Adiciones</div>
-    <div class="cat" data-cat="bebidas">🥤 Bebidas</div>
-    <div class="cat" data-cat="postres">🍰 Postres</div>
-    <div class="cat" data-cat="entradas">🍴 Entradas</div>
-    <div class="cat" data-cat="picar">🥜 Para Picar</div>
-  </div>
-
-  <div id="menu"></div>
-
-  <div class="footer">
-    Menú digital powered by <span>QUICK-T Food</span><br>
-    Escaneá · Pedí · Disfrutá
-  </div>
+<a class="skip" href="#menu">Ir a la carta</a>
+<div class="app" id="app">
+<header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">Q</span>QUICK-T <span>Food</span></div><span class="top-note">A tu mesa. A tu ritmo.</span></header>
+<div id="connection-status" class="status" role="status" hidden>Sin conexión. Tu selección sigue en este dispositivo; WhatsApp necesita internet.</div>
+<section class="hero" aria-labelledby="restaurant-name"><img class="hero-photo" src="./img/amelia/foto_9.jpeg" alt="Fondue de queso servido en una mesa para compartir" fetchpriority="high" width="700" height="1050"><div><p class="eyebrow">Fondue & Fagottos</p><h1 id="restaurant-name">Amelia</h1><div class="since">Desde 1991</div><p>El placer de compartir,<br>sin mirar el reloj.</p></div></section>
+<div class="experience"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></svg><details><summary><strong>AI Pairing · Tu guía de maridaje</strong><p>Un acompañante para cada sabor. Toca para conocer más.</p></summary><p>Recomendaciones predefinidas para acompañar tu elección, no un chat de IA en vivo. Los maridajes no se agregan al pedido. Consulta disponibilidad y alternativas sin alcohol con nuestro equipo.</p></details></div>
+<nav class="nav-wrap" aria-label="Categorías de la carta"><div class="nav-label"><span>Explora la carta</span><span>Precios en COP</span></div><div class="tabs" id="category-tabs"></div></nav>
+<main id="menu" class="menu" tabindex="-1"></main>
+<noscript><p class="noscript">Activa JavaScript para consultar la carta y preparar tu pedido. También puedes consultar la carta con el equipo de Amelia.</p></noscript>
+<footer class="closing"><p>Porque amamos la vida<br>le ponemos pasión<br>a la comida.</p><small>Fotografías de la carta de Amelia. Algunas son representativas<br>de la categoría; los ingredientes están en cada descripción.<br>Confirma alergias y disponibilidad antes de pedir.</small><small class="powered">AMELIA · DESDE 1991<br>Una experiencia QUICK-T Food</small></footer>
 </div>
-
+<div class="floating" aria-label="Tu pedido"><button class="cart-toggle" id="cart-toggle" aria-haspopup="dialog" aria-controls="cart-sheet"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3h2l3 12h11l2-8H6M9 20h.01M18 20h.01"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span class="cart-copy">Mi pedido<small id="cart-subtitle">Elige algo para compartir</small></span><span class="cart-count" id="cart-count">0</span><span class="sr-only" id="cart-accessible">0 productos</span></button><a id="whatsapp-float" class="wa-float" href="https://wa.me/573000000000?text=" target="_blank" rel="noopener noreferrer" aria-label="Compartir pedido por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 3.7A10 10 0 0 0 4.7 16L3 22l6-1.6A10 10 0 0 0 20.4 3.7Z"/><path d="M8 7c-2 1 0 5 2 7s5 3 6 1l1-2-3-1-1 1c-2-1-3-2-3-3l1-1-1-3Z"/></svg></a></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog class="sheet" id="cart-sheet" aria-labelledby="cart-title"><div class="handle" aria-hidden="true"></div><div class="sheet-header"><div><h2 id="cart-title">Tu mesa, tu elección</h2><p>Amelia · Revisa tu pedido</p></div><button class="icon-button" id="close-cart" aria-label="Cerrar pedido" autofocus>×</button></div><div class="sheet-body"><div id="cart-lines"></div><div id="cart-details" hidden><div class="order-fields"><label for="table" class="field-label">Mesa o nombre (opcional)</label><input id="table" maxlength="60" autocomplete="off" placeholder="Ej. Mesa 4 · Ana"><label for="notes" class="field-label">Algo que debamos saber (opcional)</label><textarea id="notes" maxlength="500" placeholder="Alergias, acompañamiento o alguna preferencia…"></textarea></div><p id="fondue-note" class="warning" hidden>La carta indica que los fondue se sirven de dos porciones en adelante. Confirma la combinación con el equipo.</p><div class="totals"><span>Subtotal</span><strong id="cart-total">$0</strong></div><p class="fineprint">Valores de la carta en pesos colombianos. Servicio voluntario no incluido. Sujeto a disponibilidad y confirmación del restaurante.</p><button class="primary" id="order-button">Hacer pedido <span aria-hidden="true">↗</span></button><section class="checkout" id="checkout" hidden aria-labelledby="checkout-title"><h3 id="checkout-title">Tu pedido está listo para compartir</h3><label class="sr-only" for="order-preview">Resumen del pedido</label><textarea id="order-preview" readonly></textarea><p class="warning">WhatsApp de demostración: +57 300 000 0000. El restaurante debe confirmar este número antes de usarlo para pedidos reales.</p><a class="primary" id="send-order" href="https://wa.me/573000000000?text=" target="_blank" rel="noopener noreferrer">Abrir WhatsApp <span aria-hidden="true">↗</span></a><p class="fineprint">Se abrirá un borrador; tú decides cuándo enviarlo. El pedido no queda confirmado al abrir WhatsApp.</p></section></div></div></dialog>
 <script>
-const MENU = {
-  fondue: {
-    title: '🧀 Fondue — Nuestras Especialidades',
-    note: 'Servido de dos porciones en adelante. Acompañado de baguette de masa madre.',
-    items: [
-      {name:'Queso Tradicional', desc:'Mezcla de quesos emmental, tilsit, gruyere y holandés.', price:'$69.900', sub:'150 gr', price2:'$112.900', sub2:'250 gr'},
-      {name:'Queso Azul', desc:'Nuestra mezcla de queso tradicional enriquecida con trozos de queso azul.', price:'$72.900', sub:'150 gr', price2:'$115.900', sub2:'250 gr'},
-      {name:'Queso Napolitano', desc:'Nuestra mezcla de queso tradicional añadiendo tomates cherry, pesto y salsa napolitana de la casa.', price:'$70.900', sub:'150 gr', price2:'$113.900', sub2:'250 gr'},
-      {name:'Res', desc:'Trozos de solomito. Acompañado de ensalada y salsas de la casa.', price:'$68.600', sub:'250 gr'},
-      {name:'Pollo', desc:'Trozos de pechuga de pollo apanado. Acompañado de ensalada y salsas de la casa.', price:'$66.600', sub:'250 gr'},
-      {name:'Mixto', desc:'Trozos de solomito y de pechuga de pollo apanado. Acompañado de ensalada y salsas de la casa.', price:'$68.600', sub:'250 gr'},
-    ]
-  },
-  fagottos: {
-    title: '🌯 Fagottos — Nuestras Especialidades',
-    note: 'Acompañados con chips de papa o ensalada.',
-    items: [
-      {name:'Jamón Serrano', desc:'Jamón serrano, tomate fresco, tomates secos, rúgula, queso parmesano y queso mozzarella.', price:'$41.900'},
-      {name:'Pollo', desc:'Pollo desmechado en salsa de alcaparras con queso ricotta, tomates frescos, tomates secos y queso mozzarella.', price:'$37.900'},
-      {name:'Solomito', desc:'Solomito en tiras en salsa de la casa, cebolla confitada, pimentón ahumado, champiñones y queso mozzarella.', price:'$44.900'},
-      {name:'Cerdo Agridulce', desc:'Cerdo en tiras en salsa agridulce a base de tomate y vino con queso mozzarella.', price:'$37.900'},
-      {name:'Trucha Entera', desc:'Trucha ahumada, tomates frescos, tomates secos, rúgula y queso mozzarella.', price:'$41.900'},
-      {name:'Brie', desc:'Queso brie, jamón serrano, salsa de fruta natural y queso mozzarella.', price:'$41.900'},
-      {name:'Pavo', desc:'Lonjas de pavo de finas hierbas, tomate fresco, lechuga, queso ricotta y queso mozzarella.', price:'$36.900'},
-    ]
-  },
-  adiciones: {
-    title: '🥗 Adiciones',
-    items: [
-      {name:'Manzana Verde', price:'$6.900'},
-      {name:'Tomate Cherry', price:'$7.200'},
-      {name:'Champiñones', price:'$7.600'},
-      {name:'Brócoli', price:'$7.600'},
-      {name:'Cabano', price:'$12.800'},
-    ]
-  },
-  bebidas: {
-    title: '🥤 Bebidas',
-    items: [
-      {name:'Bebidas', desc:'Consulta nuestra carta de bebidas con el mesero.', price:''}
-    ]
-  },
-  postres: {
-    title: '🍰 Postres',
-    items: [
-      {name:'Postres', desc:'Consulta nuestra selección de postres con el mesero.', price:''}
-    ]
-  },
-  entradas: {
-    title: '🍴 Entradas',
-    items: [
-      {name:'Entradas', desc:'Consulta nuestras entradas con el mesero.', price:''}
-    ]
-  },
-  picar: {
-    title: '🥜 Para Picar',
-    items: [
-      {name:'Para Picar', desc:'Consulta nuestras opciones con el mesero.', price:''}
-    ]
-  }
-};
-
-function render(cat) {
-  const data = MENU[cat];
-  if (!data) return;
-  let h = `<div class="section-title">${data.title}</div>`;
-  if (data.note) h += `<div class="note">${data.note}</div>`;
-  data.items.forEach(item => {
-    h += `<div class="item"><div class="item-info"><h3>${item.name}</h3>`;
-    if (item.desc) h += `<p>${item.desc}</p>`;
-    h += `</div><div class="item-price">${item.price || ''}`;
-    if (item.sub) h += `<small>${item.sub}</small>`;
-    if (item.price2) h += `<br>${item.price2}<small>${item.sub2||''}</small>`;
-    h += `</div></div>`;
-  });
-  document.getElementById('menu').innerHTML = h;
-}
-
-document.querySelectorAll('.cat').forEach(el => {
-  el.addEventListener('click', function() {
-    document.querySelectorAll('.cat').forEach(c => c.classList.remove('active'));
-    this.classList.add('active');
-    render(this.dataset.cat);
-  });
+'use strict';
+/* Source: carta amelia.pdf, 13 pages. Prices are integer COP, never inferred.
+   Everything except existing local photographs is embedded in this file.
+   This single-document build is PWA-ready; it does not claim offline caching. */
+const PAIRINGS = Object.freeze({
+  'Queso Tradicional':'Vino Blanco (Chardonnay)', 'Queso Azul':'Vino Tinto (Malbec)',
+  'Queso Napolitano':'Vino Rosado', 'Res':'Vino Tinto (Cabernet)',
+  'Pollo':'Vino Blanco (Sauvignon Blanc)', 'Mixto':'Vino Tinto (Merlot)',
+  'Jamón Serrano':'Cerveza Artesanal', 'Solomito':'Vino Tinto (Malbec)',
+  'Cerdo Agridulce':'Cóctel de Maracuyá', 'Trucha Entera':'Vino Blanco (Chardonnay)',
+  'Brie':'Vino Espumoso', 'Pavo':'Limonada Natural',
+  'Espinacas':'Vino Blanco (Sauvignon Blanc)', 'Berenjenas':'Vino Tinto (Merlot)',
+  'Champiñones':'Vino Tinto (Merlot)', 'Napolitano':'Vino Rosado',
+  'Vegetales':'Vino Blanco (Sauvignon Blanc)', 'Especial':'Vino Blanco (Chardonnay)'
 });
-
-render('fondue');
+const STORIES={
+  quesos:'Sabor, calidez y momentos para compartir. El equilibrio perfecto entre quesos selectos, vino blanco y un toque de ajo que se funden para sumergir pan fresco y vegetales crujientes.',
+  carnes:'Una experiencia a tu ritmo. Te permite cocinar cada trozo a tu gusto, directamente en tu mesa, creando un momento único.',
+  fagottos:'Este exquisito envuelto comienza con una fina capa de pan árabe, se rellena con una variedad de sabores y se saltea con pesto de albahaca. Una elección más ligera y saludable.'
+};
+const CATEGORIES=[
+ {id:'fondue',name:'Fondue',emoji:'🫕',gallery:[[9,'El ritual de compartir'],[10,'Quesos que se funden'],[11,'Carnes a tu ritmo']],note:'Nuestros fondue se sirven de dos porciones en adelante. Todos vienen acompañados de baguette de masa madre.'},
+ {id:'fagottos',name:'Fagottos',emoji:'🌯',gallery:[[12,'Pan árabe, pesto y mucho sabor'],[14,'Una especialidad de Amelia'],[17,'Hechos para disfrutar']],note:'Acompañados con chips de papa o ensalada.'},
+ {id:'adiciones',name:'Adiciones',emoji:'🥦',gallery:[],note:'Dale tu toque al fondue. Precio por adición.'},
+ {id:'bebidas',name:'Bebidas',emoji:'🍷',gallery:[[6,'Una copa para acompañar'],[24,'Bebidas para cada momento']],note:'Pregunta por sabores, referencias y disponibilidad. Bebidas alcohólicas solo para mayores de edad.'},
+ {id:'postres',name:'Postres',emoji:'🍨',gallery:[[8,'Un final dulce'],[22,'Fondue de chocolate o arequipe']],note:'Para terminar sin prisa. Consulta los sabores de nuestros postres de palo.'},
+ {id:'entradas',name:'Entradas',emoji:'🍽️',gallery:[[19,'Cremas y sopas'],[18,'Ensaladas frescas'],[20,'Algo para compartir']],note:'Cremas, ensaladas, gratinados y nuestra selección para picar.'}
+];
+const MENU=[];
+function dish(id,category,group,name,desc,price,photo=null,emoji=null,pairing=null){
+ MENU.push({id,category,group,name,desc,variants:Array.isArray(price)?price.map(([label,value])=>({label,price:value})):[{label:'',price}],photo,emoji:emoji||CATEGORIES.find(c=>c.id===category).emoji,pairing:category==='bebidas'?null:(pairing||PAIRINGS[name]||(category==='postres'?'Café Americano':category==='adiciones'?'Agua natural':'Vino Blanco (Sauvignon Blanc)'))});
+}
+dish('fondue-tradicional','fondue','Quesos','Queso Tradicional','Mezcla de quesos emmental, tilsit, gruyere y holandés.',[['150 gr',69900],['250 gr',112900]],10);
+dish('fondue-azul','fondue','Quesos','Queso Azul','Nuestra mezcla de queso tradicional enriquecida con trozos de queso azul.',[['150 gr',72900],['250 gr',115900]],10);
+dish('fondue-napolitano','fondue','Quesos','Queso Napolitano','Queso tradicional con tomates cherry, pesto y salsa napolitana de la casa.',[['150 gr',70900],['250 gr',113900]],3);
+dish('fondue-res','fondue','Carnes','Res','Trozos de solomito. Acompañado de ensalada y salsas de la casa.',[['250 gr',68600]],11);
+dish('fondue-pollo','fondue','Carnes','Pollo','Trozos de pechuga de pollo apanado. Acompañado de ensalada y salsas de la casa.',[['250 gr',66600]],9);
+dish('fondue-mixto','fondue','Carnes','Mixto','Trozos de solomito y de pechuga de pollo apanado. Acompañado de ensalada y salsas de la casa.',[['250 gr',68600]],11);
+[
+ ['serrano','Jamón Serrano','Jamón serrano, tomate fresco, tomates secos, rúgula, queso parmesano y queso mozzarella.',41900,12],
+ ['pollo','Pollo','Pollo desmechado en salsa de alcaparras con ricotta, tomates frescos, tomates secos y mozzarella.',37900,14],
+ ['solomito','Solomito','Solomito en tiras en salsa de la casa, cebolla confitada, pimentón ahumado, champiñones y mozzarella.',44900,4],
+ ['cerdo','Cerdo Agridulce','Cerdo en tiras en salsa agridulce a base de tomate y vino con mozzarella.',37900,12],
+ ['trucha','Trucha Entera','Trucha ahumada, tomates frescos, tomates secos, rúgula y mozzarella. Disfrútala también entera.',41900,17],
+ ['brie','Brie','Queso brie, jamón serrano, salsa de fruta natural y mozzarella.',41900,14],
+ ['pavo','Pavo','Lonjas de pavo de finas hierbas, tomate fresco, lechuga, ricotta y mozzarella.',36900,12]
+].forEach(([id,n,d,p,im])=>dish('fagotto-'+id,'fagottos','Nuestros sabores',n,d,p,im));
+[
+ ['espinacas','Espinacas','Espinacas en salsa blanca de la casa, tomates secos, parmesano y mozzarella. Jamón de cerdo opcional.'],
+ ['berenjenas','Berenjenas','Berenjenas asadas, ricotta, parmesano, tomates secos y mozzarella.'],
+ ['champinones','Champiñones','Champiñones en salsa blanca de la casa, parmesano y mozzarella. Jamón de cerdo opcional.'],
+ ['napolitano','Napolitano','Tomate fresco, pesto de albahaca, parmesano y mozzarella.'],
+ ['vegetales','Vegetales','Cebolla confitada, parmesano, ricotta, champiñón, pimentones dulces, zucchini y mozzarella.'],
+ ['especial','Especial','Tomate fresco, pesto de albahaca, parmesano, tomates secos, champiñones en salsa blanca y mozzarella.']
+].forEach(([id,n,d])=>dish('fagotto-'+id,'fagottos','Vegetarianos',n,d,37900,17));
+[['manzana','Manzana Verde',6900,'🍏'],['tomate','Tomate Cherry',7200,'🍅'],['champinones','Champiñones',12800,'🍄'],['brocoli','Brócoli',7600,'🥦'],['cabano','Cabano',12800,'🥓']].forEach(([id,n,p,e])=>dish('adicion-'+id,'adiciones','A tu gusto',n,'',p,null,e,'Agua natural'));
+// The original drink page is column-based: values checked against its rendered layout.
+[
+ ['kombucha','Kombucha',15900],['soda','Soda Saborizada',13900],['hatsu','Hatsu',10900],['agua','Botella Agua',6900],['gaseosa','Gaseosa',7900],['jugos','Jugos Naturales',8900],['coco','Limonada de Coco',10900]
+].forEach(([id,n,p])=>dish('bebida-'+id,'bebidas','Frías',n,'Consulta sabores disponibles.',p,null,'🥤'));
+[
+ ['vino-caliente','Copa Vino Caliente',25500],['herbal','Infusión Herbal',3700],['frutal','Infusión Frutal',5900],['prensa2','Café Prensa 2 Tazas',9900],['prensa4','Café Prensa 4 Tazas',19900],['prensa6','Café Prensa 6 Tazas',29900],['americano','Americano',7500],['espresso','Espresso',7500],['chocolate','Chocolate',7500],['cappuccino','Cappuccino',7500]
+].forEach(([id,n,p])=>dish('bebida-'+id,'bebidas','Calientes',n,'',p,id==='vino-caliente'?24:null,'☕'));
+[['artesanal','Artesanales',16900],['nacional','Nacionales',10900],['heineken','Heineken',13900],['stella','Stella Artois',15900],['torrealta','Torrealta',18900]].forEach(([id,n,p])=>dish('cerveza-'+id,'bebidas','Cervezas',n,'',p,null,'🍺'));
+[
+ ['ron3','Trago Ron 3 Años',8300],['medio-ron3','1/2 Ron 3 Años',72900],['ron8','Trago Ron 8 Años',16900],['medio-ron8','1/2 Ron 8 Años',107900],['aguardiente','Trago Aguardiente',8300],['medio-aguardiente','1/2 Aguardiente',72900],['vodka','Trago Vodka',16900],['ginebra','Trago Ginebra',16900],['whisky','Trago Whisky',17900],['medio-whisky','1/2 Whisky',182900],['cointreau','Trago Cointreau',17900],['tequila','Trago Tequila',17900],['copa-vino','Copa de Vino',23900]
+].forEach(([id,n,p])=>dish('licor-'+id,'bebidas','Licores',n,'',p,id==='copa-vino'?6:null,'🥃'));
+[
+ ['celia','La Celia','Malbec · Argentina',[['Reserva',169000],['Pioneer',219000]]],
+ ['moras-malbec','Finca Las Moras Barrel Select','Malbec · Argentina',169000],
+ ['trivento','Trivento','Malbec · Argentina',169000],
+ ['hormigas','Altos de las Hormigas','Malbec · Argentina',219000],
+ ['panul','Panul Gran Reserva','Carmenere · Chile',105000],
+ ['ema-gran','Santa Ema Gran Reserva','Carmenere / Merlot · Chile',219000],
+ ['ema-select','Santa Ema Select','Carmenere / Merlot / Cabernet Sauvignon · Chile',179000],
+ ['carolina','Santa Carolina Reserva','Merlot / Carmenere · Chile',169000],
+ ['riscal','Riscal','Tempranillo · España',179000],
+ ['ramon','Ramon Bilbao','Crianza / Reserva · España',[['Crianza',179000],['Reserva',259000]]],
+ ['beronia','Beronia','Crianza · España',195000],
+ ['canas','Luis Cañas','Crianza / Reserva · España',[['Crianza',249000],['Reserva',299000]]],
+ ['pascua','Pascua','Montepulciano d’Abruzzo · Italia',149000],
+ ['media-ema','1/2 Santa Ema','Merlot / Cabernet Sauvignon · Chile',109000],
+ ['media-hormigas','1/2 Altos de las Hormigas','Malbec · Argentina',115000]
+].forEach(([id,n,d,p])=>dish('tinto-'+id,'bebidas','Vinos tintos',n,d,p,6));
+[
+ ['moras-sauvignon','Finca Las Moras Sauvignon Blanc','Argentina',129000],
+ ['moras-rose','Finca Las Moras Syrah Rosé','Argentina',129000],
+ ['moras-chardonnay','Finca Las Moras Chardonnay','Argentina',129000],
+ ['ema-chardonnay','Santa Ema Chardonnay','Chile',179000],
+ ['ema-sauvignon','Santa Ema Sauvignon Blanc','Chile',179000],
+ ['ema-rose','Santa Ema Rosé','Chile',179000],
+ ['ramon-verdejo','Ramon Bilbao Verdejo','España',179000],
+ ['beronia-verdejo','Beronia Verdejo','España',195000],
+ ['lambrusco-bianco','Lambrusco Bianco','Italia',119000],
+ ['lambrusco-rosso','Lambrusco Rosso','Italia',119000],
+ ['lambrusco-rosato','Lambrusco Rosato','Italia',119000],
+ ['colli','Colli Euganei','Pinot Bianco / Grigio · Italia',149000],
+ ['media-ema-sauvignon','1/2 Santa Ema Sauvignon Blanc','Chile',109000],
+ ['media-ema-chardonnay','1/2 Santa Ema Chardonnay','Chile',109000]
+].forEach(([id,n,d,p])=>dish('vino-'+id,'bebidas','Vinos blancos y rosados',n,d,p,null,'🥂'));
+[
+ ['manzanitas','Manzanitas','Trozos de manzana en mantequilla caliente con canela, crepe, crema y helado.',19500,null,'🍎'],
+ ['volcan','Volcán','Arequipe caliente servido en plato de peltre con mortiño, crepe, crema y helado.',27900,null,'🍨'],
+ ['mestizo','Mestizo','Arequipe, chocolate, nueces picadas, crepe, crema y helado.',19500,8,'🍨'],
+ ['nueces','Chocolate con Nueces','Chocolate, nueces picadas, crepe, crema y helado.',19500,8,'🍫'],
+ ['banano','Chocolate Banano','Chocolate, almendra fileteada, rodajas de banano, crepe, crema y helado.',19500,null,'🍌'],
+ ['maracuya','Maracuyá','Salsa de maracuyá, ralladura de limón, crepe, crema y helado.',19500,null,'🍨'],
+ ['banana-split','Banana Split','Banano, chocolate, arequipe, mortiño, crepe, crema y doble porción de helado.',27900,null,'🍌'],
+ ['fondue-dulce','Fondue de Chocolate / Arequipe','Para bañar fresas, bananito, manzana, uchuvas, masmelos y nueces picadas. Con yogur griego y helado.',[['Chocolate',59900],['Arequipe',59900]],22,'🍫'],
+ ['palo','Postres de Palo','Caseros, a base de yogur, fruta natural y crema. Pregunta por sabores. Servidos sobre crema: escoge dos entre arequipe, chocolate, nueces, mortiño, maracuyá y almendras.',[['De palo',7500],['Servido',14900]],null,'🍦']
+].forEach(([id,n,d,p,im,e])=>dish('postre-'+id,'postres','Un final dulce',n,d,p,im,e));
+[
+ ['tomate-natural','Tomate Natural','Con aceite de oliva, parmesano y crema de leche. Acompañada de pan francés.',16900],
+ ['tomate-horno','Tomate al Horno','Gratinada con mozzarella, parmesano y pesto de albahaca. Con crema de leche y pan francés.',19900],
+ ['cebolla','Sopa de Cebolla Francesa','Gratinada con gruyere y parmesano. Fondo de carne y cebolla salteada en mantequilla. Con pan francés.',24300]
+].forEach(([id,n,d,p])=>dish('sopa-'+id,'entradas','Cremas y sopas',n,d,p,19));
+[
+ ['espanola','Española','Lechuga, aceitunas, chorizo español, jamón serrano, tomates secos y pimentón asado. Con galletas de maíz.',43900],
+ ['esparragos','Espárragos Palmito','Espárragos y palmitos sobre lechuga con salsa de queso azul, tomates cherry y parmesano. Con galletas de maíz.',39900],
+ ['berenjena','Berenjenas Tomate Seco','Berenjena y tomate seco sobre lechuga, con balsámico, aceite de oliva y parmesano. Con galletas de maíz.',39900]
+].forEach(([id,n,d,p])=>dish('ensalada-'+id,'entradas','Ensaladas',n,d,p,18));
+dish('gratinado-espinacas','entradas','Gratinados','Espinacas Queso Azul','Espinacas en salsa de la casa con queso azul, espárragos, palmitos vegetales y parmesano. Con pan francés. Haz la mezcla que prefieras.',48900,null,'🥬','Vino Blanco (Chardonnay)');
+[
+ ['empanadas','Empanadas','Ocho empanadas tradicionales de papa con ají casero.',15900,7,'🥟'],
+ ['aceitunas','Aceitunas','Sobre lechuga con aceite de oliva y balsámico. Con pan francés.',16900,null,'🫒'],
+ ['papas','Papas Chips','Porción de papas chips caseras acompañadas de salsa de la casa.',11500,null,'🥔'],
+ ['tejitas','Tejitas','Galletas de maíz con ricotta y parmesano. Por unidad.',[['Berenjena y tomate seco',5900],['Cebolla confitada y tomate cherry',5900]],23,'🫓'],
+ ['camembert','Camembert Caliente','Queso camembert con miel y mostaza. Con cascos de manzana, galletas y tomate cherry.',44900,21,'🧀'],
+ ['champinones','Champiñones Calientes','Champiñones en salsa de la casa con jamón de cerdo y parmesano. Con pan francés.',41700,null,'🍄']
+].forEach(([id,n,d,p,im,e])=>dish('picar-'+id,'entradas','Para picar',n,d,p,im,e,n==='Camembert Caliente'?'Vino Espumoso':'Cerveza Artesanal'));
+const PRODUCTS=new Map();
+MENU.forEach(item=>item.variants.forEach((variant,index)=>PRODUCTS.set(item.id+':'+index,{...item,...variant,key:item.id+':'+index})));
+const MONEY=new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0});
+const money=value=>MONEY.format(value);
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);
+const photoPath=n=>'./img/amelia/foto_'+n+([0,1,2,10,16,25,26,27,28,29,30].includes(n)?'.png':'.jpeg');
+const STORAGE_KEY='quickt.amelia.cart.v1';
+let cart={},toastTimer,returnFocus=null,storageAvailable=true;
+function loadCart(){
+ try{const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');if(stored&&typeof stored==='object'&&!Array.isArray(stored)){for(const [key,q] of Object.entries(stored)){if(PRODUCTS.has(key)&&Number.isInteger(q)&&q>0&&q<=99)cart[key]=q;}}}catch{cart={};}
+}
+function saveCart(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(cart));}catch{storageAvailable=false;}}
+function announce(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),2600);}
+function renderMenu(){
+ $('category-tabs').innerHTML=CATEGORIES.map((c,i)=>`<a class="tab" href="#${c.id}" data-category="${c.id}" aria-current="${i===0?'true':'false'}">${c.name}</a>`).join('');
+ $('menu').innerHTML=CATEGORIES.map(c=>{
+  const items=MENU.filter(i=>i.category===c.id);let group='';
+  const gallery=c.gallery.length?`<div class="gallery" role="region" aria-label="Galería de ${c.name}" tabindex="0">${c.gallery.map(([n,caption])=>`<figure><img src="${photoPath(n)}" alt="${esc(caption)}" loading="lazy" decoding="async" width="320" height="180"><figcaption>${esc(caption)}</figcaption></figure>`).join('')}</div>`:`<div class="gallery-empty"><span aria-hidden="true">${c.emoji}</span>Sin fotografías de adiciones en la carta. Elige tus favoritos abajo.</div>`;
+  return `<section class="category" id="${c.id}" aria-labelledby="heading-${c.id}"><div class="section-heading"><h2 id="heading-${c.id}">${c.name}</h2><span class="count">${items.length} opciones</span></div>${gallery}${c.id==='fagottos'?`<p class="story">${STORIES.fagottos}</p>`:''}<p class="category-note">${c.note}</p>`+items.map(item=>{
+   let heading='';if(group!==item.group){group=item.group;const story=c.id==='fondue'?STORIES[group.toLowerCase()]:null;heading=(story?`<p class="story">${story}</p>`:'')+`<h3 class="group-title">${group}</h3>`;}
+   return heading+`<article class="dish" data-dish="${item.id}"><div class="dish-media"><span class="emoji" role="img" aria-label="${esc(item.name)}">${item.emoji}</span>${item.photo!==null?`<img src="${photoPath(item.photo)}" alt="Foto representativa: ${esc(item.name)}" title="Foto representativa de la carta" loading="lazy" decoding="async" width="76" height="82">`:''}</div><div><h4>${esc(item.name)}</h4>${item.desc?`<p class="description">${esc(item.desc)}</p>`:''}${item.pairing?`<span class="pairing" title="Sugerencia de maridaje. Consulta disponibilidad."><b>✧ AI Pairing</b><span>${esc(item.pairing)}</span></span>`:''}${item.variants.map((v,index)=>`<div class="purchase-row"><div class="price">${money(v.price)}${v.label?`<span class="variant">${esc(v.label)}</span>`:''}</div><button class="add" data-add="${item.id}:${index}" aria-label="Agregar ${esc(item.name)}${v.label?' · '+esc(v.label):''}">+</button></div>`).join('')}</div></article>`;
+  }).join('')+'</section>';
+ }).join('');
+ document.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.hidden=true;if(img.closest('figure'))img.closest('figure').classList.add('image-missing');},{once:true}));
+}
+function entries(){return Object.entries(cart).filter(([k,q])=>PRODUCTS.has(k)&&q>0).map(([key,quantity])=>({...PRODUCTS.get(key),quantity}));}
+function subtotal(){return entries().reduce((sum,p)=>sum+p.price*p.quantity,0);}
+function orderText(){
+ const lines=['Amelia · Desde 1991','Pedido preparado con QUICK-T Food',''];
+ const table=$('table').value.trim(),notes=$('notes').value.trim();if(table)lines.push('Mesa / nombre: '+table,'');
+ entries().forEach(p=>lines.push(`${p.quantity} × ${p.name}${p.label?' ('+p.label+')':''} · ${CATEGORIES.find(c=>c.id===p.category).name}\n  ${money(p.price)} c/u · ${money(p.price*p.quantity)}`));
+ lines.push('',`Subtotal: ${money(subtotal())} COP`,'Servicio voluntario no incluido.');
+ if(notes)lines.push('','Notas: '+notes);
+ if(entries().some(p=>p.category==='fondue'))lines.push('','Fondue: la carta indica mínimo dos porciones; confirmar con el restaurante.');
+ lines.push('','Por favor, confirmar disponibilidad y pedido.');return lines.join('\n');
+}
+function whatsappURL(){return 'https://wa.me/573000000000?text='+encodeURIComponent(orderText());}
+function updateOrderLinks(){const url=whatsappURL();$('whatsapp-float').href=url;$('send-order').href=url;if(!$('checkout').hidden)$('order-preview').value=orderText();}
+function renderCart(){
+ const list=entries(),count=list.reduce((sum,p)=>sum+p.quantity,0);
+ $('cart-count').textContent=count;$('cart-accessible').textContent=`${count} productos`;$('cart-subtitle').textContent=count?`${money(subtotal())} · Ver resumen`:'Elige algo para compartir';
+ $('cart-toggle').setAttribute('aria-label',`Ver pedido, ${count} productos, ${money(subtotal())}`);
+ $('cart-lines').innerHTML=list.length?list.map(p=>`<div class="cart-line"><div class="cart-line-top"><div><h3>${esc(p.name)}</h3><small>${CATEGORIES.find(c=>c.id===p.category).name}${p.label?' · '+esc(p.label):''} · ${money(p.price)} c/u</small></div><span class="price">${money(p.price*p.quantity)}</span></div><div class="cart-line-bottom"><div class="stepper"><button data-change="${p.key}" data-delta="-1" aria-label="Restar ${esc(p.name)}">−</button><output aria-label="Cantidad de ${esc(p.name)}">${p.quantity}</output><button data-change="${p.key}" data-delta="1" ${p.quantity>=99?'disabled':''} aria-label="Sumar ${esc(p.name)}">+</button></div><button class="remove" data-remove="${p.key}" aria-label="Quitar ${esc(p.name)} del pedido">Quitar</button></div></div>`).join(''):`<div class="empty-cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-2 12H6ZM8 8l4-5 4 5"/></svg><h3>Lo bueno empieza por elegir</h3><p>Agrega un plato con +.<br>Aquí guardaremos tu selección.</p><button class="secondary" id="browse-menu">Explorar la carta</button></div>`;
+ $('cart-details').hidden=!list.length;$('cart-total').textContent=money(subtotal());$('order-button').disabled=!list.length;$('fondue-note').hidden=!list.some(p=>p.category==='fondue');updateOrderLinks();
+}
+function changeCart(key,delta){
+ if(!PRODUCTS.has(key)||!Number.isInteger(delta))return;
+ const next=(cart[key]||0)+delta;if(next>99){announce('Máximo 99 unidades por opción.');return;}if(next<=0)delete cart[key];else cart[key]=next;
+ saveCart();$('checkout').hidden=true;renderCart();
+ if(!storageAvailable)announce('Selección actualizada. Este navegador no permite guardarla al cerrar.');
+}
+function openCart(){returnFocus=document.activeElement;if(!$('cart-sheet').open){$('cart-sheet').showModal();document.body.style.overflow='hidden';}}
+function closeCart(){$('cart-sheet').close();}
+function compileOrder(){if(!entries().length){openCart();return false;}$('checkout').hidden=false;updateOrderLinks();$('order-preview').focus({preventScroll:true});$('cart-sheet').scrollTo({top:$('cart-sheet').scrollHeight,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return true;}
+loadCart();renderMenu();renderCart();
+document.addEventListener('click',event=>{
+ const add=event.target.closest('[data-add]');if(add){const key=add.dataset.add;const before=cart[key]||0;changeCart(key,1);if((cart[key]||0)>before&&storageAvailable)announce(PRODUCTS.get(key).name+' agregado a tu pedido');return;}
+ const change=event.target.closest('[data-change]');if(change){const key=change.dataset.change,delta=Number(change.dataset.delta);changeCart(key,delta);const next=[...document.querySelectorAll('[data-change]')].find(b=>b.dataset.change===key&&b.dataset.delta===String(delta));(next||$('close-cart')).focus({preventScroll:true});return;}
+ const remove=event.target.closest('[data-remove]');if(remove){changeCart(remove.dataset.remove,-(cart[remove.dataset.remove]||0));$('close-cart').focus({preventScroll:true});return;}
+ if(event.target.closest('#browse-menu'))closeCart();
+});
+$('cart-toggle').addEventListener('click',openCart);$('close-cart').addEventListener('click',closeCart);$('order-button').addEventListener('click',compileOrder);
+$('cart-sheet').addEventListener('close',()=>{document.body.style.overflow='';if(returnFocus&&returnFocus.isConnected)returnFocus.focus({preventScroll:true});});
+$('cart-sheet').addEventListener('click',e=>{if(e.target===$('cart-sheet')){const b=$('cart-sheet').getBoundingClientRect();if(e.clientY<b.top||e.clientX<b.left||e.clientX>b.right)closeCart();}});
+$('whatsapp-float').addEventListener('click',e=>{if(!entries().length){e.preventDefault();openCart();announce('Agrega un plato para preparar tu pedido.');}else{updateOrderLinks();}});
+['table','notes'].forEach(id=>$(id).addEventListener('input',updateOrderLinks));
+const activateCategory=id=>document.querySelectorAll('.tab').forEach(a=>a.setAttribute('aria-current',String(a.dataset.category===id)));
+$('category-tabs').addEventListener('click',e=>{const a=e.target.closest('[data-category]');if(a)activateCategory(a.dataset.category);});
+if('IntersectionObserver' in window){const observer=new IntersectionObserver(items=>{const visible=items.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);if(visible.length)activateCategory(visible[0].target.id);},{rootMargin:'-110px 0px -65% 0px',threshold:0});document.querySelectorAll('.category').forEach(el=>observer.observe(el));}
+function connectionState(){$('connection-status').hidden=navigator.onLine;}
+window.addEventListener('online',connectionState);window.addEventListener('offline',connectionState);connectionState();
+window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY){cart={};loadCart();$('checkout').hidden=true;renderCart();}});
+// Embedded icon and manifest: no CDN, no extra deployed files or external runtime.
+try{
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#0D0D0D';ctx.fillRect(0,0,512,512);ctx.strokeStyle='#D4A843';ctx.lineWidth=7;ctx.beginPath();ctx.arc(256,256,195,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#D4A843';ctx.textAlign='center';ctx.font='300 270px system-ui';ctx.fillText('A',256,340);const icon=canvas.toDataURL('image/png');$('app-icon').href=icon;$('apple-icon').href=icon;
+ const start=new URL(location.href);start.hash='';start.search='';const scope=new URL('./',start).href;
+ const manifest={id:start.href,name:'Amelia · QUICK-T Food',short_name:'Amelia',description:'Fondue y fagottos desde 1991. Carta y pedidos.',lang:'es-CO',start_url:start.href,scope,display:'standalone',background_color:'#0D0D0D',theme_color:'#0D0D0D',icons:[{src:icon,sizes:'512x512',type:'image/png',purpose:'any'}]};
+ $('app-manifest').href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest));
+}catch{/* Menu and ordering remain available if canvas/manifest is restricted. */}
 </script>
 </body>
 </html>
