@@ -1131,10 +1131,13 @@
 
     /* === NOVEDADES: table + pagination === */
     function renderNovedadesTable() {
-      const today = hoyColombia();
+      const now = new Date();
+      const hace24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
       novFiltered = novedades.filter(n => {
         const ts = n.timestamp || n.fecha || '';
-        return ts.startsWith(today);
+        if (!ts) return false;
+        const d = new Date(ts);
+        return !isNaN(d.getTime()) && d >= hace24h;
       });
       // If empty, show all (for now, gate: will be empty)
       if (novFiltered.length === 0 && novedades.length > 0) {
