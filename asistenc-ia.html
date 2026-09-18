@@ -876,9 +876,13 @@
     }
     function formatHoraStr(ts) {
       if (!ts) return '—';
-      // ts is "2026-07-31 14:00:00" or ISO "2026-07-31T14:00:00"
-      const m = /(\d{2}):(\d{2})/.exec(ts);
-      return m ? `${m[1]}:${m[2]}` : '—';
+      // Convertir UTC a hora Colombia (UTC-5) para mostrar hora local
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) {
+        const m = /(\d{2}):(\d{2})/.exec(ts);
+        return m ? `${m[1]}:${m[2]}` : '—';
+      }
+      return d.toLocaleTimeString('es-CO', {timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit'});
     }
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, c => ({
