@@ -893,7 +893,7 @@
       // Step 1: get all unique employees (all time) as master list
       const empMap = new Map(); // id -> {nombre, identificacion}
       for (const r of registros) {
-        const id = r.identificacion || '';
+        const id = r.identificacion || r.nombre || '';
         const nom = r.nombre || '';
         if (id && !empMap.has(id)) {
           empMap.set(id, { nombre: nom, identificacion: id });
@@ -1010,7 +1010,8 @@
       const today = hoyColombia();
 
       // Unique employees total (master list)
-      const idEmpleadosTotal = new Set(registros.map(r => r.identificacion).filter(Boolean));
+      // Unique employees total (master list) — usar nombre si no hay ID
+      const idEmpleadosTotal = new Set(registros.map(r => r.identificacion || r.nombre).filter(Boolean));
       const totalEmp = idEmpleadosTotal.size;
 
       // Count employees with entrada today (Ingreso + Salida that have entrada)
