@@ -1199,7 +1199,7 @@
       const sel = document.getElementById('novedadEmpleadoSel');
       const ids = new Map();
       for (const r of registros) {
-        const id  = r.identificacion || '';
+        const id  = r.identificacion || r.nombre || '';
         const nom = r.nombre || '';
         if (id && !ids.has(id)) ids.set(id, nom);
       }
