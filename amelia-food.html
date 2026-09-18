@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amelia — QUICK-T Food</title>
+<meta name="description" content="Menú digital de Amelia — Desde 1991. Fondue, Fagottos y más.">
+<link rel="manifest" href="data:application/json,{}">
+<meta name="theme-color" content="#0D0D0D">
+<style>
+:root{--bg:#0D0D0D;--gold:#D4A843;--cream:#FFF8E7;--dark:#1A1A1A;--dim:#888;--card:#121212;--accent:#B388FF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:#fff;min-height:100vh}
+.container{max-width:480px;margin:0 auto;padding:16px}
+.header{text-align:center;padding:24px 0 16px;position:sticky;top:0;background:var(--bg);z-index:10}
+.header .brand{font-size:10px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.header h1{font-size:32px;font-weight:700;color:var(--gold);letter-spacing:-.02em}
+.header .since{font-size:12px;color:var(--dim);margin-top:4px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--card);color:var(--dim);border:1px solid transparent;transition:.2s}
+.cat.active{background:rgba(212,168,67,.12);color:var(--gold);border-color:rgba(212,168,67,.25)}
+.section-title{font-size:18px;font-weight:700;color:var(--gold);margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.item{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:12px}
+.item-info{flex:1}
+.item-info h3{font-size:15px;font-weight:600;margin-bottom:2px}
+.item-info p{font-size:12px;color:var(--dim);line-height:1.4}
+.item-price{font-size:15px;font-weight:700;color:var(--gold);white-space:nowrap;padding-top:2px}
+.item-price small{font-size:11px;color:var(--dim);display:block;font-weight:400}
+.note{font-size:11px;color:var(--dim);font-style:italic;margin-top:8px;padding:8px 12px;background:var(--card);border-radius:8px;border-left:2px solid var(--gold)}
+.footer{text-align:center;padding:32px 16px;color:var(--dim);font-size:11px}
+.footer span{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">QUICK-T Food</div>
+    <h1>Amelia</h1>
+    <div class="since">El original — Desde 1991</div>
+  </div>
+
+  <div class="cats" id="cats">
+    <div class="cat active" data-cat="fondue">🧀 Fondue</div>
+    <div class="cat" data-cat="fagottos">🌯 Fagottos</div>
+    <div class="cat" data-cat="adiciones">🥗 Adiciones</div>
+    <div class="cat" data-cat="bebidas">🥤 Bebidas</div>
+    <div class="cat" data-cat="postres">🍰 Postres</div>
+    <div class="cat" data-cat="entradas">🍴 Entradas</div>
+    <div class="cat" data-cat="picar">🥜 Para Picar</div>
+  </div>
+
+  <div id="menu"></div>
+
+  <div class="footer">
+    Menú digital powered by <span>QUICK-T Food</span><br>
+    Escaneá · Pedí · Disfrutá
+  </div>
+</div>
+
+<script>
+const MENU = {
+  fondue: {
+    title: '🧀 Fondue — Nuestras Especialidades',
+    note: 'Servido de dos porciones en adelante. Acompañado de baguette de masa madre.',
+    items: [
+      {name:'Queso Tradicional', desc:'Mezcla de quesos emmental, tilsit, gruyere y holandés.', price:'$69.900', sub:'150 gr', price2:'$112.900', sub2:'250 gr'},
+      {name:'Queso Azul', desc:'Nuestra mezcla de queso tradicional enriquecida con trozos de queso azul.', price:'$72.900', sub:'150 gr', price2:'$115.900', sub2:'250 gr'},
+      {name:'Queso Napolitano', desc:'Nuestra mezcla de queso tradicional añadiendo tomates cherry, pesto y salsa napolitana de la casa.', price:'$70.900', sub:'150 gr', price2:'$113.900', sub2:'250 gr'},
+      {name:'Res', desc:'Trozos de solomito. Acompañado de ensalada y salsas de la casa.', price:'$68.600', sub:'250 gr'},
+      {name:'Pollo', desc:'Trozos de pechuga de pollo apanado. Acompañado de ensalada y salsas de la casa.', price:'$66.600', sub:'250 gr'},
+      {name:'Mixto', desc:'Trozos de solomito y de pechuga de pollo apanado. Acompañado de ensalada y salsas de la casa.', price:'$68.600', sub:'250 gr'},
+    ]
+  },
+  fagottos: {
+    title: '🌯 Fagottos — Nuestras Especialidades',
+    note: 'Acompañados con chips de papa o ensalada.',
+    items: [
+      {name:'Jamón Serrano', desc:'Jamón serrano, tomate fresco, tomates secos, rúgula, queso parmesano y queso mozzarella.', price:'$41.900'},
+      {name:'Pollo', desc:'Pollo desmechado en salsa de alcaparras con queso ricotta, tomates frescos, tomates secos y queso mozzarella.', price:'$37.900'},
+      {name:'Solomito', desc:'Solomito en tiras en salsa de la casa, cebolla confitada, pimentón ahumado, champiñones y queso mozzarella.', price:'$44.900'},
+      {name:'Cerdo Agridulce', desc:'Cerdo en tiras en salsa agridulce a base de tomate y vino con queso mozzarella.', price:'$37.900'},
+      {name:'Trucha Entera', desc:'Trucha ahumada, tomates frescos, tomates secos, rúgula y queso mozzarella.', price:'$41.900'},
+      {name:'Brie', desc:'Queso brie, jamón serrano, salsa de fruta natural y queso mozzarella.', price:'$41.900'},
+      {name:'Pavo', desc:'Lonjas de pavo de finas hierbas, tomate fresco, lechuga, queso ricotta y queso mozzarella.', price:'$36.900'},
+    ]
+  },
+  adiciones: {
+    title: '🥗 Adiciones',
+    items: [
+      {name:'Manzana Verde', price:'$6.900'},
+      {name:'Tomate Cherry', price:'$7.200'},
+      {name:'Champiñones', price:'$7.600'},
+      {name:'Brócoli', price:'$7.600'},
+      {name:'Cabano', price:'$12.800'},
+    ]
+  },
+  bebidas: {
+    title: '🥤 Bebidas',
+    items: [
+      {name:'Bebidas', desc:'Consulta nuestra carta de bebidas con el mesero.', price:''}
+    ]
+  },
+  postres: {
+    title: '🍰 Postres',
+    items: [
+      {name:'Postres', desc:'Consulta nuestra selección de postres con el mesero.', price:''}
+    ]
+  },
+  entradas: {
+    title: '🍴 Entradas',
+    items: [
+      {name:'Entradas', desc:'Consulta nuestras entradas con el mesero.', price:''}
+    ]
+  },
+  picar: {
+    title: '🥜 Para Picar',
+    items: [
+      {name:'Para Picar', desc:'Consulta nuestras opciones con el mesero.', price:''}
+    ]
+  }
+};
+
+function render(cat) {
+  const data = MENU[cat];
+  if (!data) return;
+  let h = `<div class="section-title">${data.title}</div>`;
+  if (data.note) h += `<div class="note">${data.note}</div>`;
+  data.items.forEach(item => {
+    h += `<div class="item"><div class="item-info"><h3>${item.name}</h3>`;
+    if (item.desc) h += `<p>${item.desc}</p>`;
+    h += `</div><div class="item-price">${item.price || ''}`;
+    if (item.sub) h += `<small>${item.sub}</small>`;
+    if (item.price2) h += `<br>${item.price2}<small>${item.sub2||''}</small>`;
+    h += `</div></div>`;
+  });
+  document.getElementById('menu').innerHTML = h;
+}
+
+document.querySelectorAll('.cat').forEach(el => {
+  el.addEventListener('click', function() {
+    document.querySelectorAll('.cat').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    render(this.dataset.cat);
+  });
+});
+
+render('fondue');
+</script>
+</body>
+</html>
