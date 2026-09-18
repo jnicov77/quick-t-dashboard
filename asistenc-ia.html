@@ -871,9 +871,8 @@
     // El Sheet registra en hora Colombia; usar UTC rompe el filtro "hoy"
     // después de las 19:00 local (medianoche UTC).
     function hoyColombia() {
-      const ahora = new Date();
-      const offsetCol = -5 * 60 * 60 * 1000; // UTC-5
-      return new Date(ahora.getTime() + offsetCol).toISOString().slice(0, 10);
+      // Usa Intl para obtener la fecha correcta en zona horaria Colombia (UTC-5)
+      return new Date().toLocaleDateString('sv', {timeZone: 'America/Bogota'});
     }
     function formatHoraStr(ts) {
       if (!ts) return '—';
