@@ -917,7 +917,7 @@
       };
 
       for (const r of registros) {
-        const id = r.identificacion || '';
+        const id = r.identificacion || r.nombre || '';
         if (!id) continue;
 
         const action = (r.action || '').toUpperCase();
