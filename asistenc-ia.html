@@ -908,8 +908,13 @@
       const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
       const validTimePattern = /^\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}/;
 
-      const isToday = ts =>
-        (ts && validDatePattern.test(ts) && ts.startsWith(today) && validTimePattern.test(ts)) ? ts : '';
+      const isToday = ts => {
+        if (!ts || !validDatePattern.test(ts) || !validTimePattern.test(ts)) return '';
+        const d = new Date(ts);
+        // Convertir el timestamp UTC a fecha Colombia para comparar correctamente
+        const colDate = d.toLocaleDateString('sv', {timeZone: 'America/Bogota'});
+        return colDate === today ? ts : '';
+      };
 
       for (const r of registros) {
         const id = r.identificacion || '';
