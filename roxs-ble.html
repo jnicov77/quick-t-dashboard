@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROXS Garden</title>
+  <style>
+    :root{--bg:#0D0D0D;--gold:#D4A843;--cyan:#00D4D4;--green:#00E676;--purple:#B388FF;--panel:rgba(255,255,255,.02)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:#fff;max-width:420px;margin:0 auto;padding:16px;min-height:100vh}
+    .header{text-align:center;padding:20px 0 12px}
+    .header img{width:130px;margin-bottom:4px}
+    .header h1{font-size:22px;color:var(--gold);font-weight:700;margin:4px 0 0}
+    .status{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:4px 12px;border-radius:12px;margin:8px 0}
+    .status.on{background:rgba(0,230,118,.12);color:var(--green)}
+    .status.off{background:rgba(244,63,94,.12);color:#F43F5E}
+    .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .status.on .dot{animation:pulse 2s infinite}
+    .card{background:var(--panel);border-radius:16px;padding:18px 14px;margin:10px 0;border:1px solid rgba(255,255,255,.05);position:relative}
+    .card.t{border-color:rgba(0,212,212,.15);box-shadow:0 0 30px rgba(0,212,212,.06)}
+    .card.h{border-color:rgba(0,230,118,.15);box-shadow:0 0 30px rgba(0,230,118,.06)}
+    .card.p{border-color:rgba(179,136,255,.15);box-shadow:0 0 30px rgba(179,136,255,.06)}
+    .val{font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1}
+    .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#666;margin-top:4px}
+    .sub{font-size:12px;margin-top:4px}
+    .t .val,.t .sub{color:var(--cyan)}.h .val,.h .sub{color:var(--green)}.p .val, .p .sub{color:var(--purple)}
+    .rec{padding:14px;border-radius:12px;font-size:13px;line-height:1.5;background:rgba(255,255,255,.03);color:#aaa;margin-top:2px;border:1px solid rgba(255,255,255,.04)}
+    .btn{display:block;width:100%;padding:14px;margin:12px 0;background:var(--purple);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-align:center}
+    .btn:hover{opacity:.9}
+    .foot{text-align:center;font-size:10px;color:#444;margin-top:20px;padding-top:12px;border-top:1px solid rgba(255,255,255,.04)}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="roxs-logo.png" alt="ROXS" style="filter:brightness(1.2);">
+    <h1>ROXS Garden</h1>
+  </div>
+  <div class="status off" id="status"><div class="dot"></div><span id="statusText">DESCONECTADO</span></div>
+  <button class="btn" id="connectBtn" onclick="connect()">🔵 Conectar ROXS Garden</button>
+  
+  <div class="card t"><div class="val" id="tv">--</div><div class="lbl">Temperatura</div><div class="sub" id="ts">°C</div></div>
+  <div class="card h"><div class="val" id="hv">--</div><div class="lbl">Humedad Relativa</div><div class="sub" id="hs">%</div></div>
+  <div class="card p"><div class="val" id="pv">--</div><div class="lbl">VPD - Déficit de Presión de Vapor</div><div class="sub" id="ps">kPa</div></div>
+  <div class="rec" id="rec">Acercá tu celular al ROXS Garden y tocá Conectar.</div>
+  <div class="foot">ROXS Lab · Quick-T</div>
+
+<script>
+const RECS = [
+  [0,0.4,'💧 VPD CRÍTICAMENTE BAJO — Riesgo de *Bottrytis*, Oídio. Subí temp y reducí riego.'],
+  [0.4,0.8,'💧 VPD BAJO — Óptimo para enraizamiento y clones.'],
+  [0.8,1.1,'✅ VPD ÓPTIMO VEGETATIVO — Máxima fotosíntesis. Inyectá CO₂.'],
+  [1.1,1.3,'🌿 VPD ÓPTIMO FLORACIÓN — Alta producción de cannabinoides y tepernos.'],
+  [1.3,1.6,'💨 VPD ALTO FLORACIÓN TARDÍA — Compactación de flor, inhibe hongos.'],
+  [1.6,99,'🚨 VPD CRÍTICAMENTE ALTO — Estrés hídrico seveero. ¡Reducí temp YA!']
+];
+
+const SERVICE = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+const CHAR   = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+let dev, char, active=false;
+
+function setStatus(on){const s=document.getElementById('status');s.className='status '+(on?'on':'off');document.getElementById('statusText').textContent=on?'EN LÍNEA':'DESCONECTADO';}
+
+async function connect(){
+  const btn=document.getElementById('connectBtn');
+  try{
+    btn.textContent='Buscando ROXS-Garden...';btn.disabled=true;
+    dev=await navigator.bluetooth.requestDevice({filters:[{name:'ROXS-Garden'}],optionalServices:[SERVICE]});
+    const srv=await dev.gatt.connect();
+    const svc=await srv.getPrimaryService(SERVICE);
+    char=await svc.getCharacteristic(CHAR);
+    active=true;setStatus(true);
+    btn.textContent='🔵 Conectado';btn.style.background='#00E676';btn.style.color='#000';
+    dev.addEventListener('gattserverdisconnected',()=>{active=false;setStatus(false);btn.textContent='🔵 Reconectar';btn.style.background='var(--purple)';btn.style.color='#fff';btn.disabled=false;});
+    await char.startNotifications();
+    char.addEventListener('characteristicvaluechanged',e=>{
+      try{const d=JSON.parse(new TextDecoder().decode(e.target.value));update(d);}catch(ex){}
+    });
+    // Leer valor actual
+    const v=await char.readValue();
+    update(JSON.parse(new TextDecoder().decode(v)));
+  }catch(e){
+    btn.textContent='🔵 Conectar ROXS Garden';btn.disabled=false;
+    setStatus(false);
+  }
+}
+
+function update(d){
+  document.getElementById('tv').textContent=d.t.toFixed(1);
+  document.getElementById('ts').textContent=d.t.toFixed(1)+'°C';
+  document.getElementById('hv').textContent=d.h.toFixed(1);
+  document.getElementById('hs').textContent=d.h.toFixed(1)+'%';
+  document.getElementById('pv').textContent=d.v.toFixed(2);
+  document.getElementById('ps').textContent=d.v.toFixed(2)+' kPa';
+  const r=RECS.find(x=>d.v>=x[0]&&d.v<x[1]);
+  document.getElementById('rec').innnerHTML=r?r[2]:'Sin datos.';
+}
+</script>
+</body>
+</html>
