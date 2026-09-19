@@ -312,53 +312,6 @@ renderCal = function(){
   _renderCalOrig();
   renderEvs();
 };
-
-    /* ═══ WEB BLUETOOTH ═══ */
-    const BLE_SERVICE = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-    const BLE_CHAR   = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
-    let bleDev=null, bleChar=null, bleActive=false;
-    async function connectBLE(){
-      const btn=document.getElementById('bleBtn');
-      try{
-        btn.textContent='Buscando...';btn.style.background='#B388FF';
-        bleDev=await navigator.bluetooth.requestDevice({
-          filters:[{name:'ROXS-Garden'}],optionalServices:[BLE_SERVICE]
-        });
-        const server=await bleDev.gatt.connect();
-        const service=await server.getPrimaryService(BLE_SERVICE);
-        bleChar=await service.getCharacteristic(BLE_CHAR);
-        bleActive=true;btn.textContent='🔵 Conectado';btn.style.background='#00E676';btn.style.color='#000';
-        document.getElementById('online').innerHTML='<span class="dot"></span>BLE';
-        bleDev.addEventListener('gattserverdisconnected',()=>{
-          bleActive=false;btn.textContent='🔵 BLE';btn.style.background='#510C82';btn.style.color='#fff';
-          document.getElementById('online').innerHTML='<span class="dot"></span>OFFLINE';
-        });
-      }catch(e){
-        console.log('BLE:',e.message);btn.textContent='🔵 BLE';btn.style.background='#510C82';
-      }
-    }
-    async function readBLE(){
-      if(!bleActive||!bleChar)return null;
-      try{
-        const val=await bleChar.readValue();
-        const txt=new TextDecoder().decode(val);
-        return JSON.parse(txt);
-      }catch(e){return null;}
-    }
-    async function startBLENotify(){
-      if(!bleActive||!bleChar)return;
-      try{
-        await bleChar.startNotifications();
-        bleChar.addEventListener('characteristicvaluechanged',(e)=>{
-          const txt=new TextDecoder().decode(e.target.value);
-          try{
-            const d=JSON.parse(txt);
-            updateGauges(d.t,d.h,d.v);
-          }catch(ex){}
-        });
-      }catch(e){console.log('Notify:',e.message);}
-    }
-
-  </script>
+</script>
 </body>
 </html>
