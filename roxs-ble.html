@@ -50,7 +50,10 @@
     .section-heading h2 { font-size:10px; font-weight:600; letter-spacing:.16em; color:var(--muted); margin:0; }
     .live-label { font-size:10px; color:var(--muted); }
     .readings { display:grid; gap:12px; }
-    .card { --accent:var(--cyan); --rgb:0,212,212; position:relative; border:1px solid rgba(var(--rgb),.23); border-radius:20px; padding:17px 19px; background:linear-gradient(125deg,rgba(var(--rgb),.065),rgba(255,255,255,.015) 65%); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); box-shadow:0 8px 28px rgba(0,0,0,.2),0 0 30px rgba(var(--rgb),.045),inset 0 1px rgba(255,255,255,.035); transition:border-color .35s,box-shadow .35s,transform .35s,opacity .35s; overflow:hidden; }
+      .calendar-section { margin-top:24px; padding:0 4px; }
+  .calendar-section input, .calendar-section select { font-size:11px; }
+  .cal-grid div { padding:4px; border-radius:3px; }
+  .card { --accent:var(--cyan); --rgb:0,212,212; position:relative; border:1px solid rgba(var(--rgb),.23); border-radius:20px; padding:17px 19px; background:linear-gradient(125deg,rgba(var(--rgb),.065),rgba(255,255,255,.015) 65%); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); box-shadow:0 8px 28px rgba(0,0,0,.2),0 0 30px rgba(var(--rgb),.045),inset 0 1px rgba(255,255,255,.035); transition:border-color .35s,box-shadow .35s,transform .35s,opacity .35s; overflow:hidden; }
     .card.h { --accent:var(--green); --rgb:0,230,118; }
     .card.p { --accent:var(--purple); --rgb:179,136,255; }
     .card-top { display:flex; justify-content:space-between; align-items:center; gap:6px; }
@@ -89,7 +92,10 @@
     .signature { border-top:1px solid #ffffff0d; padding-top:16px; margin:0; font-size:11px; letter-spacing:.06em; color:var(--gold); }
     noscript p { padding:16px; border:1px solid var(--red); font-size:13px; }
     @media(hover:hover) { .card:hover { border-color:rgba(var(--rgb),.45); box-shadow:0 0 38px rgba(var(--rgb),.11); transform:translateY(-2px); } .btn:not(:disabled):hover { box-shadow:0 5px 28px rgba(212,168,67,.24); } .rec:hover,.guide:hover { border-color:var(--gold); box-shadow:0 0 25px rgba(212,168,67,.07); } }
-    @media(max-width:350px) { .app { padding-left:16px; padding-right:16px; } .card { padding:16px; } .value { font-size:56px; } .dial { width:60px; height:60px; } .trend { font-size:9px; } }
+    @media(max-width:350px) { .app { padding-left:16px; padding-right:16px; }   .calendar-section { margin-top:24px; padding:0 4px; }
+  .calendar-section input, .calendar-section select { font-size:11px; }
+  .cal-grid div { padding:4px; border-radius:3px; }
+  .card { padding:16px; } .value { font-size:56px; } .dial { width:60px; height:60px; } .trend { font-size:9px; } }
     @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
   </style>
 </head>
@@ -135,7 +141,27 @@
       <p class="rec-note" id="recNote" hidden>Última lectura guardada en pantalla; no es un dato en vivo.</p>
     </section>
     <details class="guide"><summary>Conexión y acceso desde tu celular</summary><p><strong>Primera conexión:</strong> activá Bluetooth, encendé el sensor y tocá Conectar. Elegí ROXS-Garden. Luego intentaremos recuperar el dispositivo autorizado y reconectar si se pierde la señal.</p><p><strong>Navegadores:</strong> Chrome en Android o Chrome/Edge en una computadora con Bluetooth. Safari en iPhone/iPad no admite Web Bluetooth. La reconexión al abrir depende de los permisos y del navegador.</p><p><strong>Acceso rápido:</strong> en el menú del navegador elegí «Agregar a pantalla de inicio» o «Instalar aplicación», si está disponible. La página necesita HTTPS para usar Bluetooth. Esta edición de un solo archivo no garantiza la reapertura sin internet; las lecturas no usan internet una vez abierta.</p><p><strong>Cómo leer el panel:</strong> las flechas comparan con la lectura anterior; no indican por sí solas un estado bueno o malo. Los anillos usan escalas de 0–50 °C, 0–100 % y 0–3 kPa. La guía VPD es orientativa y depende de la especie y etapa de cultivo.</p></details>
-    <footer class="foot"><div class="privacy"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3Z"/><path d="M5 8l2 2 4-4"/></svg> Sin cuentas · Sin nube · Directo a tu sensor</div><p class="signature">ROXS Lab · Quick-T</p></footer>
+    
+  <section class="calendar-section" aria-label="Calendario de cultivo">
+    <div class="section-heading"><h2>CALENDARIO DE CULTIVO</h2></div>
+    <div class="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <button class="btn" style="width:auto;padding:6px 14px;font-size:12px;" onclick="calShift(-1)">◀</button>
+      <span id="calMonth" style="font-size:13px;color:var(--gold);font-weight:600;"></span>
+      <button class="btn" style="width:auto;padding:6px 14px;font-size:12px;" onclick="calShift(1)">▶</button>
+    </div>
+    <div class="cal-grid" id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:10px;"></div>
+    <div class="cal-form" style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap;">
+      <input id="evDate" type="date" style="flex:1;min-width:100px;padding:6px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:11px;">
+      <input id="evVar" placeholder="Variedad" style="flex:1;min-width:80px;padding:6px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:11px;">
+      <select id="evStage" style="flex:1;min-width:60px;padding:6px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:11px;">
+        <option>Siembra</option><option>Poda</option><option>Cosecha</option>
+      </select>
+      <button class="btn" style="width:auto;padding:6px 12px;font-size:18px;line-height:1;" onclick="addEvent()">+</button>
+    </div>
+    <div id="evList" style="margin-top:8px;font-size:11px;color:var(--muted);max-height:120px;overflow-y:auto;"></div>
+  </section>
+
+<footer class="foot"><div class="privacy"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3Z"/><path d="M5 8l2 2 4-4"/></svg> Sin cuentas · Sin nube · Directo a tu sensor</div><p class="signature">ROXS Lab · Quick-T</p></footer>
   </main>
 <script>
 'use strict';
@@ -393,6 +419,46 @@ const manifest = {
 };
 $('appManifest').href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
 initializeBluetooth();
+
+// ═══ CALENDARIO DE CULTIVO ═══
+let calOffset=0, calDate=new Date();
+function getEvs(){try{return JSON.parse(localStorage.getItem('roxs_evs')||'[]');}catch(e){return[];}}
+function saveEvs(evs){localStorage.setItem('roxs_evs',JSON.stringify(evs));}
+function renderCal(){
+  var d=new Date(calDate.getFullYear(),calDate.getMonth()+calOffset,1);
+  var months=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+  document.getElementById('calMonth').textContent=months[d.getMonth()]+' '+d.getFullYear();
+  var evs=getEvs(),today=new Date().toISOString().slice(0,10);
+  var grid=document.getElementById('calGrid'),h='<div style="color:var(--muted);">Do</div><div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div><div>Vi</div><div style="color:var(--muted);">Sa</div>';
+  var startDay=(d.getDay()+6)%7,end=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  for(var i=0;i<startDay;i++)h+='<div></div>';
+  for(var day=1;day<=end;day++){
+    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+    var hasEv=evs.some(function(e){return e.date===ds;});
+    var isToday=ds===today;
+    h+='<div style="padding:3px;'+(isToday?'background:var(--purple);color:#fff;border-radius:4px;':'')+'">'+day+(hasEv?'<div style="width:4px;height:4px;background:var(--green);border-radius:50%;margin:1px auto 0;"></div>':'')+'</div>';
+  }
+  grid.innerHTML=h;renderEvs();
+}
+function calShift(n){calOffset+=n;renderCal();}
+function addEvent(){
+  var d=document.getElementById('evDate').value,v=document.getElementById('evVar').value.trim(),s=document.getElementById('evStage').value;
+  if(!d||!v)return;
+  var evs=getEvs();evs.push({date:d,variety:v,stage:s});saveEvs(evs);
+  document.getElementById('evVar').value='';renderCal();
+}
+function renderEvs(){
+  var evs=getEvs(),list=document.getElementById('evList');
+  if(!evs.length){list.innerHTML='';return;}
+  evs.sort(function(a,b){return a.date>b.date?1:-1;});
+  list.innerHTML=evs.map(function(e,i){
+    return'<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);"><span>'+e.date+' · '+e.stage+' · <b>'+e.variety+'</b></span><span onclick="delEv('+i+')" style="cursor:pointer;color:var(--red);">x</span></div>';
+  }).join('');
+  var a=evs.filter(function(e){var t=new Date(e.date);var n=new Date();var diff=(t-n)/(1000*60*60*24);return diff>=0&&diff<=7;});
+  if(a.length)document.getElementById('recNote').textContent='Próximos: '+a.map(function(e){return e.stage+' de '+e.variety+' el '+e.date;}).join(' · ');
+}
+function delEv(i){var evs=getEvs();evs.splice(i,1);saveEvs(evs);renderCal();}
+renderCal();
 
 </script>
 </body>
