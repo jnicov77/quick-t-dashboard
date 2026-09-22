@@ -28,11 +28,18 @@
 <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">Q</span>QUICK-T <span>Food</span></div><span class="top-note">A tu mesa. A tu ritmo.</span></header>
 <div id="connection-status" class="status" role="status" hidden>Sin conexión. Tu selección sigue en este dispositivo; WhatsApp necesita internet.</div>
 <section class="hero" aria-labelledby="restaurant-name"><img class="hero-photo" src="./img/amelia/foto_9.jpeg" alt="Fondue de queso servido en una mesa para compartir" fetchpriority="high" width="700" height="1050"><div><p class="eyebrow">Fondue & Fagottos</p><h1 id="restaurant-name">Amelia</h1><div class="since">Desde 1991</div><p>El placer de compartir,<br>sin mirar el reloj.</p></div></section>
+<div id="sommelier-box" style="margin:12px 22px;padding:14px 16px;background:rgba(179,136,255,.06);border:1px solid rgba(179,136,255,.15);border-radius:14px;display:none;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+    <span style="font-size:18px;">🍷</span>
+    <strong style="color:var(--purple);font-size:13px;">Agente Sommelier Virtual</strong>
+  </div>
+  <p id="sommelier-text" style="font-size:12px;color:var(--muted);line-height:1.5;min-height:18px;">Esperando tu selección de la carta para analizar los perfiles de sabor y sugerir el maridaje perfecto...</p>
+</div>
 <div class="experience"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></svg><details><summary><strong>AI Pairing · Tu guía de maridaje</strong><p>Un acompañante para cada sabor. Toca para conocer más.</p></summary><p>Recomendaciones predefinidas para acompañar tu elección, no un chat de IA en vivo. Los maridajes no se agregan al pedido. Consulta disponibilidad y alternativas sin alcohol con nuestro equipo.</p></details></div>
 <nav class="nav-wrap" aria-label="Categorías de la carta"><div class="nav-label"><span>Explora la carta</span><span>Precios en COP</span></div><div class="tabs" id="category-tabs"></div></nav>
 <main id="menu" class="menu" tabindex="-1"></main>
 <noscript><p class="noscript">Activa JavaScript para consultar la carta y preparar tu pedido. También puedes consultar la carta con el equipo de Amelia.</p></noscript>
-<footer class="closing"><p>Porque amamos la vida<br>le ponemos pasión<br>a la comida.</p><small>Fotografías de la carta de Amelia. Algunas son representativas<br>de la categoría; los ingredientes están en cada descripción.<br>Confirma alergias y disponibilidad antes de pedir.</small><small class="powered">AMELIA · DESDE 1991<br>Una experiencia QUICK-T Food</small></footer>
+<footer class="closing"><p style="font-style:italic;color:var(--gold);">"Porque amamos la vida le ponemos pasión a la comida."</p><p style="font-size:11px;color:var(--muted);margin-top:4px;">Abrimos cuando llegamos. Cerramos cuando nos vamos.</p><small>Fotografías de la carta de Amelia. Algunas son representativas<br>de la categoría; los ingredientes están en cada descripción.<br>Confirma alergias y disponibilidad antes de pedir.</small><small class="powered">AMELIA · DESDE 1991<br>Una experiencia QUICK-T Food</small></footer>
 </div>
 <div class="floating" aria-label="Tu pedido"><button class="cart-toggle" id="cart-toggle" aria-haspopup="dialog" aria-controls="cart-sheet"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3h2l3 12h11l2-8H6M9 20h.01M18 20h.01"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span class="cart-copy">Mi pedido<small id="cart-subtitle">Elige algo para compartir</small></span><span class="cart-count" id="cart-count">0</span><span class="sr-only" id="cart-accessible">0 productos</span></button><a id="whatsapp-float" class="wa-float" href="https://wa.me/573137796920?text=" target="_blank" rel="noopener noreferrer" aria-label="Compartir pedido por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 3.7A10 10 0 0 0 4.7 16L3 22l6-1.6A10 10 0 0 0 20.4 3.7Z"/><path d="M8 7c-2 1 0 5 2 7s5 3 6 1l1-2-3-1-1 1c-2-1-3-2-3-3l1-1-1-3Z"/></svg></a></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -43,15 +50,26 @@
    Everything except existing local photographs is embedded in this file.
    This single-document build is PWA-ready; it does not claim offline caching. */
 const PAIRINGS = Object.freeze({
-  'Queso Tradicional':'Vino Blanco (Chardonnay)', 'Queso Azul':'Vino Tinto (Malbec)',
-  'Queso Napolitano':'Vino Rosado', 'Res':'Vino Tinto (Cabernet)',
-  'Pollo':'Vino Blanco (Sauvignon Blanc)', 'Mixto':'Vino Tinto (Merlot)',
-  'Jamón Serrano':'Cerveza Artesanal', 'Solomito':'Vino Tinto (Malbec)',
-  'Cerdo Agridulce':'Cóctel de Maracuyá', 'Trucha Entera':'Vino Blanco (Chardonnay)',
-  'Brie':'Vino Espumoso', 'Pavo':'Limonada Natural',
-  'Espinacas':'Vino Blanco (Sauvignon Blanc)', 'Berenjenas':'Vino Tinto (Merlot)',
-  'Champiñones':'Vino Tinto (Merlot)', 'Napolitano':'Vino Rosado',
-  'Vegetales':'Vino Blanco (Sauvignon Blanc)', 'Especial':'Vino Blanco (Chardonnay)'
+  'Queso Tradicional':'🍷 SANTA EMA CHARDONAY (Chile) — Perfil lácteo, ideal con emmental y gruyere',
+  'Queso Azul':'🍷 LA CELIA RESERVA MALBEC (Argentina) — Notas intensas para queso azul',
+  'Queso Napolitano':'🍷 LAMBRUSCO ROSATO (Italia) — Notas herbales y ácidas, perfecto con tomate cherry y pesto',
+  'Res':'🍷 LUIS CAÑAS CRIANZA (España) — Proteína robusta, taninos elegantes',
+  'Pollo':'🍷 SANTA EMA GRAN RESERVA CARMENERE (Chile) — Suave, frutal, ideal con ave',
+  'Mixto':'🍷 SANTA EMA CARMENERE/MERLOT (Chile) — Equilibrio perfecto entre carnes',
+  'Jamón Serrano':'🍷 FINCA LAS MORAS SYRAH ROSÉ (Argentina) — Fresco y salado, maridaje mediterráneo',
+  'Solomito':'🍷 RISCAL TEMPRANILLO (España) — Sabores ahumados y confitados',
+  'Cerdo Agridulce':'🍷 TRIVENTO MALBEC (Argentina) — Frutal, balancea el agridulce',
+  'Trucha Entera':'🍷 RAMON BILBAO VERDEJO (España) — Ligero, herbal, perfecto con pescado',
+  'Brie':'🍷 ESPUMOSO BRUT (Francia) — Burbujas que cortan la cremosidad del brie',
+  'Pavo':'🍷 PINOT NOIR (Chile) — Ligero, no opaca las finas hierbas',
+  'Sopa de Cebolla':'🍺 STELLA ARTOIS (Bélgica) — Cerveza fría con gratinado caliente',
+  'Tejitas':'🍹 KOMBUCHA FRÍA — Aperitivo ligero, prepara el paladar',
+  'Espinacas':'🍷 SAUVIGNON BLANC (Chile) — Verdor y acidez para hojas verdes',
+  'Berenjenas':'🍷 MERLOT (Chile) — Cuerpo medio, ahumado sutil',
+  'Champiñones':'🍷 PINOT NOIR (Francia) — Terroso, combina con hongos',
+  'Napolitano':'🍷 CHIANTI (Italia) — Acidez italiana con tomate',
+  'Vegetales':'🍷 VERDEJO (España) — Fresco, herbal, ligero',
+  'Especial':'🍷 CHEF'S PAIRING — Consultá con nuestro sommelier'
 });
 const STORIES={
   quesos:'Sabor, calidez y momentos para compartir. El equilibrio perfecto entre quesos selectos, vino blanco y un toque de ajo que se funden para sumergir pan fresco y vegetales crujientes.',
@@ -248,6 +266,45 @@ try{
  const manifest={id:start.href,name:'Amelia · QUICK-T Food',short_name:'Amelia',description:'Fondue y fagottos desde 1991. Carta y pedidos.',lang:'es-CO',start_url:start.href,scope,display:'standalone',background_color:'#0D0D0D',theme_color:'#0D0D0D',icons:[{src:icon,sizes:'512x512',type:'image/png',purpose:'any'}]};
  $('app-manifest').href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest));
 }catch{/* Menu and ordering remain available if canvas/manifest is restricted. */}
+
+let typingTimer;
+function typeWriter(text) {
+  const el = document.getElementById('sommelier-text');
+  const box = document.getElementById('sommelier-box');
+  box.style.display = 'block';
+  clearInterval(typingTimer);
+  el.textContent = '';
+  let i = 0;
+  typingTimer = setInterval(function() {
+    if (i < text.length) { el.textContent += text.charAt(i); i++; }
+    else { clearInterval(typingTimer); }
+  }, 25);
+}
+
+// ═══ SOMELIER TRIGGER ═══
+// Watch cart changes and trigger sommelier on new additions
+let _lastCartCount=0;
+setInterval(function(){
+  const cc=document.getElementById('cart-count');
+  const cur=parseInt(cc.textContent)||0;
+  if(cur>_lastCartCount){
+    _lastCartCount=cur;
+    // Find the last added dish name from the cart
+    const lines=document.getElementById('cart-lines');
+    if(lines){
+      const last=lines.querySelector('.dish:last-child .dish-info h3, .cart-item:last-child strong, li:last-child');
+      if(last){
+        const name=last.textContent.trim();
+        const p=PAIRINGS[name]||'';
+        if(p){
+          document.getElementById('sommelier-box').style.display='block';
+          typeWriter('🍷 [Analizando: '+name+'] ... '+p);
+        }
+      }
+    }
+  }
+},800);
+
 </script>
 </body>
 </html>
