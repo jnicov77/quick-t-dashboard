@@ -305,6 +305,22 @@ setInterval(function(){
   }
 },800);
 
+// ═══ SOMELIER ═══
+document.addEventListener('click',function(e){
+  if(!e.target.closest('button.add'))return;
+  setTimeout(function(){
+    var lines=document.getElementById('cart-lines');
+    if(!lines)return;
+    var h3s=lines.querySelectorAll('h3');
+    if(!h3s.length)return;
+    var name=h3s[h3s.length-1].textContent.replace(/\(.*?\)/g,'').trim();
+    var p=PAIRINGS[name]||'';
+    if(!p)return;
+    document.getElementById('sommelier-box').style.display='block';
+    typeWriter('\ud83c\udf77 '+name+': '+p);
+  },700);
+});
+
 </script>
 </body>
 </html>
