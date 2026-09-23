@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0D0D0D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>QUICK-T Food · Tu menú digital, con inteligencia</title>
+<style>
+:root{--bg:#0D0D0D;--gold:#D4A843;--cream:#FFF8E7;--dark:#1A1A1A;--dim:#999;--accent:#B388FF;--green:#00E676}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui;background:var(--bg);color:#fff;line-height:1.6}
+.container{max-width:800px;margin:0 auto;padding:40px 20px}
+.header{text-align:center;padding:60px 0 40px}
+.header .badge{display:inline-block;background:rgba(212,168,67,.12);color:var(--gold);padding:6px 14px;border-radius:20px;font-size:12px;margin-bottom:16px}
+.header h1{font-size:clamp(28px,5vw,44px);color:var(--gold);letter-spacing:-.02em}
+.header p{color:var(--dim);font-size:17px;margin-top:12px;max-width:500px;margin-left:auto;margin-right:auto}
+.cta{display:inline-block;background:var(--gold);color:#000;padding:14px 24px;border-radius:10px;font-weight:700;text-decoration:none;margin-top:20px;font-size:15px}
+.cta:hover{opacity:.9}
+.section{padding:50px 0;border-top:1px solid rgba(255,255,255,.06)}
+.section h2{font-size:24px;color:var(--gold);margin-bottom:12px;letter-spacing:-.01em}
+.section h3{font-size:18px;color:#fff;margin-bottom:8px}
+.section p{color:var(--dim);font-size:15px;max-width:550px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--dark);border-radius:14px;padding:24px;border:1px solid rgba(255,255,255,.06)}
+.card .icon{font-size:36px;margin-bottom:8px}
+.card h3{font-size:17px;color:#fff;margin-bottom:6px}
+.card p{font-size:13px;color:var(--dim)}
+preview{border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden;margin-top:20px;background:var(--dark)}
+.preview img{width:100%;display:block;border-radius:12px}
+.case{background:linear-gradient(135deg,rgba(179,136,255,.08),rgba(212,168,67,.08));border:1px solid rgba(212,168,67,.15);border-radius:14px;padding:20px;margin:20px 0}
+.case span{color:var(--gold);font-size:12px;font-weight:600}
+.case p{color:#ccc;font-size:14px;margin-top:4px}
+.footer{text-align:center;padding:30px 0;border-top:1px solid rgba(255,255,255,.06);color:var(--dim);font-size:12px;margin-top:40px}
+.footer span{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🍽️ QUICK-T Food</div>
+    <h1>Tu menú digital,<br>con inteligencia.</h1>
+    <p>Convertimos tu carta en una experiencia digital. Sin apps, sin complicaciones.</p>
+    <a href="https://wa.me/573137796920" class="cta">Quiero mi menú digital →</a>
+  </div>
+
+  <div class="case">
+    <span>⭐ CASO REAL</span>
+    <p>Ya usado por <strong>Amelia · Fondue & Fagottos</strong> · Desde 1991. <a href="amelia-food.html" style="color:var(--accent)">Ver demo en vivo →</a></p>
+  </div>
+
+  <div class="section">
+    <h2>Del PDF al celular</h2>
+    <p>Tu carta en PDF se convierte en una PWA interactiva. Fotos reales de tus platos, navegación por categorías, precios actualizados. Tus clientes escanean, tocan y piden.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="icon">🍷</div>
+      <h3>Agente Sommelier</h3>
+      <p>IA que recomienda maridajes según el plato. Vinos reales, cervezas, cócteles. Efecto typewriter que sorprende a tus comensales.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📲</div>
+      <h3>Pedido por WhatsApp</h3>
+      <p>El cliente arma su pedido en el menú y lo envía directo a tu WhatsApp. Sin apps de delivery, sin comisiones.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📇</div>
+      <h3>Tap NFC y pedí</h3>
+      <p>Tarjeta NFC en cada mesa. El cliente acerca su celular y ve el menú al instante. Sin escanear QR, sin escribir URLs.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🧀</div>
+      <h3>Textos que venden</h3>
+      <p>Incorporamos los textos filosóficos y la historia de tu restaurante. "Porque amamos la vida, le ponemos pasión a la comida."</p>
+    </div>
+  </div>
+
+  <div class="preview">
+    <img src="img/amelia/foto_9.jpeg" alt="Amelia PWA preview" style="width:100%;max-width:400px;margin:0 auto;display:block;">
+  </div>
+
+  <div style="text-align:center;padding:40px 0;">
+    <h2 style="color:var(--gold);margin-bottom:12px;">¿Listo para digitalizar tu restaurante?</h2>
+    <p style="color:var(--dim);margin-bottom:20px;">15 minutos. Sin compromiso. Te mostramos cómo se vería TU carta.</p>
+    <a href="https://wa.me/573137796920" class="cta">Agendar demo gratis →</a>
+  </div>
+
+  <div class="footer">
+    <span>QUICK-T Food</span> · Menús digitales inteligentes<br>
+    Amelia · ROXS Lab · Quick-T © 2026
+  </div>
+</div>
+</body>
+</html>
