@@ -839,8 +839,8 @@
        Legacy schema: nombre, identificacion, entrada, salida (kept for reversibility). */
     function normalizeEventoRow(obj) {
       const hasNew = obj.employee_name !== undefined || obj.uid !== undefined || obj.action !== undefined;
-      const nombre         = (obj.employee_name || obj.nombre || '').trim();
-      const identificacion = (obj.uid || obj.identificacion || '').trim();
+      const nombre         = (obj.employee_name || obj.nombre || obj.empleado || '').trim();
+      const identificacion = (obj.uid || obj.identificacion || obj['id tag'] || '').trim();
       const action         = (obj.action || '').trim().toUpperCase();
       const timestamp      = (obj.timestamp || obj['fecha y hora'] || obj.fecha || '').trim();
 
