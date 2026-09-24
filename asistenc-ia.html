@@ -842,7 +842,7 @@
       const nombre         = (obj.employee_name || obj.nombre || '').trim();
       const identificacion = (obj.uid || obj.identificacion || '').trim();
       const action         = (obj.action || '').trim().toUpperCase();
-      const timestamp      = (obj.timestamp || '').trim();
+      const timestamp      = (obj.timestamp || obj['fecha y hora'] || obj.fecha || '').trim();
 
       let entrada = (obj.entrada || '').trim();
       let salida  = (obj.salida  || '').trim();
