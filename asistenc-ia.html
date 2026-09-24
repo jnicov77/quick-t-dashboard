@@ -1043,7 +1043,11 @@
       // Novedades (today)
       const novHoy = novedades.filter(n => {
         const ts = n.timestamp || n.fecha || '';
-        return ts.startsWith(today);
+        if (!ts) return false;
+        const d = new Date(ts);
+        if (isNaN(d.getTime())) return false;
+        const colDate = d.toLocaleDateString('sv', {timeZone: 'America/Bogota'});
+        return colDate === today;
       });
       document.getElementById('statNovedades').textContent = novHoy.length;
     }
