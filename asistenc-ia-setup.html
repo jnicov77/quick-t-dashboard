@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0D0D0D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>QUICK-T · Configurar Asistenc-IA</title>
+<style>
+:root{--bg:#0D0D0D;--gold:#D4A843;--purple:#B388FF;--green:#00E676}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui;background:var(--bg);color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.container{max-width:400px;width:100%;text-align:center}
+.logo{width:80px;margin-bottom:8px}
+h1{font-size:20px;color:var(--gold);margin:4px 0}
+.sub{font-size:12px;color:#888;margin-bottom:24px}
+.steps{text-align:left;background:rgba(255,255,255,.03);border-radius:12px;padding:14px;margin-bottom:20px;font-size:11px;color:#aaa;line-height:1.8}
+.steps span{color:var(--purple);font-weight:700}
+.card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:24px}
+input{width:100%;padding:14px;margin:8px 0;background:#1a1a1a;border:1px solid #333;border-radius:10px;color:#fff;font-size:15px}
+input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+button{width:100%;padding:14px;margin-top:12px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+button:hover{opacity:.9}
+.success{display:none;color:var(--green);font-size:14px;margin-top:12px}
+.success.show{display:block}
+.lock{font-size:10px;color:#555;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="container">
+  <img class="logo" src="quickt-logo-new.png" alt="QUICK-T" onerror="this.style.display='none'">
+  <h1>Asistenc-IA</h1>
+  <p class="sub">Configurá el WiFi de tu empresa.<br>Se hace una sola vez.</p>
+
+  <div class="steps">
+    <span>1.</span> Conectate a la red WiFi <b>"QuickT-Asistenc"</b><br>
+    <span>2.</span> Ingresá el nombre y clave de tu WiFi<br>
+    <span>3.</span> Tocá <b>Conectar</b>. El dispositivo se reinicia solo.
+  </div>
+
+  <div class="card">
+    <form id="wifiForm">
+      <input name="s" id="ssid" placeholder="Nombre de tu WiFi" required autofocus>
+      <input name="p" id="pass" type="password" placeholder="Contraseña del WiFi">
+      <button type="submit">⚡ Conectar</button>
+    </form>
+    <div class="success" id="success">
+      <p>✅ ¡Configurado!</p>
+      <p style="font-size:12px;color:#aaa;">Conectando a <b id="netName"></b>…</p>
+      <p style="font-size:11px;color:#666;">El dispositivo se reiniciará automáticamente.</p>
+    </div>
+  </div>
+
+  <p class="lock">🔒 Tus datos se guardan solo en el dispositivo.<br>Nada se envía a internet.</p>
+</div>
+
+<script>
+const form = document.getElementById('wifiForm');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const ssid = document.getElementById('ssid').value;
+  const pass = document.getElementById('pass').value;
+
+  const btn = form.querySelector('button');
+  btn.textContent = 'Conectando…';
+  btn.disabled = true;
+
+  try {
+    // Enviar al ESP32 en modo AP
+    const params = new URLSearchParams();
+    params.append('s', ssid);
+    params.append('p', pass);
+
+    await fetch('http://192.168.4.1/save', {
+      method: 'POST',
+      body: params,
+      mode: 'no-cors'
+    });
+
+    // Mostrar éxito
+    form.style.display = 'none';
+    document.getElementById('success').classList.add('show');
+    document.getElementById('netName').textContent = ssid;
+
+    // Reiniciar ESP32 después de 3 segundos
+    setTimeout(async () => {
+      try { await fetch('http://192.168.4.1/reboot', {mode:'no-cors'}); } catch(e) {}
+    }, 3000);
+
+  } catch(err) {
+    btn.textContent = 'Error — reintentar';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
