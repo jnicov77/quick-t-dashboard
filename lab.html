@@ -91,6 +91,13 @@ body{font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backg
 .actions{ddisplay:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .actions button{background:var(--card-bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;backdrop-filter:blur(10px)}
 .actions button:hover{background:rgba(0,212,112,.1);border-color:var(--cyan);color:var(--cyan)}
+/* Voice button */
+.vc-btn{position:fixed;bttom:20px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--card-bg);border:2px solid var(--cyan);color:var(--cyan);font-size:22px;cursor:pointer;z-index:999;backdrop-filter:blur(10px);box-shadow:var(--glow);transition:all .2s;display:flex;align-items:center;justify-content:center}
+.vc-btn:hover{background:rgba(0,212,212,.1);transform:scale(1.08)}
+.vc-btn.listening{background:var(--green);color:#fff;border-color:var(--green);animation:vc-pulse .8s infinite}
+@keyframes vc-pulse{0%,100%{box-shadow:0 0 10px var(--green)}50%{box-shadow:0 0 30px var(--green),0 0 60px var(--green)}}
+.vc-toast{position:fixed;bottom:80px;right:20px;background:var(--card-bg);border:1px solid var(--cyan);color:var(--text);padding:10px 16px;border-radius:10px;font-size:11px;z-index:999;opacity:0;transition:opacity .3s;max-width:220px}
+.vc-toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -183,5 +190,29 @@ body{font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backg
   </div>
 </div>
 </div>
+
+<!-- Voice Control -->
+<button class="vc-btn" id="vcBtn" title="Comandos de voz" onclick="toggleVoice()">🎤</button>
+<div class="vc-toast" id="vcToast"></div>
+<script>
+var listening=false,S=null;
+function toggleVoice(){
+  if(listening){stopVoice();return}
+  var SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){document.getElementById('vcToast').textContent='Tu navegador no soporta voz';document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},2000);return}
+  S=new SpeechRecognition();S.lang='es-CO';S.interimResults=false;S.maxAlternatives=1;
+  S.onstart=function(){listening=true;document.getElementById('vcBtn').classList.add('listening');document.getElementById('vcBtn').textContent='🎙️';document.getElementById('vcToast').textContent='🎙️ Escuchando...';document.getElementById('vcToast').classList.add('show')};
+  S.onresult=function(e){var cmd=e.results[0][0].transcript.toLowerCase().trim();executeVoice(cmd)};
+  S.onerror=function(e){stopVoice();document.getElementById('vcToast').textContent='❌ No entend\u00ed';document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},1500)};
+  S.onend=function(){stopVoice()};
+  S.start();
+}
+function stopVoice(){listening=false;document.getElementById('vcBtn').classList.remove('listening');document.getElementById('vcBtn').textContent='🎤';document.getElementById('vcToast').classList.remove('show');if(S)try{S.stop()}catch(e){}}
+function executeVoice(cmd){
+  var urls={'abrir asistencia':'asistenc-ia.html','abrir roxs':'roxs-ble.html','abrir amelia':'amelia-food.html','food landing':'food-landing.html','iot':'IoT-perspective.html','whatsapp':'https://wa.me/573137796920'};
+  for(var k in urls){if(cmd.includes(k)){window.open(urls[k]);document.getElementById('vcToast').textContent='✅ '+k;document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},1500);return}}
+  document.getElementById('vcToast').textContent='🤷 Comando: '+cmd;document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},2500);
+}
+</script>
 </body>
 </html>
