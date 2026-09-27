@@ -275,13 +275,15 @@ try{
 
 let typingTimer;
 function addToCartDirect(dishId){
-  var dish=MENU.find(function(m){return m.id===dishId;});
-  if(!dish)return;
-  enries().push({id:dish.id,name:dish.name,price:dish.variants[0].price,label:dish.variants[0].label});
-  updateOrderLinks();updateCartUI();
-  var count=document.getElementById('cart-count');
-  if(count)count.textContent=entries().length;
-  document.getElementById('cart-toggle').setAttribute('aria-label','Ver pedido, '+entries().length+' productos, '+money(subtotal()));
+  // Find any variant key for this dish
+  var productKey=null;
+  PRODUCTS.forEach(function(val,key){
+    if(!productKey&&String(val.id)===String(dishId))productKey=key;
+  });
+  if(!productKey)return;
+  cart[productKey]=(cart[productKey]||0)+1;
+  updateCartUI();
+  updateOrderLinks();
 }
 function typeWriter(text) {
   const el = document.getElementById('sommelier-text');
