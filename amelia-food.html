@@ -274,6 +274,15 @@ try{
 }catch{/* Menu and ordering remain available if canvas/manifest is restricted. */}
 
 let typingTimer;
+function addToCartDirect(dishId){
+  var dish=MENU.find(function(m){return m.id===dishId;});
+  if(!dish)return;
+  enries().push({id:dish.id,name:dish.name,price:dish.variants[0].price,label:dish.variants[0].label});
+  updateOrderLinks();updateCartUI();
+  var count=document.getElementById('cart-count');
+  if(count)count.textContent=entries().length;
+  document.getElementById('cart-toggle').setAttribute('aria-label','Ver pedido, '+entries().length+' productos, '+money(subtotal()));
+}
 function typeWriter(text) {
   const el = document.getElementById('sommelier-text');
   const box = document.getElementById('sommelier-box');
@@ -329,7 +338,15 @@ document.addEventListener('click',function(e){
   var el=document.createElement('div');
   el.className='somm-inline';
   el.style.cssText='margin-top:6px;padding:8px 10px;background:rgba(179,136,255,.08);border:1px solid rgba(179,136,255,.2);border-radius:8px;font-size:11px;color:#B388FF;line-height:1.5;animation:fadeIn .3s;';
-  el.innerHTML='<span style="font-size:14px;">🍷</span> <b>'+name+'</b>: '+p;
+  // Extract wine name from pairing to enable "buy this drink"
+  var wineName=p.replace(/[🍷🥂🍾🍸🥃]*\s*/,'').split('—')[0].trim();
+  // Find matching wine in the menu
+  var wineItem=MENU.find(function(m){return m.name===wineName||(m.name||'').toUpperCase().includes(wineName.toUpperCase().substring(0,8));});
+  var buyBtn='';
+  if(wineItem){
+    buyBtn='<br><button onclick="addToCartDirect('+wineItem.id+')" style="margin-top:6px;background:rgba(212,168,67,.15);border:1px solid var(--gold);color:var(--gold);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-weight:600;">➕ Añadir '+wineItem.name+'</button>';
+  }
+  el.innerHTML='<span style="font-size:14px;">🍷</span> <b>'+name+'</b>: '+p+buyBtn;
   if(desc)desc.after(el);else dish.appendChild(el);
   // Auto-remove after 8 seconds
   setTimeout(function(){if(el.parentNode)el.remove();},8000);
