@@ -140,6 +140,40 @@
       <div class="scale" aria-hidden="true"><div class="scale-track"><i style="--segment:#00D4D4"></i><i style="--segment:#68DDDE"></i><i style="--segment:#00E676"></i><i style="--segment:#B388FF"></i><i style="--segment:#D4A843"></i><i style="--segment:#FF7184"></i></div><span class="scale-marker" id="vpdMarker" hidden></span><div class="scale-labels"><span>Bajo</span><span>Óptimo</span><span>Alto</span></div></div>
       <p class="rec-note" id="recNote" hidden>Última lectura guardada en pantalla; no es un dato en vivo.</p>
     </section>
+    <button class="btn" id="guideBtn" hidden onclick="document.getElementById('guidePanel').hidden=!document.getElementById('guidePanel').hidden" style="background:linear-gradient(135deg,#B388FF,var(--purple));border-color:#B388FF;color:#fff;margin-top:8px">📖 Guía de Cultivo ROXS</button>
+    <section id="guidePanel" hidden style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-top:10px;max-height:400px;overflow-y:auto;font-size:12px;line-height:1.7">
+<h3 style="color:var(--purple);margin:0 0 12px">📖 Guía de Cultivo ROXS</h3>
+<p style="color:var(--gold);font-style:italic">"Cultivar es, ante todo, un acto de libertad."</p>
+<p>Este manual es una brújula para reconectarte con el ritmo de la tierra. A medida que tus plantas crezcan, tú también lo harás.</p>
+
+<h4 style="color:var(--cyan);margin:12px 0 6px">🌱 ETAPAS DEL CULTIVO</h4>
+<table style="width:100%;font-size:10px;border-collapse:collapse;margin-bottom:12px">
+<tr style="color:var(--gold)"><td style="padding:4px">Etapa</td><td>Temp</td><td>Humedad</td><td>VPD</td><td>Luz</td></tr>
+<tr><td style="padding:4px;color:var(--green)">Germinación</td><td>20-25°C</td><td>70-80%</td><td>0.4-0.8</td><td>18h</td></tr>
+<tr><td style="padding:4px;color:var(--cyan)">Crecimiento</td><td>22-28°C</td><td>55-70%</td><td>0.8-1.2</td><td>18h</td></tr>
+<tr><td style="padding:4px;color:var(--purple)">Floración</td><td>20-26°C</td><td>40-55%</td><td>1.0-1.5</td><td>12h</td></tr>
+<tr><td style="padding:4px;color:var(--gold)">Cosecha</td><td>18-22°C</td><td>35-50%</td><td>1.2-1.6</td><td>12h</td></tr>
+</table>
+
+<h4 style="color:var(--cyan);margin:12px 0 6px">🧬 CONCEPTOS CLAVE</h4>
+<p><b style="color:var(--gold)">Cannabinoides:</b> Moléculas únicas (THC, CBD) que determinan potencia y efectos.</p>
+<p><b style="color:var(--gold)">Terpenos:</b> Compuestos aromáticos que modulan el efecto (Linalool=calma, Limoneno=energía).</p>
+<p><b style="color:var(--gold)">Tricomas:</b> Glándulas donde se producen cannabinoides. Indicador visual de madurez.</p>
+<p><b style="color:var(--gold)">Fotoperiodo:</b> Ciclo luz/oscuridad que controla crecimiento vs. floración.</p>
+
+<h4 style="color:var(--cyan);margin:12px 0 6px">🌿 FILOSOFÍA ROXS</h4>
+<p>• Minimizar la huella: sustratos reutilizables, luces LED eficientes.</p>
+<p>• Nutrición limpia: enmiendas orgánicas sobre sales sintéticas.</p>
+<p>• Zero-Waste: reutilizar material vegetal (té, compost, extractos).</p>
+<p>• Pureza desde la semilla hasta el consumo.</p>
+
+<h4 style="color:var(--cyan);margin:12px 0 6px">✅ BUENAS PRÁCTICAS</h4>
+<p>• Observá los tricomas con lupa para saber el momento exacto de cosecha.</p>
+<p>• Mantené un diario de cultivo con fechas, riegos y observaciones.</p>
+<p>• La prevención es clave: buen flujo de aire evita hongos.</p>
+<p>• Secado lento (7-14 días) y curado en frascos para máxima calidad.</p>
+<p style="color:var(--muted);margin-top:12px;font-size:10px">© ROXS Lab · QUICK-T</p>
+</section>
     <details class="guide"><summary>Conexión y acceso desde tu celular</summary><p><strong>Primera conexión:</strong> activá Bluetooth, encendé el sensor y tocá Conectar. Elegí ROXS-Garden. Luego intentaremos recuperar el dispositivo autorizado y reconectar si se pierde la señal.</p><p><strong>Navegadores:</strong> Chrome en Android o Chrome/Edge en una computadora con Bluetooth. Safari en iPhone/iPad no admite Web Bluetooth. La reconexión al abrir depende de los permisos y del navegador.</p><p><strong>Acceso rápido:</strong> en el menú del navegador elegí «Agregar a pantalla de inicio» o «Instalar aplicación», si está disponible. La página necesita HTTPS para usar Bluetooth. Esta edición de un solo archivo no garantiza la reapertura sin internet; las lecturas no usan internet una vez abierta.</p><p><strong>Cómo leer el panel:</strong> las flechas comparan con la lectura anterior; no indican por sí solas un estado bueno o malo. Los anillos usan escalas de 0–50 °C, 0–100 % y 0–3 kPa. La guía VPD es orientativa y depende de la especie y etapa de cultivo.</p></details>
     
   <section class="calendar-section" aria-label="Calendario de cultivo">
@@ -193,6 +227,8 @@ function setStatus(state) {
   $('connectBtn').textContent = state === 'connecting' ? 'Conectando con tu sensor…' : dev ? 'Reintentar conexión' : 'Conectar ROXS Garden';
   if ($('chooseBtn')) $('chooseBtn').hidden = !dev || active || state === 'connecting';
   if ($('readings')) $('readings').classList.toggle('disconnected', !active);
+  if ($('guideBtn')) $('guideBtn').hidden = !active;
+  if ($('guidePanel')) $('guidePanel').hidden = true;
   if (!active) freshConnectionReading = false;
   refreshFreshness();
 }
