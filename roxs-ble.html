@@ -143,6 +143,12 @@
     <button class="btn" id="guideBtn" hidden onclick="document.getElementById('guidePanel').hidden=!document.getElementById('guidePanel').hidden" style="background:linear-gradient(135deg,#B388FF,var(--purple));border-color:#B388FF;color:#fff;margin-top:8px">📖 Guía de Cultivo ROXS</button>
     <section id="guidePanel" hidden style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-top:10px;max-height:400px;overflow-y:auto;font-size:12px;line-height:1.7">
 <h3 style="color:var(--purple);margin:0 0 12px">📖 Guía de Cultivo ROXS</h3>
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+<label style="font-size:10px;color:var(--muted)">Etapa actual:</label>
+<select id="guideStage" onchange="updateGuideComparison()" style="padding:5px 8px;background:#1a1a1a;border:1px solid #333;color:var(--gold);border-radius:6px;font-size:11px">
+<option>Germinación</option><option>Crecimiento</option><option>Floración</option><option>Cosecha</option></select>
+</div>
+<div id="guideComparison" style="font-size:11px;line-height:1.8;margin-bottom:12px"></div>
 <p style="color:var(--gold);font-style:italic">"Cultivar es, ante todo, un acto de libertad."</p>
 <p>Este manual es una brújula para reconectarte con el ritmo de la tierra. A medida que tus plantas crezcan, tú también lo harás.</p>
 
@@ -422,6 +428,7 @@ function update(d) {
   freshConnectionReading = true;
   message('Datos recibidos directamente de tu ROXS Garden.');
   refreshFreshness();
+  if(typeof updateGuideComparison==='function') updateGuideComparison();
 }
 
 $('connectBtn').addEventListener('click', () => { retries = 0; connect(false); });
@@ -495,6 +502,17 @@ function renderEvs(){
 }
 function delEv(i){var evs=getEvs();evs.splice(i,1);saveEvs(evs);renderCal();}
 renderCal();
+// ═══ GUÍA INTERACTIVA ═══
+var STAGES={'Germinación':{t:[20,25],h:[70,80],v:[0.4,0.8]},'Crecimiento':{t:[22,28],h:[55,70],v:[0.8,1.2]},'Floración':{t:[20,26],h:[40,55],v:[1.0,1.5]},'Cosecha':{t:[18,22],h:[35,50],v:[1.2,1.6]}};
+function updateGuideComparison(){
+  var s=document.getElementById('guideStage').value,st=STAGES[s],d=previous;
+  if(!st||!d){document.getElementById('guideComparison').innerHTML='<span style=\"color:var(--muted)\">Conectá el sensor para ver la comparación.</span>';return}
+  var ok=function(v,r){return v>=r[0]&&v<=r[1]?'✅':'⚠️';}
+  document.getElementById('guideComparison').innerHTML='<table style=\"width:100%;font-size:10px\"><tr style=\"color:var(--gold)\"><td>Métrica</td><td>Actual</td><td>Ideal '+s+'</td><td></td></tr>'+
+    '<tr><td>🌡️ Temp</td><td>'+d.t.toFixed(1)+'°C</td><td>'+st.t[0]+'-'+st.t[1]+'°C</td><td>'+ok(d.t,st.t)+'</td></tr>'+
+    '<tr><td>💧 Humedad</td><td>'+d.h.toFixed(1)+'%</td><td>'+st.h[0]+'-'+st.h[1]+'%</td><td>'+ok(d.h,st.h)+'</td></tr>'+
+    '<tr><td>📊 VPD</td><td>'+d.v.toFixed(2)+'kPa</td><td>'+st.v[0]+'-'+st.v[1]+'kPa</td><td>'+ok(d.v,st.v)+'</td></tr></table>';
+}
 
 </script>
 </body>
