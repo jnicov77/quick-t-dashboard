@@ -349,7 +349,7 @@ async function initializeBluetooth() {
     try { savedId = localStorage.getItem('roxs-garden-device'); } catch (_) { /* Optional. */ }
     const saved = devices.find(d => d.id === savedId) || devices.find(d => d.name === 'ROXS-Garden');
     setStatus('off');
-    if (saved) { selectDevice(saved); await connect(false); }
+    if (saved) { selectDevice(saved); try { await connect(false); } catch(e) { message('Tocá Conectar para reconectar. El sensor debe estar cerca.'); } }
     else message('Encendé tu ROXS Garden, acercalo y tocá Conectar. Solo necesitás autorizarlo la primera vez.');
   } catch (_) {
     setStatus('off');
