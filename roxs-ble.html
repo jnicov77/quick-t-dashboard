@@ -115,6 +115,7 @@
       </div>
       <p class="help" id="connectionHelp" aria-live="polite">Encendé tu sensor y conectalo por Bluetooth.</p>
       <button class="btn" id="connectBtn" type="button">Conectar ROXS Garden</button>
+      <button class="btn" id="reconnectBtn" type="button" hidden style="margin-top:6px;background:var(--cyan);border-color:var(--cyan);color:#0D0D0D" onclick="retries=0;connect(false)">🔄 Reconectar ahora</button>
       <button class="secondary" id="chooseBtn" type="button" hidden>Elegir otro sensor</button>
     </section>
     <div class="section-heading"><h2>AMBIENTE DE TU CULTIVO</h2><span class="live-label" id="liveLabel">Esperando sensor</span></div>
@@ -232,6 +233,7 @@ function setStatus(state) {
   $('connectBtn').hidden = active;
   $('connectBtn').textContent = state === 'connecting' ? 'Conectando con tu sensor…' : dev ? 'Reintentar conexión' : 'Conectar ROXS Garden';
   if ($('chooseBtn')) $('chooseBtn').hidden = !dev || active || state === 'connecting';
+  if ($('reconnectBtn')) $('reconnectBtn').hidden = !dev || active || state === 'connecting';
   if ($('readings')) $('readings').classList.toggle('disconnected', !active);
   if ($('guideBtn')) $('guideBtn').hidden = !active;
   if ($('guidePanel')) $('guidePanel').hidden = true;
