@@ -183,7 +183,7 @@
 </section>
     <details class="guide"><summary>Conexión y acceso desde tu celular</summary><p><strong>Primera conexión:</strong> activá Bluetooth, encendé el sensor y tocá Conectar. Elegí ROXS-Garden. Luego intentaremos recuperar el dispositivo autorizado y reconectar si se pierde la señal.</p><p><strong>Navegadores:</strong> Chrome en Android o Chrome/Edge en una computadora con Bluetooth. Safari en iPhone/iPad no admite Web Bluetooth. La reconexión al abrir depende de los permisos y del navegador.</p><p><strong>Acceso rápido:</strong> en el menú del navegador elegí «Agregar a pantalla de inicio» o «Instalar aplicación», si está disponible. La página necesita HTTPS para usar Bluetooth. Esta edición de un solo archivo no garantiza la reapertura sin internet; las lecturas no usan internet una vez abierta.</p><p><strong>Cómo leer el panel:</strong> las flechas comparan con la lectura anterior; no indican por sí solas un estado bueno o malo. Los anillos usan escalas de 0–50 °C, 0–100 % y 0–3 kPa. La guía VPD es orientativa y depende de la especie y etapa de cultivo.</p></details>
     
-  <section class="calendar-section" aria-label="Calendario de cultivo">
+  <section class="calendar-section" id="calendarSection" hidden aria-label="Calendario de cultivo">
     <div class="section-heading"><h2>CALENDARIO DE CULTIVO</h2></div>
     <div class="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <button class="btn" style="width:auto;padding:6px 14px;font-size:12px;" onclick="calShift(-1)">◀</button>
@@ -237,6 +237,7 @@ function setStatus(state) {
   if ($('readings')) $('readings').classList.toggle('disconnected', !active);
   if ($('guideBtn')) $('guideBtn').hidden = !active;
   if ($('guidePanel')) $('guidePanel').hidden = true;
+  if ($('calendarSection')) $('calendarSection').hidden = !active;
   if (!active) freshConnectionReading = false;
   refreshFreshness();
 }
