@@ -218,9 +218,9 @@ const RECS = [
 const SERVICE = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 const CHAR   = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 const $ = id => document.getElementById(id);
-const RETRY_DELAYS = [1000, 2000, 4000, 8000, 15000];
+const RETRY_DELAYS = [1000, 2000, 4000, 8000, 15000, 30000, 60000, 120000];
 let dev = null, char = null, active = false, busy = false;
-let retryTimer = null, retries = 0, generation = 0, supported = true;
+let retryTimer = null, retries = 0, generation = 0, supported = true, foreverRetry = true;
 const decoder = new TextDecoder();
 
 function message(text) { if ($('connectionHelp')) $('connectionHelp').textContent = text; }
@@ -261,7 +261,10 @@ function scheduleReconnect() {
   clearTimeout(retryTimer);
   if (!dev || !supported) return;
   if (retries >= RETRY_DELAYS.length) {
-    message('No encontramos el sensor. Revisá Bluetooth y su alimentación, y tocá Reintentar conexión.');
+    // Keep retrying forever — use the last delay
+    const delay = RETRY_DELAYS[RETRY_DELAYS.length - 1];
+    message('Reconexión automática en ' + delay / 1000 + ' s. Mantené el sensor cerca.');
+    retryTimer = setTimeout(() => connect(false), delay);
     return;
   }
   const delay = RETRY_DELAYS[retries++];
