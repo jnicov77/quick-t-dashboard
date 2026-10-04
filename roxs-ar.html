@@ -9,7 +9,7 @@
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
   #cam{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
   #world{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;perspective:1000px;pointer-events:none}
-  #hud{position:absolute;bottom:120px;left:50%;width:300px;margin-left:-150px;padding:20px;background:rgba(13,13,13,.5);border:1px solid rgba(0,212,212,.25);border-radius:22px;color:#fff;display:none;text-align:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 0 80px rgba(0,212,212,.08),inset 0 0 40px rgba(0,212,212,.04);transition:transform .3s ease-out}
+  #hud{position:absolute;bottom:120px;left:50%;width:300px;margin-left:-150px;padding:20px;background:rgba(13,13,13,.5);border:1px solid rgba(0,212,212,.25);border-radius:22px;color:#fff;display:none;text-align:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 0 80px rgba(0,212,212,.08),inset 0 0 40px rgba(0,212,212,.04);transition:transform .3s ease-out;backface-visibility:hidden;-webkit-backface-visibility:hidden}
   #hud .val{font-size:28px;font-weight:700;color:#00D4D4;line-height:1.5;text-shadow:0 0 20px rgba(0,212,212,.4)}
   #hud .label{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.12em;display:block}
   #ground{position:fixed;bottom:60px;left:50%;width:300px;height:4px;margin-left:-150px;background:radial-gradient(ellipse at center,rgba(0,212,212,.15),transparent 70%);z-index:9;border-radius:50%;display:none}
@@ -57,11 +57,17 @@ function updateHUD(){
 }
 
 var hud=document.getElementById('hud');
+var gyro={x:0,y:0};
 window.addEventListener('deviceorientation',function(e){
   if(!e.beta)return;
-  gyro.x=(e.gamma||0)*-3; // tilt left/right
-  gyro.y=(e.beta||0)*2;   // tilt forward/back
-  hud.style.transform='translateZ(250px) rotateX('+gyro.y+'deg) rotateY('+gyro.x+'deg)';
+  // Suavizar y limitar
+  var tx=(e.gamma||0)*-1.5;
+  var ty=(e.beta||0)*1;
+  tx=Math.max(-20,Math.min(20,tx));
+  ty=Math.max(-15,Math.min(15,ty));
+  gyro.x+=(tx-gyro.x)*0.3;
+  gyro.y+=(ty-gyro.y)*0.3;
+  hud.style.transform='translateZ(200px) rotateX('+gyro.y+'deg) rotateY('+gyro.x+'deg)';
 });
 
 async function startAR(){
