@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0D0D0D">
+<meta name="mobile-web-app-capable" content="yes">
+<title>ROXS Garden AR</title>
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+<style>
+  body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
+  .dashboard{position:fixed;top:10px;left:10px;z-ndex:10;background:rgba(13,13,13,.85);border:1px solid #D4A843;border-radius:12px;padding:14px;color:#fff;font-size:11px;backdrop-filter:blur(10px);max-width:180px}
+  .dashboard h3{color:#D4A843;margin:0 0 8px;font-size:12px}
+  .dashboard .row{display:flex;justify-content:space-between;margin:4px 0}
+  .dashboard .val{color:#00D4D4;font-weight:700}
+  .ar-controls{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(13,13,13,.9);border:1px solid #D4A843;border-radius:20px;padding:8px 14px;color:#D4A843;font-size:10px}
+</style>
+</head>
+<body>
+<div class="dashboard" id="arDashboard">
+  <h3>🌿 ROXS Garden AR</h3>
+  <div class="row"><span>🌡️ Temp</span><span class="val" id="arTemp">--°C</span></div>
+  <div class="row"><span>💧 Hum</span><span class="val" id="arHum">--%</span></div>
+  <div class="row"><span>📊 VPD</span><span class="val" id="arVPD">-- kPa</span></div>
+</div>
+<div class="ar-controls">📱 Apuntá al marcador ROXS</div>
+
+<a-scene embedded arjs="sourceType:webcam;debugUIEnabled:false;">
+  <a-marker preset="hiro">
+    <a-plane position="0 0 0" width="1.2" height="0.7" color="#D4A843" opacity="0.9">
+      <a-text value="ROXS Garden" position="0 0.15 0" align="center" color="#0D0D0D" width="3"></a-text>
+      <a-text value="Temp: --°C" position="-0.4 -0.05 0.01" color="#0D0D0D" width="1.5" id="markerTemp"></a-text>
+      <a-text value="Hum: --%" position="0.1 -0.05 0.01" color="#0D0D0D" width="1.5" id="markerHum"></a-text>
+      <a-text value="VPD: -- kPa" position="-0.15 -0.25 0.01" color="#0D0D0D" width="1.5" id="markerVPD"></a-text>
+    </a-plane>
+  </a-marker>
+  <a-entity camera></a-entity>
+</a-scene>
+
+<script>
+// Leer datos del BLE si está conectado (mismo localStorage)
+var prev = null;
+try { prev = JSON.parse(localStorage.getItem('roxs_last') || 'null'); } catch(e) {}
+
+function updateAR() {
+  try { prev = JSON.parse(localStorage.getItem('roxs_last') || 'null'); } catch(e) {}
+  if (prev) {
+    document.getElementById('arTemp').textContent = prev.t.toFixed(1)+'°C';
+    document.getElementById('arHum').textContent = prev.h.toFixed(1)+'%';
+    document.getElementById('arVPD').textContent = prev.v.toFixed(2)+' kPa';
+    
+    var mt = document.getElementById('markerTemp');
+    var mh = document.getElementById('markerHum');
+    var mv = document.getElementById('markerVPD');
+    if (mt && mt.getAttribute('text')) mt.setAttribute('value', 'Temp: '+prev.t.toFixed(1)+'°C');
+    if (mh && mh.getAttribute('text')) mh.setAttribute('value', 'Hum: '+prev.h.toFixed(1)+'%');
+    if (mv && mv.getAttribute('text')) mv.setAttribute('value', 'VPD: '+prev.v.toFixed(2)+' kPa');
+  }
+}
+updateAR();
+setInterval(updateAR, 5000);
+</script>
+</body>
+</html>
