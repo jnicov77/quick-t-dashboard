@@ -8,17 +8,16 @@
 <style>
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
   #cam{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
-  #hud{position:fixed;bottom:60px;left:50%;transform:translateX(-50%) perspective(600px) translateZ(180px) scale(0.85);z-index:10;background:rgba(13,13,13,.92);border:1px solid rgba(0,212,212,.5);border-radius:20px;padding:16px 24px;color:#fff;display:none;gap:20px;text-align:center;backdrop-filter:blur(12px);box-shadow:0 0 40px rgba(0,212,212,.15),0 30px 80px rgba(0,0,0,.6),0 10px 30px rgba(0,212,212,.08);animation:float 4s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateX(-50%) perspective(600px) translateZ(180px) scale(0.85) translateY(0)}50%{transform:translateX(-50%) perspective(600px) translateZ(180px) scale(0.85) translateY(-8px)}}
-  #hud .item{display:flex;flex-direction:column}
-  #hud .label{font-size:9px;color:#A9AAA9;letter-spacing:.12em}
-  #hud .val{font-size:22px;font-weight:700;color:#00D4D4}
+  #world{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;perspective:800px;pointer-events:none}
+  #hud{position:absolute;bottom:80px;left:50%;width:280px;margin-left:-140px;padding:18px 20px;background:rgba(13,13,13,.92);border:1px solid rgba(0,212,212,.5);border-radius:20px;color:#fff;display:none;text-align:center;backdrop-filter:blur(12px);box-shadow:0 0 50px rgba(0,212,212,.2),0 40px 100px rgba(0,0,0,.7),0 10px 30px rgba(0,212,212,.1);transform:translateZ(200px) rotateX(-5deg);animation:float 5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateZ(200px) rotateX(-5deg) translateY(0)}50%{transform:translateZ(200px) rotateX(-5deg) translateY(-10px)}}
+  #hud .val{font-size:26px;font-weight:700;color:#00D4D4;line-height:1.4}
+  #hud .label{font-size:9px;color:#A9AAA9;letter-spacing:.12em;display:block}
   #start{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;background:rgba(13,13,13,.95);border:1px solid #00D4D4;border-radius:20px;padding:30px;color:#fff;text-align:center}
   #start h2{color:#00D4D4;margin:0 0 8px}
   #start p{color:#A9AAA9;font-size:12px;margin:0 0 16px}
   #start button{background:#00D4D4;color:#0D0D0D;border:0;padding:14px 30px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
   #exit{position:fixed;top:16px;right:16px;z-index:20;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 14px;border-radius:8px;font-size:11px;cursor:pointer;display:none}
-  #data{position:fixed;top:16px;left:16px;z-index:10;color:#A9AAA9;font-size:10px;display:none}
 </style>
 </head>
 <body>
@@ -30,14 +29,18 @@
   <button onclick="startAR()">Iniciar AR</button>
 </div>
 
-<div id="hud">
-  <div class="item"><span class="label">🌡️ TEMP</span><span class="val" id="arTemp">--°</span></div>
-  <div class="item"><span class="label">💧 HUM</span><span class="val" id="arHum">--%</span></div>
-  <div class="item"><span class="label">📊 VPD</span><span class="val" id="arVPD">--</span></div>
+<div id="world">
+  <div id="hud">
+    <span class="label">🌡️ TEMPERATURA</span>
+    <span class="val" id="arTemp">--°</span>
+    <span class="label" style="margin-top:6px">💧 HUMEDAD</span>
+    <span class="val" id="arHum">--%</span>
+    <span class="label" style="margin-top:6px">📊 VPD</span>
+    <span class="val" id="arVPD">--</span>
+  </div>
 </div>
 
 <button id="exit" onclick="stopAR()">✕ Salir</button>
-<div id="data">📡 Datos del sensor ROXS</div>
 
 <script>
 var stream=null, prev=null;
@@ -57,9 +60,8 @@ async function startAR(){
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}});
     document.getElementById('cam').srcObject=stream;
     document.getElementById('start').style.display='none';
-    document.getElementById('hud').style.display='flex';
+    document.getElementById('hud').style.display='block';
     document.getElementById('exit').style.display='block';
-    document.getElementById('data').style.display='block';
     updateHUD();
     setInterval(updateHUD,5000);
   }catch(e){
