@@ -5,37 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0D0D0D">
 <title>ROXS Garden AR</title>
-<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 <style>
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
-  .hud{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(13,13,13,.9);border:1px solid rgba(0,212,212,.4);border-radius:16px;padding:14px 20px;color:#fff;font-size:12px;backdrop-filter:blur(12px);display:none;gap:18px;text-align:center;box-shadow:0 0 30px rgba(0,212,212,.1)}
-  .hud .item{display:flex;flex-direction:column}
-  .hud .label{font-size:9px;color:#A9AAA9;letter-spacing:.1em;margin-bottom:3px}
-  .hud .val{font-size:20px;font-weight:700;color:#00D4D4}
-  .hint{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);z-index:10;background:rgba(0,0,0,.7);color:#fff;font-size:12px;padding:18px 24px;border-radius:16px;text-align:center;line-height:1.8}
+  #cam{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  #hud{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(13,13,13,.9);border:1px solid rgba(0,212,212,.5);border-radius:20px;padding:16px 24px;color:#fff;display:none;gap:20px;text-align:center;backdrop-filter:blur(12px);box-shadow:0 0 40px rgba(0,212,212,.15)}
+  #hud .item{display:flex;flex-direction:column}
+  #hud .label{font-size:9px;color:#A9AAA9;letter-spacing:.12em}
+  #hud .val{font-size:22px;font-weight:700;color:#00D4D4}
+  #start{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;background:rgba(13,13,13,.95);border:1px solid #00D4D4;border-radius:20px;padding:30px;color:#fff;text-align:center}
+  #start h2{color:#00D4D4;margin:0 0 8px}
+  #start p{color:#A9AAA9;font-size:12px;margin:0 0 16px}
+  #start button{background:#00D4D4;color:#0D0D0D;border:0;padding:14px 30px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
+  #exit{position:fixed;top:16px;right:16px;z-index:20;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 14px;border-radius:8px;font-size:11px;cursor:pointer;display:none}
+  #data{position:fixed;top:16px;left:16px;z-index:10;color:#A9AAA9;font-size:10px;display:none}
 </style>
 </head>
 <body>
-<div class="hint" id="hint">📱 <b>Apuntá al sticker NFC del ROXS</b><br><small>o al logo ROXS en el dispositivo</small></div>
-<div class="hud" id="hud">
+<video id="cam" autoplay playsinline></video>
+
+<div id="start">
+  <h2>🥽 ROXS Garden AR</h2>
+  <p>Dashboard flotando sobre tu cultivo en tiempo real</p>
+  <button onclick="startAR()">Iniciar AR</button>
+</div>
+
+<div id="hud">
   <div class="item"><span class="label">🌡️ TEMP</span><span class="val" id="arTemp">--°</span></div>
   <div class="item"><span class="label">💧 HUM</span><span class="val" id="arHum">--%</span></div>
   <div class="item"><span class="label">📊 VPD</span><span class="val" id="arVPD">--</span></div>
 </div>
 
-<a-scene embedded arjs="sourceType:webcam;debugUIEnabled:false;videoTexture:true;">
-  <a-marker preset="hiro">
-    <a-ring position="0 0 0.05" radius-inner="0.12" radius-outer="0.18" color="#00D4D4" opacity="0.4">
-      <a-animation attribute="opacity" from="0.2" to="0.6" dur="2000" direction="alternate" repeat="indefinite"></a-animation>
-    </a-ring>
-  </a-marker>
-  <a-entity camera></a-entity>
-</a-scene>
+<button id="exit" onclick="stopAR()">✕ Salir</button>
+<div id="data">📡 Datos del sensor ROXS</div>
 
 <script>
-var prev=null;
+var stream=null, prev=null;
 try{prev=JSON.parse(localStorage.getItem('roxs_last')||'null');}catch(e){}
+
 function updateHUD(){
   try{prev=JSON.parse(localStorage.getItem('roxs_last')||'null');}catch(e){}
   if(prev){
@@ -44,18 +50,25 @@ function updateHUD(){
     document.getElementById('arVPD').textContent=prev.v.toFixed(2)+' kPa';
   }
 }
-updateHUD();
-setInterval(updateHUD,5000);
 
-var scene=document.querySelector('a-scene');
-if(scene){
-  scene.addEventListener('markerFound',function(){
+async function startAR(){
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}});
+    document.getElementById('cam').srcObject=stream;
+    document.getElementById('start').style.display='none';
     document.getElementById('hud').style.display='flex';
-    document.getElementById('hint').style.display='none';
-  });
-  scene.addEventListener('markerLost',function(){
-    document.getElementById('hint').style.display='block';
-  });
+    document.getElementById('exit').style.display='block';
+    document.getElementById('data').style.display='block';
+    updateHUD();
+    setInterval(updateHUD,5000);
+  }catch(e){
+    alert('Permití el acceso a la cámara para AR');
+  }
+}
+
+function stopAR(){
+  if(stream){stream.getTracks().forEach(t=>t.stop());}
+  location.reload();
 }
 </script>
 </body>
