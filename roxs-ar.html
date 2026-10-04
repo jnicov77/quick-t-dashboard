@@ -2,32 +2,32 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0D0D0D">
 <title>ROXS Garden AR</title>
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 <style>
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
-  .hud{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(13,13,13,.9);border:1px solid rgba(0,212,212,.4);border-radius:16px;padding:14px 20px;color:#fff;font-size:12px;backdrop-filter:blur(12px);display:flex;gap:18px;text-align:center;box-shadow:0 0 30px rgba(0,212,212,.1)}
+  .hud{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(13,13,13,.9);border:1px solid rgba(0,212,212,.4);border-radius:16px;padding:14px 20px;color:#fff;font-size:12px;backdrop-filter:blur(12px);display:none;gap:18px;text-align:center;box-shadow:0 0 30px rgba(0,212,212,.1)}
   .hud .item{display:flex;flex-direction:column}
   .hud .label{font-size:9px;color:#A9AAA9;letter-spacing:.1em;margin-bottom:3px}
   .hud .val{font-size:20px;font-weight:700;color:#00D4D4}
-  .hint{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(0,0,0,.7);color:#A9AAA9;font-size:10px;padding:6px 14px;border-radius:20px}
+  .hint{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);z-index:10;background:rgba(0,0,0,.7);color:#fff;font-size:12px;padding:18px 24px;border-radius:16px;text-align:center;line-height:1.8}
 </style>
 </head>
 <body>
-<div class="hint" id="hint">📱 Apuntá al marcador ROXS</div>
-<div class="hud" id="hud" style="display:none">
+<div class="hint" id="hint">📱 <b>Apuntá al sticker NFC del ROXS</b><br><small>o al logo ROXS en el dispositivo</small></div>
+<div class="hud" id="hud">
   <div class="item"><span class="label">🌡️ TEMP</span><span class="val" id="arTemp">--°</span></div>
   <div class="item"><span class="label">💧 HUM</span><span class="val" id="arHum">--%</span></div>
   <div class="item"><span class="label">📊 VPD</span><span class="val" id="arVPD">--</span></div>
 </div>
 
-<a-scene embedded arjs="sourceType:webcam;debugUIEnabled:false;">
+<a-scene embedded arjs="sourceType:webcam;debugUIEnabled:false;videoTexture:true;">
   <a-marker preset="hiro">
-    <a-ring position="0 0 0" radius-inner="0.15" radius-outer="0.2" color="#00D4D4" opacity="0.3">
-      <a-animation attribute="opacity" from="0.3" to="0.6" dur="1500" direction="alternate" repeat="indefinite"></a-animation>
+    <a-ring position="0 0 0.05" radius-inner="0.12" radius-outer="0.18" color="#00D4D4" opacity="0.4">
+      <a-animation attribute="opacity" from="0.2" to="0.6" dur="2000" direction="alternate" repeat="indefinite"></a-animation>
     </a-ring>
   </a-marker>
   <a-entity camera></a-entity>
@@ -42,21 +42,21 @@ function updateHUD(){
     document.getElementById('arTemp').textContent=prev.t.toFixed(1)+'°C';
     document.getElementById('arHum').textContent=prev.h.toFixed(1)+'%';
     document.getElementById('arVPD').textContent=prev.v.toFixed(2)+' kPa';
-    document.getElementById('hud').style.display='flex';
-    document.getElementById('hint').style.display='none';
   }
 }
 updateHUD();
 setInterval(updateHUD,5000);
 
-// Show hint when marker lost (simplified)
-document.querySelector('a-scene').addEventListener('markerFound',function(){
-  document.getElementById('hud').style.display='flex';
-  document.getElementById('hint').style.display='none';
-});
-document.querySelector('a-scene').addEventListener('markerLost',function(){
-  document.getElementById('hint').style.display='block';
-});
+var scene=document.querySelector('a-scene');
+if(scene){
+  scene.addEventListener('markerFound',function(){
+    document.getElementById('hud').style.display='flex';
+    document.getElementById('hint').style.display='none';
+  });
+  scene.addEventListener('markerLost',function(){
+    document.getElementById('hint').style.display='block';
+  });
+}
 </script>
 </body>
 </html>
