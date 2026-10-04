@@ -67,7 +67,7 @@ window.addEventListener('deviceorientation',function(e){
   ty=Math.max(-15,Math.min(15,ty));
   gyro.x+=(tx-gyro.x)*0.3;
   gyro.y+=(ty-gyro.y)*0.3;
-  hud.style.transform='translateZ(400px) rotateX('+gyro.y+'deg) rotateY('+gyro.x+'deg)';
+  hud.style.transform='translateZ(400px) translateY('+(gyro.y*3)+'px) translateX('+(gyro.x*3)+'px)';
 });
 
 async function startAR(){
