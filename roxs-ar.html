@@ -172,7 +172,10 @@ function takePhoto(){
   }
   
   var a=document.createElement('a');
-  a.download='ROXS_'+new Date().toISOString().slice(0,10)+'.png';
+  var def='ROXS_'+new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  var name=prompt('Nombre de la foto:',def);
+  if(!name)return;
+  a.download=(name.endsWith('.png')?name:name+'.png');
   a.href=cv.toDataURL('image/png');
   a.click();
 }
