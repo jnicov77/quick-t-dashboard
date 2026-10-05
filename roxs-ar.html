@@ -131,9 +131,44 @@ window.addEventListener('deviceorientation',function(e){
 function takePhoto(){
   var c=document.getElementById('cam');
   var cv=document.createElement('canvas');
-  cv.width=c.videoWidth||640;
-  cv.height=c.videoHeight||480;
-  cv.getContext('2d').drawImage(c,0,0,cv.width,cv.height);
+  cv.width=c.videoWidth||1280;
+  cv.height=c.videoHeight||720;
+  var ctx=cv.getContext('2d');
+  ctx.drawImage(c,0,0,cv.width,cv.height);
+  
+  // Dibujar datos encima
+  var w=cv.width, h=cv.height;
+  if(prev){
+    // Fondo sutil para legibilidad
+    var cx=w/2, cy=h-180;
+    // Tres gauges
+    var colors=['#D4A843','#00D4D4','#B388FF'];
+    var vals=[prev.t.toFixed(1)+'°',prev.h.toFixed(0)+'%',prev.v.toFixed(2)];
+    var labels=['TEMP','HUM','VPD'];
+    var gap=100, r=45;
+    var startX=cx-gap;
+    for(var i=0;i<3;i++){
+      var x=startX+i*gap;
+      // Ring background
+      ctx.beginPath();ctx.arc(x,cy,r,0,2*Math.PI);ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=5;ctx.stroke();
+      // Ring fill
+      var pct=[prev.t/50,prev.h/100,prev.v/3][i];
+      ctx.beginPath();ctx.arc(x,cy,r,-Math.PI/2,-Math.PI/2+2*Math.PI*pct);ctx.strokeStyle=colors[i];ctx.lineWidth=5;ctx.lineCap='round';ctx.stroke();
+      // Value
+      ctx.fillStyle=colors[i];ctx.font='bold 26px system-ui';ctx.textAlign='center';ctx.fillText(vals[i],x,cy+8);
+      // Label
+      ctx.fillStyle=colors[i];ctx.font='11px system-ui';ctx.fillText(labels[i],x,cy+r+20);
+    }
+    // Recomendación
+    var r=getRec(prev.t,prev.h,prev.v);
+    ctx.fillStyle=r.color;ctx.font='bold 16px system-ui';ctx.textAlign='center';
+    ctx.fillText(r.txt,cx,h-40);
+    // Fecha
+    var now=new Date();
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='11px system-ui';
+    ctx.fillText(now.toLocaleDateString('es-CO')+' '+now.toLocaleTimeString('es-CO'),cx,h-16);
+  }
+  
   var a=document.createElement('a');
   a.download='ROXS_'+new Date().toISOString().slice(0,10)+'.png';
   a.href=cv.toDataURL('image/png');
