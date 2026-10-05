@@ -9,24 +9,29 @@
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
   #cam{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
   #world{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;perspective:1000px;pointer-events:none}
-  #hud{position:absolute;bottom:180px;left:50%;width:280px;margin-left:-140px;text-align:center;display:none;filter:drop-shadow(0 0 15px rgba(0,0,0,.6))}
-  #gauges{display:flex;justify-content:center;gap:16px}
-  .gauge{position:relative;width:70px;height:70px}
-  .gauge svg{width:70px;height:70px}
-  .gauge .ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:4}
-  .gauge .ring-fill{fill:none;stroke-width:4;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .8s}
-  .gauge .val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700}
-  .gauge .lbl{font-size:7px;letter-spacing:.1em;margin-top:2px;text-align:center}
-  #rec{font-size:10px;margin-top:10px;font-weight:600}
+  #hud{position:absolute;bottom:200px;left:50%;width:300px;margin-left:-150px;text-align:center;display:none;filter:drop-shadow(0 0 20px rgba(0,0,0,.7))}
+  #gauges{display:flex;justify-content:center;gap:20px}
+  .gauge{position:relative;width:75px;height:75px;filter:drop-shadow(0 0 12px currentColor)}
+  .gauge svg{width:75px;height:75px}
+  .gauge .ring-bg{fill:none;stroke:rgba(255,255,255,.06);stroke-width:4}
+  .gauge .ring-fill{fill:none;stroke-width:4;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .8s;filter:drop-shadow(0 0 6px currentColor)}
+  .gauge .val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:800}
+  #labels{display:flex;justify-content:center;gap:20px;margin-top:4px}
+  #labels span{font-size:7px;letter-spacing:.15em}
+  #rec{font-size:10px;margin-top:8px;font-weight:600;line-height:1.5;max-width:280px;margin-left:auto;margin-right:auto}
+  #info{font-size:8px;margin-top:6px;opacity:.5}
   #start{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;background:rgba(13,13,13,.95);border:1px solid #00D4D4;border-radius:20px;padding:30px;color:#fff;text-align:center}
   #start h2{color:#00D4D4;margin:0 0 8px}
   #start p{color:#A9AAA9;font-size:12px;margin:0 0 16px}
   #start button{background:#00D4D4;color:#0D0D0D;border:0;padding:14px 30px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
-  #exit{position:fixed;top:16px;right:16px;z-index:20;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);color:#fff;padding:6px 12px;border-radius:8px;font-size:10px;cursor:pointer;display:none}
+  #controls{position:fixed;top:16px;right:16px;z-index:20;display:none;gap:6px}
+  #controls button{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);color:#fff;padding:6px 12px;border-radius:8px;font-size:10px;cursor:pointer}
+  #snap{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:20;display:none;width:50px;height:50px;border-radius:50%;border:3px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);cursor:pointer;backdrop-filter:blur(4px)}
 </style>
 </head>
 <body>
 <video id="cam" autoplay playsinline></video>
+<canvas id="photo" style="display:none"></canvas>
 
 <div id="start">
   <h2>🥽 ROXS Garden AR</h2>
@@ -37,67 +42,80 @@
 <div id="world">
   <div id="hud">
     <div id="gauges">
-      <div class="gauge">
-        <svg viewBox="0 0 70 70">
-          <circle class="ring-bg" cx="35" cy="35" r="30"/>
-          <circle class="ring-fill" id="ringT" cx="35" cy="35" r="30" stroke="#D4A843" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+      <div class="gauge" style="color:#D4A843">
+        <svg viewBox="0 0 75 75">
+          <circle class="ring-bg" cx="37.5" cy="37.5" r="32"/>
+          <circle class="ring-fill" id="ringT" cx="37.5" cy="37.5" r="32" stroke="#D4A843" stroke-dasharray="201" stroke-dashoffset="201"/>
         </svg>
-        <div class="val" style="color:#D4A843" id="arTemp">--</div>
+        <div class="val" id="arTemp">--</div>
       </div>
-      <div class="gauge">
-        <svg viewBox="0 0 70 70">
-          <circle class="ring-bg" cx="35" cy="35" r="30"/>
-          <circle class="ring-fill" id="ringH" cx="35" cy="35" r="30" stroke="#00D4D4" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+      <div class="gauge" style="color:#00D4D4">
+        <svg viewBox="0 0 75 75">
+          <circle class="ring-bg" cx="37.5" cy="37.5" r="32"/>
+          <circle class="ring-fill" id="ringH" cx="37.5" cy="37.5" r="32" stroke="#00D4D4" stroke-dasharray="201" stroke-dashoffset="201"/>
         </svg>
-        <div class="val" style="color:#00D4D4" id="arHum">--</div>
+        <div class="val" id="arHum">--</div>
       </div>
-      <div class="gauge">
-        <svg viewBox="0 0 70 70">
-          <circle class="ring-bg" cx="35" cy="35" r="30"/>
-          <circle class="ring-fill" id="ringV" cx="35" cy="35" r="30" stroke="#B388FF" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+      <div class="gauge" style="color:#B388FF">
+        <svg viewBox="0 0 75 75">
+          <circle class="ring-bg" cx="37.5" cy="37.5" r="32"/>
+          <circle class="ring-fill" id="ringV" cx="37.5" cy="37.5" r="32" stroke="#B388FF" stroke-dasharray="201" stroke-dashoffset="201"/>
         </svg>
-        <div class="val" style="color:#B388FF" id="arVPD">--</div>
+        <div class="val" id="arVPD">--</div>
       </div>
     </div>
-    <div style="display:flex;justify-content:center;gap:16px;margin-top:3px">
-      <div class="lbl" style="color:#D4A843">TEMP</div>
-      <div class="lbl" style="color:#00D4D4">HUM</div>
-      <div class="lbl" style="color:#B388FF">VPD</div>
+    <div id="labels">
+      <span style="color:#D4A843">TEMP °C</span>
+      <span style="color:#00D4D4">HUM %</span>
+      <span style="color:#B388FF">VPD kPa</span>
     </div>
-    <div id="rec" style="color:#00E676">✅ Condiciones ideales</div>
+    <div id="rec">✅ Condiciones ideales</div>
+    <div id="info"></div>
   </div>
 </div>
 
-<button id="exit" onclick="stopAR()">✕</button>
+<div id="controls">
+  <button onclick="stopAR()">✕ Salir</button>
+</div>
+<button id="snap" onclick="takePhoto()" title="Tomar foto">📷</button>
 
 <script>
 var stream=null, prev=null, gyro={x:0,y:0};
 try{prev=JSON.parse(localStorage.getItem('roxs_last')||'null');}catch(e){}
 
 function getRec(t,h,v){
-  if(t>30||t<15)return{color:'#F43F5E',txt:'⚠️ Temperatura fuera de rango'};
-  if(h>85||h<35)return{color:'#F4A83F',txt:'⚠️ Humedad fuera de rango'};
-  if(v>1.8||v<0.3)return{color:'#F4A83F',txt:'⚠️ VPD fuera de rango'};
-  if(t>28||h<45)return{color:'#F4A83F',txt:'⚡ Condiciones al límite'};
-  return{color:'#00E676',txt:'✅ Condiciones ideales'};
+  var r={color:'#00E676',txt:'✅ Todo en orden. Tu cultivo está en condiciones ideales.'};
+  if(t>32){r={color:'#F43F5E',txt:'🔥 Mucho calor ('+t.toFixed(1)+'°C). Ventilá urgente o encendé extractor.'};}
+  else if(t>30){r={color:'#F4A83F',txt:'🌡️ Calor elevado. Abrí ventilación y revisá en 30 min.'};}
+  else if(t<15){r={color:'#F43F5E',txt:'❄️ Muy frío. Cerrá ventanas o encendé calefactor.'};}
+  else if(t<18){r={color:'#F4A83F',txt:'🥶 Temperatura baja. Considerá calefacción suave.'};}
+  
+  if(h>85){r={color:'#F43F5E',txt:'💧 Exceso de humedad ('+h.toFixed(0)+'%). Riesgo de hongos. Ventilá.'};}
+  else if(h<35){r={color:'#F43F5E',txt:'🏜️ Ambiente seco. Pulverizá o usá humidificador.'};}
+  else if(h<45&&r.color==='#00E676'){r={color:'#F4A83F',txt:'💧 Humedad baja. Considerá pulverizar.'};}
+  
+  if(v>2.0){r={color:'#F43F5E',txt:'📊 VPD muy alto. La planta se deshidrata. Bajá temp o subí humedad.'};}
+  else if(v<0.3){r={color:'#F4A83F',txt:'📊 VPD bajo. Poca transpiración. Subí temp o bajá humedad.'};}
+  
+  return r;
 }
 
-var circ=2*Math.PI*30; // 188.5
+var circ=2*Math.PI*32;
 
 function updateHUD(){
   try{prev=JSON.parse(localStorage.getItem('roxs_last')||'null');}catch(e){}
   if(prev){
-    document.getElementById('arTemp').textContent=prev.t.toFixed(1)+'°';
-    document.getElementById('arHum').textContent=prev.h.toFixed(1)+'%';
+    document.getElementById('arTemp').textContent=prev.t.toFixed(1);
+    document.getElementById('arHum').textContent=prev.h.toFixed(0);
     document.getElementById('arVPD').textContent=prev.v.toFixed(2);
-    // Rings: T 0-50°C, H 0-100%, V 0-3 kPa
     document.getElementById('ringT').style.strokeDashoffset=circ-(prev.t/50*circ);
     document.getElementById('ringH').style.strokeDashoffset=circ-(prev.h/100*circ);
     document.getElementById('ringV').style.strokeDashoffset=circ-(prev.v/3*circ);
     var r=getRec(prev.t,prev.h,prev.v);
-    var re=document.getElementById('rec');
-    re.textContent=r.txt;
-    re.style.color=r.color;
+    document.getElementById('rec').textContent=r.txt;
+    document.getElementById('rec').style.color=r.color;
+    var now=new Date();
+    document.getElementById('info').textContent=now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'})+' · '+now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
   }
 }
 
@@ -105,10 +123,22 @@ var hud=document.getElementById('hud');
 window.addEventListener('deviceorientation',function(e){
   if(!e.beta)return;
   var ty=(e.beta||0)*1;
-  ty=Math.max(-15,Math.min(15,ty));
+  ty=Math.max(-12,Math.min(12,ty));
   gyro.y+=(ty-gyro.y)*0.3;
   hud.style.transform='translateZ(400px) translateY('+(gyro.y*3)+'px)';
 });
+
+function takePhoto(){
+  var c=document.getElementById('cam');
+  var cv=document.createElement('canvas');
+  cv.width=c.videoWidth||640;
+  cv.height=c.videoHeight||480;
+  cv.getContext('2d').drawImage(c,0,0,cv.width,cv.height);
+  var a=document.createElement('a');
+  a.download='ROXS_'+new Date().toISOString().slice(0,10)+'.png';
+  a.href=cv.toDataURL('image/png');
+  a.click();
+}
 
 async function startAR(){
   try{
@@ -116,7 +146,8 @@ async function startAR(){
     document.getElementById('cam').srcObject=stream;
     document.getElementById('start').style.display='none';
     document.getElementById('hud').style.display='block';
-    document.getElementById('exit').style.display='block';
+    document.getElementById('controls').style.display='flex';
+    document.getElementById('snap').style.display='block';
     try{document.documentElement.requestFullscreen();}catch(e){}
     updateHUD();
     setInterval(updateHUD,5000);
