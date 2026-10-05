@@ -511,6 +511,8 @@ function renderEvs(){
 }
 function delEv(i){var evs=getEvs();evs.splice(i,1);saveEvs(evs);renderCal();}
 renderCal();
+// Mover guía debajo de su botón
+if($('guidePanel')&&$('guideBtn')){$('guideBtn').after($('guidePanel'));}
 // ═══ GUÍA INTERACTIVA ═══
 var STAGES={'Germinación':{t:[20,25],h:[70,80],v:[0.4,0.8]},'Crecimiento':{t:[22,28],h:[55,70],v:[0.8,1.2]},'Floración':{t:[20,26],h:[40,55],v:[1.0,1.5]},'Cosecha':{t:[18,22],h:[35,50],v:[1.2,1.6]}};
 function updateGuideComparison(){
