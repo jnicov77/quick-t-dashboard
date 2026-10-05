@@ -9,7 +9,7 @@
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
   #cam{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
   #world{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;perspective:1000px;pointer-events:none}
-  #hud{position:absolute;bottom:200px;left:50%;width:300px;margin-left:-150px;text-align:center;display:none;filter:drop-shadow(0 0 20px rgba(0,0,0,.7))}
+  #hud{position:absolute;bottom:50%;left:50%;width:300px;margin-left:-150px;transform:translateY(35%);text-align:center;display:none;filter:drop-shadow(0 0 20px rgba(0,0,0,.7))}
   #gauges{display:flex;justify-content:center;gap:20px}
   .gauge{position:relative;width:75px;height:75px;filter:drop-shadow(0 0 12px currentColor)}
   .gauge svg{width:75px;height:75px}
@@ -125,7 +125,9 @@ window.addEventListener('deviceorientation',function(e){
   var ty=(e.beta||0)*1;
   ty=Math.max(-12,Math.min(12,ty));
   gyro.y+=(ty-gyro.y)*0.3;
-  hud.style.transform='translateZ(400px) translateY('+(gyro.y*3)+'px)';
+  // Mantener visible: rango limitado ±25px
+  var dy=Math.max(-25,Math.min(25,gyro.y*3));
+  hud.style.transform='translateZ(400px) translateY('+dy+'px)';
 });
 
 function takePhoto(){
