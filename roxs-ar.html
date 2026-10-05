@@ -72,7 +72,7 @@ window.addEventListener('deviceorientation',function(e){
   var tx=(e.gamma||0)*-1.5, ty=(e.beta||0)*1;
   tx=Math.max(-20,Math.min(20,tx)); ty=Math.max(-15,Math.min(15,ty));
   gyro.x+=(tx-gyro.x)*0.3; gyro.y+=(ty-gyro.y)*0.3;
-  hud.style.transform='translateZ(400px) translateY('+(gyro.y*3)+'px) translateX('+(gyro.x*3)+'px)';
+  hud.style.transform='translateZ(400px) translateY('+(gyro.y*3)+'px)';
 });
 
 async function startAR(){
