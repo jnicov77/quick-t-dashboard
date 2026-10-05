@@ -9,11 +9,15 @@
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
   #cam{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
   #world{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;perspective:1000px;pointer-events:none}
-  #hud{position:absolute;bottom:160px;left:50%;width:260px;margin-left:-130px;text-align:center;display:none}
-  .metric{margin:6px 0;font-weight:700;filter:drop-shadow(0 0 12px currentColor)}
-  .metric .val{font-size:36px;line-height:1.2}
-  .metric .lbl{font-size:9px;letter-spacing:.15em;opacity:.7}
-  #rec{font-size:10px;margin-top:8px;font-weight:600;filter:drop-shadow(0 0 8px currentColor)}
+  #hud{position:absolute;bottom:180px;left:50%;width:280px;margin-left:-140px;text-align:center;display:none;filter:drop-shadow(0 0 15px rgba(0,0,0,.6))}
+  #gauges{display:flex;justify-content:center;gap:16px}
+  .gauge{position:relative;width:70px;height:70px}
+  .gauge svg{width:70px;height:70px}
+  .gauge .ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:4}
+  .gauge .ring-fill{fill:none;stroke-width:4;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .8s}
+  .gauge .val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700}
+  .gauge .lbl{font-size:7px;letter-spacing:.1em;margin-top:2px;text-align:center}
+  #rec{font-size:10px;margin-top:10px;font-weight:600}
   #start{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;background:rgba(13,13,13,.95);border:1px solid #00D4D4;border-radius:20px;padding:30px;color:#fff;text-align:center}
   #start h2{color:#00D4D4;margin:0 0 8px}
   #start p{color:#A9AAA9;font-size:12px;margin:0 0 16px}
@@ -32,9 +36,34 @@
 
 <div id="world">
   <div id="hud">
-    <div class="metric" style="color:#D4A843"><span class="val" id="arTemp">--°</span><br><span class="lbl">TEMPERATURA</span></div>
-    <div class="metric" style="color:#00D4D4"><span class="val" id="arHum">--%</span><br><span class="lbl">HUMEDAD</span></div>
-    <div class="metric" style="color:#B388FF"><span class="val" id="arVPD">--</span><br><span class="lbl">VPD</span></div>
+    <div id="gauges">
+      <div class="gauge">
+        <svg viewBox="0 0 70 70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"/>
+          <circle class="ring-fill" id="ringT" cx="35" cy="35" r="30" stroke="#D4A843" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+        </svg>
+        <div class="val" style="color:#D4A843" id="arTemp">--</div>
+      </div>
+      <div class="gauge">
+        <svg viewBox="0 0 70 70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"/>
+          <circle class="ring-fill" id="ringH" cx="35" cy="35" r="30" stroke="#00D4D4" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+        </svg>
+        <div class="val" style="color:#00D4D4" id="arHum">--</div>
+      </div>
+      <div class="gauge">
+        <svg viewBox="0 0 70 70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"/>
+          <circle class="ring-fill" id="ringV" cx="35" cy="35" r="30" stroke="#B388FF" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+        </svg>
+        <div class="val" style="color:#B388FF" id="arVPD">--</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:3px">
+      <div class="lbl" style="color:#D4A843">TEMP</div>
+      <div class="lbl" style="color:#00D4D4">HUM</div>
+      <div class="lbl" style="color:#B388FF">VPD</div>
+    </div>
     <div id="rec" style="color:#00E676">✅ Condiciones ideales</div>
   </div>
 </div>
@@ -53,12 +82,18 @@ function getRec(t,h,v){
   return{color:'#00E676',txt:'✅ Condiciones ideales'};
 }
 
+var circ=2*Math.PI*30; // 188.5
+
 function updateHUD(){
   try{prev=JSON.parse(localStorage.getItem('roxs_last')||'null');}catch(e){}
   if(prev){
-    document.getElementById('arTemp').textContent=prev.t.toFixed(1)+'°C';
+    document.getElementById('arTemp').textContent=prev.t.toFixed(1)+'°';
     document.getElementById('arHum').textContent=prev.h.toFixed(1)+'%';
-    document.getElementById('arVPD').textContent=prev.v.toFixed(2)+' kPa';
+    document.getElementById('arVPD').textContent=prev.v.toFixed(2);
+    // Rings: T 0-50°C, H 0-100%, V 0-3 kPa
+    document.getElementById('ringT').style.strokeDashoffset=circ-(prev.t/50*circ);
+    document.getElementById('ringH').style.strokeDashoffset=circ-(prev.h/100*circ);
+    document.getElementById('ringV').style.strokeDashoffset=circ-(prev.v/3*circ);
     var r=getRec(prev.t,prev.h,prev.v);
     var re=document.getElementById('rec');
     re.textContent=r.txt;
@@ -69,9 +104,9 @@ function updateHUD(){
 var hud=document.getElementById('hud');
 window.addEventListener('deviceorientation',function(e){
   if(!e.beta)return;
-  var tx=(e.gamma||0)*-1.5, ty=(e.beta||0)*1;
-  tx=Math.max(-20,Math.min(20,tx)); ty=Math.max(-15,Math.min(15,ty));
-  gyro.x+=(tx-gyro.x)*0.3; gyro.y+=(ty-gyro.y)*0.3;
+  var ty=(e.beta||0)*1;
+  ty=Math.max(-15,Math.min(15,ty));
+  gyro.y+=(ty-gyro.y)*0.3;
   hud.style.transform='translateZ(400px) translateY('+(gyro.y*3)+'px)';
 });
 
