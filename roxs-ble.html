@@ -116,6 +116,8 @@
       <p class="help" id="connectionHelp" aria-live="polite">Encendé tu sensor y conectalo por Bluetooth.</p>
       <button class="btn" id="connectBtn" type="button">Conectar ROXS Garden</button>
       <button class="btn" id="reconnectBtn" type="button" hidden style="margin-top:6px;background:var(--cyan);border-color:var(--cyan);color:#0D0D0D" onclick="retries=0;connect(false)">🔄 Reconectar ahora</button>
+      <button class="btn" id="arBtn" hidden onclick="window.open('roxs-ar.html','_blank')" style="background:linear-gradient(135deg,#00D4D4,var(--cyan));border-color:#00D4D4;color:#0D0D0D;margin-top:6px">🥽 Ver en Realidad Aumentada</button>
+      <button class="btn" id="guideBtn" hidden onclick="document.getElementById('guidePanel').hidden=!document.getElementById('guidePanel').hidden" style="background:linear-gradient(135deg,#B388FF,var(--purple));border-color:#B388FF;color:#fff;margin-top:6px">📖 Guía de Cultivo ROXS</button>
       <button class="secondary" id="chooseBtn" type="button" hidden>Elegir otro sensor</button>
     </section>
     <div class="section-heading"><h2>AMBIENTE DE TU CULTIVO</h2><span class="live-label" id="liveLabel">Esperando sensor</span></div>
@@ -141,8 +143,6 @@
       <div class="scale" aria-hidden="true"><div class="scale-track"><i style="--segment:#00D4D4"></i><i style="--segment:#68DDDE"></i><i style="--segment:#00E676"></i><i style="--segment:#B388FF"></i><i style="--segment:#D4A843"></i><i style="--segment:#FF7184"></i></div><span class="scale-marker" id="vpdMarker" hidden></span><div class="scale-labels"><span>Bajo</span><span>Óptimo</span><span>Alto</span></div></div>
       <p class="rec-note" id="recNote" hidden>Última lectura guardada en pantalla; no es un dato en vivo.</p>
     </section>
-    <button class="btn" id="guideBtn" hidden onclick="document.getElementById('guidePanel').hidden=!document.getElementById('guidePanel').hidden" style="background:linear-gradient(135deg,#B388FF,var(--purple));border-color:#B388FF;color:#fff;margin-top:8px">📖 Guía de Cultivo ROXS</button>
-    <button class="btn" id="arBtn" hidden onclick="window.open('roxs-ar.html','_blank')" style="background:linear-gradient(135deg,#00D4D4,var(--cyan));border-color:#00D4D4;color:#0D0D0D;margin-top:6px">🥽 Ver en Realidad Aumentada</button>
     <section id="guidePanel" hidden style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-top:10px;max-height:400px;overflow-y:auto;font-size:12px;line-height:1.7">
 <h3 style="color:var(--purple);margin:0 0 12px">📖 Guía de Cultivo ROXS</h3>
 <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
