@@ -9,15 +9,16 @@
   body{margin:0;overflow:hidden;background:#000;font-family:system-ui}
   #cam{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
   #world{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;perspective:1000px;pointer-events:none}
-  #hud{position:absolute;bottom:140px;left:50%;width:220px;margin-left:-110px;padding:16px;background:rgba(13,13,13,.45);border:1px solid rgba(0,212,212,.2);border-radius:20px;color:#fff;display:none;text-align:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 0 80px rgba(0,212,212,.06),inset 0 0 40px rgba(0,212,212,.03);backface-visibility:hidden;-webkit-backface-visibility:hidden}
-  #hud .val{font-size:20px;font-weight:700;color:#00D4D4;line-height:1.4;text-shadow:0 0 20px rgba(0,212,212,.4)}
-  #hud .label{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.12em;display:block}
-  #ground{position:fixed;bottom:80px;left:50%;width:220px;height:4px;margin-left:-110px;background:radial-gradient(ellipse at center,rgba(0,212,212,.12),transparent 70%);z-index:9;border-radius:50%;display:none}
+  #hud{position:absolute;bottom:160px;left:50%;width:260px;margin-left:-130px;text-align:center;display:none}
+  .metric{margin:6px 0;font-weight:700;filter:drop-shadow(0 0 12px currentColor)}
+  .metric .val{font-size:36px;line-height:1.2}
+  .metric .lbl{font-size:9px;letter-spacing:.15em;opacity:.7}
+  #rec{font-size:10px;margin-top:8px;font-weight:600;filter:drop-shadow(0 0 8px currentColor)}
   #start{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;background:rgba(13,13,13,.95);border:1px solid #00D4D4;border-radius:20px;padding:30px;color:#fff;text-align:center}
   #start h2{color:#00D4D4;margin:0 0 8px}
   #start p{color:#A9AAA9;font-size:12px;margin:0 0 16px}
   #start button{background:#00D4D4;color:#0D0D0D;border:0;padding:14px 30px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
-  #exit{position:fixed;top:16px;right:16px;z-index:20;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 14px;border-radius:8px;font-size:11px;cursor:pointer;display:none}
+  #exit{position:fixed;top:16px;right:16px;z-index:20;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);color:#fff;padding:6px 12px;border-radius:8px;font-size:10px;cursor:pointer;display:none}
 </style>
 </head>
 <body>
@@ -25,27 +26,32 @@
 
 <div id="start">
   <h2>🥽 ROXS Garden AR</h2>
-  <p>Dashboard flotando sobre tu cultivo en tiempo real</p>
+  <p>Datos flotando sobre tu cultivo</p>
   <button onclick="startAR()">Iniciar AR</button>
 </div>
 
 <div id="world">
   <div id="hud">
-    <span class="label">🌡️ TEMPERATURA</span>
-    <span class="val" id="arTemp">--°</span>
-    <span class="label" style="margin-top:8px">💧 HUMEDAD</span>
-    <span class="val" id="arHum">--%</span>
-    <span class="label" style="margin-top:8px">📊 VPD</span>
-    <span class="val" id="arVPD">--</span>
+    <div class="metric" style="color:#D4A843"><span class="val" id="arTemp">--°</span><br><span class="lbl">TEMPERATURA</span></div>
+    <div class="metric" style="color:#00D4D4"><span class="val" id="arHum">--%</span><br><span class="lbl">HUMEDAD</span></div>
+    <div class="metric" style="color:#B388FF"><span class="val" id="arVPD">--</span><br><span class="lbl">VPD</span></div>
+    <div id="rec" style="color:#00E676">✅ Condiciones ideales</div>
   </div>
 </div>
-<div id="ground"></div>
 
-<button id="exit" onclick="stopAR()">✕ Salir</button>
+<button id="exit" onclick="stopAR()">✕</button>
 
 <script>
 var stream=null, prev=null, gyro={x:0,y:0};
 try{prev=JSON.parse(localStorage.getItem('roxs_last')||'null');}catch(e){}
+
+function getRec(t,h,v){
+  if(t>30||t<15)return{color:'#F43F5E',txt:'⚠️ Temperatura fuera de rango'};
+  if(h>85||h<35)return{color:'#F4A83F',txt:'⚠️ Humedad fuera de rango'};
+  if(v>1.8||v<0.3)return{color:'#F4A83F',txt:'⚠️ VPD fuera de rango'};
+  if(t>28||h<45)return{color:'#F4A83F',txt:'⚡ Condiciones al límite'};
+  return{color:'#00E676',txt:'✅ Condiciones ideales'};
+}
 
 function updateHUD(){
   try{prev=JSON.parse(localStorage.getItem('roxs_last')||'null');}catch(e){}
@@ -53,20 +59,19 @@ function updateHUD(){
     document.getElementById('arTemp').textContent=prev.t.toFixed(1)+'°C';
     document.getElementById('arHum').textContent=prev.h.toFixed(1)+'%';
     document.getElementById('arVPD').textContent=prev.v.toFixed(2)+' kPa';
+    var r=getRec(prev.t,prev.h,prev.v);
+    var re=document.getElementById('rec');
+    re.textContent=r.txt;
+    re.style.color=r.color;
   }
 }
 
 var hud=document.getElementById('hud');
-var gyro={x:0,y:0};
 window.addEventListener('deviceorientation',function(e){
   if(!e.beta)return;
-  // Suavizar y limitar
-  var tx=(e.gamma||0)*-1.5;
-  var ty=(e.beta||0)*1;
-  tx=Math.max(-20,Math.min(20,tx));
-  ty=Math.max(-15,Math.min(15,ty));
-  gyro.x+=(tx-gyro.x)*0.3;
-  gyro.y+=(ty-gyro.y)*0.3;
+  var tx=(e.gamma||0)*-1.5, ty=(e.beta||0)*1;
+  tx=Math.max(-20,Math.min(20,tx)); ty=Math.max(-15,Math.min(15,ty));
+  gyro.x+=(tx-gyro.x)*0.3; gyro.y+=(ty-gyro.y)*0.3;
   hud.style.transform='translateZ(400px) translateY('+(gyro.y*3)+'px) translateX('+(gyro.x*3)+'px)';
 });
 
@@ -76,19 +81,12 @@ async function startAR(){
     document.getElementById('cam').srcObject=stream;
     document.getElementById('start').style.display='none';
     document.getElementById('hud').style.display='block';
-    document.getElementById('ground').style.display='block';
     document.getElementById('exit').style.display='block';
-    // Fullscreen
-    try { document.documentElement.requestFullscreen(); } catch(e) {};
+    try{document.documentElement.requestFullscreen();}catch(e){}
     updateHUD();
     setInterval(updateHUD,5000);
-    // Request permission for gyro on iOS
-    if(typeof DeviceOrientationEvent.requestPermission==='function'){
-      DeviceOrientationEvent.requestPermission();
-    }
-  }catch(e){
-    alert('Permití acceso a la cámara y al giroscopio');
-  }
+    if(typeof DeviceOrientationEvent.requestPermission==='function') DeviceOrientationEvent.requestPermission();
+  }catch(e){alert('Permití cámara y giroscopio');}
 }
 
 function stopAR(){
