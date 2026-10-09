@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0D0D0D">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#fbf4d4">
+<meta name="color-scheme" content="light">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,33 +16,249 @@
 <link id="app-icon" rel="icon">
 <link id="apple-icon" rel="apple-touch-icon">
 <style>
-:root{--bg:#0D0D0D;--surface:#181715;--surface2:#211f1a;--gold:#D4A843;--cream:#f7f1e5;--muted:#b9b2a5;--purple:#B388FF;--line:#ffffff15;--green:#65df91;--radius:18px;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:142px}body{margin:0;background:var(--bg);color:var(--cream);font-size:14px;line-height:1.5}button,input,select,textarea{font:inherit}button,a,input,textarea{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}a{color:inherit}button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--purple);outline-offset:4px}button{color:inherit}svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.app{max-width:480px;min-height:100dvh;margin:auto;background:var(--bg);box-shadow:0 0 100px #d4a84306}.skip{position:fixed;top:-100px;z-index:1000;background:var(--gold);color:var(--bg);padding:12px}.skip:focus{top:0}.topbar{height:64px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:9px;letter-spacing:.08em;font-size:12px;font-weight:800}.brand-mark{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--gold);border-radius:8px;color:var(--gold);font-size:18px}.brand span:last-child{font-weight:400;color:var(--gold);letter-spacing:.03em}.top-note{color:var(--muted);font-size:10px;letter-spacing:.09em;text-transform:uppercase}.hero{position:relative;min-height:390px;display:flex;align-items:flex-end;padding:30px 24px;isolation:isolate;overflow:hidden}.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 47%;z-index:-3}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 0%,#0d0d0dbc 36%,#0d0d0d10 90%);z-index:-2}.hero:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 20% 90%,#d4a84316,transparent 60%);z-index:-1}.eyebrow{text-transform:uppercase;letter-spacing:.23em;font-size:10px;font-weight:650;color:var(--gold);margin:0 0 10px}.hero h1{font-size:68px;line-height:1;font-weight:300;letter-spacing:-.065em;margin:0 0 10px}.hero .since{display:flex;align-items:center;gap:10px;color:var(--gold);font-size:11px;letter-spacing:.2em;text-transform:uppercase}.since:before{content:"";width:28px;height:1px;background:var(--gold)}.hero p:last-child{font-size:14px;font-weight:300;max-width:250px;margin:15px 0 0;color:#e3d9c8}.experience{display:none!important;margin:0 20px 22px;padding:15px 0;border-top:1px solid #d4a84330;border-bottom:1px solid #d4a84330;display:flex;gap:12px;align-items:center}.experience svg{color:var(--purple)}.experience strong{font-size:12px;font-weight:600}.experience p{font-size:11px;color:var(--muted);margin:3px 0 0}.experience summary{cursor:pointer;list-style:none}.experience summary::-webkit-details-marker{display:none}.experience details>p{font-size:12px;line-height:1.6;max-width:355px}.nav-wrap{position:sticky;top:0;z-index:20;background:#0d0d0df5;border-bottom:1px solid var(--line);padding:13px 0 10px}.nav-label{display:flex;justify-content:space-between;padding:0 22px 9px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}.nav-label span:last-child{color:var(--gold)}.tabs{display:flex;gap:7px;overflow:auto;padding:0 20px 3px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{flex-shrink:0;text-decoration:none;padding:11px 17px;border-radius:100px;min-height:44px;border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:600;transition:background .2s,color .2s}.tab[aria-current="true"]{background:var(--gold);color:#17130a;border-color:var(--gold);box-shadow:0 2px 18px #d4a84316}.menu{padding:0 20px}.category{padding-top:32px;scroll-margin-top:112px}.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:16px}.section-heading h2{font-size:28px;letter-spacing:-.045em;font-weight:500;margin:0}.section-heading .count{font-size:11px;color:var(--muted)}.gallery{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#d4a84340 transparent;padding-bottom:8px;margin:0 -20px 18px;padding-left:20px;padding-right:20px}.gallery figure{position:relative;margin:0;flex:0 0 76%;height:177px;border-radius:14px;overflow:hidden;scroll-snap-align:center;background:var(--surface)}.gallery img{width:100%;height:100%;object-fit:cover}.gallery figcaption{position:absolute;inset:auto 0 0;padding:27px 13px 10px;background:linear-gradient(transparent,#000c);font-size:11px;letter-spacing:.03em}.gallery-empty{color:var(--muted);font-size:12px;background:var(--surface);border:1px dashed #d4a84335;border-radius:14px;padding:18px;margin-bottom:20px}.gallery-empty span{font-size:22px;margin-right:8px}.story{font-size:13px;line-height:1.85;color:#c8c0b0;margin:8px 0 15px;text-wrap:pretty}.group-title{font-size:12px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin:24px 0 8px;font-weight:650}.category-note{font-size:11px;line-height:1.7;color:var(--muted);padding:10px 0 15px;border-bottom:1px solid var(--line);margin:0}.dish{padding:18px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:76px minmax(0,1fr);gap:13px}.dish-media{height:82px;position:relative;border-radius:12px;overflow:hidden;background:var(--surface2);display:grid;place-items:center;align-self:start}.dish-media img{position:absolute;width:100%;height:100%;object-fit:cover}.dish-media .emoji{font-size:29px}.dish h4{font-size:15px;font-weight:550;line-height:1.35;letter-spacing:-.01em;margin:0 0 5px;overflow-wrap:anywhere}.description{font-size:11px;color:var(--muted);line-height:1.65;margin:0 0 8px}.pairing{display:none!important;align-items:flex-start;gap:5px;padding:5px 7px;background:#b388ff0b;border:1px solid #b388ff23;border-radius:7px;font-size:10px;line-height:1.5;margin:2px 0 7px;max-width:100%;text-align:left}.pairing b{font-weight:650;white-space:nowrap}.purchase-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:49px}.price{color:var(--gold);font-weight:600;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}.variant{display:block;font-weight:400;font-size:10px;color:var(--muted);white-space:normal}.add{width:44px;height:44px;flex-shrink:0;border:1px solid #d4a84355;border-radius:50%;background:#d4a8430d;color:var(--gold);font-size:24px;line-height:1;transition:transform .15s,background .15s}.add:hover{background:#d4a84326}.add:active{transform:scale(.9)}.closing{padding:44px 20px 30px;text-align:center}.closing p{max-width:275px;margin:0 auto 20px;font-size:21px;line-height:1.6;font-weight:300;color:#dfd0b0}.closing small{display:block;font-size:10px;line-height:1.8;color:var(--muted)}.closing .powered{margin-top:20px;letter-spacing:.09em;color:var(--gold)}footer{padding-bottom:130px}.floating{position:fixed;z-index:30;bottom:calc(18px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),448px);display:flex;align-items:center;gap:10px}.cart-toggle{display:flex;align-items:center;gap:11px;flex:1;min-width:0;min-height:60px;padding:12px 16px;background:var(--gold);color:#171207;border:1px solid #f2cb7040;border-radius:18px;box-shadow:0 5px 30px #d4a84326,0 8px 25px #0008;font-weight:650;text-align:left}.cart-copy{flex:1;display:flex;flex-direction:column;line-height:1.45}.cart-copy small{font-size:10px;font-weight:450}.cart-count{font-size:11px;background:#19130d;color:var(--gold);min-width:24px;height:24px;display:grid;place-items:center;border-radius:50%}.wa-float{display:flex;align-items:center;justify-content:center;width:60px;height:60px;flex-shrink:0;text-decoration:none;border-radius:18px;background:#173622;border:1px solid #65df9160;color:var(--green);box-shadow:0 7px 24px #0007}.wa-float svg{width:28px;height:28px}.toast{position:fixed;left:50%;bottom:calc(94px + env(safe-area-inset-bottom));transform:translate(-50%,12px);background:#29251d;color:var(--cream);font-size:12px;padding:12px 18px;border:1px solid #d4a84350;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;z-index:80;max-width:calc(100% - 40px);text-align:center;width:max-content}.toast.visible{opacity:1;transform:translate(-50%,0)}.status{font-size:11px;padding:10px 20px;background:#302717;color:#f0d69d}.status[hidden]{display:none}.sheet{position:fixed;inset:auto 0 0;margin:0 auto;padding:0;width:100%;max-width:480px;max-height:90dvh;overflow:auto;border:1px solid #d4a84335;border-bottom:0;border-radius:26px 26px 0 0;background:#181715;color:var(--cream);overscroll-behavior:contain;box-shadow:0 -12px 70px #0008}.sheet::backdrop{background:#000b}.sheet[open]{animation:slide-up .28s cubic-bezier(.2,.7,.3,1)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slide-up{from{transform:translateY(100%);opacity:.5}to{transform:translateY(0);opacity:1}}.handle{height:4px;width:38px;border-radius:6px;background:#ffffff30;margin:12px auto 0}.sheet-header{position:sticky;top:0;z-index:2;background:#181715;padding:15px 22px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}.sheet-header h2{font-size:23px;letter-spacing:-.04em;margin:0;font-weight:550}.sheet-header p{font-size:11px;color:var(--muted);margin:3px 0 0}.icon-button{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:transparent;border:1px solid var(--line);font-size:22px}.sheet-body{padding:8px 22px 22px}.empty-cart{text-align:center;padding:35px 0}.empty-cart svg{width:42px;height:42px;color:var(--gold)}.empty-cart h3{font-weight:500;font-size:19px}.empty-cart p{font-size:13px;color:var(--muted)}.cart-line{padding:15px 0;border-bottom:1px solid var(--line)}.cart-line-top{display:flex;justify-content:space-between;align-items:start;gap:15px}.cart-line h3{font-size:13px;margin:0;font-weight:550}.cart-line small{font-size:10px;color:var(--muted)}.cart-line-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:8px}.stepper{display:flex;align-items:center;gap:11px}.stepper button{width:44px;height:44px;border-radius:12px;border:1px solid #d4a84340;background:#d4a8430a;color:var(--gold);font-size:22px}.stepper output{font-size:13px;min-width:20px;text-align:center;font-variant-numeric:tabular-nums}.remove{font-size:11px;background:none;border:0;text-decoration:underline;color:var(--muted);padding:12px 0 12px 12px;min-height:44px}.order-fields{margin-top:20px}.field-label{display:block;font-size:12px;margin:14px 0 7px;color:var(--muted)}input,textarea{width:100%;border:1px solid #ffffff25;border-radius:10px;background:#0d0d0d;color:var(--cream);padding:12px;font-size:16px}textarea{resize:vertical;min-height:78px}.totals{display:flex;justify-content:space-between;align-items:center;margin:20px 0 3px;font-size:18px}.totals strong{color:var(--gold);font-variant-numeric:tabular-nums}.fineprint{font-size:10px;color:var(--muted);line-height:1.7;margin:7px 0 14px}.primary{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--gold);color:#171207;font-weight:650;min-height:52px;border:0;border-radius:12px;text-decoration:none;width:100%;padding:12px 18px}.secondary{background:none;border:1px solid #d4a84350;color:var(--gold);border-radius:12px;padding:12px;min-height:48px;width:100%;margin-top:10px}.checkout{padding:16px 0 calc(8px + env(safe-area-inset-bottom))}.checkout h3{font-size:16px;font-weight:550}.checkout textarea{font-size:12px;line-height:1.65;min-height:180px;margin-bottom:10px}.checkout a{background:var(--green);color:#112119}.warning{color:#ead19b;background:#d4a8430e;padding:10px 12px;border-radius:8px;font-size:11px;line-height:1.6}.noscript{margin:20px;padding:20px;border:1px solid var(--gold);border-radius:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}[hidden]{display:none!important}
-@media(min-width:600px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}@media(max-width:350px){.topbar{padding:0 16px}.top-note{font-size:9px}.hero h1{font-size:59px}.dish{grid-template-columns:60px minmax(0,1fr);gap:10px}.dish-media{height:70px}.menu{padding:0 16px}.pairing{font-size:9px}.floating{width:calc(100% - 24px)}.cart-toggle{padding:10px 12px}.cart-copy{font-size:13px}.gallery{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
+:root{--bg:#fbf4d4;--surface:#fffaf0;--surface2:#f0e4cb;--accent:#623c15;--ink:#3d291d;--muted:#76604a;--wine:#793e41;--line:#623c1526;--green:#45644f;--radius:18px;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:142px}
+body{margin:0;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit}
+button,a,input,textarea{-webkit-tap-highlight-color:transparent}
+button,a{touch-action:manipulation}
+button{cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}
+a{color:inherit}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--wine);outline-offset:4px}
+button{color:inherit}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.app{max-width:480px;min-height:100dvh;margin:auto;background:var(--bg);box-shadow:0 0 100px #623c1506}
+.skip{position:fixed;top:-100px;z-index:1000;background:var(--accent);color:var(--bg);padding:12px}
+.skip:focus{top:0}
+.topbar{height:64px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:9px;letter-spacing:.08em;font-size:12px;font-weight:800}
+.brand-mark{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:18px}
+.brand span:last-child{font-weight:400;color:var(--accent);letter-spacing:.03em}
+.top-note{color:var(--muted);font-size:10px;letter-spacing:.09em;text-transform:uppercase}
+.hero{position:relative;min-height:390px;display:flex;align-items:flex-end;padding:30px 24px;isolation:isolate;overflow:hidden}
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 47%;z-index:-3}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 0%,#fbf4d4bc 36%,#fbf4d410 90%);z-index:-2}
+.hero:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 20% 90%,#623c1516,transparent 60%);z-index:-1}
+.eyebrow{text-transform:uppercase;letter-spacing:.23em;font-size:10px;font-weight:650;color:var(--accent);margin:0 0 10px}
+.hero h1{font-size:68px;line-height:1;font-weight:300;letter-spacing:-.065em;margin:0 0 10px}
+.hero .since{display:flex;align-items:center;gap:10px;color:var(--accent);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.since:before{content:"";width:28px;height:1px;background:var(--accent)}
+.hero p:last-child{font-size:14px;font-weight:300;max-width:250px;margin:15px 0 0;color:#76604a}
+.experience{display:none!important;margin:0 20px 22px;padding:15px 0;border-top:1px solid #623c1530;border-bottom:1px solid #623c1530;display:flex;gap:12px;align-items:center}
+.experience svg{color:var(--wine)}
+.experience strong{font-size:12px;font-weight:600}
+.experience p{font-size:11px;color:var(--muted);margin:3px 0 0}
+.experience summary{cursor:pointer;list-style:none}
+.experience summary::-webkit-details-marker{display:none}
+.experience details>p{font-size:12px;line-height:1.6;max-width:355px}
+.nav-wrap{position:sticky;top:0;z-index:20;background:#fbf4d4f5;border-bottom:1px solid var(--line);padding:13px 0 10px}
+.nav-label{display:flex;justify-content:space-between;padding:0 22px 9px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.nav-label span:last-child{color:var(--accent)}
+.tabs{display:flex;gap:7px;overflow:auto;padding:0 20px 3px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;text-decoration:none;padding:11px 17px;border-radius:100px;min-height:44px;border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:600;transition:background .2s,color .2s}
+.tab[aria-current="true"]{background:var(--accent);color:#17130a;border-color:var(--accent);box-shadow:0 2px 18px #623c1516}
+.menu{padding:0 20px}
+.category{padding-top:32px;scroll-margin-top:112px}
+.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:16px}
+.section-heading h2{font-size:28px;letter-spacing:-.045em;font-weight:500;margin:0}
+.section-heading .count{font-size:11px;color:var(--muted)}
+.gallery{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#623c1540 transparent;padding-bottom:8px;margin:0 -20px 18px;padding-left:20px;padding-right:20px}
+.gallery figure{position:relative;margin:0;flex:0 0 76%;height:177px;border-radius:14px;overflow:hidden;scroll-snap-align:center;background:var(--surface)}
+.gallery img{width:100%;height:100%;object-fit:cover}
+.gallery figcaption{position:absolute;inset:auto 0 0;padding:27px 13px 10px;background:linear-gradient(transparent,#000c);font-size:11px;letter-spacing:.03em}
+.gallery-empty{color:var(--muted);font-size:12px;background:var(--surface);border:1px dashed #623c1535;border-radius:14px;padding:18px;margin-bottom:20px}
+.gallery-empty span{font-size:22px;margin-right:8px}
+.story{font-size:13px;line-height:1.85;color:#76604a;margin:8px 0 15px;text-wrap:pretty}
+.group-title{font-size:12px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin:24px 0 8px;font-weight:650}
+.category-note{font-size:11px;line-height:1.7;color:var(--muted);padding:10px 0 15px;border-bottom:1px solid var(--line);margin:0}
+.dish{padding:18px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:76px minmax(0,1fr);gap:13px}
+.dish-media{height:82px;position:relative;border-radius:12px;overflow:hidden;background:var(--surface2);display:grid;place-items:center;align-self:start}
+.dish-media img{position:absolute;width:100%;height:100%;object-fit:cover}
+.dish-media .emoji{font-size:29px}
+.dish h4{font-size:15px;font-weight:550;line-height:1.35;letter-spacing:-.01em;margin:0 0 5px;overflow-wrap:anywhere}
+.description{font-size:11px;color:var(--muted);line-height:1.65;margin:0 0 8px}
+.pairing{display:none!important;align-items:flex-start;gap:5px;padding:5px 7px;background:#793e410b;border:1px solid #793e4123;border-radius:7px;font-size:10px;line-height:1.5;margin:2px 0 7px;max-width:100%;text-align:left}
+.pairing b{font-weight:650;white-space:nowrap}
+.purchase-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:49px}
+.price{color:var(--accent);font-weight:600;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.variant{display:block;font-weight:400;font-size:10px;color:var(--muted);white-space:normal}
+.add{width:44px;height:44px;flex-shrink:0;border:1px solid #623c1555;border-radius:50%;background:#623c150d;color:var(--accent);font-size:24px;line-height:1;transition:transform .15s,background .15s}
+.add:hover{background:#623c1526}
+.add:active{transform:scale(.9)}
+.closing{padding:44px 20px 30px;text-align:center}
+.closing p{max-width:275px;margin:0 auto 20px;font-size:21px;line-height:1.6;font-weight:300;color:#623c15}
+.closing small{display:block;font-size:10px;line-height:1.8;color:var(--muted)}
+.closing .powered{margin-top:20px;letter-spacing:.09em;color:var(--accent)}
+footer{padding-bottom:130px}
+.floating{position:fixed;z-index:30;bottom:calc(18px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),448px);display:flex;align-items:center;gap:10px}
+.cart-toggle{display:flex;align-items:center;gap:11px;flex:1;min-width:0;min-height:60px;padding:12px 16px;background:var(--accent);color:#171207;border:1px solid #f2cb7040;border-radius:18px;box-shadow:0 5px 30px #623c1526,0 8px 25px #0008;font-weight:650;text-align:left}
+.cart-copy{flex:1;display:flex;flex-direction:column;line-height:1.45}
+.cart-copy small{font-size:10px;font-weight:450}
+.cart-count{font-size:11px;background:#19130d;color:var(--accent);min-width:24px;height:24px;display:grid;place-items:center;border-radius:50%}
+.wa-float{display:flex;align-items:center;justify-content:center;width:60px;height:60px;flex-shrink:0;text-decoration:none;border-radius:18px;background:#173622;border:1px solid #45644f60;color:var(--green);box-shadow:0 7px 24px #0007}
+.wa-float svg{width:28px;height:28px}
+.toast{position:fixed;left:50%;bottom:calc(94px + env(safe-area-inset-bottom));transform:translate(-50%,12px);background:#29251d;color:var(--ink);font-size:12px;padding:12px 18px;border:1px solid #623c1550;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;z-index:80;max-width:calc(100% - 40px);text-align:center;width:max-content}
+.toast.visible{opacity:1;transform:translate(-50%,0)}
+.status{font-size:11px;padding:10px 20px;background:#302717;color:#f0d69d}
+.status[hidden]{display:none}
+.sheet{position:fixed;inset:auto 0 0;margin:0 auto;padding:0;width:100%;max-width:480px;max-height:90dvh;overflow:auto;border:1px solid #623c1535;border-bottom:0;border-radius:26px 26px 0 0;background:#fffaf0;color:var(--ink);overscroll-behavior:contain;box-shadow:0 -12px 70px #0008}
+.sheet::backdrop{background:#000b}
+.sheet[open]{animation:slide-up .28s cubic-bezier(.2,.7,.3,1)}
+@keyframes fadeIn{from{opacity:0}
+to{opacity:1}
+}
+@keyframes slide-up{from{transform:translateY(100%);opacity:.5}
+to{transform:translateY(0);opacity:1}
+}
+.handle{height:4px;width:38px;border-radius:6px;background:#623c1538;margin:12px auto 0}
+.sheet-header{position:sticky;top:0;z-index:2;background:#fffaf0;padding:15px 22px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
+.sheet-header h2{font-size:23px;letter-spacing:-.04em;margin:0;font-weight:550}
+.sheet-header p{font-size:11px;color:var(--muted);margin:3px 0 0}
+.icon-button{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:transparent;border:1px solid var(--line);font-size:22px}
+.sheet-body{padding:8px 22px 22px}
+.empty-cart{text-align:center;padding:35px 0}
+.empty-cart svg{width:42px;height:42px;color:var(--accent)}
+.empty-cart h3{font-weight:500;font-size:19px}
+.empty-cart p{font-size:13px;color:var(--muted)}
+.cart-line{padding:15px 0;border-bottom:1px solid var(--line)}
+.cart-line-top{display:flex;justify-content:space-between;align-items:start;gap:15px}
+.cart-line h3{font-size:13px;margin:0;font-weight:550}
+.cart-line small{font-size:10px;color:var(--muted)}
+.cart-line-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.stepper{display:flex;align-items:center;gap:11px}
+.stepper button{width:44px;height:44px;border-radius:12px;border:1px solid #623c1540;background:#623c150a;color:var(--accent);font-size:22px}
+.stepper output{font-size:13px;min-width:20px;text-align:center;font-variant-numeric:tabular-nums}
+.remove{font-size:11px;background:none;border:0;text-decoration:underline;color:var(--muted);padding:12px 0 12px 12px;min-height:44px}
+.order-fields{margin-top:20px}
+.field-label{display:block;font-size:12px;margin:14px 0 7px;color:var(--muted)}
+input,textarea{width:100%;border:1px solid #623c1526;border-radius:10px;background:#fbf4d4;color:var(--ink);padding:12px;font-size:16px}
+textarea{resize:vertical;min-height:78px}
+.totals{display:flex;justify-content:space-between;align-items:center;margin:20px 0 3px;font-size:18px}
+.totals strong{color:var(--accent);font-variant-numeric:tabular-nums}
+.fineprint{font-size:10px;color:var(--muted);line-height:1.7;margin:7px 0 14px}
+.primary{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:#171207;font-weight:650;min-height:52px;border:0;border-radius:12px;text-decoration:none;width:100%;padding:12px 18px}
+.secondary{background:none;border:1px solid #623c1550;color:var(--accent);border-radius:12px;padding:12px;min-height:48px;width:100%;margin-top:10px}
+.checkout{padding:16px 0 calc(8px + env(safe-area-inset-bottom))}
+.checkout h3{font-size:16px;font-weight:550}
+.checkout textarea{font-size:12px;line-height:1.65;min-height:180px;margin-bottom:10px}
+.checkout a{background:var(--green);color:#112119}
+.warning{color:#623c15;background:#623c150e;padding:10px 12px;border-radius:8px;font-size:11px;line-height:1.6}
+.noscript{margin:20px;padding:20px;border:1px solid var(--accent);border-radius:12px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[hidden]{display:none!important}
+
+@media(min-width:600px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}
+}
+@media(max-width:350px){.topbar{padding:0 16px}
+.top-note{font-size:9px}
+.hero h1{font-size:59px}
+.dish{grid-template-columns:60px minmax(0,1fr);gap:10px}
+.dish-media{height:70px}
+.menu{padding:0 16px}
+.pairing{font-size:9px}
+.floating{width:calc(100% - 24px)}
+.cart-toggle{padding:10px 12px}
+.cart-copy{font-size:13px}
+.gallery{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}
+}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}
+*,*:before,*:after{animation:none!important;transition:none!important}
+}
+
+
+/* Amelia: sampled from the menu cover, not QUICK-T's palette.
+   Paper #fbf4d4, wood #623c15, caramel #efc68e; wine/sage are supporting tones.
+   Original lettering is preserved in the extracted logo; Georgia is a local editorial companion. */
+:root{--bg:#fbf4d4;--surface:#fffaf0;--surface2:#f0e4cb;--accent:#623c15;--ink:#3d291d;--muted:#76604a;--wine:#793e41;--line:#623c1526;--green:#45644f;--radius:16px;font-family:Arial,Helvetica,sans-serif;color-scheme:light}
+body{background:#e5d8bd;background-image:radial-gradient(#623c150b .7px,transparent .7px);background-size:7px 7px}
+.app{box-shadow:0 0 90px #623c1520;background:var(--bg)}
+.topbar{height:49px;padding:0 22px;border-bottom:1px solid var(--line);background:var(--accent);color:var(--bg)}
+.brand{font-size:10px;letter-spacing:.14em;font-weight:400;text-transform:uppercase}
+.top-note{color:var(--bg);font-size:10px;letter-spacing:.1em}
+.topbar a{text-decoration:none;border-bottom:1px solid #efc68e77;padding:6px 0}
+.hero{display:block;min-height:0;padding:31px 22px 0;text-align:center;background:radial-gradient(ellipse at 50% 15%,#fffaf0 0%,transparent 75%)}
+.hero:before{inset:0 auto auto -26px;width:175px;height:153px;background:url('./img/amelia/amelia-botanical.webp') center/contain no-repeat;opacity:.55;z-index:-1;transform:rotate(4deg)}
+.hero:after{inset:45px -39px auto auto;width:125px;height:150px;background:url('./img/amelia/amelia-botanical.webp') center/contain no-repeat;opacity:.35;transform:rotate(180deg);z-index:-1}
+.hero-logo{display:block;width:174px;height:auto;margin:0 auto 17px}
+.hero .eyebrow{font-size:10px;letter-spacing:.23em;margin:0 0 9px;color:var(--accent);font-weight:600}
+.hero .since{display:block;font-size:9px;letter-spacing:.16em;color:var(--muted)}
+.hero .since:before{display:none}
+.hero h2{font:italic 30px/1.12 Georgia,'Times New Roman',serif;letter-spacing:-.035em;margin:19px 0 21px;color:var(--accent)}
+.hero-image{position:relative;margin:0;border-radius:100px 100px 8px 8px;overflow:hidden;border:4px solid var(--surface);box-shadow:0 5px 20px #623c1517}
+.hero-photo{position:static;display:block;height:180px;width:100%;object-fit:cover;object-position:50% 47%}
+.hero-image figcaption{position:absolute;inset:auto 0 0;padding:35px 10px 13px;background:linear-gradient(transparent,#302014d9);color:#fffaf0;font:italic 17px Georgia,serif}
+.sommelier-box{margin:22px;padding:17px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--wine);border-radius:4px 14px 14px 4px;box-shadow:0 4px 16px #623c1507}
+.sommelier-title{display:flex;align-items:center;gap:9px;color:var(--wine);font:19px Georgia,serif}
+.sommelier-title svg{width:21px;height:24px}
+.sommelier-box p{font-size:12px;line-height:1.7;color:var(--ink);min-height:40px;margin:10px 0 8px}
+.sommelier-box small{display:block;color:var(--muted);font-size:10px;line-height:1.6}
+#sommelier-box[aria-busy="true"] #sommelier-text:after{content:'▍';color:var(--wine);animation:blink .8s infinite}
+@keyframes blink{50%{opacity:0}}
+.nav-wrap{background:#fbf4d4f7;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:14px 0 10px}
+.nav-label{font-size:9px;color:var(--muted)}
+.tab{border-radius:6px;padding:10px 16px;color:var(--accent);font-weight:500;font-size:12px;border-color:var(--line);background:var(--surface)}
+.tab[aria-current="true"]{color:var(--bg);background:var(--accent);border-color:var(--accent);box-shadow:none}
+.category{padding-top:32px}.section-heading h2{font:italic 34px Georgia,serif;color:var(--accent);letter-spacing:-.035em}
+.section-heading .count{font-size:10px;letter-spacing:.03em}
+.gallery figure{border-radius:70px 70px 6px 6px;flex-basis:78%;height:183px;border:3px solid var(--surface)}
+.gallery figcaption{color:#fffaf0;font:italic 15px Georgia,serif;padding:30px 15px 12px}
+.story{font:italic 16px/1.65 Georgia,serif;color:var(--muted)}
+.group-title{font-size:10px;letter-spacing:.2em;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:9px;margin-top:25px}
+.category-note{font-size:11px}.dish{padding:21px 0;gap:14px}.dish-media{border-radius:50%;height:76px;border:3px solid var(--surface)}
+.dish h4{font:20px/1.2 Georgia,serif;color:var(--accent);margin-bottom:7px;letter-spacing:-.025em}
+.description{font-size:12px;line-height:1.65}.price{font-size:16px;color:var(--wine);font-weight:600}.variant{font-size:10px;margin-top:3px}
+.add{border-color:var(--line);background:var(--surface);color:var(--accent)}.add:hover{background:#efc68e80}
+.somm-inline{margin:12px 0 4px;padding:12px;background:#eee4d5;border-left:2px solid var(--wine);border-radius:0 8px 8px 0;color:var(--wine);font-size:11px;line-height:1.65;animation:fadeIn .3s}
+.somm-inline strong{font:italic 15px Georgia,serif}.somm-inline p{margin:5px 0}.somm-inline .secondary{font-size:11px;padding:9px;min-height:44px;line-height:1.5;border-color:#793e4160;color:var(--wine)}
+.closing{margin-top:34px;padding:40px 28px 130px;border-top:1px solid var(--line);background:linear-gradient(transparent,#efc68e35)}
+.closing p{font-family:Georgia,serif;color:var(--accent)}.closing .powered{font-size:9px;color:var(--muted)}
+.floating{gap:8px;bottom:calc(12px + env(safe-area-inset-bottom));width:min(calc(100% - 24px),448px);padding:6px;background:#fffaf0ee;border:1px solid var(--line);border-radius:19px;box-shadow:0 5px 30px #3d291d25;backdrop-filter:blur(10px)}
+.cart-toggle{min-height:56px;background:var(--accent);color:var(--bg);border:0;border-radius:12px;padding:10px 12px;box-shadow:none;gap:8px}
+.cart-copy{font-size:13px}.cart-copy small{font-size:9px}.cart-count{background:#efc68e;color:var(--accent);min-width:22px;height:22px}
+.wa-float{width:49px;height:56px;border-radius:12px;box-shadow:none;flex-direction:column;gap:3px;background:var(--green);color:#fffaf0;border:0}
+.wa-float svg{width:23px;height:23px}.wa-float span{font-size:8px;letter-spacing:.02em;font-weight:600}
+#waiter-float{background:#ede2cc;color:var(--accent)}
+.toast{background:var(--accent);color:var(--bg);border-color:#efc68e;border-radius:8px}
+.sheet{background:var(--surface);color:var(--ink);border-color:var(--line);box-shadow:0 -12px 70px #3d291d40}.sheet::backdrop{background:#30201499;backdrop-filter:blur(3px)}
+.sheet-header{background:var(--surface)}.sheet-header h2{font:25px Georgia,serif;letter-spacing:-.025em;color:var(--accent)}.handle{background:#623c1538}
+.cart-line h3{font:17px Georgia,serif}.stepper button{background:var(--bg);border-color:var(--line)}
+input,textarea{background:#fffdf7;border-color:var(--line);color:var(--ink)}input::placeholder,textarea::placeholder{color:var(--muted)}
+.primary{background:var(--accent);color:var(--bg)}.checkout a{background:var(--green);color:#fffaf0}.warning{color:var(--accent);background:#efc68e35}.status{background:#efc68e;color:var(--accent)}
+.empty-cart h3,.checkout h3{font-family:Georgia,serif}.skip{color:var(--bg)}
+@media(max-width:350px){.hero{padding-left:16px;padding-right:16px}.hero h2{font-size:28px}.sommelier-box{margin:18px 16px}.dish-media{height:60px}.floating{gap:5px}.cart-toggle{padding:10px 8px;gap:6px}.cart-toggle>svg{display:none}.cart-copy small{font-size:8px}.wa-float{width:44px}.cart-copy{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <a class="skip" href="#menu">Ir a la carta</a>
 <div class="app" id="app">
-<header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">Q</span>QUICK-T <span>Food</span></div><span class="top-note">A tu mesa. A tu ritmo.</span></header>
+<header class="topbar"><span class="brand">El Original · Desde 1991</span><a class="top-note" href="#menu">Nuestra carta ↗</a></header>
 <div id="connection-status" class="status" role="status" hidden>Sin conexión. Tu selección sigue en este dispositivo; WhatsApp necesita internet.</div>
-<section class="hero" aria-labelledby="restaurant-name"><img class="hero-photo" src="./img/amelia/foto_9.jpeg" alt="Fondue de queso servido en una mesa para compartir" fetchpriority="high" width="700" height="1050"><div><p class="eyebrow">Fondue & Fagottos</p><h1 id="restaurant-name">Amelia</h1><div class="since">Desde 1991</div><p>El placer de compartir,<br>sin mirar el reloj.</p></div></section>
-<div id="sommelier-box" style="margin:12px 22px;padding:14px 16px;background:rgba(179,136,255,.06);border:1px solid rgba(179,136,255,.15);border-radius:14px;">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-    <span style="font-size:18px;">🍷</span>
-    <strong style="color:var(--purple);font-size:13px;">Agente Sommelier Virtual</strong>
-  </div>
-  <p id="sommelier-text" style="font-size:12px;color:var(--muted);line-height:1.5;min-height:18px;">Esperando tu selección de la carta para analizar los perfiles de sabor y sugerir el maridaje perfecto...</p>
-</div>
-<div class="experience" style="display:none"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></svg><details><summary><strong>AI Pairing · Tu guía de maridaje</strong><p>Un acompañante para cada sabor. Toca para conocer más.</p></summary><p>Recomendaciones predefinidas para acompañar tu elección, no un chat de IA en vivo. Los maridajes no se agregan al pedido. Consulta disponibilidad y alternativas sin alcohol con nuestro equipo.</p></details></div>
+<section class="hero" aria-labelledby="restaurant-name">
+ <h1 id="restaurant-name" class="sr-only">Fondue de Amelia</h1>
+ <img class="hero-logo" src="./img/amelia/amelia-logo.webp" alt="Fondue de Amelia, logotipo original" width="600" height="497" fetchpriority="high">
+ <p class="eyebrow">Fondue &amp; Fagottos</p>
+ <div class="since">El Original — Desde 1991</div>
+ <h2>El placer de compartir,<br>sin mirar el reloj.</h2>
+ <figure class="hero-image"><img class="hero-photo" src="./img/amelia/foto_9.jpeg" alt="Fondue servido para compartir en la mesa" width="700" height="1050" fetchpriority="high"><figcaption>Una mesa. Mil buenos momentos.</figcaption></figure>
+</section>
+<section id="sommelier-box" class="sommelier-box" aria-labelledby="sommelier-title" aria-live="polite" aria-atomic="true" aria-busy="false">
+ <div class="sommelier-title"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h10l1 6a6 6 0 0 1-12 0l1-6ZM12 15v6M8 21h8M7 8h10"/></svg><span id="sommelier-title">Tu sommelier virtual</span></div>
+ <p id="sommelier-text">Cada sabor tiene su compañía. Elige un plato y descubre una sugerencia para brindar.</p>
+ <small>Maridajes predefinidos, no un chat en vivo. Consulta disponibilidad y opciones sin alcohol.</small>
+</section>
 <nav class="nav-wrap" aria-label="Categorías de la carta"><div class="nav-label"><span>Explora la carta</span><span>Precios en COP</span></div><div class="tabs" id="category-tabs"></div></nav>
 <main id="menu" class="menu" tabindex="-1"></main>
 <noscript><p class="noscript">Activa JavaScript para consultar la carta y preparar tu pedido. También puedes consultar la carta con el equipo de Amelia.</p></noscript>
-<footer class="closing"><p style="font-style:italic;color:var(--gold);">"Porque amamos la vida le ponemos pasión a la comida."</p><p style="font-size:11px;color:var(--muted);margin-top:4px;">Abrimos cuando llegamos. Cerramos cuando nos vamos.</p><small>Fotografías de la carta de Amelia. Algunas son representativas<br>de la categoría; los ingredientes están en cada descripción.<br>Confirma alergias y disponibilidad antes de pedir.</small><small class="powered">AMELIA · DESDE 1991<br>Una experiencia QUICK-T Food</small></footer>
+<footer class="closing"><p style="font-style:italic;color:var(--accent);">"Porque amamos la vida le ponemos pasión a la comida."</p><p style="font-size:11px;color:var(--muted);margin-top:4px;">Abrimos cuando llegamos. Cerramos cuando nos vamos.</p><small>Fotografías de la carta de Amelia. Algunas son representativas<br>de la categoría; los ingredientes están en cada descripción.<br>Confirma alergias y disponibilidad antes de pedir.</small><small class="powered">AMELIA · DESDE 1991<br>Una experiencia QUICK-T Food</small></footer>
 </div>
-<div class="floating" aria-label="Tu pedido"><button class="cart-toggle" id="cart-toggle" aria-haspopup="dialog" aria-controls="cart-sheet"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3h2l3 12h11l2-8H6M9 20h.01M18 20h.01"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span class="cart-copy">Mi pedido<small id="cart-subtitle">Elige algo para compartir</small></span><span class="cart-count" id="cart-count">0</span><span class="sr-only" id="cart-accessible">0 productos</span></button><button id="waiter-float" class="wa-float" onclick="callWaiter()" style="background:#751010;border-color:#ff444460;color:#ff6b6b;" aria-label="Llamar mesero" title="Llamar mesero"><svg viewBox="0 0 32 32" aria-hidden="true" width="28" height="28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g stroke-width="1.6"><circle cx="10" cy="6" r="3.2"/><path d="M4 29V19c0-3.5 1.8-5.5 4-6M12 13c2 .5 3.2 2 4.5 4l3 4 4.5-4M7 21v8h9v-8"/><path d="m7 11.5 3 1.5-3 1.5Zm6 0L10 13l3 1.5Z" fill="currentColor" stroke="none"/><path d="m8 16 2 4 2-4M10 20v9M17 16h13M19 13.5h9l-1.5 2.5h-6Z"/><path d="M21 10.5c-2-2 2-2.5 0-4.5M26 10.5c-2-2 2-2.5 0-4.5"/></g></svg></button>
-  <a id="whatsapp-float" class="wa-float" href="https://wa.me/573137796920?text=" target="_blank" rel="noopener noreferrer" aria-label="Compartir pedido por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 3.7A10 10 0 0 0 4.7 16L3 22l6-1.6A10 10 0 0 0 20.4 3.7Z"/><path d="M8 7c-2 1 0 5 2 7s5 3 6 1l1-2-3-1-1 1c-2-1-3-2-3-3l1-1-1-3Z"/></svg></a></div>
+<div class="floating" aria-label="Tu pedido"><button class="cart-toggle" id="cart-toggle" aria-haspopup="dialog" aria-controls="cart-sheet"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3h2l3 12h11l2-8H6M9 20h.01M18 20h.01"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span class="cart-copy">Mi pedido<small id="cart-subtitle">Elige algo para compartir</small></span><span class="cart-count" id="cart-count">0</span><span class="sr-only" id="cart-accessible">0 productos</span></button><button id="waiter-float" class="wa-float" onclick="callWaiter()"  aria-label="Llamar mesero" title="Llamar mesero"><svg viewBox="0 0 32 32" aria-hidden="true" width="28" height="28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g stroke-width="1.6"><circle cx="10" cy="6" r="3.2"/><path d="M4 29V19c0-3.5 1.8-5.5 4-6M12 13c2 .5 3.2 2 4.5 4l3 4 4.5-4M7 21v8h9v-8"/><path d="m7 11.5 3 1.5-3 1.5Zm6 0L10 13l3 1.5Z" fill="currentColor" stroke="none"/><path d="m8 16 2 4 2-4M10 20v9M17 16h13M19 13.5h9l-1.5 2.5h-6Z"/><path d="M21 10.5c-2-2 2-2.5 0-4.5M26 10.5c-2-2 2-2.5 0-4.5"/></g></svg><span>Mesero</span></button>
+  <a id="whatsapp-float" class="wa-float" href="https://wa.me/573137796920?text=" target="_blank" rel="noopener noreferrer" aria-label="Compartir pedido por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 3.7A10 10 0 0 0 4.7 16L3 22l6-1.6A10 10 0 0 0 20.4 3.7Z"/><path d="M8 7c-2 1 0 5 2 7s5 3 6 1l1-2-3-1-1 1c-2-1-3-2-3-3l1-1-1-3Z"/></svg><span>WhatsApp</span></a></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <dialog class="sheet" id="cart-sheet" aria-labelledby="cart-title"><div class="handle" aria-hidden="true"></div><div class="sheet-header"><div><h2 id="cart-title">Tu mesa, tu elección</h2><p>Amelia · Revisa tu pedido</p></div><button class="icon-button" id="close-cart" aria-label="Cerrar pedido" autofocus>×</button></div><div class="sheet-body"><div id="cart-lines"></div><div id="cart-details" hidden><div class="order-fields"><label for="table" class="field-label">Mesa o nombre (opcional)</label><input id="table" maxlength="60" autocomplete="off" placeholder="Ej. Mesa 4 · Ana"><label for="notes" class="field-label">Algo que debamos saber (opcional)</label><textarea id="notes" maxlength="500" placeholder="Alergias, acompañamiento o alguna preferencia…"></textarea></div><p id="fondue-note" class="warning" hidden>La carta indica que los fondue se sirven de dos porciones en adelante. Confirma la combinación con el equipo.</p><div class="totals"><span>Subtotal</span><strong id="cart-total">$0</strong></div><p class="fineprint">Valores de la carta en pesos colombianos. Servicio voluntario no incluido. Sujeto a disponibilidad y confirmación del restaurante.</p><button class="primary" id="order-button">Hacer pedido <span aria-hidden="true">↗</span></button><section class="checkout" id="checkout" hidden aria-labelledby="checkout-title"><h3 id="checkout-title">Tu pedido está listo para compartir</h3><label class="sr-only" for="order-preview">Resumen del pedido</label><textarea id="order-preview" readonly></textarea><p class="warning">WhatsApp de demostración: +57 313 779 6920. El restaurante debe confirmar este número antes de usarlo para pedidos reales.</p><a class="primary" id="send-order" href="https://wa.me/573137796920?text=" target="_blank" rel="noopener noreferrer">Abrir WhatsApp <span aria-hidden="true">↗</span></a><p class="fineprint">Se abrirá un borrador; tú decides cuándo enviarlo. El pedido no queda confirmado al abrir WhatsApp.</p></section></div></div></dialog>
 <script>
@@ -226,8 +442,9 @@ function orderText(){
 }
 function callWaiter(){
   const table=prompt('¿Mesa o nombre? (opcional)','');
+  if(table===null)return;
   const msg='🛎️ *¡Mesero!*'+(table?' Mesa: '+table:'')+'\nNecesito asistencia. Gracias.';
-  window.open('https://wa.me/573184519594?text='+encodeURIComponent(msg),'_blank');
+  window.open('https://wa.me/573184519594?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');
 }
 function whatsappURL(){return 'https://wa.me/573137796920?text='+encodeURIComponent(orderText());}
 function updateOrderLinks(){const url=whatsappURL();$('whatsapp-float').href=url;$('send-order').href=url;if(!$('checkout').hidden)$('order-preview').value=orderText();}
@@ -242,6 +459,7 @@ function changeCart(key,delta){
  if(!PRODUCTS.has(key)||!Number.isInteger(delta))return;
  const next=(cart[key]||0)+delta;if(next>99){announce('Máximo 99 unidades por opción.');return;}if(next<=0)delete cart[key];else cart[key]=next;
  saveCart();$('checkout').hidden=true;renderCart();
+ if(delta>0&&next>0)showSommelier(PRODUCTS.get(key));
  if(!storageAvailable)announce('Selección actualizada. Este navegador no permite guardarla al cerrar.');
 }
 function openCart(){returnFocus=document.activeElement;if(!$('cart-sheet').open){$('cart-sheet').showModal();document.body.style.overflow='hidden';}}
@@ -267,93 +485,54 @@ window.addEventListener('online',connectionState);window.addEventListener('offli
 window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY){cart={};loadCart();$('checkout').hidden=true;renderCart();}});
 // Embedded icon and manifest: no CDN, no extra deployed files or external runtime.
 try{
- const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#0D0D0D';ctx.fillRect(0,0,512,512);ctx.strokeStyle='#D4A843';ctx.lineWidth=7;ctx.beginPath();ctx.arc(256,256,195,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#D4A843';ctx.textAlign='center';ctx.font='300 270px system-ui';ctx.fillText('A',256,340);const icon=canvas.toDataURL('image/png');$('app-icon').href=icon;$('apple-icon').href=icon;
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#fbf4d4';ctx.fillRect(0,0,512,512);ctx.strokeStyle='#623c15';ctx.lineWidth=7;ctx.beginPath();ctx.arc(256,256,195,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#623c15';ctx.textAlign='center';ctx.font='italic 270px Georgia';ctx.fillText('A',256,340);const icon=canvas.toDataURL('image/png');$('app-icon').href=icon;$('apple-icon').href=icon;
  const start=new URL(location.href);start.hash='';start.search='';const scope=new URL('./',start).href;
- const manifest={id:start.href,name:'Amelia · QUICK-T Food',short_name:'Amelia',description:'Fondue y fagottos desde 1991. Carta y pedidos.',lang:'es-CO',start_url:start.href,scope,display:'standalone',background_color:'#0D0D0D',theme_color:'#0D0D0D',icons:[{src:icon,sizes:'512x512',type:'image/png',purpose:'any'}]};
+ const manifest={id:start.href,name:'Amelia · QUICK-T Food',short_name:'Amelia',description:'Fondue y fagottos desde 1991. Carta y pedidos.',lang:'es-CO',start_url:start.href,scope,display:'standalone',background_color:'#fbf4d4',theme_color:'#fbf4d4',icons:[{src:icon,sizes:'512x512',type:'image/png',purpose:'any'}]};
  $('app-manifest').href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest));
 }catch{/* Menu and ordering remain available if canvas/manifest is restricted. */}
 
 let typingTimer;
-function addToCartDirect(dishId){
-  // Find any variant key for this dish
-  var productKey=null;
-  PRODUCTS.forEach(function(val,key){
-    if(!productKey&&String(val.id)===String(dishId))productKey=key;
-  });
-  if(!productKey)return;
-  cart[productKey]=(cart[productKey]||0)+1;
-  updateCartUI();
-  updateOrderLinks();
-}
+const PAIRING_PRODUCTS={
+ 'Queso Tradicional':'vino-ema-chardonnay:0','Queso Azul':'tinto-celia:0',
+ 'Queso Napolitano':'vino-lambrusco-rosato:0','Res':'tinto-canas:0',
+ 'Pollo':'tinto-ema-gran:0','Mixto':'tinto-ema-select:0',
+ 'Jamón Serrano':'vino-moras-rose:0','Solomito':'tinto-riscal:0',
+ 'Cerdo Agridulce':'tinto-trivento:0','Trucha Entera':'vino-ramon-verdejo:0',
+ 'Tejitas':'bebida-kombucha:0'
+};
 function typeWriter(text) {
-  const el = document.getElementById('sommelier-text');
-  const box = document.getElementById('sommelier-box');
-  box.style.display = 'block';
-  clearInterval(typingTimer);
-  el.textContent = '';
-  let i = 0;
-  typingTimer = setInterval(function() {
-    if (i < text.length) { el.textContent += text.charAt(i); i++; }
-    else { clearInterval(typingTimer); }
-  }, 25);
+ const el=$('sommelier-text');
+ clearInterval(typingTimer);
+ $('sommelier-box').setAttribute('aria-busy','true');
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+  el.textContent=text;$('sommelier-box').setAttribute('aria-busy','false');return;
+ }
+ el.textContent='';let i=0;
+ typingTimer=setInterval(()=>{
+  el.textContent=text.slice(0,++i);
+  if(i>=text.length){clearInterval(typingTimer);$('sommelier-box').setAttribute('aria-busy','false');}
+ },25);
 }
-
-// ═══ SOMELIER TRIGGER ═══
-// Watch cart changes and trigger sommelier on new additions
-let _lastCartCount=0;
-setInterval(function(){
-  const cc=document.getElementById('cart-count');
-  const cur=parseInt(cc.textContent)||0;
-  if(cur>_lastCartCount){
-    _lastCartCount=cur;
-    // Find the last added dish name from the cart
-    const lines=document.getElementById('cart-lines');
-    if(lines){
-      const last=lines.querySelector('.dish:last-child .dish-info h3, .cart-item:last-child strong, li:last-child');
-      if(last){
-        const name=last.textContent.trim();
-        const p=PAIRINGS[name]||'';
-        if(p){
-          document.getElementById('sommelier-box').style.display='block';
-          typeWriter('🍷 [Analizando: '+name+'] ... '+p);
-        }
-      }
-    }
-  }
-},800);
-
-// ═══ SOMELIER INLINE ═══
-document.addEventListener('click',function(e){
-  var btn=e.target.closest('button.add');
-  if(!btn)return;
-  var dish=btn.closest('.dish');
-  if(!dish)return;
-  var nameEl=dish.querySelector('h4');
-  if(!nameEl)return;
-  var name=nameEl.textContent.replace(/\(.*?\)/g,'').trim();
-  var p=PAIRINGS[name]||'';
-  if(!p)return;
-  // Remove old sommelier recommendations
-  document.querySelectorAll('.somm-inline').forEach(function(el){el.remove();});
-  // Insert recommendation right after the description
-  var desc=dish.querySelector('.description');
-  var el=document.createElement('div');
-  el.className='somm-inline';
-  el.style.cssText='margin-top:6px;padding:8px 10px;background:rgba(179,136,255,.08);border:1px solid rgba(179,136,255,.2);border-radius:8px;font-size:11px;color:#B388FF;line-height:1.5;animation:fadeIn .3s;';
-  // Extract wine name from pairing to enable "buy this drink"
-  var wineName=p.replace(/[🍷🥂🍾🍸🥃]*\s*/,'').split('—')[0].trim();
-  // Find matching wine in the menu
-  var wineItem=MENU.find(function(m){return m.name===wineName||(m.name||'').toUpperCase().includes(wineName.toUpperCase().substring(0,8));});
-  var buyBtn='';
-  if(wineItem){
-    buyBtn='<br><button onclick="addToCartDirect(\''+wineItem.id+'\')this.style.background='rgba(0,230,118,.2)';this.style.borderColor='var(--green)';this.style.color='var(--green)';this.textContent='✓ Añadido';" style="margin-top:6px;background:rgba(212,168,67,.15);border:1px solid var(--gold);color:var(--gold);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-weight:600;transition:all .15s">➕ Añadir+'</button>';
-  }
-  el.innerHTML='<span style="font-size:14px;">🍷</span> <b>'+name+'</b>: '+p+buyBtn;
-  if(desc)desc.after(el);else dish.appendChild(el);
-  // Auto-remove after 8 seconds
-  setTimeout(function(){if(el.parentNode)el.remove();},8000);
-});
-
+function showSommelier(product){
+ if(!product.pairing)return;
+ const message=product.name+' · '+product.pairing;
+ typeWriter(message);
+ document.querySelectorAll('.somm-inline').forEach(el=>el.remove());
+ const article=[...document.querySelectorAll('[data-dish]')].find(el=>el.dataset.dish===product.id);
+ if(!article)return;
+ const panel=document.createElement('aside');panel.className='somm-inline';
+ const title=document.createElement('strong');title.textContent='Tu sommelier sugiere';
+ const copy=document.createElement('p');copy.textContent=product.pairing;
+ panel.append(title,copy);
+ const key=PAIRING_PRODUCTS[product.name];
+ if(key&&PRODUCTS.has(key)){
+  const drink=PRODUCTS.get(key),button=document.createElement('button');
+  button.className='secondary';button.textContent='Añadir '+drink.name+' · '+money(drink.price);
+  button.addEventListener('click',()=>{changeCart(key,1);announce(drink.name+' agregado a tu pedido');});
+  panel.append(button);
+ }
+ article.lastElementChild.append(panel);
+}
 
 </script>
 </body>
