@@ -1,167 +1,319 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#FAFAFA">
-<meta name="mobile-web-app-capable" content="yes">
-<title>QUICK-T Food · Tu menú digital</title>
-<style>
-:root{--bg:#FAFAFA;--gold:#C8963E;--cyan:#00897B;--green:#2E7D32;--purple:#7B4FBF;--dark:#1a1a1a;--muted:#666;--line:#e0e0e0;--card:#fff}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui;background:var(--bg);color:var(--dark);min-height:100vh;overflow-x:hidden}
-.app{max-width:480px;margin:auto}
-
-/* HERO — animación de vapor */
-.hero{position:relative;background:linear-gradient(180deg,#1a1a1a 0%,#2d1f0e 60%,#3d2b14 100%);color:#fff;padding:40px 24px 60px;text-align:center;overflow:hidden}
-.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(200,150,60,.15),transparent 60%)}
-.hero h1{font-size:38px;font-weight:300;letter-spacing:-.04em;position:relative;z-index:1;margin-bottom:8px}
-.hero p{font-size:14px;color:#ccc;position:relative;z-index:1;max-width:300px;margin:0 auto}
-.steam{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:200px;height:80px;z-index:0}
-.steam span{position:absolute;bottom:0;width:3px;background:rgba(255,255,255,.15);border-radius:2px;animation:rise 3s ease-in infinite}
-.steam span:nth-child(1){left:30px;height:40px;animation-delay:0s}
-.steam span:nth-child(2){left:60px;height:55px;animation-delay:.4s}
-.steam span:nth-child(3){left:90px;height:35px;animation-delay:.8s}
-.steam span:nth-child(4){left:120px;height:50px;animation-delay:1.2s}
-.steam span:nth-child(5){left:150px;height:45px;animation-delay:1.6s}
-@keyframes rise{0%{opacity:0;transform:translateY(0) scaleX(1)}20%{opacity:.6}80%{opacity:.2}100%{opacity:0;transform:translateY(-70px) scaleX(2)}}
-
-/* Secciones */
-.section{padding:32px 24px}
-.section-title{font-size:11px;color:var(--purple);letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px;font-weight:700}
-
-/* Pasos — animación de revelación */
-.steps{display:flex;flex-direction:column;gap:20px}
-.step{display:flex;align-items:flex-start;gap:14px;opacity:0;transform:translateY(20px);animation:reveal .5s ease-out forwards}
-.step:nth-child(1){animation-delay:.2s}.step:nth-child(2){animation-delay:.5s}.step:nth-child(3){animation-delay:.8s}
-@keyframes reveal{to{opacity:1;transform:translateY(0)}}
-.step-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-.step-icon.gold{background:rgba(200,150,60,.1)}.step-icon.cyan{background:rgba(0,137,123,.1)}.step-icon.purple{background:rgba(123,79,191,.1)}
-.step h3{font-size:15px;margin-bottom:4px;font-weight:600}.step p{font-size:12px;color:var(--muted);line-height:1.6}
-
-/* Plan Base */
-.plans{display:grid;gap:16px}
-.plan-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s}
-.plan-card:hover{transform:translateY(-2px);border-color:var(--gold)}
-.plan-card.featured{border:2px solid var(--gold);box-shadow:0 4px 24px rgba(200,150,60,.08)}
-.plan-card.featured:before{content:"RECOMENDADO";position:absolute;top:12px;right:-28px;background:var(--gold);color:#fff;font-size:9px;font-weight:700;padding:3px 36px;transform:rotate(45deg);letter-spacing:.1em}
-.plan-card h3{font-size:20px;font-weight:600;color:var(--gold);margin-bottom:4px}
-.plan-card .price{font-size:32px;font-weight:700;color:var(--dark);margin:8px 0 16px}
-.plan-card .price small{font-size:13px;font-weight:400;color:var(--muted)}
-.plan-card ul{list-style:none;padding:0;margin:0}
-.plan-card li{font-size:13px;padding:6px 0;color:var(--dark);display:flex;align-items:flex-start;gap:8px}
-.plan-card li:before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0}
-
-/* NFC Tags */
-.tag-card{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.tag{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center;transition:transform .2s}
-.tag:hover{transform:translateY(-2px)}
-.tag .emoji{font-size:36px;margin-bottom:8px}
-.tag h3{font-size:15px;font-weight:600;margin-bottom:4px}
-.tag .price{font-size:22px;font-weight:700;color:var(--gold)}
-.tag p{font-size:11px;color:var(--muted);margin-top:6px}
-
-/* CTA */
-.cta{text-align:center;padding:16px 24px 40px}
-.cta a{display:inline-block;background:var(--gold);color:#fff;padding:16px 32px;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;transition:transform .2s,box-shadow .2s;animation:pulse 1.5s ease-in-out infinite}
-.cta a:hover{transform:scale(1.03);box-shadow:0 6px 24px rgba(200,150,60,.3)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.9}}
-.cta .sub{font-size:11px;color:var(--muted);margin-top:8px}
-
-/* Demo — animación de brillo */
-.demo{background:linear-gradient(135deg,#f5f0e8,#faf5ed,#f5f0e8);border-top:1px solid var(--line);padding:24px;text-align:center}
-.demo .shine{display:inline-block;color:var(--cyan);text-decoration:none;font-size:14px;font-weight:600;padding:8px 0;position:relative}
-.demo .shine:after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--cyan);animation:shimmer 2s ease-in-out infinite}
-@keyframes shimmer{0%,100%{opacity:.4}50%{opacity:1}}
-
-/* Footer */
-footer{padding:24px;text-align:center;font-size:10px;color:#aaa;border-top:1px solid var(--line)}
-footer span{color:var(--gold);font-weight:600}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b0e">
+  <meta name="description" content="QUICK-T Food: tu menú digital, pedidos por WhatsApp y llamado a mesero. START $40.000 COP/mes. LUX $80.000 COP/mes con sommelier activo.">
+  <title>QUICK-T Food · Una mejor experiencia en cada mesa</title>
+  <link rel="icon" type="image/png" href="quickt-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090b0e;
+      --surface: #111419;
+      --text: #f4f3ee;
+      --muted: #a2a8b1;
+      --gold: #dfba78;
+      --cyan: #73d6e7;
+      --line: rgba(255,255,255,.10);
+      --glass: rgba(20,24,30,.76);
+      --shadow: 0 2px 8px rgba(0,0,0,.18), 0 24px 64px rgba(0,0,0,.32);
+      --ease-out: cubic-bezier(.22,1,.36,1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    h1,h2,h3,p { margin: 0; }
+    h1,h2,h3 { text-wrap: balance; }
+    h1,h2 { font-family: 'Quicksand', system-ui, sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    a,button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    a:focus-visible,button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
+    ::selection { background: var(--gold); color: var(--bg); }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+    .skip { position: fixed; top: 12px; left: 12px; z-index: 100; padding: 10px 16px; background: var(--text); color: var(--bg); border-radius: 8px; transform: translateY(-160%); }
+    .skip:focus { transform: translateY(0); }
+    .site-header { position: sticky; top: 0; z-index: 20; background: rgba(9,11,14,.82); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; min-height: 76px; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 10px; min-height: 44px; flex-shrink: 0; }
+    .brand img { width: 34px; height: 34px; object-fit: contain; }
+    .wordmark { font-family: 'Quicksand', system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -.6px; }
+    .brand-line { color: var(--gold); font: 500 10px/1.3 'Inter', system-ui, sans-serif; letter-spacing: .18em; display: block; }
+    nav { display: flex; align-items: center; gap: 26px; }
+    nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--muted); transition: color 180ms ease-out; }
+    .nav-secondary { display: none; }
+    nav .nav-cta { color: var(--text); }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 48px; padding: 12px 20px; border-radius: 9px; border: 1px solid var(--line); background: rgba(255,255,255,.025); font-size: 14px; font-weight: 500; transition: background 180ms ease-out, border-color 180ms ease-out, transform 200ms var(--ease-out), box-shadow 200ms ease-out; }
+    .button-primary { background: var(--gold); color: #19150f; border-color: var(--gold); box-shadow: 0 2px 4px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25); }
+    .button:active { transform: scale(.98); }
+    .eyebrow { color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+    .hero { position: relative; padding: 64px 0 48px; }
+    .hero::before { content: ''; pointer-events: none; position: absolute; inset: 0; background: radial-gradient(ellipse at 85% 35%, rgba(115,214,231,.045), transparent 55%); }
+    .hero-grid { position: relative; display: grid; gap: 44px; align-items: center; }
+    .hero h1 { font-size: clamp(39px, 5.1vw, 64px); font-weight: 600; line-height: 1.08; letter-spacing: -.055em; margin: 22px 0; }
+    .hero h1 span { color: var(--gold); }
+    .hero-copy > p { max-width: 460px; color: var(--muted); font-size: 16px; line-height: 1.8; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 18px; }
+    .hero-note { color: var(--muted); font-size: 12px; }
+    .hero-note b { color: var(--text); font-weight: 500; }
+    .preview-stage { position: relative; padding: 20px 0 10px; }
+    .preview-stage::before { content: ''; position: absolute; inset: 15% 2% 8%; border-radius: 50%; background: radial-gradient(ellipse, rgba(223,186,120,.09), transparent 70%); pointer-events: none; }
+    .menu-preview { position: relative; max-width: 400px; margin-inline: auto; padding: 24px; border: 1px solid rgba(255,255,255,.15); border-radius: 22px; background: linear-gradient(145deg, rgba(37,39,43,.82), rgba(16,20,25,.88)); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.07); }
+    .preview-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+    .preview-label { color: var(--muted); font-size: 10px; letter-spacing: .13em; }
+    .preview-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); margin-right: 6px; }
+    .preview-top span:last-child { color: var(--gold); font-size: 11px; }
+    .menu-heading { padding-block: 24px 20px; }
+    .menu-heading h2 { font-size: 30px; font-weight: 500; letter-spacing: -.04em; }
+    .menu-heading p { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .pairing { padding: 18px; border: 1px solid rgba(223,186,120,.22); border-radius: 12px; background: rgba(223,186,120,.035); }
+    .pairing-title { display: flex; align-items: center; gap: 9px; color: var(--gold); font-size: 12px; font-weight: 500; }
+    .pairing-title svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .pairing-copy { min-height: 100px; margin-top: 14px; font-size: 14px; line-height: 1.8; color: #dddcd7; }
+    .pairing-copy.typing::after { content: ''; display: inline-block; height: 13px; width: 2px; background: var(--gold); margin-left: 3px; vertical-align: middle; }
+    .choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .choice { min-height: 44px; padding: 8px 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 7px; background: rgba(255,255,255,.025); cursor: pointer; font-size: 12px; transition: background 180ms ease-out, color 180ms ease-out, border-color 180ms ease-out; }
+    .choice[aria-pressed="true"] { color: var(--text); border-color: rgba(223,186,120,.45); background: rgba(223,186,120,.09); }
+    .preview-bottom { display: flex; justify-content: space-between; gap: 8px; margin-top: 20px; font-size: 11px; color: var(--cyan); }
+    .preview-caption { position: relative; text-align: center; color: var(--muted); font-size: 11px; margin-top: 18px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .section { padding-block: 58px; }
+    .section-heading { margin-bottom: 30px; }
+    .section-heading h2 { margin-top: 12px; font-size: clamp(29px, 3.2vw, 40px); line-height: 1.2; font-weight: 600; letter-spacing: -.04em; }
+    .section-heading p { margin-top: 14px; color: var(--muted); max-width: 530px; }
+    .steps-section { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 32px; }
+    .steps { list-style: none; padding: 0; margin: 0 auto; display: grid; gap: 24px; }
+    .step { display: flex; align-items: baseline; gap: 16px; }
+    .step-number { color: var(--cyan); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .step h3 { font-size: 14px; font-weight: 500; }
+    .step p { margin-top: 5px; color: var(--muted); font-size: 12px; }
+    .plans { display: grid; gap: 18px; }
+    .plan-card { display: flex; flex-direction: column; position: relative; min-width: 0; padding: 28px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.022); box-shadow: 0 2px 8px rgba(0,0,0,.12); transition: border-color 200ms ease-out, box-shadow 200ms ease-out, transform 250ms var(--ease-out); }
+    .plan-card.featured { border-color: rgba(223,186,120,.42); background: linear-gradient(150deg, rgba(223,186,120,.065), rgba(255,255,255,.02) 65%); box-shadow: var(--shadow), inset 0 1px 0 rgba(223,186,120,.08); }
+    .plan-title { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .plan-title h3 { font-size: 13px; font-weight: 600; letter-spacing: .14em; }
+    .plan-card.featured h3 { color: var(--gold); }
+    .plan-badge { color: var(--gold); background: rgba(223,186,120,.07); border: 1px solid rgba(223,186,120,.16); border-radius: 100px; padding: 3px 9px; font-size: 10px; }
+    .plan-description { color: var(--muted); margin-top: 12px; font-size: 13px; }
+    .price { margin-top: 28px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; }
+    .price strong { font-size: clamp(36px, 5vw, 48px); font-weight: 500; letter-spacing: -.05em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .price small { color: var(--muted); font-size: 12px; }
+    .plan-card ul { list-style: none; margin: 26px 0 30px; padding: 24px 0 0; border-top: 1px solid var(--line); display: grid; gap: 14px; }
+    .plan-card li { display: flex; gap: 10px; color: #d5d7db; font-size: 13px; line-height: 1.65; }
+    .plan-card li::before { content: '✓'; flex-shrink: 0; color: var(--cyan); }
+    .plan-card.featured li::before { color: var(--gold); }
+    .plan-card li small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .plan-card .button { margin-top: auto; width: 100%; }
+    .plans-note { margin-top: 20px; color: var(--muted); font-size: 12px; }
+    .tabletop { border-top: 1px solid var(--line); display: grid; gap: 28px; }
+    .tabletop .section-heading { margin: 0; }
+    .tabletop .section-heading h2 { font-size: 28px; }
+    .tabletop .section-heading p { font-size: 13px; }
+    .tag-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
+    .tag { padding: 20px 16px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.018); }
+    .tag h3 { color: #d5d7db; font-size: 12px; font-weight: 400; }
+    .tag strong { display: block; font-size: 24px; font-weight: 500; letter-spacing: -.04em; margin-top: 12px; }
+    .tag small { color: var(--muted); font-size: 10px; }
+    .closing { margin-bottom: 64px; border: 1px solid var(--line); background: var(--glass); border-radius: 16px; padding: 28px; display: grid; gap: 24px; }
+    .closing h2 { font-size: 26px; font-weight: 600; letter-spacing: -.04em; margin-top: 10px; }
+    .closing p { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .closing .button { justify-self: start; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0; }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; color: var(--muted); font-size: 11px; }
+    .footer-inner a { min-height: 44px; display: inline-flex; align-items: center; }
+    .footer-inner strong { font-weight: 500; color: var(--text); }
+    @keyframes enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-copy { animation: enter 600ms var(--ease-out) both; }
+    .preview-stage { animation: enter 700ms var(--ease-out) 80ms both; }
+    @media (hover: hover) {
+      nav a:hover,.footer-inner a:hover { color: var(--text); }
+      .button:hover { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.24); transform: translateY(-2px); }
+      .button-primary:hover { background: #e9c991; border-color: #e9c991; box-shadow: 0 4px 20px rgba(223,186,120,.12); }
+      .plan-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.24); box-shadow: var(--shadow); }
+      .plan-card.featured:hover { border-color: rgba(223,186,120,.65); }
+      .choice:hover { color: var(--text); background: rgba(255,255,255,.06); }
+    }
+    @media (min-width: 700px) {
+      .wrap { width: min(1120px, calc(100% - 80px)); }
+      .nav-secondary { display: inline-flex; }
+      .hero { padding-block: 80px 70px; }
+      .hero-grid { grid-template-columns: 1.15fr 1fr; gap: 32px; }
+      .menu-preview { padding: 26px; }
+      .steps { grid-template-columns: repeat(3,1fr); gap: 28px; }
+      .step + .step { border-left: 1px solid var(--line); padding-left: 24px; }
+      .plans { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+      .plan-card { padding: 32px; }
+      .section { padding-block: 80px; }
+      .tabletop { grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; }
+      .closing { padding: 36px; grid-template-columns: 1fr auto; align-items: center; }
+    }
+    @media (min-width: 1000px) {
+      .hero-grid { gap: 80px; }
+      .hero { padding-block: 88px 84px; }
+      .plan-card { padding: 36px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *,*::before,*::after { animation: none !important; transition: none !important; }
+      .button:hover,.button:active,.plan-card:hover { transform: none; }
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-
-  <!-- HERO -->
-  <div class="hero">
-    <h1>Tu menú, ahora interactivo</h1>
-    <p>Convertí tu carta en una experiencia digital. Sin apps, sin fricción.</p>
-    <div class="steam"><span></span><span></span><span></span><span></span><span></span></div>
-  </div>
-
-  <!-- CÓMO FUNCIONA -->
-  <div class="section">
-    <div class="section-title">En 3 pasos</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-icon gold">📇</div>
-        <div><h3>Te entregamos el NFC</h3><p>Un tag personalizado 3D con tu marca. Lo ponés en cada mesa.</p></div>
-      </div>
-      <div class="step">
-        <div class="step-icon cyan">📲</div>
-        <div><h3>Tu cliente lo toca</h3><p>Abre el menú digital al instante en su celular. Sin instalar nada.</p></div>
-      </div>
-      <div class="step">
-        <div class="step-icon purple">🍽️</div>
-        <div><h3>Pide o llama al mesero</h3><p>El pedido llega directo a tu WhatsApp. O el cliente llama al mesero.</p></div>
-      </div>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html" aria-label="QUICK-T, inicio">
+        <img src="quickt-logo.png" alt="" width="34" height="34">
+        <span class="wordmark">QUICK-T<span class="brand-line">FOOD</span></span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <a class="nav-secondary" href="#como-funciona">Cómo funciona</a>
+        <a href="#planes">Planes</a>
+        <a class="nav-cta nav-secondary" href="amelia-food.html">Ver demo <span aria-hidden="true">&nbsp;↗</span></a>
+      </nav>
     </div>
-  </div>
-
-  <!-- PLAN BASE -->
-  <div class="section">
-    <div class="section-title">Inversión</div>
-    <div class="plans">
-      <div class="plan-card featured">
-        <h3>Plan Base</h3>
-        <div class="price">$40.000 <small>/mes</small></div>
-        <ul>
-          <li>PWA interactiva personalizada a tu marca</li>
-          <li>Sommelier interactivo de vinos o cócteles</li>
-          <li>Pedido fácil o llamado a mesero (tu WhatsApp)</li>
-          <li>10 modifcaciones mensuales</li>
-          <li>1 personalización de temporada gratis al mes</li>
-          <li>Pedidos llegan a WhatsApp (o como prefieras)</li>
-        </ul>
+  </header>
+  <main id="contenido">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">QUICK-T Food / Menú digital</div>
+          <h1 id="hero-title">Tu carta.<br>Una experiencia<br><span>a otro nivel.</span></h1>
+          <p>Deja que tu menú haga más: presenta tus platos, recibe pedidos por WhatsApp y conecta cada mesa con tu equipo.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#planes">Encuentra tu plan <span aria-hidden="true">→</span></a>
+            <a class="button" href="amelia-food.html">Explorar demo <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-note">Desde <b>$40.000 COP/mes</b> · Sin instalar apps</div>
+        </div>
+        <div class="preview-stage">
+          <div class="menu-preview" role="group" aria-label="Vista previa ilustrativa del sommelier del plan LUX">
+            <div class="preview-top"><span class="preview-label"><span class="preview-dot" aria-hidden="true"></span>VISTA PREVIA</span><span>EXPERIENCIA LUX</span></div>
+            <div class="menu-heading"><h2>Una buena elección.</h2><p>Y algo especial para acompañarla.</p></div>
+            <div class="pairing">
+              <div class="pairing-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8 3h8l1 6a5 5 0 0 1-10 0l1-6ZM12 14v7m-4 0h8M7 8h10"/></svg>
+                Tu sommelier
+              </div>
+              <p class="pairing-copy" id="pairing-copy" aria-hidden="true">Para una fondue de queso, un vino blanco seco aporta frescura y equilibra su textura cremosa.</p>
+              <p class="sr-only" id="pairing-announcement" aria-live="polite" aria-atomic="true">Para una fondue de queso, un vino blanco seco aporta frescura y equilibra su textura cremosa.</p>
+              <div class="choices" aria-label="Probar recomendaciones de ejemplo">
+                <button class="choice" type="button" data-pairing="fondue" aria-pressed="true" aria-controls="pairing-copy">Fondue</button>
+                <button class="choice" type="button" data-pairing="cocktail" aria-pressed="false" aria-controls="pairing-copy">Cócteles</button>
+              </div>
+            </div>
+            <div class="preview-bottom"><span>Pedidos por WhatsApp</span><span>Llamar al mesero</span></div>
+          </div>
+          <p class="preview-caption">Prueba las sugerencias · Ejemplo ilustrativo del plan LUX</p>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <!-- NFC TAGS -->
-  <div class="section">
-    <div class="section-title">NFC Tags por mesa</div>
-    <div class="tag-card">
-      <div class="tag">
-        <div class="emoji">🏷️</div>
-        <h3>1 Color</h3>
-        <div class="price">$15.000</div>
-        <p>7cm × 7cm · Personalizado 3D</p>
+    </section>
+    <section class="steps-section" id="como-funciona" aria-label="Cómo funciona">
+      <ol class="wrap steps">
+        <li class="step"><span class="step-number">01</span><div><h3>Tu marca, en cada mesa</h3><p>Un acceso al menú con la identidad de tu restaurante.</p></div></li>
+        <li class="step"><span class="step-number">02</span><div><h3>Tu carta, en su celular</h3><p>El menú se abre al instante, sin instalar nada.</p></div></li>
+        <li class="step"><span class="step-number">03</span><div><h3>El pedido, a tu WhatsApp</h3><p>O un llamado al mesero, cuando lo necesiten.</p></div></li>
+      </ol>
+    </section>
+    <section class="wrap section" id="planes" aria-labelledby="plans-title">
+      <div class="section-heading">
+        <div class="eyebrow">Dos planes. Tu elección.</div>
+        <h2 id="plans-title">Lo esencial. O algo extraordinario.</h2>
+        <p>Empieza con un menú que conecta. Elige LUX para sumar recomendaciones y darle una nueva expresión a cada temporada.</p>
       </div>
-      <div class="tag">
-        <div class="emoji">🎨️</div>
-        <h3>2—3 Colores</h3>
-        <div class="price">$30.000</div>
-        <p>7cm × 7cm · Personalizado 3D</p>
+      <div class="plans">
+        <article class="plan-card" aria-labelledby="start-title">
+          <div class="plan-title"><h3 id="start-title">START</h3></div>
+          <p class="plan-description">Todo lo esencial para llevar tu carta al celular.</p>
+          <div class="price"><strong>$40.000</strong><small>COP / mes</small></div>
+          <ul>
+            <li>PWA de menú digital</li>
+            <li>Pedidos por WhatsApp</li>
+            <li>Botón para llamar al mesero</li>
+            <li>1–2 modificaciones al mes</li>
+          </ul>
+          <a class="button" href="https://wa.me/573137796920?text=Hola%2C%20quiero%20el%20plan%20START%20de%20QUICK-T%20Food%20por%20%2440.000%20COP%2Fmes.">Elegir START <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="plan-card featured" aria-labelledby="lux-title">
+          <div class="plan-title"><h3 id="lux-title">LUX</h3><span class="plan-badge">Con sommelier activo</span></div>
+          <p class="plan-description">Una experiencia que acompaña cada elección.</p>
+          <div class="price"><strong>$80.000</strong><small>COP / mes</small></div>
+          <ul>
+            <li>PWA de menú digital</li>
+            <li><span>Sommelier activo<small>Efecto typewriter y recomendaciones</small></span></li>
+            <li>Pedidos por WhatsApp</li>
+            <li>Botón para llamar al mesero</li>
+            <li>10 modificaciones al mes</li>
+            <li>1 personalización de PWA por temporada</li>
+          </ul>
+          <a class="button button-primary" href="https://wa.me/573137796920?text=Hola%2C%20quiero%20el%20plan%20LUX%20de%20QUICK-T%20Food%20por%20%2480.000%20COP%2Fmes.">Elegir LUX <span aria-hidden="true">→</span></a>
+        </article>
       </div>
-    </div>
-  </div>
-
-  <!-- CTA -->
-  <div class="cta">
-    <a href="https://wa.me/573137796920">Quiero mi menú digital →</a>
-    <div class="sub">Te respondemos en menos de 1 hora</div>
-  </div>
-
-  <!-- AMELIA -->
-  <div class="demo">
-    <p style="font-weight:600;margin-bottom:4px"> Ya usado por Amelia · Fondue & Fagottos · Desde 1991</p>
-    <a class="shine" href="amelia-food.html">Ver demo en vivo →</a>
-  </div>
-
+      <p class="plans-note">Valores mensuales en pesos colombianos. Accesorios para mesa por separado.</p>
+    </section>
+    <section class="wrap section tabletop" aria-labelledby="tabletop-title">
+      <div class="section-heading">
+        <div class="eyebrow">El detalle físico</div>
+        <h2 id="tabletop-title">Tu identidad también se toca.</h2>
+        <p>Accesorios NFC para mesa, personalizados en 3D con tu marca. Formato de 7 × 7 cm.</p>
+      </div>
+      <div class="tag-options">
+        <article class="tag"><h3>1 color</h3><strong>$15.000</strong><small>COP / unidad</small></article>
+        <article class="tag"><h3>2–3 colores</h3><strong>$30.000</strong><small>COP / unidad</small></article>
+      </div>
+    </section>
+    <section class="wrap closing" aria-labelledby="demo-title">
+      <div><div class="eyebrow">De la idea a la mesa</div><h2 id="demo-title">Explora el menú de Amelia.</h2><p>Fondue &amp; Fagottos · Descubre la experiencia desde tu celular.</p></div>
+      <a class="button" href="amelia-food.html">Ver demo en vivo <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
   <footer>
-    <span>QUICK-T</span> Food · Tecnología para restaurantes<br>
-    WhatsApp: +57 313 779 6920
+    <div class="wrap footer-inner"><p><strong>QUICK-T Food</strong> · Tecnología para restaurantes</p><a href="https://wa.me/573137796920">Hablemos · +57 313 779 6920 <span aria-hidden="true">&nbsp;↗</span></a></div>
   </footer>
-</div>
+  <script>
+    (() => {
+      const copy = document.getElementById('pairing-copy');
+      const announcement = document.getElementById('pairing-announcement');
+      const buttons = document.querySelectorAll('[data-pairing]');
+      const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const messages = {
+        fondue: 'Para una fondue de queso, un vino blanco seco aporta frescura y equilibra su textura cremosa.',
+        cocktail: '¿Prefieres un cóctel? Una opción cítrica y fresca puede equilibrar los sabores intensos de tu plato.'
+      };
+      let timer;
+      let current = messages.fondue;
+      function finish() {
+        window.clearTimeout(timer);
+        copy.textContent = current;
+        copy.classList.remove('typing');
+        announcement.textContent = current;
+      }
+      function recommend(key) {
+        window.clearTimeout(timer);
+        current = messages[key];
+        buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pairing === key)));
+        if (motion.matches) { finish(); return; }
+        let position = 0;
+        copy.textContent = '';
+        copy.classList.add('typing');
+        function type() {
+          position = Math.min(position + 2, current.length);
+          copy.textContent = current.slice(0, position);
+          if (position < current.length) timer = window.setTimeout(type, 28);
+          else finish();
+        }
+        type();
+      }
+      buttons.forEach(button => button.addEventListener('click', () => recommend(button.dataset.pairing)));
+      motion.addEventListener('change', () => { if (motion.matches) finish(); });
+      // No autoplay: motion is short, purposeful, and initiated by the visitor.
+    })();
+  </script>
 </body>
 </html>
