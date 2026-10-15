@@ -1448,17 +1448,23 @@
           '<td><code>' + (p.uid || '—') + '</code></td>' +
           '<td><input id="pNombre_' + i + '" placeholder="Nombre completo" style="width:100%;padding:4px;border:1px solid var(--primary-20);border-radius:4px;font:inherit"></td>' +
           '<td><select id="pArea_' + i + '" style="padding:4px;border:1px solid var(--primary-20);border-radius:4px;font:inherit"><option>Administración</option><option>Operación</option></select></td>' +
-          '<td><button onclick="guardarNfc(' + i + ',\'' + (p.uid || '') + '\')" style="background:var(--accent);color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit">Guardar</button></td>' +
+          '<td><button data-idx="' + i + '" data-uid="' + (p.uid || '') + '" style="background:var(--accent);color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit">Guardar</button></td>' +
           '</tr>';
       }).join('');
     }
+    document.getElementById('pendingNfcTable').addEventListener('click', function(e) {
+      var btn = e.target.closest('button[data-idx]');
+      if (!btn) return;
+      var idx = parseInt(btn.getAttribute('data-idx'));
+      var uid = btn.getAttribute('data-uid');
+      guardarNfc(idx, uid, btn);
+    });
 
-    async function guardarNfc(idx, uid) {
+    async function guardarNfc(idx, uid, btnEl) {
       var nombre = document.getElementById('pNombre_' + idx).value.trim();
       var area = document.getElementById('pArea_' + idx).value;
       if (!nombre) { alert('Escribí el nombre del empleado'); return; }
-      var btn = event.target;
-      btn.textContent = 'Guardando…'; btn.disabled = true;
+      btnEl.textContent = 'Guardando…'; btnEl.disabled = true;
       try {
         var res = await fetch(APPS_SCRIPT_URL + '?action=assign', {
           method: 'POST',
@@ -1466,10 +1472,10 @@
           body: JSON.stringify({ uid: uid, nombre: nombre, area: area })
         });
         var data = await res.json();
-        if (data.ok) { btn.textContent = '✓ Guardado'; btn.style.background = 'var(--green)'; setTimeout(loadPendingNfc, 1000); }
-        else { alert(data.error || 'Error al guardar'); btn.textContent = 'Guardar'; btn.disabled = false; }
+        if (data.ok) { btnEl.textContent = '✓ Guardado'; btnEl.style.background = 'var(--green)'; setTimeout(loadPendingNfc, 1000); }
+        else { alert(data.error || 'Error al guardar'); btnEl.textContent = 'Guardar'; btnEl.disabled = false; }
       } catch (err) {
-        alert('Error de conexión'); btn.textContent = 'Guardar'; btn.disabled = false;
+        alert('Error de conexión'); btnEl.textContent = 'Guardar'; btnEl.disabled = false;
       }
     }
 
