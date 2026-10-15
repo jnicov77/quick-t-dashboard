@@ -176,6 +176,19 @@
     .section-subtitle {
       font-size: 13px; color: var(--primary-60); margin-top: 2px;
     }
+    .novedades-priority { padding: 24px; background: white; border: 1px solid var(--primary-10); border-radius: var(--radius-md); box-shadow: var(--shadow-hover); }
+    .novedades-priority .section-title { font-size: 24px; }
+    #novedadesPanel { overflow-x: auto; }
+    .nfc-details { border: 1px solid var(--primary-10); border-radius: var(--radius-md); background: white; }
+    .nfc-details > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; cursor: pointer; list-style: none; border-radius: var(--radius-md); }
+    .nfc-details > summary::-webkit-details-marker { display: none; }
+    .nfc-details > summary::after { content: '+'; font-size: 24px; color: var(--accent); }
+    .nfc-details[open] > summary::after { content: '−'; }
+    .nfc-details > summary:hover { background: var(--accent-15); }
+    .nfc-details > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .nfc-details .tag { background: var(--accent-15); vertical-align: middle; }
+    .nfc-content { padding: 0 20px 20px; }
+    .nfc-content > .section-subtitle { margin-bottom: 16px; }
 
     /* ========== METRIC CARDS (3, mock style) ========== */
     .metrics-grid {
@@ -574,109 +587,8 @@
       </div>
     </section>
 
-    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
-    <section aria-labelledby="secSeguimiento">
-      <div class="section-head">
-        <div>
-          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
-          <div class="section-subtitle">Últimos movimientos del día</div>
-        </div>
-        <button class="btn-primary" id="btnAddPersonal" type="button">➕ Agregar Personal</button>
-      </div>
-
-      <div class="toolbar">
-        <div class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-               aria-hidden="true">
-            <circle cx="11" cy="11" r="7"/>
-            <path d="m21 21-4.3-4.3"/>
-          </svg>
-          <input type="text" id="filtroEmpleado"
-                 placeholder="Buscar empleado por nombre..."
-                 aria-label="Buscar empleado" />
-        </div>
-        <div class="chips" id="filterChips" role="tablist">
-          <button class="chip is-active" data-filter="" type="button">Todos</button>
-          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
-          <button class="chip" data-filter="salida" type="button">Salida</button>
-          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
-        </div>
-      </div>
-
-      <div class="panel" id="seguimientoPanel">
-        <table id="tablaSeguimiento">
-          <thead>
-            <tr>
-              <th>Empleado</th>
-              <th>Área / dispositivo</th>
-              <th>Hora entrada</th>
-              <th>Hora salida</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tablaSeguimientoBody">
-            <tr>
-              <td colspan="5" class="empty-state">Cargando marcaciones…</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination" id="paginationSeguimiento" style="display:none;">
-          <span class="pagination-info" id="pgInfoSeguimiento"></span>
-          <div class="pagination-btns">
-            <button class="pg-btn" id="pgPrevSeguimiento" disabled
-                    aria-label="Página anterior">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-              Anterior
-            </button>
-            <button class="pg-btn" id="pgNextSeguimiento"
-                    aria-label="Página siguiente">
-              Siguiente
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m9 18 6-6-6-6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section aria-labelledby="secNfc">
-      <div class="section-head"><div>
-        <h2 class="section-title" id="secNfc">Asignar NFC <span class="tag" id="pendingNfcCount">0</span></h2>
-        <p class="section-subtitle">Tarjetas detectadas sin nombre · Escribe desde aquí, no desde el dispositivo.</p>
-      </div></div>
-      <p class="personal-status" id="personalStatus" role="status">Conectando personal…</p>
-      <div class="field admin-key"><label for="nfcAdminKey">Clave de administración</label><input id="nfcAdminKey" type="password" autocomplete="off" placeholder="Clave configurada en Apps Script"></div>
-      <div class="panel personal-scroll"><table id="pendingNfcTable">
-        <thead><tr><th>UID del NFC</th><th>Nombre</th><th>Área</th><th>Acción</th></tr></thead>
-        <tbody id="pendingNfcBody"><tr><td colspan="4" class="empty-state">Consultando tarjetas…</td></tr></tbody>
-      </table></div>
-      <p class="data-notice" id="nfcFeedback" role="status"></p>
-    </section>
-
-    <dialog id="personalDialog" aria-labelledby="personalTitle">
-      <div class="section-head"><h2 id="personalTitle">Agregar Personal</h2><button class="btn-ghost" id="closeImport" type="button" aria-label="Cerrar carga de personal">Cerrar</button></div>
-      <p class="section-subtitle">Sube un CSV o pega desde Excel con encabezados: <strong>Nombre, Cédula, Cargo, Área</strong>. UID es opcional; otras columnas se conservan. Áreas: Administración y Operación.</p>
-      <p class="data-notice">La asignación automática usa únicamente tarjetas reales detectadas y libres de la misma área. Sin tarjetas disponibles, el empleado queda pendiente; nunca se generan UIDs ficticios.</p>
-      <p class="data-notice"><a href="asistenc-ia-plantilla.csv" download class="btn-ghost">Descargar plantilla CSV</a></p>
-      <fieldset id="importControls">
-        <div class="field"><label for="personalFile">Archivo CSV / TSV · Máximo 2 MB</label><input id="personalFile" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values"></div>
-        <div class="field"><label for="personalPaste">O pega las celdas de Excel aquí</label><textarea id="personalPaste" placeholder="Nombre,Cédula,Cargo,Área" spellcheck="false"></textarea></div>
-        <div class="field"><label for="importAdminKey">Clave de administración (para guardar)</label><input id="importAdminKey" type="password" autocomplete="off"></div>
-        <div class="personal-actions"><button class="btn-ghost" id="previewImport" type="button">Validar y previsualizar</button><button class="btn-primary" id="confirmImport" type="button" disabled>Confirmar carga</button></div>
-      </fieldset>
-      <p class="data-notice" id="importBackendStatus"></p>
-      <p class="personal-status" id="importFeedback" role="status" style="margin-top:16px"></p>
-      <div class="personal-scroll" id="importPreview"></div>
-    </dialog>
-
     <!-- ========== NOVEDADES (renamed from "Panel de Novedades") ========== -->
-    <section aria-labelledby="secNovedades">
+    <section class="novedades-priority" aria-labelledby="secNovedades">
       <div class="section-head">
         <div>
           <div class="section-title" id="secNovedades">Novedades</div>
@@ -770,6 +682,111 @@
         </div>
       </div>
     </section>
+
+    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
+    <section aria-labelledby="secSeguimiento">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
+          <div class="section-subtitle">Últimos movimientos del día</div>
+        </div>
+        <button class="btn-primary" id="btnAddPersonal" type="button">➕ Agregar Personal</button>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="text" id="filtroEmpleado"
+                 placeholder="Buscar empleado por nombre..."
+                 aria-label="Buscar empleado" />
+        </div>
+        <div class="chips" id="filterChips" role="tablist">
+          <button class="chip is-active" data-filter="" type="button">Todos</button>
+          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
+          <button class="chip" data-filter="salida" type="button">Salida</button>
+          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
+        </div>
+      </div>
+
+      <div class="panel" id="seguimientoPanel">
+        <table id="tablaSeguimiento">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Área / dispositivo</th>
+              <th>Hora entrada</th>
+              <th>Hora salida</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tablaSeguimientoBody">
+            <tr>
+              <td colspan="5" class="empty-state">Cargando marcaciones…</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination" id="paginationSeguimiento" style="display:none;">
+          <span class="pagination-info" id="pgInfoSeguimiento"></span>
+          <div class="pagination-btns">
+            <button class="pg-btn" id="pgPrevSeguimiento" disabled
+                    aria-label="Página anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Anterior
+            </button>
+            <button class="pg-btn" id="pgNextSeguimiento"
+                    aria-label="Página siguiente">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="secNfc">
+      <details class="nfc-details">
+      <summary>
+        <h2 class="section-title" id="secNfc">Asignar NFC <span class="tag" id="pendingNfcCount">0</span></h2>
+      </summary>
+      <div class="nfc-content">
+      <p class="section-subtitle">Asigna nombres a las tarjetas detectadas o modifica los ya asignados.</p>
+      <p class="personal-status" id="personalStatus" role="status">Conectando personal…</p>
+      <div class="field admin-key"><label for="nfcAdminKey">Clave de administración</label><input id="nfcAdminKey" type="password" autocomplete="off" placeholder="Clave configurada en Apps Script"></div>
+      <div class="panel personal-scroll"><table id="pendingNfcTable">
+        <thead><tr><th>UID del NFC</th><th>Nombre</th><th>Área</th><th>Acción</th></tr></thead>
+        <tbody id="pendingNfcBody"><tr><td colspan="4" class="empty-state">Consultando tarjetas…</td></tr></tbody>
+      </table></div>
+      <p class="data-notice" id="nfcFeedback" role="status"></p>
+      </div>
+      </details>
+    </section>
+
+    <dialog id="personalDialog" aria-labelledby="personalTitle">
+      <div class="section-head"><h2 id="personalTitle">Agregar Personal</h2><button class="btn-ghost" id="closeImport" type="button" aria-label="Cerrar carga de personal">Cerrar</button></div>
+      <p class="section-subtitle">Sube un CSV o pega desde Excel con encabezados: <strong>Nombre, Cédula, Cargo, Área</strong>. UID es opcional; otras columnas se conservan. Áreas: Administración y Operación.</p>
+      <p class="data-notice">La asignación automática usa únicamente tarjetas reales detectadas y libres de la misma área. Sin tarjetas disponibles, el empleado queda pendiente; nunca se generan UIDs ficticios.</p>
+      <p class="data-notice"><a href="asistenc-ia-plantilla.csv" download class="btn-ghost">Descargar plantilla CSV</a></p>
+      <fieldset id="importControls">
+        <div class="field"><label for="personalFile">Archivo CSV / TSV · Máximo 2 MB</label><input id="personalFile" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values"></div>
+        <div class="field"><label for="personalPaste">O pega las celdas de Excel aquí</label><textarea id="personalPaste" placeholder="Nombre,Cédula,Cargo,Área" spellcheck="false"></textarea></div>
+        <div class="field"><label for="importAdminKey">Clave de administración (para guardar)</label><input id="importAdminKey" type="password" autocomplete="off"></div>
+        <div class="personal-actions"><button class="btn-ghost" id="previewImport" type="button">Validar y previsualizar</button><button class="btn-primary" id="confirmImport" type="button" disabled>Confirmar carga</button></div>
+      </fieldset>
+      <p class="data-notice" id="importBackendStatus"></p>
+      <p class="personal-status" id="importFeedback" role="status" style="margin-top:16px"></p>
+      <div class="personal-scroll" id="importPreview"></div>
+    </dialog>
 
   </main>
 
