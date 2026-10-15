@@ -762,7 +762,6 @@
       <div class="nfc-content">
       <p class="section-subtitle">Asigna nombres a las tarjetas detectadas o modifica los ya asignados.</p>
       <p class="personal-status" id="personalStatus" role="status">Conectando personal…</p>
-      <div class="field admin-key"><label for="nfcAdminKey">Clave de administración</label><input id="nfcAdminKey" type="password" autocomplete="off" placeholder="Clave configurada en Apps Script"></div>
       <div class="panel personal-scroll"><table id="pendingNfcTable">
         <thead><tr><th>UID del NFC</th><th>Nombre</th><th>Área</th><th>Acción</th></tr></thead>
         <tbody id="pendingNfcBody"><tr><td colspan="4" class="empty-state">Consultando tarjetas…</td></tr></tbody>
@@ -1421,23 +1420,7 @@
 
     // ═══ ADMIN: Asignar NFC ═══
     var adminToken = 'As1st3ncIA-2026-QT';
-    (function() {
-      var el = document.getElementById('nfcAdminKey');
-      if (el) { el.value = adminToken; el.readOnly = true; el.style.opacity = '0.5'; }
-      loadPendingNfc();
-    })();
-
-    document.getElementById('nfcAdminKey').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        adminToken = this.value.trim();
-        localStorage.setItem('asistenc_admin_key', adminToken);
-        loadPendingNfc();
-      }
-    });
-    document.getElementById('nfcAdminKey').addEventListener('blur', function() {
-      adminToken = this.value.trim();
-      if (adminToken) { localStorage.setItem('asistenc_admin_key', adminToken); loadPendingNfc(); }
-    });
+    loadPendingNfc();
 
     async function loadPendingNfc() {
       if (!adminToken) return;
