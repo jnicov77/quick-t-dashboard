@@ -1464,9 +1464,13 @@
     });
 
     async function guardarNfc(idx, uid, btnEl) {
-      var row = btnEl.closest('tr');
-      var nombre = row.querySelector('input[placeholder="Nombre completo"]').value.trim();
-      var area = row.querySelector('select').value;
+          var row = btnEl.closest('tr');
+          if (!row) { alert('Error: fila no encontrada'); return; }
+          var inp = row.querySelector('input[placeholder="Nombre completo"]');
+          var sel = row.querySelector('select');
+          if (!inp || !sel) { alert('Error: campos no encontrados'); return; }
+          var nombre = inp.value.trim();
+          var area = sel.value;
       if (!nombre) { alert('Escribí el nombre del empleado'); return; }
       btnEl.textContent = 'Guardando…'; btnEl.disabled = true;
       try {
