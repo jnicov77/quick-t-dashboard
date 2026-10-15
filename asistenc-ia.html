@@ -1464,8 +1464,9 @@
     });
 
     async function guardarNfc(idx, uid, btnEl) {
-      var nombre = document.getElementById('pNombre_' + idx).value.trim();
-      var area = document.getElementById('pArea_' + idx).value;
+      var row = btnEl.closest('tr');
+      var nombre = row.querySelector('input[placeholder="Nombre completo"]').value.trim();
+      var area = row.querySelector('select').value;
       if (!nombre) { alert('Escribí el nombre del empleado'); return; }
       btnEl.textContent = 'Guardando…'; btnEl.disabled = true;
       try {
