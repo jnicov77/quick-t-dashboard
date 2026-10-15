@@ -106,7 +106,7 @@
     }
     .logo-mark img { height: 100%; width: auto; display: block; }
     .logo-text { transition: font-size 0.28s ease; }
-    .site-header.is-scrolled .logo-mark { width: 28px; height: 200px; }
+    .site-header.is-scrolled .logo-mark { width: auto; height: 32px; }
     .site-header.is-scrolled .logo { font-size: 15px; }
 
     .header-meta {
@@ -326,7 +326,7 @@
       letter-spacing: 0.04em; text-transform: uppercase;
     }
     .tag--ingreso     { background: var(--green-15); color: var(--green); }
-    .tag--salida      { background: var(--alert-15); color: var(--primary); }
+    .tag--salida      { background: var(--alert-15); color: #BE123C; }
     .tag--sin-registro{ background: var(--primary-10); color: var(--primary-60); }
 
     /* ========== PAGINATION ========== */
@@ -453,6 +453,24 @@
     }
     .form-feedback.is-pending { background: var(--alert-15); color: var(--primary); }
 
+    .area-toolbar { margin: 20px 0 0; }
+    .area-toolbar .chip.is-active { background: var(--accent); color: var(--deep); border-color: var(--accent); }
+    .area-count { font-weight: 700; margin-left: 6px; }
+    .section-head { flex-wrap: wrap; }
+    #seguimientoPanel { overflow-x: auto; }
+    #tablaSeguimiento { min-width: 600px; }
+    .data-notice { font-size: 13px; color: var(--primary-60); margin-top: 10px; }
+    dialog { margin: auto; width: min(900px, calc(100% - 24px)); max-height: 90dvh; border: 1px solid var(--primary-10); border-radius: 16px; padding: 24px; color: var(--primary); }
+    dialog::backdrop { background: rgba(15,23,42,.55); backdrop-filter: blur(3px); }
+    dialog .field { margin: 14px 0; }
+    dialog .field textarea { height: 140px; min-height: 140px; max-height: 300px; resize: vertical; overflow: auto; }
+    .personal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .personal-scroll { overflow: auto; max-height: 340px; }
+    #importControls { border: 0; min-width: 0; }
+    #pendingNfcTable { min-width: 640px; }
+    #pendingNfcTable select { height: 36px; border: 1px solid var(--primary-20); border-radius: 8px; background: white; font: inherit; padding: 6px; }
+    .admin-key { max-width: 340px; margin: 12px 0; }
+    .personal-status { padding: 12px 16px; background: var(--accent-15); border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
     /* ========== FOOTER ========== */
     .site-footer {
       margin-top: 48px; padding: 20px 0;
@@ -495,7 +513,7 @@
         <span class="status-date" id="headerDate">—</span>
         <span class="status-pill">
           <span class="status-dot" aria-hidden="true"></span>
-          Sincronizado
+          <span id="syncLabel">Conectando…</span>
         </span>
         <button class="icon-btn" id="refreshBtn" type="button"
                 aria-label="Actualizar datos" title="Actualizar">
@@ -517,6 +535,12 @@
     <!-- ========== HERO: nombre de la empresa (Nicolás: solo "Industrias SAS", sin tagline) ========== -->
     <section class="hero" aria-labelledby="heroTitle">
       <h1 id="heroTitle">Industrias SAS</h1>
+      <div class="chips area-toolbar" id="areaFilters" role="group" aria-label="Filtrar por área">
+        <button class="chip is-active" type="button" data-area="" aria-pressed="true">Todos <span class="area-count" id="countAll">—</span></button>
+        <button class="chip" type="button" data-area="Administración" aria-pressed="false">Administración <span class="area-count" id="countAdmin">—</span></button>
+        <button class="chip" type="button" data-area="Operación" aria-pressed="false">Operación <span class="area-count" id="countOperacion">—</span></button>
+      </div>
+      <p class="data-notice" id="areaNotice" aria-live="polite">Personas con marcación hoy por dispositivo · Actualización cada 30 segundos.</p>
     </section>
 
     <!-- ========== MÉTRICAS (3 cards: Asistencia, Empleados, Novedades — Nicolás: quitar Horario) ========== -->
@@ -544,7 +568,7 @@
         <div class="metric-card">
           <div class="metric-label">Novedades</div>
           <div class="metric-value" id="statNovedades">0</div>
-          <div class="metric-hint">Registradas en el día</div>
+          <div class="metric-hint">Registradas en el día · Todas las áreas</div>
         </div>
 
       </div>
@@ -557,6 +581,7 @@
           <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
           <div class="section-subtitle">Últimos movimientos del día</div>
         </div>
+        <button class="btn-primary" id="btnAddPersonal" type="button">➕ Agregar Personal</button>
       </div>
 
       <div class="toolbar">
@@ -584,6 +609,7 @@
           <thead>
             <tr>
               <th>Empleado</th>
+              <th>Área / dispositivo</th>
               <th>Hora entrada</th>
               <th>Hora salida</th>
               <th>Estado</th>
@@ -591,7 +617,7 @@
           </thead>
           <tbody id="tablaSeguimientoBody">
             <tr>
-              <td colspan="4" class="empty-state">Cargando marcaciones…</td>
+              <td colspan="5" class="empty-state">Cargando marcaciones…</td>
             </tr>
           </tbody>
         </table>
@@ -618,6 +644,36 @@
         </div>
       </div>
     </section>
+
+    <section aria-labelledby="secNfc">
+      <div class="section-head"><div>
+        <h2 class="section-title" id="secNfc">Asignar NFC <span class="tag" id="pendingNfcCount">0</span></h2>
+        <p class="section-subtitle">Tarjetas detectadas sin nombre · Escribe desde aquí, no desde el dispositivo.</p>
+      </div></div>
+      <p class="personal-status" id="personalStatus" role="status">Conectando personal…</p>
+      <div class="field admin-key"><label for="nfcAdminKey">Clave de administración</label><input id="nfcAdminKey" type="password" autocomplete="off" placeholder="Clave configurada en Apps Script"></div>
+      <div class="panel personal-scroll"><table id="pendingNfcTable">
+        <thead><tr><th>UID del NFC</th><th>Nombre</th><th>Área</th><th>Acción</th></tr></thead>
+        <tbody id="pendingNfcBody"><tr><td colspan="4" class="empty-state">Consultando tarjetas…</td></tr></tbody>
+      </table></div>
+      <p class="data-notice" id="nfcFeedback" role="status"></p>
+    </section>
+
+    <dialog id="personalDialog" aria-labelledby="personalTitle">
+      <div class="section-head"><h2 id="personalTitle">Agregar Personal</h2><button class="btn-ghost" id="closeImport" type="button" aria-label="Cerrar carga de personal">Cerrar</button></div>
+      <p class="section-subtitle">Sube un CSV o pega desde Excel con encabezados: <strong>Nombre, Cédula, Cargo, Área</strong>. UID es opcional; otras columnas se conservan. Áreas: Administración y Operación.</p>
+      <p class="data-notice">La asignación automática usa únicamente tarjetas reales detectadas y libres de la misma área. Sin tarjetas disponibles, el empleado queda pendiente; nunca se generan UIDs ficticios.</p>
+      <p class="data-notice"><a href="asistenc-ia-plantilla.csv" download class="btn-ghost">Descargar plantilla CSV</a></p>
+      <fieldset id="importControls">
+        <div class="field"><label for="personalFile">Archivo CSV / TSV · Máximo 2 MB</label><input id="personalFile" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values"></div>
+        <div class="field"><label for="personalPaste">O pega las celdas de Excel aquí</label><textarea id="personalPaste" placeholder="Nombre,Cédula,Cargo,Área" spellcheck="false"></textarea></div>
+        <div class="field"><label for="importAdminKey">Clave de administración (para guardar)</label><input id="importAdminKey" type="password" autocomplete="off"></div>
+        <div class="personal-actions"><button class="btn-ghost" id="previewImport" type="button">Validar y previsualizar</button><button class="btn-primary" id="confirmImport" type="button" disabled>Confirmar carga</button></div>
+      </fieldset>
+      <p class="data-notice" id="importBackendStatus"></p>
+      <p class="personal-status" id="importFeedback" role="status" style="margin-top:16px"></p>
+      <div class="personal-scroll" id="importPreview"></div>
+    </dialog>
 
     <!-- ========== NOVEDADES (renamed from "Panel de Novedades") ========== -->
     <section aria-labelledby="secNovedades">
@@ -721,6 +777,7 @@
     Quick-T V1.0 · Cada registro es exacto, auditable y verificable.
   </footer>
 
+  <script src="asistenc-ia-personal.js"></script>
   <script>
     /* ============================================================
      *  Quick-T Dashboard v3
@@ -748,6 +805,8 @@
     let empleadosDia      = [];   // aggregated: [{nombre, identificacion, entrada, salida, estado}]
     let novedades         = [];   // rows from SHEET_NOVEDADES_URL
     let lastFetchAt       = null;
+    let areaFilter = '';
+    let personal = [];
 
     // Pagination
     let segPage = 0, novPage = 0;
@@ -770,14 +829,14 @@
     async function fetchJsonEvents() {
       if (!APPS_SCRIPT_URL) return [];
       try {
-        const res = await fetch(APPS_SCRIPT_URL + '?action=today', { cache: 'no-store' });
-        if (!res.ok) return [];
+        const res = await fetch(APPS_SCRIPT_URL + '?action=today', { cache: 'no-store', signal: AbortSignal.timeout(30000) });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
-        if (!Array.isArray(data)) return [];
+        if (!Array.isArray(data)) throw new Error('Respuesta de eventos no válida');
         return data.map(normalizeEventoRow).filter(obj => obj.identificacion || obj.nombre);
       } catch (err) {
         console.warn('Apps Script read failed:', err);
-        return [];
+        throw err;
       }
     }
 
@@ -785,17 +844,23 @@
       const refreshBtn = document.getElementById('refreshBtn');
       refreshBtn.classList.add('reloading');
 
+      try {
       const [ev, nov] = await Promise.all([
         fetchJsonEvents(),
         fetchCsv(SHEET_NOVEDADES_URL),
+        fetchPersonal().catch(() => null),
       ]);
       registros  = ev;
       novedades  = nov;
 
       lastFetchAt = new Date();
       renderAll();
-
+      document.getElementById('syncLabel').textContent = personalLoadError ? 'Sincronización parcial' : 'Sincronizado';
+      } catch (err) {
+        document.getElementById('syncLabel').textContent = 'Sin conexión · datos anteriores';
+      } finally {
       refreshBtn.classList.remove('reloading');
+      }
     }
 
     /* === CSV PARSER (RFC 4180 mini) === */
@@ -838,6 +903,7 @@
          -> nombre=employee_name, identificacion=uid, entrada/salida derived from action.
        Legacy schema: nombre, identificacion, entrada, salida (kept for reversibility). */
     function normalizeEventoRow(obj) {
+      obj = Object.fromEntries(Object.entries(obj).map(([k,v]) => [k.trim().toLowerCase(), String(v ?? '')]));
       const hasNew = obj.employee_name !== undefined || obj.uid !== undefined || obj.action !== undefined;
       const nombre         = (obj.employee_name || obj.nombre || obj.empleado || '').trim();
       const identificacion = (obj.uid || obj.identificacion || obj['id tag'] || '').trim();
@@ -853,7 +919,8 @@
         else if (action === 'SALIDA') salida = timestamp;
       }
 
-      return { nombre, identificacion, entrada, salida, action, timestamp };
+      const area = normalizeArea(obj.device_loc || obj.location || obj.area || obj['área'] || '');
+      return { nombre, identificacion, entrada, salida, action, timestamp, area, device_id: obj.device_id || '' };
     }
 
     /* === FORMAT HELPERS === */
@@ -875,7 +942,7 @@
     function formatHoraStr(ts) {
       if (!ts) return '—';
       // Convertir UTC a hora Colombia (UTC-5) para mostrar hora local
-      const d = new Date(ts);
+      const d = new Date(eventTime(ts));
       if (isNaN(d.getTime())) {
         const m = /(\d{2}):(\d{2})/.exec(ts);
         return m ? `${m[1]}:${m[2]}` : '—';
@@ -888,116 +955,76 @@
       })[c]);
     }
 
-    /* === AGGREGATION: group recors by employee per today === */
-    function aggregateEmpleados() {
-      const today = hoyColombia(); // YYYY-MM-DD en hora Colombia
+    function normalizeArea(value) {
+      const key = String(value || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      if (['admin', 'administracion', 'administrativa'].includes(key)) return 'Administración';
+      if (['operacion', 'operaciones', 'operativa'].includes(key)) return 'Operación';
+      return String(value || '').trim();
+    }
 
-      // Step 1: get all unique employees (all time) as master list
-      const empMap = new Map(); // id -> {nombre, identificacion}
-      for (const r of registros) {
-        const id = r.identificacion || r.nombre || '';
-        const nom = r.nombre || '';
-        if (id && !empMap.has(id)) {
-          empMap.set(id, { nombre: nom, identificacion: id });
+    // Timestamps without a zone originate in Colombia, not the browser's timezone.
+    function eventTime(value) {
+      if (!value || !/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(value)) return NaN;
+      const iso = value.replace(' ', 'T');
+      return Date.parse(/(?:Z|[+-]\d{2}:?\d{2})$/i.test(iso) ? iso : iso + '-05:00');
+    }
+
+    function buildEmployees(area = '') {
+      const people = new Map();
+      const byUID = new Map(personal.filter(p => p.uid).map(p => [p.uid.toUpperCase(), p]));
+      const byName = new Map();
+      personal.forEach(p => {
+        if (p.nombre) {
+          const name = p.nombre.toLowerCase();
+          byName.set(name, byName.has(name) ? null : p); // Never merge ambiguous names.
         }
-      }
-
-      // Step 2: for today's records, aggregate entrada/salida per employee.
-      // Event-log schema: each row is one ENTRADA/SALIDA event with a timestamp,
-      // so reconstruct per-employee entrada (earliest) / salida (latest) from action.
-      // Legacy wide schema (entrada/salida columns) still supported as fallback.
-      const todayMap = new Map(); // id -> {entrada: 'earliest', salida: 'latest', lastAction, lastTs}
-      const validDatePattern = /^\d{4}-\d{2}-\d{2}/;
-      const validTimePattern = /^\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}/;
-
-      const isToday = ts => {
-        if (!ts || !validDatePattern.test(ts) || !validTimePattern.test(ts)) return '';
-        const d = new Date(ts);
-        // Convertir el timestamp UTC a fecha Colombia para comparar correctamente
-        const colDate = d.toLocaleDateString('sv', {timeZone: 'America/Bogota'});
-        return colDate === today ? ts : '';
-      };
-
-      for (const r of registros) {
-        const id = r.identificacion || r.nombre || '';
-        if (!id) continue;
-
-        const action = (r.action || '').toUpperCase();
-        let ent = '', sal = '';
-
-        if (action === 'ENTRADA' || action === 'SALIDA') {
-          // Event-log schema: derive from action + timestamp
-          const ts = isToday(r.timestamp);
-          if (!ts) continue;
-          if (action === 'ENTRADA') ent = ts;
-          else sal = ts;
-        } else {
-          // Legacy wide schema: entrada/salida columns
-          ent = isToday(r.entrada);
-          sal = isToday(r.salida);
-          if (!ent && !sal) continue;
+        if (p.nombre && (!area || normalizeArea(p.area) === area)) {
+          people.set(p.uid || p.id || p.cedula, {nombre:p.nombre, identificacion:p.uid || p.id || p.cedula,
+            cedula:p.cedula || '', area:normalizeArea(p.area), entrada:'', salida:'', estado:'sin-registro', last:0});
         }
-
-        if (!todayMap.has(id)) todayMap.set(id, { entrada: '', salida: '', lastAction: '', lastTs: '' });
-        const cur = todayMap.get(id);
-
-        if (ent && (!cur.entrada || ent > cur.entrada)) cur.entrada = ent;  // latest ENTRADA
-        if (sal && (!cur.salida  || sal > cur.salida))  cur.salida  = sal;  // latest SALIDA
-
-        // Track the LAST event (by timestamp) to determine current state
-        const evtTs = ent || sal;
-        if (evtTs && (!cur.lastTs || evtTs > cur.lastTs)) {
-          cur.lastTs = evtTs;
-          cur.lastAction = action || (ent ? 'ENTRADA' : 'SALIDA');
-        }
-      }
-
-      // Step 3: build empleadosDia array
-      const result = [];
-      for (const [id, emp] of empMap.entries()) {
-        const td = todayMap.get(id);
-        const entrada = td && td.entrada ? td.entrada : '';
-        const salida  = td && td.salida  ? td.salida  : '';
-
-        let estado;
-        if (td && td.lastAction === 'ENTRADA') {
-          estado = 'ingreso';       // último evento fue ENTRADA → adentro
-        } else if (td && td.lastAction === 'SALIDA') {
-          estado = 'salida';        // último evento fue SALIDA → afuera
-        } else {
-          estado = 'sin-registro';  // no record today → gray
-        }
-
-        result.push({
-          nombre: emp.nombre,
-          identificacion: id,
-          entrada: entrada,
-          salida: salida,
-          estado: estado,
-        });
-      }
-
-      // Sort: Ingreso first, then Salida, then Sin Registro; alphabetical within
-      const order = { 'ingreso': 0, 'salida': 1, 'sin-registro': 2 };
-      result.sort((a, b) => {
-        const oa = order[a.estado] ?? 9;
-        const ob = order[b.estado] ?? 9;
-        if (oa !== ob) return oa - ob;
-        return a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase());
       });
-
-      empleadosDia = result;
+      for (const r of registros) {
+        const master = byUID.get(r.identificacion.toUpperCase()) || (!r.identificacion && byName.get(r.nombre.toLowerCase()));
+        const id = master ? (master.uid || master.id || master.cedula) : (r.identificacion || r.nombre);
+        const location = r.area || ''; // Employee department is not evidence of the device location.
+        if (!id || (area && location !== area)) continue;
+        if (!people.has(id)) people.set(id, {nombre:(master && master.nombre) || r.nombre, identificacion:id,
+          cedula:(master && master.cedula) || '', area:location, entrada:'', salida:'', estado:'sin-registro', last:0});
+        const employee = people.get(id);
+        for (const [field, state] of [['entrada','ingreso'],['salida','salida']]) {
+          const ts = r[field], ms = eventTime(ts);
+          if (!Number.isFinite(ms) || new Date(ms).toLocaleDateString('sv', {timeZone:'America/Bogota'}) !== hoyColombia()) continue;
+          if (!employee[field] || ms > eventTime(employee[field])) employee[field] = ts;
+          if (ms >= employee.last) Object.assign(employee, {last:ms, estado:state, area:location});
+        }
+      }
+      const order = {'ingreso':0,'salida':1,'sin-registro':2};
+      return [...people.values()].sort((a,b) => order[a.estado]-order[b.estado] || a.nombre.localeCompare(b.nombre));
+    }
+    function aggregateEmpleados() { empleadosDia = buildEmployees(); }
+    function getAreaEmployees(area = areaFilter) { return area ? buildEmployees(area) : empleadosDia; }
+    function renderAreaCounts() {
+      for (const [area,id] of [['','countAll'],['Administración','countAdmin'],['Operación','countOperacion']]) {
+        document.getElementById(id).textContent = getAreaEmployees(area).filter(e => e.estado !== 'sin-registro').length;
+      }
+      const missing = registros.filter(r => !r.area).length;
+      document.getElementById('areaNotice').textContent =
+        'Personas con marcación hoy por dispositivo · Actualización cada 30 segundos.' +
+        (missing ? ' Hay registros sin DEVICE_LOC: se muestran en Todos; no se inventa su ubicación.' : '') +
+        ' Una persona puede marcar en ambas áreas; Todos cuenta personas únicas.';
     }
 
     /* === RENDER ALL === */
     function renderAll() {
       aggregateEmpleados();
       renderHeaderInfo();
+      renderAreaCounts();
       renderStats();
       applyFiltersSeguimiento();
       renderNovedadesTable();
       poblarEmpleadosSelect();
       updateNovedadGate();
+      renderPendingCards();
     }
 
     /* === HEADER === */
@@ -1013,13 +1040,9 @@
 
       // Unique employees total (master list)
       // Unique employees total (master list) — usar nombre si no hay ID
-      const idEmpleadosTotal = new Set(registros.map(r => r.identificacion || r.nombre).filter(Boolean));
-      const totalEmp = idEmpleadosTotal.size;
-
-      // Count employees with entrada today (Ingreso + Salida that have entrada)
-      const conIngreso = empleadosDia.filter(e => e.estado === 'ingreso').length;
-      const conSalida  = empleadosDia.filter(e => e.estado === 'salida').length;
-      const conEntradaHoy = conIngreso + conSalida; // both have entrada today
+      const areaEmployees = getAreaEmployees();
+      const totalEmp = areaEmployees.length;
+      const conEntradaHoy = areaEmployees.filter(e => e.entrada).length;
 
       // Asistencia %
       const pctEl = document.getElementById('statPct');
@@ -1058,7 +1081,7 @@
       const activeChip = document.querySelector('#filterChips .chip.is-active');
       const estadoFilter = activeChip ? activeChip.dataset.filter : '';
 
-      segFiltered = empleadosDia.filter(e => {
+      segFiltered = getAreaEmployees().filter(e => {
         if (q) {
           const haystack = `${e.nombre} ${e.identificacion}`.toLowerCase();
           if (!haystack.includes(q)) return false;
@@ -1078,7 +1101,7 @@
       const totalPages = Math.ceil(segFiltered.length / PAGE_SIZE) || 1;
 
       if (page.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Aún no hay marcaciones. Acerca un tag NFC al lector.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No hay empleados que coincidan con estos filtros.</td></tr>`;
         document.getElementById('paginationSeguimiento').style.display = 'none';
         return;
       }
@@ -1109,6 +1132,7 @@
                 </div>
               </div>
             </td>
+            <td>${escapeHtml(e.area || 'Sin área')}</td>
             <td><span class="time-cell ${eCls}">${eHora}</span></td>
             <td><span class="time-cell ${sCls}">${sHora}</span></td>
             <td><span class="tag ${estadoClass}">${estadoLabel}</span></td>
@@ -1333,6 +1357,17 @@
       // Refresh button
       document.getElementById('refreshBtn').addEventListener('click', fetchAll);
 
+      document.querySelectorAll('#areaFilters .chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          areaFilter = chip.dataset.area;
+          document.querySelectorAll('#areaFilters .chip').forEach(c => {
+            c.classList.toggle('is-active', c === chip);
+            c.setAttribute('aria-pressed', String(c === chip));
+          });
+          renderStats();
+          applyFiltersSeguimiento();
+        });
+      });
       // Filter chips
       document.querySelectorAll('#filterChips .chip').forEach(chip => {
         chip.addEventListener('click', () => {
@@ -1359,6 +1394,7 @@
       document.getElementById('btnCancelNovedad').addEventListener('click', cancelNovedad);
       document.getElementById('novedadForm').addEventListener('submit', submitNovedad);
 
+      initPersonal();
       // Initial render
       renderHeaderInfo();
       applyFiltersSeguimiento();
