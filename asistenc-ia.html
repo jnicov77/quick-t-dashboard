@@ -833,7 +833,7 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         if (!Array.isArray(data)) throw new Error('Respuesta de eventos no válida');
-        return data.map(normalizeEventoRow).filter(obj => obj.identificacion || obj.nombre);
+        return data.map(normalizeEventoRow).filter(obj => obj.identificacion || obj.nombre || obj.uid);
       } catch (err) {
         console.warn('Apps Script read failed:', err);
         throw err;
@@ -894,7 +894,7 @@
         .filter(r => r.some(c => c.trim() !== ''))
         .map(r => Object.fromEntries(headers.map((h, i) => [h, (r[i] != null ? r[i] : '').trim()])))
         .map(normalizeEventoRow)
-        .filter(obj => obj.identificacion || obj.nombre);
+        .filter(obj => obj.identificacion || obj.nombre || obj.uid);
     }
 
     /* Normalize a CSV row from either schema (new event-log or legacy wide) into a
@@ -920,7 +920,7 @@
       }
 
       const area = normalizeArea(obj.device_loc || obj.location || obj.area || obj['área'] || '');
-      return { nombre, identificacion, entrada, salida, action, timestamp, area, device_id: obj.device_id || '' };
+      return { nombre, identificacion, uid: identificacion, entrada, salida, action, timestamp, area, device_id: obj.device_id || '' };
     }
 
     /* === FORMAT HELPERS === */
