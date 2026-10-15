@@ -1403,16 +1403,20 @@
     }
 
     // ═══ ADMIN: Asignar NFC ═══
-    var adminToken = '';
+    var adminToken = localStorage.getItem('asistenc_admin_key') || 'As1st3ncIA-2026-QT';
+    document.getElementById('nfcAdminKey').value = adminToken;
+    if (adminToken) loadPendingNfc();
+
     document.getElementById('nfcAdminKey').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         adminToken = this.value.trim();
+        localStorage.setItem('asistenc_admin_key', adminToken);
         loadPendingNfc();
       }
     });
     document.getElementById('nfcAdminKey').addEventListener('blur', function() {
       adminToken = this.value.trim();
-      if (adminToken) loadPendingNfc();
+      if (adminToken) { localStorage.setItem('asistenc_admin_key', adminToken); loadPendingNfc(); }
     });
 
     async function loadPendingNfc() {
