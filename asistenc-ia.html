@@ -793,15 +793,135 @@
     Quick-T V1.0 · Cada registro es exacto, auditable y verificable.
   </footer>
 
+  
+  
+
   <script>
-'use strict';
-document.getElementById('result').textContent = 'JS RUNS: ' + new Date().toISOString();
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCUyp9K9AD7d7V4ir6JkC-kBa8w4ojhrVa3Tskx1aZCJBpbJ1kvBW_4ueO69ACPPzgiw/exec';
-fetch(APPS_SCRIPT_URL + '?action=today').then(r=>r.json()).then(d=>{
-  document.getElementById('result').textContent = 'EVENTOS: ' + d.length;
-}).catch(e=>{
-  document.getElementById('result').textContent = 'ERROR: ' + e.message;
-});
-</script>
+    'use strict';
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCUyp9K9AD7d7V4ir6JkC-kBa8w4ojhrVa3Tskx1aZCJBpbJ1kvBW_4ueO69ACPPzgiw/exec';
+    var ADMIN_TOKEN = 'As1st3ncIA-2026-QT';
+    var events = [];
+    var selectedArea = '';
+    var loadState = 'loading';
+    var body = document.getElementById('tablaSeguimientoBody');
+    var status = document.getElementById('syncLabel');
+    var refresh = document.getElementById('refreshBtn');
+
+    function eventHour(value) {
+      var text = String(value || '').trim();
+      var local = text.match(/^(?:\\d{4}-\\d{2}-\\d{2}[ T])?(\\d{2}:\\d{2}(?::\\d{2})?)(?:\\.\\d+)?$/);
+      if (local) return local[1];
+      var date = new Date(text);
+      return Number.isNaN(date.getTime()) ? '—' : date.toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+
+    function normalizeEvent(row) {
+      var fields = {};
+      Object.keys(row).forEach(function(k) { fields[k.trim().toLowerCase()] = String(row[k] ?? '').trim(); });
+      var area = fields.area || fields['área'] || fields.device_loc || fields.location || '';
+      var key = area.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+      return {
+        nombre: fields.nombre || fields.employee_name || 'Sin nombre',
+        uid: fields.uid || fields.identificacion || '—',
+        area: ['administracion','admin'].indexOf(key) >= 0 ? 'Administración' : ['operacion','operaciones'].indexOf(key) >= 0 ? 'Operación' : area || 'Sin área',
+        action: (fields.action || fields.accion || fields['acción'] || '—').toUpperCase(),
+        hora: eventHour(fields.timestamp || fields.hora)
+      };
+    }
+
+    function renderEvents() {
+      if (!body) return;
+      body.innerHTML = '';
+      var visible = events.filter(function(e) { return !selectedArea || e.area === selectedArea; });
+      var countEl = document.getElementById('countAll');
+      if (countEl) countEl.textContent = 'Todos ' + visible.length;
+      if (!visible.length) {
+        body.innerHTML = '<tr><td colspan="5" class="empty-state">' + (loadState === 'loading' ? 'Cargando…' : loadState === 'error' ? 'Error al cargar.' : selectedArea ? 'No hay eventos en esta área.' : 'No hay eventos hoy.') + '</td></tr>';
+        return;
+      }
+      visible.forEach(function(event) {
+        var row = '<tr><td>' + event.nombre + '</td><td>' + event.uid + '</td><td>' + event.area + '</td><td>' + event.action + '</td><td>' + event.hora + '</td></tr>';
+        body.innerHTML += row;
+      });
+    }
+
+    function selectArea(area) {
+      selectedArea = area;
+      document.querySelectorAll('[data-area]').forEach(function(btn) {
+        var active = btn.getAttribute('data-area') === area;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
+      });
+      renderEvents();
+    }
+
+    function loadEvents() {
+      if (refresh) refresh.disabled = true;
+      loadState = 'loading';
+      if (status) { status.textContent = 'Conectando…'; }
+      var controller = new AbortController();
+      var timeout = setTimeout(function() { controller.abort(); }, 30000);
+      fetch(APPS_SCRIPT_URL + '?action=today', {method:'GET',cache:'no-store',signal:controller.signal})
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(data) {
+          if (!Array.isArray(data)) throw new Error('Invalid');
+          events = data.map(normalizeEvent);
+          loadState = 'ready';
+          if (status) status.textContent = 'Sincronizado · ' + new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});
+        })
+        .catch(function(err) {
+          loadState = 'error'; events = [];
+          if (status) status.textContent = 'Sin conexión';
+        })
+        .finally(function() {
+          clearTimeout(timeout);
+          if (refresh) refresh.disabled = false;
+          renderEvents();
+        });
+    }
+
+    // Wire up
+    document.querySelectorAll('[data-area]').forEach(function(btn) {
+      btn.addEventListener('click', function() { selectArea(btn.getAttribute('data-area')); });
+    });
+    if (refresh) refresh.addEventListener('click', loadEvents);
+
+    // NFC
+    var nfcBody = document.getElementById('pendingNfcBody');
+    var nfcCount = document.getElementById('pendingNfcCount');
+    function loadPendingNfc() {
+      if (!nfcBody) return;
+      nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Cargando…</td></tr>';
+      fetch(APPS_SCRIPT_URL + '?action=empleados', { signal: AbortSignal.timeout(15000) })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!Array.isArray(data)) { if(nfcCount) nfcCount.textContent='0'; return; }
+          var items = data.filter(function(p) { return p.uid && p.uid !== '—'; });
+          if(nfcCount) nfcCount.textContent = items.length || '0';
+          if(!items.length) { nfcBody.innerHTML='<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes.</td></tr>'; return; }
+          nfcBody.innerHTML = items.map(function(p,i){
+            var hasName = !!(p.nombre && p.nombre !== 'Sin nombre');
+            return '<tr><td>'+p.uid+'</td><td><input id="pn_'+i+'" value="'+(hasName?p.nombre:'')+'" placeholder="Nombre" style="width:100%"></td><td><select id="pa_'+i+'"><option>Administración</option><option>Operación</option></select></td><td><button class="'+(hasName?'btn-modify':'btn-save')+'" onclick="saveNfc('+i+',\''+p.uid+'\',this)">'+(hasName?'Modificar':'Guardar')+'</button></td></tr>';
+          }).join('');
+        }).catch(function(){ nfcBody.innerHTML='<tr><td colspan="4" class="empty-state">Error.</td></tr>'; });
+    }
+    function saveNfc(idx, uid, btn){
+      var inp=document.getElementById('pn_'+idx), sel=document.getElementById('pa_'+idx);
+      if(!inp||!sel){alert('Error');return;}
+      var n=inp.value.trim(), a=sel.value;
+      if(!n){alert('Escribí el nombre');return;}
+      btn.textContent='Guardando…';btn.disabled=true;
+      fetch(APPS_SCRIPT_URL+'?action=assign&uid='+encodeURIComponent(uid)+'&nombre='+encodeURIComponent(n)+'&area='+encodeURIComponent(a))
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d.status==='ok'||d.ok){btn.textContent='✓';setTimeout(function(){loadPendingNfc();loadEvents();},1000);}
+          else{alert(d.msg||d.error||'Error');btn.textContent='Guardar';btn.className='btn-save';btn.disabled=false;}
+        }).catch(function(){alert('Error de conexión');btn.textContent='Guardar';btn.className='btn-save';btn.disabled=false;});
+    }
+
+    loadEvents();
+    loadPendingNfc();
+  </script>
+
 </body>
 </html>
