@@ -1434,6 +1434,7 @@
       // initPersonal();  // desactivado temporalmente
       // Initial render
       renderHeaderInfo();
+      loadPendingNfc();
       applyFiltersSeguimiento();
       fetchAll();
       setInterval(fetchAll, REFRESH_MS);
@@ -1479,7 +1480,6 @@
 
     // ═══ ADMIN: Asignar NFC ═══
     var adminToken = 'As1st3ncIA-2026-QT';
-    loadPendingNfc();
 
     async function loadPendingNfc() {
       if (!adminToken) return;
