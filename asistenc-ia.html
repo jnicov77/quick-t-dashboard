@@ -823,6 +823,7 @@
     let lastFetchAt       = null;
     let areaFilter = '';
     let personal = [];
+    let personalLoadError = false;
 
     // Pagination
     let segPage = 0, novPage = 0;
@@ -856,18 +857,33 @@
       }
     }
 
+    async function fetchPersonal() {
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + '?action=empleados', {cache:'no-store',signal:AbortSignal.timeout(20000)});
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        const data = await res.json();
+        personalLoadError = false;
+        return Array.isArray(data) ? data : [];
+      } catch(err) {
+        personalLoadError = true;
+        console.warn('Personal read failed:', err);
+        return [];
+      }
+    }
+
     async function fetchAll() {
       const refreshBtn = document.getElementById('refreshBtn');
       refreshBtn.classList.add('reloading');
 
       try {
-      const [ev, nov] = await Promise.all([
+      const [ev, nov, pers] = await Promise.all([
         fetchJsonEvents(),
         fetchCsv(SHEET_NOVEDADES_URL),
         fetchPersonal().catch(() => null),
       ]);
       registros  = ev;
       novedades  = nov;
+      personal   = pers || [];
 
       lastFetchAt = new Date();
       renderAll();
@@ -1415,6 +1431,8 @@
       fetchAll();
       setInterval(fetchAll, REFRESH_MS);
     }
+
+    function initPersonal() { /* stub */ }
 
     // ═══ ADMIN: Asignar NFC ═══
     var adminToken = 'As1st3ncIA-2026-QT';
