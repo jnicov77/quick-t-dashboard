@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUICK-T Lab 3D — Concepto</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0A0F;overflow:hidden;font-family:'Inter',sans-serif}
+canvas{display:block}
+#info{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.1em;z-index:10}
+</style>
+</head>
+<body>
+<div id="info">QUICK-T LAB · CENTRO DE CONTROL 3D</div>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+// Escena
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#0A0A0F');
+scene.fog = new THREE.Fog('#0A0A0F', 15, 60);
+
+// Cámara
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.5, 100);
+camera.position.set(0, 8, 18);
+camera.lookAt(0, 2, 0);
+
+// Renderers
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'fixed';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild(labelRenderer.domElement);
+
+// Controles
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.target.set(0, 2.5, 0);
+controls.maxPolarAngle = Math.PI/2.2;
+controls.update();
+
+// Luces
+const ambient = new THREE.AmbientLight('#1a1a3a', 1.5);
+scene.add(ambient);
+const spot = new THREE.SpotLight('#00D4D4', 80, 40, Math.PI/4, 0.3, 0.5);
+spot.position.set(0, 12, 0);
+spot.castShadow = true;
+scene.add(spot);
+
+// Piso con grid
+const gridHelper = new THREE.PolarGridHelper(20, 64, 48, 128, '#00D4D4', '#111122');
+gridHelper.position.y = 0.01;
+scene.add(gridHelper);
+
+// Reflejo en el piso
+const floorGeo = new THREE.PlaneGeometry(30, 30);
+const floorMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.3, metalness:0.9, transparent:true, opacity:0.5});
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = 0;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ─── PANEL ROXS ───
+function createPanel(x, y, z, title, data, color) {
+  const group = new THREE.Group();
+  // Marco
+  const frameGeo = new THREE.BoxGeometry(3.2, 2.4, 0.05);
+  const frameMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.2, metalness:0.8, emissive:color, emissiveIntensity:0.15});
+  const frame = new THREE.Mesh(frameGeo, frameMat);
+  frame.castShadow = true;
+  group.add(frame);
+  // Borde glow
+  const edgeGeo = new THREE.EdgesGeometry(frameGeo);
+  const edgeMat = new THREE.LineBasicMaterial({color:color, linewidth:1, transparent:true, opacity:0.6});
+  group.add(new THREE.LineSegments(edgeGeo, edgeMat));
+  // Título
+  const titleDiv = document.createElement('div');
+  titleDiv.innerHTML = `<div style="color:${color};font-size:11px;letter-spacing:.15em;text-align:center;text-shadow:0 0 15px ${color}">${title}</div>`;
+  const titleLabel = new CSS2DObject(titleDiv);
+  titleLabel.position.set(0, 1.5, 0.05);
+  group.add(titleLabel);
+  // Datos
+  const dataDiv = document.createElement('div');
+  dataDiv.innerHTML = data.map(d => `<div style="color:#fff;font-size:16px;font-weight:700;text-align:center;margin:4px 0;text-shadow:0 0 10px ${color}">${d}</div>`).join('');
+  const dataLabel = new CSS2DObject(dataDiv);
+  dataLabel.position.set(0, 0.3, 0.05);
+  group.add(dataLabel);
+  group.position.set(x, y, z);
+  return group;
+}
+
+// Panel ROXS
+const roxsPanel = createPanel(-4, 4, 0, 'ROXS GARDEN', ['🌡️ 23.9°C', '💧 68%', '📊 0.82 kPa'], '#00D4D4');
+scene.add(roxsPanel);
+
+// Panel Asistenc-IA
+const asistPanel = createPanel(4, 4, 0, 'ASISTENC-IA', ['👥 12 activos', '🏢 Admin: 3', '🏭 Operación: 9'], '#D4A843');
+scene.add(asistPanel);
+
+// Panel Food
+const foodPanel = createPanel(0, 3.5, -5, 'QUICK-T FOOD', ['🍽️ 8 pedidos hoy', '🍷 Sommelier activo', '🛎️ 2 llamados'], '#B388FF');
+scene.add(foodPanel);
+
+// ─── AGENTES (esferas pulsantes) ───
+function createAgent(x, y, z, color, name, role) {
+  const group = new THREE.Group();
+  // Núcleo
+  const coreGeo = new THREE.SphereGeometry(0.25, 32, 32);
+  const coreMat = new THREE.MeshStandardMaterial({color:color, roughness:0.2, metalness:0.8, emissive:color, emissiveIntensity:0.8});
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  group.add(core);
+  // Anillo
+  const ringGeo = new THREE.TorusGeometry(0.4, 0.03, 16, 48);
+  const ringMat = new THREE.MeshStandardMaterial({color:color, roughness:0.1, emissive:color, emissiveIntensity:0.4});
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI/2;
+  group.add(ring);
+  // Label
+  const labelDiv = document.createElement('div');
+  labelDiv.innerHTML = `<div style="color:${color};font-size:10px;text-align:center;text-shadow:0 0 10px ${color}"><b>${name}</b><br><span style="font-size:8px;opacity:.7">${role}</span></div>`;
+  const label = new CSS2DObject(labelDiv);
+  label.position.set(0, 0.7, 0);
+  group.add(label);
+  group.position.set(x, y, z);
+  group.userData = {core, ring};
+  return group;
+}
+
+const zoro = createAgent(-6, 0.5, -3, '#00D4D4', 'ZORO', 'Director');
+const wong = createAgent(-2, 0.5, -4.5, '#D4A843', 'Mr. Wong', 'Programador');
+const sanji = createAgent(2, 0.5, -4.5, '#B388FF', 'Sanji', '3D');
+const patrona = createAgent(5, 0.5, -3.5, '#FFB547', 'La Patrona', 'Prospección');
+scene.add(zoro, wong, sanji, patrona);
+
+// ─── PLATAFORMA CENTRAL ───
+const platformGeo = new THREE.CylinderGeometry(3, 3.5, 0.3, 48);
+const platformMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.3, metalness:0.9, emissive:'#00D4D4', emissiveIntensity:0.05});
+const platform = new THREE.Mesh(platformGeo, platformMat);
+platform.position.y = 0.15;
+platform.receiveShadow = true;
+scene.add(platform);
+
+// Anillo de la plataforma
+const platRingGeo = new THREE.TorusGeometry(3.25, 0.03, 16, 96);
+const platRing = new THREE.Mesh(platRingGeo, new THREE.MeshStandardMaterial({color:'#00D4D4', emissive:'#00D4D4', emissiveIntensity:0.5}));
+platRing.rotation.x = Math.PI/2;
+platRing.position.y = 0.32;
+scene.add(platRing);
+
+// Logo central
+const logoDiv = document.createElement('div');
+logoDiv.innerHTML = '<div style="color:#00D4D4;font-size:18px;font-weight:700;text-align:center;letter-spacing:.1em;text-shadow:0 0 20px #00D4D4">QUICK-T<br><span style="font-size:8px;opacity:.6">LAB</span></div>';
+const logoLabel = new CSS2DObject(logoDiv);
+logoLabel.position.set(0, 0.4, 0);
+scene.add(logoLabel);
+
+// ─── PARTÍCULAS ───
+const particlesGeo = new THREE.BufferGeometry();
+const count = 200;
+const pos = new Float32Array(count*3);
+for(let i=0;i<count*3;i+=3){pos[i]=(Math.random()-.5)*20;pos[i+1]=Math.random()*8;pos[i+2]=(Math.random()-.5)*20}
+particlesGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+const particlesMat = new THREE.PointsMaterial({color:'#00D4D4',size:0.03,transparent:true,opacity:0.5});
+scene.add(new THREE.Points(particlesGeo,particlesMat));
+
+// Animación
+const clock = new THREE.Clock();
+function animate(){
+  const t = clock.getElapsedTime();
+  // Pulsar anillos de agentes
+  [zoro,wong,sanji,patrona].forEach(a=>{
+    const s = 1+Math.sin(t*3+a.position.x)*0.15;
+    a.userData.ring.scale.setScalar(s);
+    a.userData.core.material.emissiveIntensity = 0.5+Math.sin(t*3+a.position.x)*0.5;
+  });
+  // Rotar partículas
+  scene.children.find(c=>c.isPoints).rotation.y+=0.001;
+  controls.update();
+  renderer.render(scene,camera);
+  labelRenderer.render(scene,camera);
+  requestAnimationFrame(animate);
+}
+animate();
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  labelRenderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+</body>
+</html>
