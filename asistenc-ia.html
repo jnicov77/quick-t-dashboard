@@ -526,7 +526,7 @@
         <span class="status-date" id="headerDate">—</span>
         <span class="status-pill">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="syncLabel">Conectando…</span><span id="jsTest" style="color:red;font-size:20px">JS?</span>
+          <span id="syncLabel">Conectando…</span><span id="jsTest" style="color:red;font-size:20px">
         </span>
         <button class="icon-btn" id="refreshBtn" type="button"
                 aria-label="Actualizar datos" title="Actualizar">
@@ -794,6 +794,9 @@
   </footer>
 
   <script src="asistenc-ia-personal.js"></script>
+  <script>
+    document.getElementById("syncLabel").textContent = "JS-OK";
+  </script>
   <script>
     /* ============================================================
      *  Quick-T Dashboard v3
