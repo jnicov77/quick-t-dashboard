@@ -3,204 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QUICK-T Lab 3D — Concepto</title>
+<meta name="theme-color" content="#0A0A0F">
+<meta name="description" content="QUICK-T Lab: explora en 3D los agentes, proyectos y clientes del ecosistema QUICK-T.">
+<title>QUICK-T Lab · Ecosistema 3D</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0A0A0F;overflow:hidden;font-family:'Inter',sans-serif}
-canvas{display:block}
-#info{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.1em;z-index:10}
+:root{color-scheme:dark;--bg:#0A0A0F;--cyan:#00D4D4;--gold:#D4A843;--purple:#B388FF;--text:#F0F3F8;--muted:#9CA6BA;--line:#242839}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.5}a{color:inherit;text-decoration:none}a:hover{color:var(--cyan)}button{font:inherit;color:inherit;cursor:pointer}a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--cyan);outline-offset:5px}button:disabled{opacity:.4;cursor:default}.skip{position:absolute;top:-100px;z-index:100;background:var(--bg);padding:12px}.skip:focus{top:8px}.wrap{max-width:1440px;margin:auto;padding:0 32px}
+header{display:flex;justify-content:space-between;align-items:center;gap:24px;min-height:90px;border-bottom:1px solid var(--line)}.eyebrow{font:10px ui-monospace,monospace;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}h1{font-size:23px;letter-spacing:.12em;font-weight:650}h1 span{color:var(--cyan);font-weight:400}.header-right{display:flex;gap:28px;align-items:center}.home{font-size:12px;color:var(--muted)}.clock{text-align:right}.clock time{display:block;font:21px ui-monospace,monospace;font-variant-numeric:tabular-nums}.clock small{color:var(--muted);font-size:10px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:2;margin-top:24px}.kpi{min-width:0;padding:17px 20px;background:linear-gradient(135deg,#121821e8,#101018e8);border:1px solid var(--line);border-top:1px solid #00d4d44a;box-shadow:0 12px 40px #0005;border-radius:8px;backdrop-filter:blur(12px)}.kpi dt{color:var(--muted);font-size:11px}.kpi dd{font-size:30px;line-height:1.3;margin:5px 0;font-weight:600;letter-spacing:-.03em}.kpi small{color:var(--muted);font-size:11px}.kpi:nth-child(2){border-top-color:#d4a84380}.kpi:nth-child(3){border-top-color:#b388ff80}.kpi .domain{font-size:clamp(17px,1.8vw,24px);padding:4px 0;color:var(--cyan)}
+.scene-shell{position:relative;margin:10px -32px 0;height:550px;isolation:isolate;overflow:hidden}#scene{position:absolute;inset:0}#scene canvas{display:block;touch-action:none}.labels{position:absolute;inset:0;pointer-events:none}.scene-top{position:absolute;top:18px;left:32px;right:32px;display:flex;justify-content:space-between;align-items:start;gap:16px;z-index:3;pointer-events:none}.scene-top p{font-size:11px;color:var(--muted);margin-top:5px}.tools{display:flex;gap:8px;pointer-events:auto}.tools button{border:1px solid var(--line);border-radius:5px;background:#11141de6;padding:8px 11px;font-size:11px}.tools button:hover{border-color:var(--cyan)}#scene-status{position:absolute;bottom:17px;left:32px;right:32px;color:var(--muted);font-size:11px;z-index:3;pointer-events:none}.scene-label{width:204px;text-align:center;background:#0b1019e6;border:1px solid var(--tint);border-radius:6px;padding:14px 12px;box-shadow:0 0 24px #0008;pointer-events:none}.scene-label h3{color:var(--tint);font-size:11px;letter-spacing:.12em}.scene-label p{font-size:13px;margin:8px 0 4px}.scene-label small{display:block;font-size:10px;color:var(--muted)}.agent-label{pointer-events:auto;background:#0a0a0fe0;border:1px solid var(--line);border-bottom:2px solid var(--tint);padding:5px 9px;border-radius:5px;color:var(--tint);font-size:11px;white-space:nowrap}.agent-label:hover{background:#242839}.center-label{text-align:center;color:var(--cyan);font-size:19px;font-weight:650;letter-spacing:.14em;text-shadow:0 0 24px #00d4d480}.center-label small{display:block;font-size:8px;letter-spacing:.3em;color:var(--muted)}
+.section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin:24px 0 14px}h2{font-size:13px;font-weight:500;letter-spacing:.1em;text-transform:uppercase}.section-heading p{color:var(--muted);font-size:11px}.agents{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.agent{padding:16px 14px;border:1px solid var(--line);background:#11131c;border-radius:7px;min-width:0;transition:border-color .2s}.agent:target,.agent.selected{border-color:var(--tint);box-shadow:0 0 22px #00d4d412}.agent h3{font-size:14px;color:var(--tint);margin-bottom:7px}.agent h3::before{content:'';display:inline-block;width:6px;height:6px;border-radius:100%;background:var(--tint);margin-right:8px;box-shadow:0 0 10px var(--tint)}.agent p{font-size:11px;overflow-wrap:anywhere;min-height:34px}.agent .rate{color:var(--text);margin-top:9px;min-height:0}.agent small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.projects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.project{border:1px solid var(--line);border-left:2px solid var(--tint);padding:18px;border-radius:7px;background:#10121b}.project h3{color:var(--tint);font-size:12px;letter-spacing:.1em}.project .project-summary{font-size:14px;margin:10px 0 5px}.project .project-note{font-size:11px;color:var(--muted)}.project-links{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.project-links a{padding:6px 9px;border:1px solid var(--line);border-radius:4px;font:11px ui-monospace,monospace}.project-links a:hover{border-color:var(--tint);color:var(--tint)}.source-note{font-size:11px;color:var(--muted);margin:20px 0;max-width:900px}footer{border-top:1px solid var(--line);padding:18px 0 25px;color:var(--muted);font-size:11px}.no-3d .scene-shell{height:130px}.no-3d .tools{display:none}.no-3d #scene{display:none}
+@media(max-width:1100px){.agents{grid-template-columns:repeat(3,minmax(0,1fr))}.scene-label{width:176px;padding:11px 8px}.scene-label p{font-size:12px}}
+@media(max-width:650px){.wrap{padding:0 16px}header{min-height:84px;gap:10px}h1{font-size:18px}.header-right{gap:12px}.home{display:none}.clock time{font-size:18px}.clock small{font-size:9px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:16px}.kpi{padding:12px}.kpi dd{font-size:26px}.kpi .domain{font-size:16px;white-space:nowrap}.kpi small{font-size:10px}.scene-shell{height:430px;margin:4px -16px 0}.scene-top{left:16px;right:16px;top:16px;flex-direction:column;gap:10px}.scene-top p{font-size:10px}.tools button{font-size:10px;padding:7px 9px}.scene-label{width:auto;min-width:90px;padding:7px 5px}.scene-label h3{font-size:8px;letter-spacing:.03em}.scene-label p,.scene-label small{display:none}.agent-label{font-size:9px;padding:4px 6px}.center-label{font-size:13px}.center-label small{font-size:6px}.agents{grid-template-columns:repeat(2,minmax(0,1fr))}.agent{padding:14px 12px}.projects{grid-template-columns:1fr}.section-heading{align-items:start;flex-direction:column;gap:5px;margin-top:20px}#scene-status{left:16px;right:16px;font-size:10px}.source-note{line-height:1.7}footer{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div id="info">QUICK-T LAB · CENTRO DE CONTROL 3D</div>
+<a class="skip" href="#agents">Ir a los agentes y proyectos</a>
+<div class="wrap">
+<header>
+<div><p class="eyebrow">Ecosistema · Centro de control</p><h1>QUICK-T <span>LAB</span></h1></div>
+<div class="header-right"><a class="home" href="index.html">Volver a Quick-T ↗</a><div class="clock"><time id="live-clock" aria-label="Hora de Colombia">--:--:--</time><small id="live-date">Colombia · UTC−5</small></div></div>
+</header>
+<main>
+<dl class="kpis" aria-label="Indicadores del ecosistema">
+<div class="kpi"><dt>Clientes activos</dt><dd>3+</dd><small>JusTTime · Bacu · Daniel</small></div>
+<div class="kpi"><dt>Proyectos en desarrollo</dt><dd>~5</dd><small>Portafolio en construcción</small></div>
+<div class="kpi"><dt>Dashboards publicados</dt><dd id="dashboard-count">6</dd><small><a href="#projects">Explorar publicaciones ↘</a></small></div>
+<div class="kpi"><dt>Dominio propio</dt><dd class="domain"><a href="https://quickttech.co" target="_blank" rel="noopener noreferrer">quickttech.co ↗</a></dd><small>Identidad digital QUICK-T</small></div>
+</dl>
+<section class="scene-shell" aria-label="Laboratorio 3D interactivo">
+<div id="scene"></div>
+<div class="scene-top"><div><h2>El laboratorio</h2><p>Arrastra para orbitar · Toca un agente para ver su ficha</p></div><div class="tools"><button type="button" id="reset-view" disabled>Restablecer vista</button><button type="button" id="toggle-motion" aria-pressed="false" disabled>Pausar animación</button></div></div>
+<p id="scene-status" role="status">Cargando escena 3D… Los datos y enlaces están disponibles abajo.</p>
+</section>
+<section id="agents" aria-labelledby="agents-title">
+<div class="section-heading"><h2 id="agents-title">Equipo de agentes / 06</h2><p>Modelos, especialidades y tarifas de referencia</p></div>
+<div class="agents">
+<article class="agent" id="agent-zoro" data-agent="ZORO" style="--tint:#00D4D4" tabindex="-1"><h3>ZORO</h3><p>deepseek-v4.1-flash</p><p class="rate">$0.02 / $0.89 por M</p><small>Entrada / salida · USD</small></article>
+<article class="agent" id="agent-wong" data-agent="Mr. Wong" style="--tint:#D4A843" tabindex="-1"><h3>Mr. Wong</h3><p>gemini-4-argon</p><p class="rate">$2 / $10 por M</p><small>Entrada / salida · USD</small><small>#1 DeepSWE 77.9%</small></article>
+<article class="agent" id="agent-sanji" data-agent="Sanji" style="--tint:#B388FF" tabindex="-1"><h3>Sanji</h3><p>Modelador 3D oficial</p><small>Diseño y fabricación</small></article>
+<article class="agent" id="agent-patrona" data-agent="La Patrona" style="--tint:#D4A843" tabindex="-1"><h3>La Patrona</h3><p>Prospección</p><p class="rate">Qwen 3B</p></article>
+<article class="agent" id="agent-pancho" data-agent="Pancho" style="--tint:#00D4D4" tabindex="-1"><h3>Pancho</h3><p>Pitch</p><p class="rate">Qwen 3B</p></article>
+<article class="agent" id="agent-jever" data-agent="Mr. Jever" style="--tint:#B388FF" tabindex="-1"><h3>Mr. Jever</h3><p>Clasificador</p><p class="rate">Jev 1.13</p></article>
+</div>
+</section>
+<section id="projects" aria-labelledby="projects-title">
+<div class="section-heading"><h2 id="projects-title">Proyectos / Publicaciones</h2><p>Tres líneas · Acceso directo a los seis dashboards</p></div>
+<div class="projects">
+<article class="project" style="--tint:#00D4D4"><h3>ROXS GARDEN</h3><p class="project-summary">Temperatura · Humedad · VPD</p><p class="project-note">Monitor Bluetooth + experiencia AR</p><nav class="project-links" aria-label="Dashboards ROXS"><a href="roxs-ble.html">roxs-ble ↗</a><a href="roxs-ar.html">roxs-ar ↗</a></nav></article>
+<article class="project" style="--tint:#D4A843"><h3>ASISTENC-IA</h3><p class="project-summary">JusTTime · Control de asistencia</p><p class="project-note">Registros y seguimiento de la operación</p><nav class="project-links" aria-label="Dashboard Asistenc-IA"><a href="asistenc-ia.html">asistenc-ia ↗</a></nav></article>
+<article class="project" style="--tint:#B388FF"><h3>QUICK-T FOOD</h3><p class="project-summary">Amelia · Bacu</p><p class="project-note">Cartas digitales · Sommelier en Amelia</p><nav class="project-links" aria-label="Dashboards Food"><a href="food-landing.html">food-landing ↗</a><a href="amelia-food.html">amelia-food ↗</a><a href="bacu-food.html">bacu-food ↗</a></nav></article>
+</div>
+</section>
+<p class="source-note">Datos de referencia del ecosistema proporcionados por QUICK-T. Modelos, tarifas y benchmark según la ficha del equipo; no se consultan proveedores en vivo. Los indicadores no son telemetría: este Lab no está conectado a sensores, asistencia ni pedidos. Solo el reloj se actualiza en tiempo real.</p>
+<noscript><p class="source-note">Activa JavaScript para explorar la escena 3D y el reloj. Las fichas y enlaces siguen disponibles.</p></noscript>
+</main>
+<footer>QUICK-T Lab v0.1 · Tecnología ágil para tu operación, en tiempo real</footer>
+</div>
+<script>
+// Independent from WebGL: the clock and static project directory always work.
+const liveClock = document.getElementById('live-clock');
+const timeFormat = new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+const dateFormat = new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',day:'2-digit',month:'short'});
+function updateClock(){const now=new Date();liveClock.textContent=timeFormat.format(now);liveClock.dateTime=now.toISOString();document.getElementById('live-date').textContent=dateFormat.format(now)+' · Colombia UTC−5';}
+updateClock();setInterval(updateClock,1000);
+document.getElementById('dashboard-count').textContent=new Set(Array.from(document.querySelectorAll('.project-links a'),a=>a.getAttribute('href'))).size;
+window.labFallback = function(){document.body.classList.add('no-3d');document.body.dataset.scene='fallback';document.getElementById('scene-status').textContent='Vista 3D no disponible. Puedes consultar todos los agentes, KPIs y proyectos aquí.';};
+window.labLoadTimeout = setTimeout(window.labFallback,20000);
+</script>
 <script type="importmap">
 {"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
 </script>
 <script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-
-// Escena
-const scene = new THREE.Scene();
-scene.background = new THREE.Color('#0A0A0F');
-scene.fog = new THREE.Fog('#0A0A0F', 15, 60);
-
-// Cámara
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.5, 100);
-camera.position.set(0, 8, 18);
-camera.lookAt(0, 2, 0);
-
-// Renderers
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-renderer.shadowMap.enabled = true;
-document.body.appendChild(renderer.domElement);
-
-const labelRenderer = new CSS2DRenderer();
-labelRenderer.setSize(window.innerWidth, window.innerHeight);
-labelRenderer.domElement.style.position = 'fixed';
-labelRenderer.domElement.style.top = '0';
-labelRenderer.domElement.style.pointerEvents = 'none';
-document.body.appendChild(labelRenderer.domElement);
-
-// Controles
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.target.set(0, 2.5, 0);
-controls.maxPolarAngle = Math.PI/2.2;
-controls.update();
-
-// Luces
-const ambient = new THREE.AmbientLight('#1a1a3a', 1.5);
-scene.add(ambient);
-const spot = new THREE.SpotLight('#00D4D4', 80, 40, Math.PI/4, 0.3, 0.5);
-spot.position.set(0, 12, 0);
-spot.castShadow = true;
-scene.add(spot);
-
-// Piso con grid
-const gridHelper = new THREE.PolarGridHelper(20, 64, 48, 128, '#00D4D4', '#111122');
-gridHelper.position.y = 0.01;
-scene.add(gridHelper);
-
-// Reflejo en el piso
-const floorGeo = new THREE.PlaneGeometry(30, 30);
-const floorMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.3, metalness:0.9, transparent:true, opacity:0.5});
-const floor = new THREE.Mesh(floorGeo, floorMat);
-floor.rotation.x = -Math.PI/2;
-floor.position.y = 0;
-floor.receiveShadow = true;
-scene.add(floor);
-
-// ─── PANEL ROXS ───
-function createPanel(x, y, z, title, data, color) {
-  const group = new THREE.Group();
-  // Marco
-  const frameGeo = new THREE.BoxGeometry(3.2, 2.4, 0.05);
-  const frameMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.2, metalness:0.8, emissive:color, emissiveIntensity:0.15});
-  const frame = new THREE.Mesh(frameGeo, frameMat);
-  frame.castShadow = true;
-  group.add(frame);
-  // Borde glow
-  const edgeGeo = new THREE.EdgesGeometry(frameGeo);
-  const edgeMat = new THREE.LineBasicMaterial({color:color, linewidth:1, transparent:true, opacity:0.6});
-  group.add(new THREE.LineSegments(edgeGeo, edgeMat));
-  // Título
-  const titleDiv = document.createElement('div');
-  titleDiv.innerHTML = `<div style="color:${color};font-size:11px;letter-spacing:.15em;text-align:center;text-shadow:0 0 15px ${color}">${title}</div>`;
-  const titleLabel = new CSS2DObject(titleDiv);
-  titleLabel.position.set(0, 1.5, 0.05);
-  group.add(titleLabel);
-  // Datos
-  const dataDiv = document.createElement('div');
-  dataDiv.innerHTML = data.map(d => `<div style="color:#fff;font-size:16px;font-weight:700;text-align:center;margin:4px 0;text-shadow:0 0 10px ${color}">${d}</div>`).join('');
-  const dataLabel = new CSS2DObject(dataDiv);
-  dataLabel.position.set(0, 0.3, 0.05);
-  group.add(dataLabel);
-  group.position.set(x, y, z);
-  return group;
-}
-
-// Panel ROXS
-const roxsPanel = createPanel(-4, 4, 0, 'ROXS GARDEN', ['🌡️ 23.9°C', '💧 68%', '📊 0.82 kPa'], '#00D4D4');
-scene.add(roxsPanel);
-
-// Panel Asistenc-IA
-const asistPanel = createPanel(4, 4, 0, 'ASISTENC-IA', ['👥 12 activos', '🏢 Admin: 3', '🏭 Operación: 9'], '#D4A843');
-scene.add(asistPanel);
-
-// Panel Food
-const foodPanel = createPanel(0, 3.5, -5, 'QUICK-T FOOD', ['🍽️ 8 pedidos hoy', '🍷 Sommelier activo', '🛎️ 2 llamados'], '#B388FF');
-scene.add(foodPanel);
-
-// ─── AGENTES (esferas pulsantes) ───
-function createAgent(x, y, z, color, name, role) {
-  const group = new THREE.Group();
-  // Núcleo
-  const coreGeo = new THREE.SphereGeometry(0.25, 32, 32);
-  const coreMat = new THREE.MeshStandardMaterial({color:color, roughness:0.2, metalness:0.8, emissive:color, emissiveIntensity:0.8});
-  const core = new THREE.Mesh(coreGeo, coreMat);
-  group.add(core);
-  // Anillo
-  const ringGeo = new THREE.TorusGeometry(0.4, 0.03, 16, 48);
-  const ringMat = new THREE.MeshStandardMaterial({color:color, roughness:0.1, emissive:color, emissiveIntensity:0.4});
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = Math.PI/2;
-  group.add(ring);
-  // Label
-  const labelDiv = document.createElement('div');
-  labelDiv.innerHTML = `<div style="color:${color};font-size:10px;text-align:center;text-shadow:0 0 10px ${color}"><b>${name}</b><br><span style="font-size:8px;opacity:.7">${role}</span></div>`;
-  const label = new CSS2DObject(labelDiv);
-  label.position.set(0, 0.7, 0);
-  group.add(label);
-  group.position.set(x, y, z);
-  group.userData = {core, ring};
-  return group;
-}
-
-const zoro = createAgent(-6, 0.5, -3, '#00D4D4', 'ZORO', 'Director');
-const wong = createAgent(-2, 0.5, -4.5, '#D4A843', 'Mr. Wong', 'Programador');
-const sanji = createAgent(2, 0.5, -4.5, '#B388FF', 'Sanji', '3D');
-const patrona = createAgent(5, 0.5, -3.5, '#FFB547', 'La Patrona', 'Prospección');
-scene.add(zoro, wong, sanji, patrona);
-
-// ─── PLATAFORMA CENTRAL ───
-const platformGeo = new THREE.CylinderGeometry(3, 3.5, 0.3, 48);
-const platformMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.3, metalness:0.9, emissive:'#00D4D4', emissiveIntensity:0.05});
-const platform = new THREE.Mesh(platformGeo, platformMat);
-platform.position.y = 0.15;
-platform.receiveShadow = true;
-scene.add(platform);
-
-// Anillo de la plataforma
-const platRingGeo = new THREE.TorusGeometry(3.25, 0.03, 16, 96);
-const platRing = new THREE.Mesh(platRingGeo, new THREE.MeshStandardMaterial({color:'#00D4D4', emissive:'#00D4D4', emissiveIntensity:0.5}));
-platRing.rotation.x = Math.PI/2;
-platRing.position.y = 0.32;
-scene.add(platRing);
-
-// Logo central
-const logoDiv = document.createElement('div');
-logoDiv.innerHTML = '<div style="color:#00D4D4;font-size:18px;font-weight:700;text-align:center;letter-spacing:.1em;text-shadow:0 0 20px #00D4D4">QUICK-T<br><span style="font-size:8px;opacity:.6">LAB</span></div>';
-const logoLabel = new CSS2DObject(logoDiv);
-logoLabel.position.set(0, 0.4, 0);
-scene.add(logoLabel);
-
-// ─── PARTÍCULAS ───
-const particlesGeo = new THREE.BufferGeometry();
-const count = 200;
-const pos = new Float32Array(count*3);
-for(let i=0;i<count*3;i+=3){pos[i]=(Math.random()-.5)*20;pos[i+1]=Math.random()*8;pos[i+2]=(Math.random()-.5)*20}
-particlesGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-const particlesMat = new THREE.PointsMaterial({color:'#00D4D4',size:0.03,transparent:true,opacity:0.5});
-scene.add(new THREE.Points(particlesGeo,particlesMat));
-
-// Animación
-const clock = new THREE.Clock();
-function animate(){
-  const t = clock.getElapsedTime();
-  // Pulsar anillos de agentes
-  [zoro,wong,sanji,patrona].forEach(a=>{
-    const s = 1+Math.sin(t*3+a.position.x)*0.15;
-    a.userData.ring.scale.setScalar(s);
-    a.userData.core.material.emissiveIntensity = 0.5+Math.sin(t*3+a.position.x)*0.5;
-  });
-  // Rotar partículas
-  scene.children.find(c=>c.isPoints).rotation.y+=0.001;
-  controls.update();
-  renderer.render(scene,camera);
-  labelRenderer.render(scene,camera);
-  requestAnimationFrame(animate);
-}
-animate();
-window.addEventListener('resize',()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-  labelRenderer.setSize(window.innerWidth,window.innerHeight);
+try {
+const [THREE,{OrbitControls},{CSS2DRenderer,CSS2DObject}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('three/addons/renderers/CSS2DRenderer.js')]);
+const host=document.getElementById('scene');
+const scene=new THREE.Scene();scene.background=new THREE.Color('#0A0A0F');scene.fog=new THREE.Fog('#0A0A0F',22,65);
+const camera=new THREE.PerspectiveCamera(48,1,.1,120);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.domElement.setAttribute('aria-label','Escena 3D con seis agentes y tres paneles de proyectos');renderer.domElement.setAttribute('role','img');host.appendChild(renderer.domElement);
+const labels=new CSS2DRenderer();labels.domElement.className='labels';host.appendChild(labels.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.enablePan=false;controls.enableZoom=false;controls.minPolarAngle=.45;controls.maxPolarAngle=Math.PI/2.2;controls.minAzimuthAngle=-.5;controls.maxAzimuthAngle=.5;
+scene.add(new THREE.AmbientLight('#7788BB',2));
+const spot=new THREE.SpotLight('#00D4D4',150,50,Math.PI/3,.7,1);spot.position.set(0,12,4);scene.add(spot);
+const fill=new THREE.PointLight('#B388FF',60,25);fill.position.set(5,6,-4);scene.add(fill);
+const grid=new THREE.PolarGridHelper(20,48,36,128,'#155458','#151827');grid.position.y=.01;scene.add(grid);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:'#0A0A0F',metalness:.85,roughness:.3,transparent:true,opacity:.5}));floor.rotation.x=-Math.PI/2;scene.add(floor);
+// Concept panels retain their physical frames; their text comes from the real project directory.
+const panelPositions=[[-7,4.2,-1],[7,4.2,-1],[0,5.4,-5]];
+const panels=Array.from(document.querySelectorAll('.project')).map((card,i)=>{
+ const color=card.style.getPropertyValue('--tint'),group=new THREE.Group();
+ const geo=new THREE.BoxGeometry(3.7,2.3,.08);
+ group.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:'#10141D',metalness:.7,roughness:.3,emissive:color,emissiveIntensity:.08})));
+ group.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color,transparent:true,opacity:.65})));
+ const div=document.createElement('div');div.className='scene-label';div.style.setProperty('--tint',color);div.setAttribute('aria-hidden','true');
+ const title=document.createElement('h3');title.textContent=card.querySelector('h3').textContent;
+ const summary=document.createElement('p');summary.textContent=card.querySelector('.project-summary').textContent;
+ const note=document.createElement('small');note.textContent=card.querySelector('.project-note').textContent;
+ div.append(title,summary,note);const label=new CSS2DObject(div);label.position.z=.1;group.add(label);group.position.set(...panelPositions[i]);scene.add(group);return group;
 });
+const positions=[[-6,.6,2],[-3.5,.6,4],[3.5,.6,4],[6,.6,2],[-3,.6,-2],[3,.6,-2]];
+const agentCards=Array.from(document.querySelectorAll('[data-agent]'));
+const agents=agentCards.map((card,i)=>{
+ const color=card.style.getPropertyValue('--tint'),group=new THREE.Group();
+ const core=new THREE.Mesh(new THREE.SphereGeometry(.26,24,24),new THREE.MeshStandardMaterial({color,metalness:.65,roughness:.22,emissive:color,emissiveIntensity:.8}));
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(.43,.025,12,48),new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.7}));ring.rotation.x=Math.PI/2;group.add(core,ring);
+ const button=document.createElement('button');button.type='button';button.className='agent-label';button.textContent=card.dataset.agent;button.style.setProperty('--tint',color);button.setAttribute('aria-label','Ver ficha de '+card.dataset.agent);
+ button.addEventListener('click',()=>{agentCards.forEach(c=>c.classList.toggle('selected',c===card));card.scrollIntoView({behavior:'auto',block:'center'});card.focus({preventScroll:true});});
+ const label=new CSS2DObject(button);label.position.y=.75;group.add(label);group.position.set(...positions[i]);group.userData={core,ring};scene.add(group);
+ const link=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,.2,0),new THREE.Vector3(...positions[i])]);scene.add(new THREE.Line(link,new THREE.LineBasicMaterial({color,transparent:true,opacity:.14})));
+ return group;
+});
+const platform=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.9,.3,64),new THREE.MeshStandardMaterial({color:'#111821',roughness:.3,metalness:.9,emissive:'#00D4D4',emissiveIntensity:.04}));platform.position.y=.15;scene.add(platform);
+for(const radius of [2.65,2.9]){const ring=new THREE.Mesh(new THREE.TorusGeometry(radius,.018,12,96),new THREE.MeshBasicMaterial({color:'#00D4D4',transparent:true,opacity:radius===2.65?.7:.22}));ring.rotation.x=Math.PI/2;ring.position.y=.32;scene.add(ring);}
+const logo=document.createElement('div');logo.className='center-label';logo.innerHTML='QUICK-T<small>LAB / MULTI-AGENT SYSTEM</small>';logo.setAttribute('aria-hidden','true');const logoLabel=new CSS2DObject(logo);logoLabel.position.set(0,.5,.5);scene.add(logoLabel);
+const pos=new Float32Array(450);for(let i=0;i<450;i+=3){pos[i]=(Math.random()-.5)*22;pos[i+1]=Math.random()*7;pos[i+2]=(Math.random()-.5)*18;}
+const particleGeo=new THREE.BufferGeometry();particleGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));const particles=new THREE.Points(particleGeo,new THREE.PointsMaterial({color:'#00D4D4',size:.025,transparent:true,opacity:.45}));scene.add(particles);
+function resetView(){const aspect=host.clientWidth/host.clientHeight;const distance=Math.max(18,20/aspect);controls.enableDamping=false;controls.update();camera.position.set(0,2.3+distance*.37,distance);controls.target.set(0,2.3,0);controls.update();controls.enableDamping=true;}
+function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);labels.setSize(w,h);resetView();}
+const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');let paused=motionQuery.matches;
+const pauseButton=document.getElementById('toggle-motion');
+function updateMotionButton(){pauseButton.textContent=paused?'Activar animación':'Pausar animación';pauseButton.setAttribute('aria-pressed',String(paused));}
+pauseButton.addEventListener('click',()=>{paused=!paused;updateMotionButton();});motionQuery.addEventListener('change',e=>{paused=e.matches;updateMotionButton();});updateMotionButton();
+document.getElementById('reset-view').addEventListener('click',resetView);
+let elapsed=0,last=performance.now(),frame;
+function animate(now){const dt=Math.min((now-last)/1000,.05);last=now;if(!paused){elapsed+=dt;agents.forEach((a,i)=>{a.userData.ring.scale.setScalar(1+Math.sin(elapsed*2.5+i)*.14);a.userData.core.material.emissiveIntensity=.7+Math.sin(elapsed*2.5+i)*.25;});particles.rotation.y=elapsed*.025;}controls.update();renderer.render(scene,camera);labels.render(scene,camera);frame=requestAnimationFrame(animate);}
+document.addEventListener('visibilitychange',()=>{cancelAnimationFrame(frame);if(!document.hidden){last=performance.now();frame=requestAnimationFrame(animate);}});
+renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(frame);window.labFallback();});
+clearTimeout(window.labLoadTimeout);document.body.classList.remove('no-3d');resize();new ResizeObserver(resize).observe(host);frame=requestAnimationFrame(animate);
+document.body.dataset.scene='ready';document.body.dataset.agentCount=String(agents.length);document.body.dataset.panelCount=String(panels.length);
+document.getElementById('scene-status').textContent='6 agentes · 3 líneas de producto · Vista del ecosistema, sin telemetría conectada';
+document.querySelectorAll('.tools button').forEach(b=>b.disabled=false);
+} catch(error){clearTimeout(window.labLoadTimeout);window.labFallback();console.warn('QUICK-T Lab: vista 3D no disponible',error);}
 </script>
 </body>
 </html>
