@@ -1330,11 +1330,10 @@
 
       try {
         await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
-        });
+
         // Optimistic
         novedades.push(payload);
         novPage = 0;
@@ -1379,10 +1378,9 @@
           document.querySelectorAll('#areaFilters .chip').forEach(c => {
             c.classList.toggle('is-active', c === chip);
             c.setAttribute('aria-pressed', String(c === chip));
-          });
           renderStats();
           applyFiltersSeguimiento();
-        });
+
       });
       // Filter chips
       document.querySelectorAll('#filterChips .chip').forEach(chip => {
@@ -1390,7 +1388,7 @@
           document.querySelectorAll('#filterChips .chip').forEach(c => c.classList.remove('is-active'));
           chip.classList.add('is-active');
           applyFiltersSeguimiento();
-        });
+
       });
 
       // Search input
@@ -1430,7 +1428,7 @@
         var res = await fetch(APPS_SCRIPT_URL + '?action=pending', {
           headers: { 'X-Admin-Token': adminToken },
           signal: AbortSignal.timeout(15000)
-        });
+
         var data = await res.json();
         renderPendingNfc(data);
       } catch (err) {
@@ -1474,11 +1472,9 @@
       if (!nombre) { alert('Escribí el nombre del empleado'); return; }
       btnEl.textContent = 'Guardando…'; btnEl.disabled = true;
       try {
-        var res = await fetch(APPS_SCRIPT_URL + '?action=assign', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
-          body: JSON.stringify({ uid: uid, nombre: nombre, area: area })
-        });
+        var url = APPS_SCRIPT_URL + '?action=assign&uid=' + encodeURIComponent(uid) + '&nombre=' + encodeURIComponent(nombre) + '&area=' + encodeURIComponent(area);
+        var res = await fetch(url); // no body
+
         var data = await res.json();
         if (data.ok) { btnEl.textContent = '✓ Guardado'; btnEl.style.background = 'var(--green)'; setTimeout(loadPendingNfc, 1000); }
         else { alert(data.error || 'Error al guardar'); btnEl.textContent = 'Guardar'; btnEl.disabled = false; }
