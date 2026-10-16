@@ -6,9 +6,9 @@
   <title>JusTTime</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
   <style>
-    /* Esmeralda v3: same palette, typography and table treatment. */
+    /* Esmeralda v3 */
     :root { --primary:#1A1D23; --accent:#10B981; --alert:#0DF2C9; --cloud:#F8FAFC; --deep:#0F172A; --muted:#64748B; --border:rgba(26,29,35,.10); }
     * { box-sizing:border-box; }
     body { margin:0; background:var(--cloud); color:var(--primary); font-family:'Inter',system-ui,sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; }
@@ -32,6 +32,19 @@
     tbody tr:hover { background:rgba(16,185,129,.03); } td:nth-child(2),td:nth-child(5) { font-variant-numeric:tabular-nums; white-space:nowrap; }
     td:nth-child(2) { font-family:ui-monospace,monospace; font-size:13px; } .entry { color:#15803D; font-weight:600; } .exit { color:#BE123C; font-weight:600; }
     .empty { text-align:center; color:var(--muted); padding:40px 20px; } #status { padding:16px 0; } #status.error { color:#BE123C; }
+    /* NFC section */
+    .nfc-details { border:1px solid var(--border); border-radius:12px; background:white; margin-top:32px; }
+    .nfc-details > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 20px; cursor:pointer; list-style:none; border-radius:12px; font-family:'Space Grotesk','Inter',sans-serif; font-size:20px; font-weight:600; }
+    .nfc-details > summary::-webkit-details-marker { display:none; }
+    .nfc-details > summary::after { content:'+'; font-size:24px; color:var(--accent); }
+    .nfc-details[open] > summary::after { content:'−'; }
+    .nfc-details > summary:hover { background:rgba(16,185,129,.05); }
+    .nfc-content { padding:0 20px 20px; }
+    .nfc-content table { min-width:600px; }
+    .nfc-content select { height:36px; border:1px solid var(--border); border-radius:8px; background:white; font:inherit; padding:6px; }
+    .nfc-content input[type="text"] { width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:8px; font:inherit; font-size:14px; }
+    .btn-save { background:var(--accent); color:white; border:0; padding:6px 14px; border-radius:8px; cursor:pointer; font:600 13px 'Inter',system-ui,sans-serif; }
+    .btn-modify { background:var(--primary); color:white; border:0; padding:6px 14px; border-radius:8px; cursor:pointer; font:600 13px 'Inter',system-ui,sans-serif; }
     @media(max-width:600px) { .header-inner,.app { padding:20px 16px; } h1 { font-size:27px; } th,td { padding:14px 12px; } table { min-width:620px; } .section-head { align-items:flex-start; } }
   </style>
 </head>
@@ -55,12 +68,27 @@
         <tbody id="eventsBody"><tr><td class="empty" colspan="5">Cargando eventos…</td></tr></tbody>
       </table>
     </div></div>
+    <!-- NFC COLLAPSIBLE -->
+    <details class="nfc-details">
+      <summary>Asignar NFC <span id="pendingNfcCount" style="font-size:13px;font-weight:400;color:var(--muted)">—</span></summary>
+      <div class="nfc-content">
+        <p class="subtitle" style="margin-bottom:12px">Asigna nombres a las tarjetas NFC detectadas o modifica los ya asignados.</p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Tarjetas NFC pendientes">
+          <table id="pendingNfcTable">
+            <thead><tr><th>UID del NFC</th><th>Nombre</th><th>Área</th><th>Acción</th></tr></thead>
+            <tbody id="pendingNfcBody"><tr><td class="empty" colspan="4">Cargando tarjetas…</td></tr></tbody>
+          </table>
+        </div>
+        <p class="subtitle" id="nfcFeedback" style="margin-top:8px"></p>
+      </div>
+    </details>
     <p id="status" role="status" aria-live="polite">Consultando registros…</p>
     <noscript>Activa JavaScript para consultar los eventos.</noscript>
   </main>
   <script>
     'use strict';
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCUyp9K9AD7d7V4ir6JkC-kBa8w4ojhrVa3Tskx1aZCJBpbJ1kvBW_4ueO69ACPPzgiw/exec';
+    const ADMIN_TOKEN = 'As1st3ncIA-2026-QT';
     let events = [];
     let selectedArea = '';
     let loadState = 'loading';
@@ -70,8 +98,7 @@
 
     function eventHour(value) {
       const text = String(value || '').trim();
-      // Apps Script emits Colombia wall time without an offset: do not reinterpret it in the viewer's timezone.
-      const local = text.match(/^(?:\d{4}-\d{2}-\d{2}[ T])?(\d{2}:\d{2}(?::\d{2})?)(?:\.\d+)?$/);
+      const local = text.match(/^(?:\\d{4}-\\d{2}-\\d{2}[ T])?(\\d{2}:\\d{2}(?::\\d{2})?)(?:\\.\\d+)?$/);
       if (local) return local[1];
       const date = new Date(text);
       return Number.isNaN(date.getTime()) ? '—' : date.toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -79,7 +106,7 @@
     function normalizeEvent(row) {
       const fields = Object.fromEntries(Object.entries(row).map(([key,value]) => [key.trim().toLowerCase(),String(value ?? '').trim()]));
       const area = fields.area || fields['área'] || fields.device_loc || fields.location || '';
-      const key = area.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+      const key = area.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
       return {
         nombre:fields.nombre || fields.employee_name || 'Sin nombre',
         uid:fields.uid || fields.identificacion || '—',
@@ -95,9 +122,8 @@
       if (!visible.length) {
         const row = document.createElement('tr');
         const cell = document.createElement('td');
-        cell.colSpan = 5;
-        cell.className = 'empty';
-        cell.textContent = loadState === 'loading' ? 'Cargando eventos…' : loadState === 'error' ? 'No se pudieron cargar los eventos. Pulsa Actualizar para reintentar.' : selectedArea ? 'No hay eventos de hoy en esta área.' : 'No hay eventos registrados hoy.';
+        cell.colSpan = 5; cell.className = 'empty';
+        cell.textContent = loadState === 'loading' ? 'Cargando eventos…' : loadState === 'error' ? 'No se pudieron cargar los eventos. Pulsa Actualizar.' : selectedArea ? 'No hay eventos de hoy en esta área.' : 'No hay eventos registrados hoy.';
         row.append(cell); body.append(row); return;
       }
       for (const event of visible) {
@@ -136,17 +162,76 @@
         loadState = 'ready';
         status.textContent = 'Actualizado a las ' + new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false}) + ' · Colombia';
       } catch (error) {
-        loadState = 'error';
-        events = [];
+        loadState = 'error'; events = [];
         status.className = 'error';
-        status.textContent = 'No se pudieron cargar los eventos. Revisa la conexión y pulsa Actualizar.';
-        console.warn('Error al consultar eventos:',error);
+        status.textContent = 'No se pudieron cargar los eventos.';
+        console.warn('Error:',error);
       } finally {
         clearTimeout(timeout);
         refresh.disabled = false;
         renderEvents();
       }
     }
+
+    // ═══ NFC ASSIGNMENT ═══
+    const nfcBody = document.getElementById('pendingNfcBody');
+    const nfcCount = document.getElementById('pendingNfcCount');
+    const nfcFeedback = document.getElementById('nfcFeedback');
+
+    async function loadPendingNfc() {
+      nfcBody.innerHTML = '<tr><td class="empty" colspan="4">Cargando tarjetas…</td></tr>';
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + '?action=empleados', { signal: AbortSignal.timeout(15000) });
+        const data = await res.json();
+        if (!Array.isArray(data)) { nfcCount.textContent = '0'; return; }
+        const items = data.filter(p => p.uid && p.uid !== '—');
+        nfcCount.textContent = items.length || '0';
+        if (!items.length) { nfcBody.innerHTML = '<tr><td class="empty" colspan="4">No hay tarjetas pendientes. Pasá un NFC por el lector.</td></tr>'; return; }
+        nfcBody.innerHTML = items.map((p,i) => {
+          const hasName = !!(p.nombre && p.nombre !== 'Sin nombre');
+          return '<tr>' +
+            '<td style="font-family:ui-monospace,monospace;font-size:13px">' + (p.uid || '—') + '</td>' +
+            '<td><input id="pn_' + i + '" value="' + (hasName ? p.nombre : '') + '" placeholder="Nombre completo" style="width:100%"></td>' +
+            '<td><select id="pa_' + i + '"><option' + ((p.area||'').includes('Admin')?' selected':'') + '>Administración</option><option' + ((p.area||'').includes('Oper')?' selected':'') + '>Operación</option></select></td>' +
+            '<td><button class="' + (hasName ? 'btn-modify' : 'btn-save') + '" onclick="saveNfc(' + i + ',\'' + (p.uid || '') + '\',this)">' + (hasName ? 'Modificar' : 'Guardar') + '</button></td>' +
+            '</tr>';
+        }).join('');
+      } catch (e) { nfcBody.innerHTML = '<tr><td class="empty" colspan="4">Error al cargar tarjetas.</td></tr>'; }
+    }
+
+    async function saveNfc(idx, uid, btn) {
+      var inp = document.getElementById('pn_' + idx);
+      var sel = document.getElementById('pa_' + idx);
+      if (!inp || !sel) { alert('Error: campos no encontrados'); return; }
+      var nombre = inp.value.trim();
+      var area = sel.value;
+      if (!nombre) { alert('Escribí el nombre del empleado'); return; }
+      btn.textContent = 'Guardando…'; btn.disabled = true;
+      try {
+        var url = APPS_SCRIPT_URL + '?action=assign&uid=' + encodeURIComponent(uid) + '&nombre=' + encodeURIComponent(nombre) + '&area=' + encodeURIComponent(area);
+        var res = await fetch(url);
+        var data = await res.json();
+        if (data.status === 'ok' || data.ok) {
+          btn.textContent = '✓ Guardado';
+          btn.className = 'btn-modify';
+          btn.style.background = 'var(--primary)';
+          setTimeout(function(){ loadPendingNfc(); loadEvents(); }, 1000);
+        } else {
+          alert(data.msg || data.error || 'Error al guardar');
+          btn.textContent = 'Guardar';
+          btn.className = 'btn-save';
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert('Error de conexión');
+        btn.textContent = 'Guardar';
+        btn.className = 'btn-save';
+        btn.disabled = false;
+      }
+    }
+
+    loadPendingNfc();
+
     for (const button of document.querySelectorAll('[data-area]')) button.addEventListener('click',() => selectArea(button.dataset.area));
     refresh.addEventListener('click',loadEvents);
     loadEvents();
