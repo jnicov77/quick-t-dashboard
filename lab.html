@@ -3,216 +3,204 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0A0E17">
-<meta name="mobile-web-app-capable" content="yes">
-<title>QUICK-T · Centro de Control</title>
+<title>QUICK-T Lab 3D — Concepto</title>
 <style>
-:root{--bg:#0A0E17;--card-bg:rgba(15,23,42,.7);--cyan:#00D4D4;--green:#10B981;--gold:#D4A843;--purple:#7C3AED;--red:#EF4444;--border:rgba(0,212,212,.15);--text:#E2E8F0;--muted:#94A3B8;--glow:0 0 15px rgba(0,212,212,.1)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.app{max-width:960px;margin:auto;padding:16px}
-
-/* Header */
-.header{ddisplay:flex;align-items:center;gap:12px;padding:12px 0;margin-bottom:16px;border-bottom:1px solid var(--border)}
-.header img{height:30px}
-.header h1{font-size:18px;font-weight:600;letter-spacing:-.02em}
-.pulse{width:9px;height:9px;background:var(--green);border-radius:50%;flex-shrink:0;animation:pulse 2s infinite;box-shadow:0 0 10px rgba(16,185,129,.4)}
-@keyframes pulse{0%,100%{box-shadow:0 0 8px var(--green)}50%{box-shadow:0 0 20px var(--green)}}
-.live{font-size:10px;color:var(--muted);margin-left:auto;letter-spacing:.1em;text-transform:uppercase}
-
-/* KPI */
-.kpi-grid{ddisplay:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-@media(max-width:640px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;box-shadow:var(--glow);backdrop-filter:blur(10px)}
-.kpi .v{font-size:30px;font-weight:700;line-height:1}
-.kpi .l{font-size:10px;color:var(--muted);margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
-
-/* Grid */
-.grid{ddisplay:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:640px){.rid{grid-template-columns:1fr}}
-.section-title{font-sze:10px;color:var(--cyan);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;font-weight:600}
-
-/* Cards */
-.card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:var(--glow);backdrop-filter:blur(10px)}
-.card-header{ddisplay:flex;align-items:center;gap:8px;margin-bottom:10px}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.dot-green{background:var(--green);box-shadow:0 0 8px var(--green)}
-.dot-gold{background:var(--gold);box-shadow:0 0 8px var(--gold)}
-.dot-cyan{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
-.row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0}
-.row .mt{color:var(--muted)}
-.badge{font-size:9px;padding:3px 10px;border-radius:100px;font-weight:600}
-.bg-old{background:rgba(212,168,67,.12);color:var(--gold)}
-.bg-cyan{background:rgba(0,212,212,.12);color:var(--cyan)}
-.bg-green{background:rgba(16,185,129,.12);color:var(--green)}
-
-/* Agent profiles */
-.agent-cards{ddisplay:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
-.agent-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;box-shadow:var(--glow);backdrop-filter:blur(10px);cursor:pointer;transition:border-color .2s}
-.agent-card:hover{border-color:var(--cyan)}
-.av{width:38px;height:38px;border-radius:50%;ddisplay:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:14px;font-weight:700}
-.av-g{background:rgba(212,168,67,.15);color:var(--gold);border:2px solid rgba(212,168,67,.3)}
-.av-c{background:rgba(0,212,212,.15);color:var(--cyan);border:2px solid rgba(0,212,212,.3)}
-.av-p{background:rgba(124,58,237,.15);color:var(--purple);border:2px solid rgba(124,58,237,.3)}
-.av-n{background:rgba(16,185,129,.15);color:var(--green);border:2px solid rgba(16,185,129,.3)}
-.agent-card h3{font-size:12px;margin-bottom:3px}
-.agent-card .role{font-size:9px;color:var(--muted);margin-bottom:6px}
-.agent-card .metric{font-size:20px;font-weight:700;color:var(--cyan)}
-
-/* Network viz */
-.network{position:relative;min-height:200px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--glow);backdrop-filter:blur(10px)}
-.network svg{position:absolute;inset:0;width:100%;height:100%}
-.node{position:absolute;text-align:center;cursor:pointer;transition:transform .2s;z-index:1}
-.node:hover{transform:scale(1.08)}
-.node .nd{width:42px;height:42px;border-radius:50%;ddisplay:flex;align-items:center;justify-content:center;margin:0 auto 5px;font-size:16px;font-weight:700}
-.node .nm{font-size:10px;font-weight:600}
-
-/* Feed */
-.feed{max-height:240px;overflow:auto}
-.feed-item{padding:10px 0;border-bottom:1px solid var(--border);font-size:11px;line-height:1.5}
-.feed-item:last-child{border-bottom:none}
-.feed-item time{ddisplay:block;font-size:9px;color:var(--muted);margin-top:3px}
-.feed-item .tag{ddisplay:inline-block;font-size:8px;padding:2px 7px;border-radius:100px;margin-right:4px;font-weight:600}
-.tag-green{background:rgba(16,185,129,.15);color:var(--green)}
-.tag-cyan{background:rgba(0,212,212,.15);color:var(--cyan)}
-.tag-gold{background:rgba(212,168,67,.15);color:var(--gold)}
-.tag-red{background:rgba(239,68,68,.15);color:var(--red)}
-
-/* Incident log */
-.log{max-height:200px;overflow:auto}
-.log-item{ddisplay:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px}
-.log-item:last-child{border-bottom:none}
-.log-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
-.log-dot.r{background:var(--red);box-shadow:0 0 6px var(--red)}
-.log-dot.g{background:var(--green);box-shadow:0 0 6px var(--green)}
-.log-dot.y{background:var(--gold);box-shadow:0 0 6px var(--gold)}
-
-/* Actions */
-.actions{ddisplay:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.actions button{background:var(--card-bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;backdrop-filter:blur(10px)}
-.actions button:hover{background:rgba(0,212,112,.1);border-color:var(--cyan);color:var(--cyan)}
-/* Voice button */
-.vc-btn{position:fixed;bottom:20px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--card-bg);border:2px solid var(--cyan);color:var(--cyan);font-size:22px;cursor:pointer;z-index:999;backdrop-filter:blur(10px);box-shadow:var(--glow);transition:all .2s;display:flex;align-items:center;justify-content:center}
-.vc-btn:hover{background:rgba(0,212,212,.1);transform:scale(1.08)}
-.vc-btn.listening{background:var(--green);color:#fff;border-color:var(--green);animation:vc-pulse .8s infinite}
-@keyframes vc-pulse{0%,100%{box-shadow:0 0 10px var(--green)}50%{box-shadow:0 0 30px var(--green),0 0 60px var(--green)}}
-.vc-toast{position:fixed;bottom:80px;right:20px;background:var(--card-bg);border:1px solid var(--cyan);color:var(--text);padding:10px 16px;border-radius:10px;font-size:11px;z-index:999;opacity:0;transition:opacity .3s;max-width:220px}
-.vc-toast.show{opacity:1}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0A0F;overflow:hidden;font-family:'Inter',sans-serif}
+canvas{display:block}
+#info{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.1em;z-index:10}
 </style>
 </head>
 <body>
-<div class="app">
-<header class="header">
-  <img src="quickt-logo-new.png" alt="QUICK-T" onerror="this.style.display='none'">
-  <h1>Centro de Control</h1>
-  <div class="pulse"></div>
-  <span class="live">Online</span>
-</header>
+<div id="info">QUICK-T LAB · CENTRO DE CONTROL 3D</div>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-<!-- KPIs -->
-<div class="kpi-grid">
-  <div class="kpi"><div class="v" style="color:var(--cyan)">3</div><div class="l">Agentes Activos</div></div>
-  <div class="kpi"><div class="v" style="color:var(--gold)">47</div><div class="l">Tareas Hoy</div></div>
-  <div class="kpi"><div class="v" style="color:var(--green)">94.2%</div><div class="l">Eficiencia</div></div>
-  <div class="kpi"><div class="v" style="color:var(--purple)">$60/m</div><div class="l">Costo Agentes</div></div>
-</div>
+// Escena
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#0A0A0F');
+scene.fog = new THREE.Fog('#0A0A0F', 15, 60);
 
-<div class="grid">
-  <!-- AGENT NETWORK + PROFILES -->
-  <div>
-    <div class="section-title">· Red de Agentes</div>
-    <div class="network" style="min-height:180px">
-      <svg viewBox="0 0 400 180" preserveAspectRatio="none">
-        <line x1="170" y1="90" x2="260" y2="30" stroke="rgba(0,212,212,.12)" stroke-width="1"/>
-        <line x1="170" y1="90" x2="300" y2="130" stroke="rgba(0,212,212,.12)" stroke-width="1"/>
-        <line x1="170" y1="90" x2="220" y2="50" stroke="rgba(0,212,212,.12)" stroke-width="1"/>
-        <line x1="170" y1="90" x2="60" y2="40" stroke="rgba(0,212,212,.12)" stroke-width="1"/>
-      </svg>
-      <div class="node" style="top:40%;left:38%"><div class="nd" style="background:rgba(212,168,67,.15);color:var(--gold);border:2px solid rgba(212,68,67,.3)">Z</div><div class="nm" style="color:var(--gold)">ZORO</div></div>
-      <div class="node" style="top:10%;left:60%"><div class="nd" style="background:rgba(0,212,212,.15);color:var(--cyan);border:2px solid rgba(0,212,212,.3)">W</div><div class="nm">Mr. Wong</div></div>
-      <div class="node" style="top:65%;left:68%"><div class="nd" style="background:rgba(124,58,237,.15);color:var(--purple);border:2px solid rgba(124,58,237,.3)">P</div><div class="nm" style="color:var(--muted)">La Patrona</div></div>
-      <div class="node" style="top:25%;left:48%"><div class="nd" style="background:rgba(124,58,237,.15);color:var(--purple);border:2px solid rgba(124,58,237,.3)">F</div><div class="nm" style="color:var(--muted)">Pancho</div></div>
-      <div class="node" style="top:15%;left:10%"><div class="nd" style="background:rgba(16,185,129,.15);color:var(--green);border:2px solid rgba(16,185,129,.3)">J</div><div class="nm" style="color:var(--green)">Mr. Jever</div></div>
-    </div>
+// Cámara
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.5, 100);
+camera.position.set(0, 8, 18);
+camera.lookAt(0, 2, 0);
 
-    <div class="section-title" style="margin-top:12px">· Perfiles</div>
-    <div class="agent-cards">
-      <div class="agent-card"><div class="av av-g">Z</div><h3>ZORO</h3><div class="role">Director</div><div class="metric">847</div><div style="font-size:9px;color:var(--muted)">tareas</div></div>
-      <div class="agent-card"><div class="av av-c">W</div><h3>Mr. Wong</h3><div class="role">Programador</div><div class="metric">312</div><div style="font-size:9px;color:var(--muted)">tareas</div></div>
-      <div class="agent-card"><div class="av av-p">P</div><h3>La Patrona</h3><div class="role">Prospección</div><div class="metric" style="color:var(--muted)">—</div><div style="font-size:9px;color:var(--muted)">idle</div></div>
-      <div class="agent-card"><div class="av av-p">F</div><h3>Pancho</h3><div class="role">Pitch</div><div class="metric" style="color:var(--muted)">—</div><div style="font-size:9px;color:var(--muted)">idle</div></div>
-    </div>
-  </div>
+// Renderers
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
 
-  <!-- CLIENTS + FEED -->
-  <div>
-    <div class="section-title">· Clientes Activos</div>
-    <div class="card"><div class="card-header"><span class="dot dot-green"></span><span style="font-size:12px;font-weight:550">ROXS Lab</span><span class="badge bg-gold" style="margin-left:auto">Piloto</span></div><div class="row"><span>BLE dashboard</span><span class="mt">Activo</span></div></div>
-    <div class="card"><div class="card-header"><span class="dot dot-cyan"></span><span style="font-size:12px;font-weight:550">Asistenc-IA</span><span class="badge bg-cyan" style="margin-left:auto">1er cliente</span></div><div class="row"><span>Empleados</span><span class="mt">90</span></div><div class="row"><span>Hardware</span><span class="mt">3 disp.</span></div></div>
-    <div class="card"><div class="card-header"><span class="dot dot-green"></span><span style="font-size:12px;font-weight:550">Amelia · Fondue</span><span class="badge bg-green" style="margin-left:auto">Activo</span></div><div class="row"><span>Producto</span><span class="mt">Food PWA + NFC</span></div></div>
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'fixed';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild(labelRenderer.domElement);
 
-    <!-- FEED -->
-    <div class="section-title" style="margin-top:14px">· Feed de Actividad</div>
-    <div class="card" style="padding:0 12px">
-      <div class="feed">
-        <div class="feed-item"><span class="tag tag-green">Asistenc-IA</span> Demo exitosa · 90 empleados · 3 hardwares<time>Hoy, 10:00 AM</time></div>
-        <div class="feed-item"><span class="tag tag-gold">ROXS Lab</span> Case Monstera v2 · Bisagra 90° integrada<time>Hoy, 14:30</time></div>
-        <div class="feed-item"><span class="tag tag-cyan">Amelia</span> Botón de comprar bebida en sommelier<time>Hoy, 17:00</time></div>
-        <div class="feed-item"><span class="tag tag-gold">Easy-Sale</span> La Patrona y Pancho · Pendiente activación<time>Ayer, 18:00</time></div>
-        <div class="feed-item"><span class="tag tag-cyan">Mr. Wong</span> Actualizado a Claude Opus 5.5<time>Ayer, 20:15</time></div>
-      </div>
-    </div>
-  </div>
-</div>
+// Controles
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.target.set(0, 2.5, 0);
+controls.maxPolarAngle = Math.PI/2.2;
+controls.update();
 
-<!-- BOTTOM ROW: LOG + CONNECTIONS + ACTIONS -->
-<div class="grid" style="margin-top:12px">
-  <div>
-    <div class="section-title">· Incident Log</div>
-    <div class="card" style="padding:0 12px">
-      <div class="log">
-        <div class="log-item"><span class="log-dot r"></span><div><b>SHT30</b> — Sensor dañado · Reemplazo pedido<br><time style="font-size:9px;color:var(--muted)">Ayer, 12:00</time></div></div>
-        <div class="log-item"><span class="log-dot g"></span><div><b>NFC Firmware</b> — Optimizado a sub-segundo<br><time style="font-size:9px;color:var(--muted)">Hoy, 09:00</time></div></div>
-        <div class="log-item"><span class="log-dot y"></span><div><b>Créditos OpenRouter</b> — Recargados<br><time style="font-size:9px;color:var(--muted)">Hoy, 01:00</time></div></div>
-      </div>
-    </div>
-  </div>
-  <div>
-    <div class="section-title">· Conexiones</div>
-    <div class="card">
-      <div class="row"><span>Telegram</span><span class="dot dot-green"></span></div>
-      <div class="row"><span>WhatsApp</span><span class="dot dot-green"></span></div>
-      <div class="row"><span>VPS</span><span class="dot dot-green"></span></div>
-      <div class="row"><span>StarNet</span><span class="dot dot-gold"></span></div>
-    </div>
-    <div class="section-title" style="margin-top:12px">· Acciones</div>
-    <div class="actions"><button onclick="window.open('asistenc-ia.html')">Asistenc-IA</button><button onclick="window.open('asistenc-ia-landing.html')">Landing Asistenc-IA</button><button onclick="window.open('roxs-ble.html')">ROXS BLE</button><button onclick="window.open('amelia-food.html')">Amelia</button><button onclick="window.open('food-landing.html')">Food Landing</button><button onclick="window.open('IoT-perspective.html')">IoT</button><button onclick="window.open('https://wa.me/573137796920')">WhatsApp</button></div>
-  </div>
-</div>
-</div>
+// Luces
+const ambient = new THREE.AmbientLight('#1a1a3a', 1.5);
+scene.add(ambient);
+const spot = new THREE.SpotLight('#00D4D4', 80, 40, Math.PI/4, 0.3, 0.5);
+spot.position.set(0, 12, 0);
+spot.castShadow = true;
+scene.add(spot);
 
-<!-- Voice Control -->
-<button class="vc-btn" id="vcBtn" title="Comandos de voz" onclick="toggleVoice()">🎤</button>
-<div class="vc-toast" id="vcToast"></div>
-<script>
-var listening=false,S=null;
-function toggleVoice(){
-  if(listening){stopVoice();return}
-  var SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SpeechRecognition){document.getElementById('vcToast').textContent='Tu navegador no soporta voz';document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},2000);return}
-  S=new SpeechRecognition();S.lang='es-CO';S.interimResults=false;S.maxAlternatives=1;
-  S.onstart=function(){listening=true;document.getElementById('vcBtn').classList.add('listening');document.getElementById('vcBtn').textContent='🎙️';document.getElementById('vcToast').textContent='🎙️ Escuchando...';document.getElementById('vcToast').classList.add('show')};
-  S.onresult=function(e){var cmd=e.results[0][0].transcript.toLowerCase().trim();executeVoice(cmd)};
-  S.onerror=function(e){stopVoice();document.getElementById('vcToast').textContent='❌ No entend\u00ed';document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},1500)};
-  S.onend=function(){stopVoice()};
-  S.start();
+// Piso con grid
+const gridHelper = new THREE.PolarGridHelper(20, 64, 48, 128, '#00D4D4', '#111122');
+gridHelper.position.y = 0.01;
+scene.add(gridHelper);
+
+// Reflejo en el piso
+const floorGeo = new THREE.PlaneGeometry(30, 30);
+const floorMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.3, metalness:0.9, transparent:true, opacity:0.5});
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = 0;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ─── PANEL ROXS ───
+function createPanel(x, y, z, title, data, color) {
+  const group = new THREE.Group();
+  // Marco
+  const frameGeo = new THREE.BoxGeometry(3.2, 2.4, 0.05);
+  const frameMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.2, metalness:0.8, emissive:color, emissiveIntensity:0.15});
+  const frame = new THREE.Mesh(frameGeo, frameMat);
+  frame.castShadow = true;
+  group.add(frame);
+  // Borde glow
+  const edgeGeo = new THREE.EdgesGeometry(frameGeo);
+  const edgeMat = new THREE.LineBasicMaterial({color:color, linewidth:1, transparent:true, opacity:0.6});
+  group.add(new THREE.LineSegments(edgeGeo, edgeMat));
+  // Título
+  const titleDiv = document.createElement('div');
+  titleDiv.innerHTML = `<div style="color:${color};font-size:11px;letter-spacing:.15em;text-align:center;text-shadow:0 0 15px ${color}">${title}</div>`;
+  const titleLabel = new CSS2DObject(titleDiv);
+  titleLabel.position.set(0, 1.5, 0.05);
+  group.add(titleLabel);
+  // Datos
+  const dataDiv = document.createElement('div');
+  dataDiv.innerHTML = data.map(d => `<div style="color:#fff;font-size:16px;font-weight:700;text-align:center;margin:4px 0;text-shadow:0 0 10px ${color}">${d}</div>`).join('');
+  const dataLabel = new CSS2DObject(dataDiv);
+  dataLabel.position.set(0, 0.3, 0.05);
+  group.add(dataLabel);
+  group.position.set(x, y, z);
+  return group;
 }
-function stopVoice(){listening=false;document.getElementById('vcBtn').classList.remove('listening');document.getElementById('vcBtn').textContent='🎤';document.getElementById('vcToast').classList.remove('show');if(S)try{S.stop()}catch(e){}}
-function executeVoice(cmd){
-  var urls={'abrir asistencia':'asistenc-ia.html','abrir roxs':'roxs-ble.html','abrir amelia':'amelia-food.html','food landing':'food-landing.html','iot':'IoT-perspective.html','whatsapp':'https://wa.me/573137796920'};
-  for(var k in urls){if(cmd.includes(k)){window.open(urls[k]);document.getElementById('vcToast').textContent='✅ '+k;document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},1500);return}}
-  document.getElementById('vcToast').textContent='🤷 Comando: '+cmd;document.getElementById('vcToast').classList.add('show');setTimeout(function(){document.getElementById('vcToast').classList.remove('show')},2500);
+
+// Panel ROXS
+const roxsPanel = createPanel(-4, 4, 0, 'ROXS GARDEN', ['🌡️ 23.9°C', '💧 68%', '📊 0.82 kPa'], '#00D4D4');
+scene.add(roxsPanel);
+
+// Panel Asistenc-IA
+const asistPanel = createPanel(4, 4, 0, 'ASISTENC-IA', ['👥 12 activos', '🏢 Admin: 3', '🏭 Operación: 9'], '#D4A843');
+scene.add(asistPanel);
+
+// Panel Food
+const foodPanel = createPanel(0, 3.5, -5, 'QUICK-T FOOD', ['🍽️ 8 pedidos hoy', '🍷 Sommelier activo', '🛎️ 2 llamados'], '#B388FF');
+scene.add(foodPanel);
+
+// ─── AGENTES (esferas pulsantes) ───
+function createAgent(x, y, z, color, name, role) {
+  const group = new THREE.Group();
+  // Núcleo
+  const coreGeo = new THREE.SphereGeometry(0.25, 32, 32);
+  const coreMat = new THREE.MeshStandardMaterial({color:color, roughness:0.2, metalness:0.8, emissive:color, emissiveIntensity:0.8});
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  group.add(core);
+  // Anillo
+  const ringGeo = new THREE.TorusGeometry(0.4, 0.03, 16, 48);
+  const ringMat = new THREE.MeshStandardMaterial({color:color, roughness:0.1, emissive:color, emissiveIntensity:0.4});
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI/2;
+  group.add(ring);
+  // Label
+  const labelDiv = document.createElement('div');
+  labelDiv.innerHTML = `<div style="color:${color};font-size:10px;text-align:center;text-shadow:0 0 10px ${color}"><b>${name}</b><br><span style="font-size:8px;opacity:.7">${role}</span></div>`;
+  const label = new CSS2DObject(labelDiv);
+  label.position.set(0, 0.7, 0);
+  group.add(label);
+  group.position.set(x, y, z);
+  group.userData = {core, ring};
+  return group;
 }
+
+const zoro = createAgent(-6, 0.5, -3, '#00D4D4', 'ZORO', 'Director');
+const wong = createAgent(-2, 0.5, -4.5, '#D4A843', 'Mr. Wong', 'Programador');
+const sanji = createAgent(2, 0.5, -4.5, '#B388FF', 'Sanji', '3D');
+const patrona = createAgent(5, 0.5, -3.5, '#FFB547', 'La Patrona', 'Prospección');
+scene.add(zoro, wong, sanji, patrona);
+
+// ─── PLATAFORMA CENTRAL ───
+const platformGeo = new THREE.CylinderGeometry(3, 3.5, 0.3, 48);
+const platformMat = new THREE.MeshStandardMaterial({color:'#0A0A0F', roughness:0.3, metalness:0.9, emissive:'#00D4D4', emissiveIntensity:0.05});
+const platform = new THREE.Mesh(platformGeo, platformMat);
+platform.position.y = 0.15;
+platform.receiveShadow = true;
+scene.add(platform);
+
+// Anillo de la plataforma
+const platRingGeo = new THREE.TorusGeometry(3.25, 0.03, 16, 96);
+const platRing = new THREE.Mesh(platRingGeo, new THREE.MeshStandardMaterial({color:'#00D4D4', emissive:'#00D4D4', emissiveIntensity:0.5}));
+platRing.rotation.x = Math.PI/2;
+platRing.position.y = 0.32;
+scene.add(platRing);
+
+// Logo central
+const logoDiv = document.createElement('div');
+logoDiv.innerHTML = '<div style="color:#00D4D4;font-size:18px;font-weight:700;text-align:center;letter-spacing:.1em;text-shadow:0 0 20px #00D4D4">QUICK-T<br><span style="font-size:8px;opacity:.6">LAB</span></div>';
+const logoLabel = new CSS2DObject(logoDiv);
+logoLabel.position.set(0, 0.4, 0);
+scene.add(logoLabel);
+
+// ─── PARTÍCULAS ───
+const particlesGeo = new THREE.BufferGeometry();
+const count = 200;
+const pos = new Float32Array(count*3);
+for(let i=0;i<count*3;i+=3){pos[i]=(Math.random()-.5)*20;pos[i+1]=Math.random()*8;pos[i+2]=(Math.random()-.5)*20}
+particlesGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+const particlesMat = new THREE.PointsMaterial({color:'#00D4D4',size:0.03,transparent:true,opacity:0.5});
+scene.add(new THREE.Points(particlesGeo,particlesMat));
+
+// Animación
+const clock = new THREE.Clock();
+function animate(){
+  const t = clock.getElapsedTime();
+  // Pulsar anillos de agentes
+  [zoro,wong,sanji,patrona].forEach(a=>{
+    const s = 1+Math.sin(t*3+a.position.x)*0.15;
+    a.userData.ring.scale.setScalar(s);
+    a.userData.core.material.emissiveIntensity = 0.5+Math.sin(t*3+a.position.x)*0.5;
+  });
+  // Rotar partículas
+  scene.children.find(c=>c.isPoints).rotation.y+=0.001;
+  controls.update();
+  renderer.render(scene,camera);
+  labelRenderer.render(scene,camera);
+  requestAnimationFrame(animate);
+}
+animate();
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  labelRenderer.setSize(window.innerWidth,window.innerHeight);
+});
 </script>
 </body>
 </html>
