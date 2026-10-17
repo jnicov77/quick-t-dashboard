@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cangrejo IA - Selección de Cerebro</title>
+<title>Cangrejo IA - Voz Física en Hardware</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 16px; }
@@ -25,23 +25,21 @@ button:hover { background: #7dd3fc; }
 <div class="container">
 <h1>🦀 Cangrejo Agente IA</h1>
 <div class="config">
-<label for="ipEsp">IP ESP32:</label>
+<label for="ipEsp">IP ESP32 del Cangrejo:</label>
 <input type="text" id="ipEsp" placeholder="192.168.X.X">
 <label for="apiKey">OpenRouter API Key:</label>
 <input type="password" id="apiKey" placeholder="sk-or-v1-...">
 <label for="modelSelect">Selecciona el Cerebro (Modelo):</label>
-<select id="modelSelect" onchange="toggleCustomModel(this.value)">
-<option value="google/gemini-2.0-flash-lite-001">Gemini 2.0 Flash Lite (Rápido / Gratis)</option>
+<select id="modelSelect">
 <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash (Recomendado)</option>
+<option value="google/gemini-2.0-flash-lite-001">Gemini 2.0 Flash Lite (Rápido / Gratis)</option>
 <option value="qwen/qwen-2.5-7b-instruct">Qwen 2.5 7B Instruct</option>
 <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B Instruct</option>
 <option value="deepseek/deepseek-r1">DeepSeek R1</option>
-<option value="custom">-- Otro modelo personalizado --</option>
 </select>
-<input type="text" id="customModel" placeholder="Escribe el id del modelo (ej: anthropic/claude-3.5-sonnet)" style="display: none; margin-top: 5px;">
 </div>
 <div class="chat-box" id="chatBox">
-<div class="msg bot">¡Hola! Soy tu cangrejo. Selecciona el cerebro con el que quieres que piense y hablemos.</div>
+<div class="msg bot">¡Hola! Escríbeme y verás cómo reacciono físicamente con mi bocina y motor.</div>
 </div>
 <div class="input-group">
 <input type="text" id="userInput" placeholder="Habla con tu cangrejo..." onkeypress="if(event.key==='Enter') interactuar()">
@@ -49,42 +47,23 @@ button:hover { background: #7dd3fc; }
 </div>
 </div>
 <script>
-// Cargar configuraciones previamente guardadas
 document.getElementById('ipEsp').value = localStorage.getItem('esp_ip') || '';
 document.getElementById('apiKey').value = localStorage.getItem('openrouter_key') || '';
-const savedModel = localStorage.getItem('openrouter_model') || 'google/gemini-2.0-flash-001';
-const selectEl = document.getElementById('modelSelect');
-if ([...selectEl.options].some(o => o.value === savedModel)) {
-selectEl.value = savedModel;
-} else {
-selectEl.value = 'custom';
-document.getElementById('customModel').value = savedModel;
-document.getElementById('customModel').style.display = 'block';
-}
-function toggleCustomModel(val) {
-document.getElementById('customModel').style.display = (val === 'custom') ? 'block' : 'none';
-}
+document.getElementById('modelSelect').value = localStorage.getItem('openrouter_model') || 'google/gemini-2.0-flash-001';
 async function interactuar() {
 const inputEl = document.getElementById('userInput');
 const text = inputEl.value.trim();
 const ip = document.getElementById('ipEsp').value.trim();
 const apiKey = document.getElementById('apiKey').value.trim();
-// Obtener el modelo seleccionado
-let selectedModel = document.getElementById('modelSelect').value;
-if (selectedModel === 'custom') {
-selectedModel = document.getElementById('customModel').value.trim();
-}
+const selectedModel = document.getElementById('modelSelect').value;
 if (!text) return;
 if (!apiKey) { alert("Ingresa tu API Key de OpenRouter"); return; }
-if (!selectedModel) { alert("Selecciona o escribe un modelo"); return; }
-// Guardar configuración
 localStorage.setItem('esp_ip', ip);
 localStorage.setItem('openrouter_key', apiKey);
 localStorage.setItem('openrouter_model', selectedModel);
 appendMessage(text, 'user');
 inputEl.value = '';
 try {
-// Consulta a la API de OpenRouter enviando el cerebro/modelo elegido
 const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
 method: "POST",
 headers: {
@@ -94,7 +73,7 @@ headers: {
 "X-Title": "Cangrejo IA Companion"
 },
 body: JSON.stringify({
-model: selectedModel, // <-- AQUÍ SE LE PASA EL CEREBRO ELEGIDO
+model: selectedModel,
 response_format: { type: "json_object" },
 messages: [
 {
@@ -102,8 +81,8 @@ role: "system",
 content: `Eres un cangrejo robótico inteligente de escritorio. Respondes SIEMPRE en un objeto JSON estricto con esta estructura exacta:
 {
 "texto": "Tu respuesta corta en español (máx 15 palabras)",
-"frecuencia": número entero entre 600 y 1800 (Hz para el tono de la bocina),
-"duracion": número entero entre 200 y 800 (milisegundos que suena),
+"frecuencia": número entero entre 600 y 1800 (Hz para el tono de la bocina física del cangrejo),
+"duracion": número entero entre 200 y 800 (milisegundos que suena la bocina),
 "mover": true o false (si debe mover el motor),
 "luces": true o false (si debe encender los LEDs)
 }`
@@ -113,18 +92,14 @@ content: `Eres un cangrejo robótico inteligente de escritorio. Respondes SIEMPR
 })
 });
 const data = await response.json();
-if (data.error) {
-throw new Error(data.error.message || "Error devuelto por la API");
-}
-// Extraer el JSON generado por el modelo seleccionado
-const content = data.choices[0].message.content;
-const aiData = JSON.parse(content);
+if (data.error) throw new Error(data.error.message);
+const aiData = JSON.parse(data.choices[0].message.content);
+// Mostrar la respuesta sólo de forma visual en la interfaz web (Cero voz en PC)
 appendMessage(aiData.texto, 'bot');
-sintetizarVoz(aiData.texto);
-// Transmitir las órdenes físicas resultantes a la ESP32
+// Enviar la orden exclusivamente al hardware del cangrejo (Pin D25 para sonido, D15 motor, D4 leds)
 if (ip) {
 const cleanIp = ip.replace(/\/$/, "");
-fetch(`http://${cleanIp}/ia-accion`, {
+await fetch(`http://${cleanIp}/ia-accion`, {
 method: 'POST',
 mode: 'no-cors',
 headers: { 'Content-Type': 'application/json' },
@@ -138,7 +113,7 @@ luces: !!aiData.luces
 }
 } catch (error) {
 console.error(error);
-appendMessage(`Error (${selectedModel}): ${error.message}`, 'bot');
+appendMessage(`Error: ${error.message}`, 'bot');
 }
 }
 function appendMessage(text, sender) {
@@ -148,15 +123,6 @@ msgDiv.className = `msg ${sender}`;
 msgDiv.textContent = text;
 box.appendChild(msgDiv);
 box.scrollTop = box.scrollHeight;
-}
-function sintetizarVoz(texto) {
-if ('speechSynthesis' in window) {
-window.speechSynthesis.cancel();
-const utterance = new SpeechSynthesisUtterance(texto);
-utterance.lang = 'es-ES';
-utterance.pitch = 1.2;
-window.speechSynthesis.speak(utterance);
-}
 }
 </script>
 </body>
