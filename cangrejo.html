@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Bluetooth Cangrejo 🦀</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #121212; color: white; padding: 20px; }
+    button { padding: 15px 25px; margin: 10px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .btn-connect { background: #007bff; color: white; }
+    .btn-action { background: #28a745; color: white; }
+    .btn-stop { background: #dc3545; color: white; }
+    #status { margin-top: 15px; font-style: italic; color: #ffc107; }
+  </style>
+</head>
+<body>
+
+  <h1>Control BLE Cangrejo 🦀</h1>
+  <button class="btn-connect" onclick="conectarBLE()">1. Conectar por Bluetooth</button>
+  <div id="status">Estado: Desconectado</div>
+
+  <hr style="margin: 20px 0; border-color: #333;">
+
+  <div>
+    <button class="btn-action" onclick="enviarComando('MOTOR_ON')">Mover Motor</button>
+    <button class="btn-stop" onclick="enviarComando('MOTOR_OFF')">Detener Motor</button>
+  </div>
+
+  <div>
+    <button class="btn-action" onclick="enviarComando('LUCES_ON')">Encender Luces</button>
+    <button class="btn-stop" onclick="enviarComando('LUCES_OFF')">Apagar Luces</button>
+  </div>
+
+  <div>
+    <button class="btn-action" onclick="enviarComando('BEEP')">Sonar Bocina</button>
+    <button class="btn-stop" onclick="enviarComando('STOP_ALL')">Apagar Todo</button>
+  </div>
+
+  <script>
+    // Los mismos UUIDs que configuramos en la ESP32
+    const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+    const CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+    
+    let bleCharacteristic = null;
+
+    async function conectarBLE() {
+      try {
+        document.getElementById('status').innerText = "Buscando 'Cangrejo-Bot'...";
+        
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [{ name: 'Cangrejo-Bot' }],
+          optionalServices: [SERVICE_UUID]
+        });
+
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService(SERVICE_UUID);
+        bleCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+        document.getElementById('status').innerText = "¡Conectado exitosamente por Bluetooth!";
+      } catch (error) {
+        console.error("Error al conectar BLE:", error);
+        document.getElementById('status').innerText = "Error o conexión cancelada.";
+      }
+    }
+
+    async function enviarComando(comando) {
+      if (!bleCharacteristic) {
+        alert("Primero debes conectar el Bluetooth pulsando el botón azul.");
+        return;
+      }
+
+      try {
+        const encoder = new TextEncoder();
+        await bleCharacteristic.writeValue(encoder.encode(comando));
+        console.log("Comando enviado:", comando);
+      } catch (error) {
+        console.error("Error enviando comando:", error);
+      }
+    }
+  </script>
+</body>
+</html>
