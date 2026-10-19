@@ -797,12 +797,12 @@
   
 
   <script>
-document.getElementById('status').textContent = 'JS OK - Cargando datos...';
+document.getElementById('syncLabel').textContent = 'JS OK - Cargando datos...';
     var URL = 'https://script.google.com/macros/s/AKfycbyCUyp9K9AD7d7V4ir6JkC-kBa8w4ojhrVa3Tskx1aZCJBpbJ1kvBW_4ueO69ACPPzgiw/exec';
     fetch(URL + '?action=today')
       .then(function(r) { return r.json(); })
       .then(function(d) {
-        document.getElementById('status').textContent = 'Eventos: ' + d.length;
+        document.getElementById('syncLabel').textContent = 'Eventos: ' + d.length;
         var tbody = document.getElementById('eventsBody');
         tbody.innerHTML = '';
         d.forEach(function(e) {
@@ -810,7 +810,7 @@ document.getElementById('status').textContent = 'JS OK - Cargando datos...';
         });
       })
       .catch(function(err) {
-        document.getElementById('status').textContent = 'Error: ' + err.message;
+        document.getElementById('syncLabel').textContent = 'Error: ' + err.message;
       });
   </script>
 </body>
