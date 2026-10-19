@@ -526,7 +526,7 @@
         <span class="status-date" id="headerDate">—</span>
         <span class="status-pill">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="syncLabel">Conectando…</span><span id="jsTest" style="color:red;font-size:20px">
+          <span id="syncLabel">Conectando…</span>
         </span>
         <button class="icon-btn" id="refreshBtn" type="button"
                 aria-label="Actualizar datos" title="Actualizar">
@@ -795,9 +795,6 @@
 
   <script src="asistenc-ia-personal.js"></script>
   <script>
-    document.getElementById("syncLabel").textContent = "JS-OK";
-  </script>
-  <script>
     /* ============================================================
      *  Quick-T Dashboard v3
      *  Alineado con mock Checho v3 + feedback Nicolás (16-Ago-2026)
@@ -863,15 +860,11 @@
     async function fetchPersonal() {
       try {
         const res = await fetch(APPS_SCRIPT_URL + '?action=empleados', {cache:'no-store',signal:AbortSignal.timeout(20000)});
-        if (!res.ok) throw new Error('HTTP '+res.status);
+        if (!res.ok) { personalLoadError = true; return []; }
         const data = await res.json();
         personalLoadError = false;
         return Array.isArray(data) ? data : [];
-      } catch(err) {
-        personalLoadError = true;
-        console.warn('Personal read failed:', err);
-        return [];
-      }
+      } catch(err) { personalLoadError = true; return []; }
     }
 
     async function fetchAll() {
@@ -879,14 +872,13 @@
       refreshBtn.classList.add('reloading');
 
       try {
-      const [ev, nov, pers] = await Promise.all([
+      const [ev, nov] = await Promise.all([
         fetchJsonEvents(),
         fetchCsv(SHEET_NOVEDADES_URL),
         fetchPersonal().catch(() => null),
       ]);
       registros  = ev;
       novedades  = nov;
-      personal   = pers || [];
 
       lastFetchAt = new Date();
       renderAll();
@@ -1059,7 +1051,7 @@
       renderNovedadesTable();
       poblarEmpleadosSelect();
       updateNovedadGate();
-      // renderPendingCards removed
+      // renderPendingCards();
     }
 
     /* === HEADER === */
@@ -1427,7 +1419,7 @@
       document.getElementById('btnCancelNovedad').addEventListener('click', cancelNovedad);
       document.getElementById('novedadForm').addEventListener('submit', submitNovedad);
 
-      // initPersonal() removed
+      initPersonal();
       // Initial render
       renderHeaderInfo();
       applyFiltersSeguimiento();
@@ -1497,7 +1489,7 @@
         var res = await fetch(url); // no body
 
         var data = await res.json();
-        if (data.ok) { btnEl.textContent = '✓ Guardado'; btnEl.style.background = 'var(--green)'; setTimeout(loadPendingNfc, 1000); }
+        if (data.status === 'ok' || data.ok) { btnEl.textContent = '✓ Guardado'; btnEl.style.background = 'var(--green)'; setTimeout(loadPendingNfc, 1000); }
         else { alert(data.error || 'Error al guardar'); btnEl.textContent = 'Guardar'; btnEl.disabled = false; }
       } catch (err) {
         alert('Error de conexión'); btnEl.textContent = 'Guardar'; btnEl.disabled = false;
