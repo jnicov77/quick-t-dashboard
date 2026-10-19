@@ -812,6 +812,49 @@ document.getElementById('syncLabel').textContent = 'JS OK - Cargando datos...';
       .catch(function(err) {
         document.getElementById('syncLabel').textContent = 'Error: ' + err.message;
       });
+    
+    // Wire buttons
+    var refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) refreshBtn.addEventListener('click', function() { location.reload(); });
+    
+    // NFC
+    var nfcBody = document.getElementById('pendingNfcBody');
+    var nfcCount = document.getElementById('pendingNfcCount');
+    var APPS_SCRIPT_URL = URL;
+    
+    function loadNfc() {
+      if (!nfcBody) return;
+      nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Cargando tarjetas...</td></tr>';
+      fetch(APPS_SCRIPT_URL + '?action=empleados', { signal: AbortSignal.timeout(15000) })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!Array.isArray(data)) { if (nfcCount) nfcCount.textContent = '0'; return; }
+          var items = data.filter(function(p) { return p.uid && p.uid !== '\u2014'; });
+          if (nfcCount) nfcCount.textContent = items.length || '0';
+          if (!items.length) { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes.</td></tr>'; return; }
+          nfcBody.innerHTML = items.map(function(p, i) {
+            var has = !!(p.nombre && p.nombre !== 'Sin nombre');
+            return '<tr><td>' + (p.uid || '—') + '</td><td><input id="pn_' + i + '" value="' + (has ? p.nombre : '') + '" placeholder="Nombre"></td><td><select id="pa_' + i + '"><option>Administracion</option><option>Operacion</option></select></td><td><button onclick="saveNfc(' + i + ',\'' + (p.uid || '') + '\',this)">' + (has ? 'Modificar' : 'Guardar') + '</button></td></tr>';
+          }).join('');
+        }).catch(function() { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Error.</td></tr>'; });
+    }
+    
+    function saveNfc(idx, uid, btn) {
+      var inp = document.getElementById('pn_' + idx);
+      var sel = document.getElementById('pa_' + idx);
+      if (!inp || !sel) { alert('Error'); return; }
+      var n = inp.value.trim(), a = sel.value;
+      if (!n) { alert('Escribi el nombre'); return; }
+      btn.textContent = 'Guardando...'; btn.disabled = true;
+      fetch(APPS_SCRIPT_URL + '?action=assign&uid=' + encodeURIComponent(uid) + '&nombre=' + encodeURIComponent(n) + '&area=' + encodeURIComponent(a))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.status === 'ok' || d.ok) { btn.textContent = 'Listo'; setTimeout(function() { loadNfc(); location.reload(); }, 1000); }
+          else { alert(d.msg || d.error || 'Error'); btn.textContent = 'Guardar'; btn.disabled = false; }
+        }).catch(function() { alert('Error de conexion'); btn.textContent = 'Guardar'; btn.disabled = false; });
+    }
+    
+    loadNfc();
   </script>
 </body>
 </html>
