@@ -794,713 +794,138 @@
   </footer>
 
   <script src="asistenc-ia-personal.js"></script>
+  
   <script>
-    /* ============================================================
-     *  Quick-T Dashboard v3
-     *  Alineado con mock Checho v3 + feedback Nicolás (16-Ago-2026)
-     *  Cambios:
-     *  - Header glassmorph + shrink on scroll
-     *  - Tagline: "Asistencia Inteligente. Cero Fricción."
-     *  - Hero: "Industrias SAS" (sin tagline)
-     *  - 3 métricas: Asistencia (progress bar ámbar), Empleados, Novedades
-     *  - Tabla agrupada por empleado/día, 3 estados (Ingreso/Salida/SinRegistro)
-     *  - Filter chips, 10 registros por página, paginación
-     *  - Calendario y cumpleaños eliminados
-     *  - Novedades: formulario inline (no modal), tabla mock-style
-     *  - Footer: Quick-T V1.0
-     * ============================================================ */
+    'use strict';
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCUyp9K9AD7d7V4ir6JkC-kBa8w4ojhrVa3Tskx1aZCJBpbJ1kvBW_4ueO69ACPPzgiw/exec';
+    var ADMIN_TOKEN = 'As1st3ncIA-2026-QT';
+    var events = [];
+    var selectedArea = '';
+    var loadState = 'loading';
+    var tbody = document.getElementById('tablaSeguimientoBody');
+    var syncLabel = document.getElementById('syncLabel');
+    var refreshBtn = document.getElementById('refreshBtn');
 
-    /* === CONFIG (gate: URLs vacías muestran empty states) === */
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCUyp9K9AD7d7V4ir6JkC-kBa8w4ojhrVa3Tskx1aZCJBpbJ1kvBW_4ueO69ACPPzgiw/exec';
-    const SHEET_NOVEDADES_URL  = 'https://script.google.com/macros/s/AKfycbyCUyp9K9AD7d7V4ir6JkC-kBa8w4ojhrVa3Tskx1aZCJBpbJ1kvBW_4ueO69ACPPzgiw/exec';  // lee hoja novedades
-    const REFRESH_MS = 30000;
-    const PAGE_SIZE = 10;
-
-    /* === STATE === */
-    let registros         = [];   // rows from eventos.csv
-    let empleadosDia      = [];   // aggregated: [{nombre, identificacion, entrada, salida, estado}]
-    let novedades         = [];   // rows from SHEET_NOVEDADES_URL
-    let lastFetchAt       = null;
-    let areaFilter = '';
-    let personal = [];
-    let personalLoadError = false;
-
-    // Pagination
-    let segPage = 0, novPage = 0;
-    let segFiltered = [], novFiltered = [];
-
-    /* === FETCH === */
-    async function fetchCsv(url) {
-      if (!url) return [];
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) return [];
-        const text = await res.text();
-        return parseCSV(text);
-      } catch (err) {
-        console.warn('CSV fetch failed:', url, err);
-        return [];
-      }
+    function eventHour(value) {
+      var text = String(value || '').trim();
+      var local = text.match(/^(?:\\d{4}-\\d{2}-\\d{2}[ T])?(\\d{2}:\\d{2}(?::\\d{2})?)(?:\\.\\d+)?$/);
+      if (local) return local[1];
+      var d = new Date(text);
+      return isNaN(d.getTime()) ? '\u2014' : d.toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
     }
 
-    async function fetchJsonEvents() {
-      if (!APPS_SCRIPT_URL) return [];
-      try {
-        const res = await fetch(APPS_SCRIPT_URL + '?action=today', { cache: 'no-store', signal: AbortSignal.timeout(30000) });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error('Respuesta de eventos no válida');
-        return data.map(normalizeEventoRow).filter(obj => obj.identificacion || obj.nombre || obj.uid);
-      } catch (err) {
-        console.warn('Apps Script read failed:', err);
-        throw err;
-      }
-    }
-
-    async function fetchPersonal() {
-      try {
-        const res = await fetch(APPS_SCRIPT_URL + '?action=empleados', {cache:'no-store',signal:AbortSignal.timeout(20000)});
-        if (!res.ok) { personalLoadError = true; return []; }
-        const data = await res.json();
-        personalLoadError = false;
-        return Array.isArray(data) ? data : [];
-      } catch(err) { personalLoadError = true; return []; }
-    }
-
-    async function fetchAll() {
-      const refreshBtn = document.getElementById('refreshBtn');
-      refreshBtn.classList.add('reloading');
-
-      try {
-      const [ev, nov] = await Promise.all([
-        fetchJsonEvents(),
-        fetchCsv(SHEET_NOVEDADES_URL),
-        fetchPersonal().catch(() => null),
-      ]);
-      registros  = ev;
-      novedades  = nov;
-
-      lastFetchAt = new Date();
-      renderAll();
-      document.getElementById('syncLabel').textContent = personalLoadError ? 'Sincronización parcial' : 'Sincronizado';
-      } catch (err) {
-        document.getElementById('syncLabel').textContent = 'Sin conexión · datos anteriores';
-      } finally {
-      refreshBtn.classList.remove('reloading');
-      }
-    }
-
-    /* === CSV PARSER (RFC 4180 mini) === */
-    function parseCSV(text) {
-      if (!text || typeof text !== 'string') return [];
-      const rows = [];
-      let cur = '', inQ = false, row = [];
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        if (inQ) {
-          if (ch === '"') {
-            if (text[i + 1] === '"') { cur += '"'; i++; }
-            else { inQ = false; }
-          } else { cur += ch; }
-        } else {
-          if (ch === '"') { inQ = true; }
-          else if (ch === ',') { row.push(cur); cur = ''; }
-          else if (ch === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
-          else if (ch === '\r') { /* skip */ }
-          else { cur += ch; }
-        }
-      }
-      if (cur !== '' || row.length > 0) { row.push(cur); rows.push(row); }
-
-      const head = rows.shift();
-      if (!head) return [];
-      // Google Sheets CSV export can prefix headers with cell refs ("A1: timestamp");
-      // strip any "XxN: " prefix and lowercase so both clean and prefixed exports parse.
-      const headers = head.map(h => h.replace(/^[a-z]+\d+:\s*/i, '').trim().toLowerCase());
-      return rows
-        .filter(r => r.some(c => c.trim() !== ''))
-        .map(r => Object.fromEntries(headers.map((h, i) => [h, (r[i] != null ? r[i] : '').trim()])))
-        .map(normalizeEventoRow)
-        .filter(obj => obj.identificacion || obj.nombre || obj.uid);
-    }
-
-    /* Normalize a CSV row from either schema (new event-log or legacy wide) into a
-       canonical {nombre, identificacion, entrada, salida, action, timestamp} shape.
-       New schema: timestamp, uid, action, device_id, location, employee_name, received_at
-         -> nombre=employee_name, identificacion=uid, entrada/salida derived from action.
-       Legacy schema: nombre, identificacion, entrada, salida (kept for reversibility). */
-    function normalizeEventoRow(obj) {
-      obj = Object.fromEntries(Object.entries(obj).map(([k,v]) => [k.trim().toLowerCase(), String(v ?? '')]));
-      const hasNew = obj.employee_name !== undefined || obj.uid !== undefined || obj.action !== undefined;
-      const nombre         = (obj.employee_name || obj.nombre || obj.empleado || '').trim();
-      const identificacion = (obj.uid || obj.identificacion || obj['id tag'] || '').trim();
-      const action         = (obj.action || '').trim().toUpperCase();
-      const timestamp      = (obj.timestamp || obj['fecha y hora'] || obj.fecha || '').trim();
-
-      let entrada = (obj.entrada || '').trim();
-      let salida  = (obj.salida  || '').trim();
-
-      if (hasNew) {
-        // Event-log schema: each row is ONE event; derive entrada/salida from action.
-        if (action === 'ENTRADA') entrada = timestamp;
-        else if (action === 'SALIDA') salida = timestamp;
-      }
-
-      const area = normalizeArea(obj.device_loc || obj.location || obj.area || obj['área'] || '');
-      return { nombre, identificacion, uid: identificacion, entrada, salida, action, timestamp, area, device_id: obj.device_id || '' };
-    }
-
-    /* === FORMAT HELPERS === */
-    const MES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio',
-                    'agosto','septiembre','octubre','noviembre','diciembre'];
-    const DOW_ES = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-
-    function formatFechaLarga(d) {
-      return `${DOW_ES[d.getDay()]}, ${d.getDate()} de ${MES_ES[d.getMonth()]} de ${d.getFullYear()}`;
-    }
-
-    // Fecha de HOY en zona horaria Colombia (UTC-5, sin DST).
-    // El Sheet registra en hora Colombia; usar UTC rompe el filtro "hoy"
-    // después de las 19:00 local (medianoche UTC).
-    function hoyColombia() {
-      // Usa Intl para obtener la fecha correcta en zona horaria Colombia (UTC-5)
-      return new Date().toLocaleDateString('sv', {timeZone: 'America/Bogota'});
-    }
-    function formatHoraStr(ts) {
-      if (!ts) return '—';
-      // Convertir UTC a hora Colombia (UTC-5) para mostrar hora local
-      const d = new Date(eventTime(ts));
-      if (isNaN(d.getTime())) {
-        const m = /(\d{2}):(\d{2})/.exec(ts);
-        return m ? `${m[1]}:${m[2]}` : '—';
-      }
-      return d.toLocaleTimeString('es-CO', {timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit'});
-    }
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, c => ({
-        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-      })[c]);
-    }
-
-    function normalizeArea(value) {
-      const key = String(value || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-      if (['admin', 'administracion', 'administrativa'].includes(key)) return 'Administración';
-      if (['operacion', 'operaciones', 'operativa'].includes(key)) return 'Operación';
-      return String(value || '').trim();
-    }
-
-    // Timestamps without a zone originate in Colombia, not the browser's timezone.
-    function eventTime(value) {
-      if (!value || !/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(value)) return NaN;
-      const iso = value.replace(' ', 'T');
-      return Date.parse(/(?:Z|[+-]\d{2}:?\d{2})$/i.test(iso) ? iso : iso + '-05:00');
-    }
-
-    function buildEmployees(area = '') {
-      const people = new Map();
-      const byUID = new Map(personal.filter(p => p.uid).map(p => [p.uid.toUpperCase(), p]));
-      const byName = new Map();
-      personal.forEach(p => {
-        if (p.nombre) {
-          const name = p.nombre.toLowerCase();
-          byName.set(name, byName.has(name) ? null : p); // Never merge ambiguous names.
-        }
-        if (p.nombre && (!area || normalizeArea(p.area) === area)) {
-          people.set(p.uid || p.id || p.cedula, {nombre:p.nombre, identificacion:p.uid || p.id || p.cedula,
-            cedula:p.cedula || '', area:normalizeArea(p.area), entrada:'', salida:'', estado:'sin-registro', last:0});
-        }
-      });
-      for (const r of registros) {
-        const master = byUID.get(r.identificacion.toUpperCase()) || (!r.identificacion && byName.get(r.nombre.toLowerCase()));
-        const id = master ? (master.uid || master.id || master.cedula) : (r.identificacion || r.nombre);
-        const location = r.area || ''; // Employee department is not evidence of the device location.
-        if (!id || (area && location !== area)) continue;
-        if (!people.has(id)) people.set(id, {nombre:(master && master.nombre) || r.nombre, identificacion:id,
-          cedula:(master && master.cedula) || '', area:location, entrada:'', salida:'', estado:'sin-registro', last:0});
-        const employee = people.get(id);
-        for (const [field, state] of [['entrada','ingreso'],['salida','salida']]) {
-          const ts = r[field], ms = eventTime(ts);
-          if (!Number.isFinite(ms) || new Date(ms).toLocaleDateString('sv', {timeZone:'America/Bogota'}) !== hoyColombia()) continue;
-          if (!employee[field] || ms > eventTime(employee[field])) employee[field] = ts;
-          if (ms >= employee.last) Object.assign(employee, {last:ms, estado:state, area:location});
-        }
-      }
-      const order = {'ingreso':0,'salida':1,'sin-registro':2};
-      return [...people.values()].sort((a,b) => order[a.estado]-order[b.estado] || a.nombre.localeCompare(b.nombre));
-    }
-    function aggregateEmpleados() { empleadosDia = buildEmployees(); }
-    function getAreaEmployees(area = areaFilter) { return area ? buildEmployees(area) : empleadosDia; }
-    function renderAreaCounts() {
-      for (const [area,id] of [['','countAll'],['Administración','countAdmin'],['Operación','countOperacion']]) {
-        document.getElementById(id).textContent = getAreaEmployees(area).filter(e => e.estado !== 'sin-registro').length;
-      }
-      const missing = registros.filter(r => !r.area).length;
-      document.getElementById('areaNotice').textContent =
-        'Personas con marcación hoy por dispositivo · Actualización cada 30 segundos.' +
-        (missing ? ' Hay registros sin DEVICE_LOC: se muestran en Todos; no se inventa su ubicación.' : '') +
-        ' Una persona puede marcar en ambas áreas; Todos cuenta personas únicas.';
-    }
-
-    /* === RENDER ALL === */
-    function renderAll() {
-      aggregateEmpleados();
-      renderHeaderInfo();
-      renderAreaCounts();
-      renderStats();
-      applyFiltersSeguimiento();
-      renderNovedadesTable();
-      poblarEmpleadosSelect();
-      updateNovedadGate();
-      // renderPendingCards();
-    }
-
-    /* === HEADER === */
-    function renderHeaderInfo() {
-      const now = new Date();
-      document.getElementById('headerDate').textContent = formatFechaLarga(now);
-      // No lastUpdate display needed; sync dot animates
-    }
-
-    /* === STATS (3 cards) === */
-    function renderStats() {
-      const today = hoyColombia();
-
-      // Unique employees total (master list)
-      // Unique employees total (master list) — usar nombre si no hay ID
-      const areaEmployees = getAreaEmployees();
-      const totalEmp = areaEmployees.length;
-      const conEntradaHoy = areaEmployees.filter(e => e.entrada).length;
-
-      // Asistencia %
-      const pctEl = document.getElementById('statPct');
-      const fillEl = document.getElementById('progressFill');
-      const hintEl = document.getElementById('statAsistenciaHint');
-
-      if (totalEmp === 0) {
-        pctEl.textContent = '—';
-        fillEl.style.width = '0%';
-        hintEl.textContent = 'Sin empleados registrados';
-      } else {
-        const pct = Math.round((conEntradaHoy / totalEmp) * 100);
-        pctEl.textContent = pct;
-        fillEl.style.width = `${pct}%`;
-        hintEl.textContent = `${conEntradaHoy} de ${totalEmp} empleados ingresaron`;
-      }
-
-      // Empleados total
-      document.getElementById('statEmpleados').textContent = totalEmp;
-
-      // Novedades (today)
-      const novHoy = novedades.filter(n => {
-        const ts = n.timestamp || n.fecha || '';
-        if (!ts) return false;
-        const d = new Date(ts);
-        if (isNaN(d.getTime())) return false;
-        const colDate = d.toLocaleDateString('sv', {timeZone: 'America/Bogota'});
-        return colDate === today;
-      });
-      document.getElementById('statNovedades').textContent = novHoy.length;
-    }
-
-    /* === SEGUIMIENTO: filters + table + pagination === */
-    function applyFiltersSeguimiento() {
-      const q = document.getElementById('filtroEmpleado').value.trim().toLowerCase();
-      const activeChip = document.querySelector('#filterChips .chip.is-active');
-      const estadoFilter = activeChip ? activeChip.dataset.filter : '';
-
-      segFiltered = getAreaEmployees().filter(e => {
-        if (q) {
-          const haystack = `${e.nombre} ${e.identificacion}`.toLowerCase();
-          if (!haystack.includes(q)) return false;
-        }
-        if (estadoFilter && e.estado !== estadoFilter) return false;
-        return true;
-      });
-
-      segPage = 0;
-      renderSeguimientoTable();
-    }
-
-    function renderSeguimientoTable() {
-      const tbody = document.getElementById('tablaSeguimientoBody');
-      const start = segPage * PAGE_SIZE;
-      const page = segFiltered.slice(start, start + PAGE_SIZE);
-      const totalPages = Math.ceil(segFiltered.length / PAGE_SIZE) || 1;
-
-      if (page.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No hay empleados que coincidan con estos filtros.</td></tr>`;
-        document.getElementById('paginationSeguimiento').style.display = 'none';
-        return;
-      }
-
-      tbody.innerHTML = page.map(e => {
-        const init = (e.nombre || '?').charAt(0).toUpperCase();
-        const eHora = e.entrada ? formatHoraStr(e.entrada) : '—';
-        const sHora = e.salida  ? formatHoraStr(e.salida)  : '—';
-        const eCls = e.entrada ? '' : 'time-empty';
-        const sCls = e.salida  ? '' : 'time-empty';
-
-        let estadoLabel, estadoClass;
-        switch (e.estado) {
-          case 'ingreso':      estadoLabel = 'Ingreso';      estadoClass = 'tag--ingreso';      break;
-          case 'salida':       estadoLabel = 'Salida';       estadoClass = 'tag--salida';       break;
-          case 'sin-registro': estadoLabel = 'Sin Registro'; estadoClass = 'tag--sin-registro'; break;
-          default:             estadoLabel = '—';             estadoClass = 'tag--sin-registro'; break;
-        }
-
-        return `
-          <tr>
-            <td>
-              <div class="emp-cell">
-                <div class="avatar">${escapeHtml(init)}</div>
-                <div>
-                  <div class="emp-name">${escapeHtml(e.nombre || '—')}</div>
-                  <div class="emp-id">ID ${escapeHtml(e.identificacion)}</div>
-                </div>
-              </div>
-            </td>
-            <td>${escapeHtml(e.area || 'Sin área')}</td>
-            <td><span class="time-cell ${eCls}">${eHora}</span></td>
-            <td><span class="time-cell ${sCls}">${sHora}</span></td>
-            <td><span class="tag ${estadoClass}">${estadoLabel}</span></td>
-          </tr>`;
-      }).join('');
-
-      // Pagination
-      const pagDiv = document.getElementById('paginationSeguimiento');
-      pagDiv.style.display = (segFiltered.length > PAGE_SIZE) ? 'flex' : 'none';
-      document.getElementById('pgInfoSeguimiento').textContent =
-        `${start + 1}–${Math.min(start + PAGE_SIZE, segFiltered.length)} de ${segFiltered.length} registros`;
-      document.getElementById('pgPrevSeguimiento').disabled = (segPage === 0);
-      document.getElementById('pgNextSeguimiento').disabled = (segPage >= totalPages - 1);
-    }
-
-    function paginateSeguimiento(delta) {
-      segPage += delta;
-      const totalPages = Math.ceil(segFiltered.length / PAGE_SIZE) || 1;
-      segPage = Math.max(0, Math.min(segPage, totalPages - 1));
-      renderSeguimientoTable();
-    }
-
-    /* === NOVEDADES: table + pagination === */
-    function renderNovedadesTable() {
-      const now = new Date();
-      const hace24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      novFiltered = novedades.filter(n => {
-        const ts = n.timestamp || n.fecha || '';
-        if (!ts) return false;
-        const d = new Date(ts);
-        return !isNaN(d.getTime()) && d >= hace24h;
-      });
-      // If empty, show all (for now, gate: will be empty)
-      if (novFiltered.length === 0 && novedades.length > 0) {
-        novFiltered = novedades.slice(-50);
-      }
-
-      const tbody = document.getElementById('tablaNovedadesBody');
-      const start = novPage * PAGE_SIZE;
-      const page = novFiltered.slice(start, start + PAGE_SIZE);
-      const totalPages = Math.ceil(novFiltered.length / PAGE_SIZE) || 1;
-
-      if (novFiltered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-state empty-state--small">Sin novedades registradas hoy.</td></tr>`;
-        document.getElementById('paginationNovedades').style.display = 'none';
-        return;
-      }
-
-      const tipoTagClass = tipo => {
-        switch ((tipo || '').toLowerCase()) {
-          case 'permiso':
-          case 'vacaciones': return 'novedad-tag--info';
-          case 'accidente':
-          case 'familiar':   return 'novedad-tag--alert';
-          default:           return 'novedad-tag--neutral';
-        }
+    function normalize(row) {
+      var f = {};
+      Object.keys(row).forEach(function(k) { f[k.trim().toLowerCase()] = String(row[k] || '').trim(); });
+      var area = f.area || f['área'] || f.device_loc || f.location || '';
+      var key = area.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();
+      return {
+        nombre: f.nombre || f.employee_name || 'Sin nombre',
+        uid: f.uid || f.identificacion || '\u2014',
+        area: key.indexOf('admin') === 0 ? 'Administración' : key.indexOf('oper') === 0 ? 'Operación' : area || 'Sin área',
+        action: (f.action || f.accion || '').toUpperCase(),
+        hora: eventHour(f.timestamp || f.hora)
       };
-
-      tbody.innerHTML = page.map(n => {
-        const hora = n.timestamp ? formatHoraStr(n.timestamp) : (n.hora || '—');
-        const nombre = n.nombre || n.empleado || '—';
-        const tipo = n.tipo || 'Otro';
-        const nota = n.nota || n.descripcion || '';
-        const init = (nombre || '?').charAt(0).toUpperCase();
-        return `
-          <tr>
-            <td>${escapeHtml(hora)}</td>
-            <td>
-              <div class="emp-cell">
-                <div class="avatar">${escapeHtml(init)}</div>
-                <div class="emp-name">${escapeHtml(nombre)}</div>
-              </div>
-            </td>
-            <td><span class="novedad-tag ${tipoTagClass(tipo)}">${escapeHtml(tipo)}</span></td>
-            <td class="novedad-note" title="${escapeHtml(nota)}">${escapeHtml(nota)}</td>
-          </tr>`;
-      }).join('');
-
-      // Pagination
-      const pagDiv = document.getElementById('paginationNovedades');
-      pagDiv.style.display = (novFiltered.length > PAGE_SIZE) ? 'flex' : 'none';
-      document.getElementById('pgInfoNovedades').textContent =
-        `${start + 1}–${Math.min(start + PAGE_SIZE, novFiltered.length)} de ${novFiltered.length} novedades`;
-      document.getElementById('pgPrevNovedades').disabled = (novPage === 0);
-      document.getElementById('pgNextNovedades').disabled = (novPage >= totalPages - 1);
     }
 
-    function paginateNovedades(delta) {
-      novPage += delta;
-      const totalPages = Math.ceil(novFiltered.length / PAGE_SIZE) || 1;
-      novPage = Math.max(0, Math.min(novPage, totalPages - 1));
-      renderNovedadesTable();
-    }
-
-    /* === NOVEDADES: inline form === */
-    function poblarEmpleadosSelect() {
-      const sel = document.getElementById('novedadEmpleadoSel');
-      const ids = new Map();
-      for (const r of registros) {
-        const id  = r.identificacion || r.nombre || '';
-        const nom = r.nombre || '';
-        if (id && !ids.has(id)) ids.set(id, nom);
-      }
-      let opts = '<option value="">Seleccionar empleado</option>';
-      for (const [id, nom] of ids.entries()) {
-        opts += `<option value="${escapeHtml(id)}">${escapeHtml(nom)} (${escapeHtml(id)})</option>`;
-      }
-      sel.innerHTML = opts;
-    }
-
-    function updateNovedadGate() {
-      const fb = document.getElementById('novedadFeedback');
-      const saveBtn = document.getElementById('btnSaveNovedad');
-      if (!APPS_SCRIPT_URL) {
-        fb.classList.add('is-pending');
-        fb.textContent = 'Endpoint pendiente de aprobación de Nicolás. El botón Guardar quedará deshabilitado.';
-        saveBtn.disabled = true;
-      } else {
-        fb.classList.remove('is-pending');
-        fb.textContent = '';
-        saveBtn.disabled = false;
-      }
-    }
-
-    function toggleNovedadForm() {
-      const form = document.getElementById('novedadForm');
-      const fb = document.getElementById('novedadFeedback');
-      form.classList.toggle('is-open');
-      if (form.classList.contains('is-open')) {
-        fb.style.display = 'block';
-        poblarEmpleadosSelect();
-        document.getElementById('novedadEmpleadoSel').value = '';
-        document.getElementById('novedadTipoSel').value = '';
-        document.getElementById('novedadNotaInput').value = '';
-      } else {
-        fb.style.display = 'none';
-      }
-    }
-
-    function cancelNovedad() {
-      document.getElementById('novedadForm').classList.remove('is-open');
-      document.getElementById('novedadFeedback').style.display = 'none';
-    }
-
-    async function submitNovedad(e) {
-      e.preventDefault();
-
-      const empleadoSel = document.getElementById('novedadEmpleadoSel');
-      const empleadoVal  = empleadoSel.value;
-      const empleadoText = empleadoSel.options[empleadoSel.selectedIndex]?.text || '';
-      const tipo  = document.getElementById('novedadTipoSel').value;
-      const nota  = document.getElementById('novedadNotaInput').value.trim();
-      const fb    = document.getElementById('novedadFeedback');
-
-      if (!APPS_SCRIPT_URL) {
-        fb.textContent = 'No se puede guardar aún: el endpoint requiere aprobación de Nicolás.';
+    function render() {
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      var visible = events.filter(function(e) { return !selectedArea || e.area === selectedArea; });
+      var countEl = document.getElementById('countAll');
+      if (countEl) countEl.textContent = 'Todos ' + visible.length;
+      if (!visible.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">' + (loadState === 'loading' ? 'Cargando…' : loadState === 'error' ? 'Error al cargar.' : selectedArea ? 'No hay eventos.' : 'No hay eventos hoy.') + '</td></tr>';
         return;
       }
-      if (!empleadoVal) {
-        fb.textContent = 'Selecciona un empleado.';
-        return;
-      }
-      if (!tipo) {
-        fb.textContent = 'Selecciona un tipo de novedad.';
-        return;
-      }
-
-      const saveBtn = document.getElementById('btnSaveNovedad');
-      saveBtn.disabled = true;
-
-      const timestamp = new Date().toISOString();
-      const payload = {
-        identificacion: empleadoVal,
-        nombre: empleadoText,
-        tipo: tipo,
-        nota: nota,
-        timestamp: timestamp,
-      };
-
-      try {
-        await fetch(APPS_SCRIPT_URL, {
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-
-        // Optimistic
-        novedades.push(payload);
-        novPage = 0;
-        renderStats();
-        renderNovedadesTable();
-        fb.classList.remove('is-pending');
-        fb.textContent = 'Novedad registrada. Se actualizará al recargar.';
-        setTimeout(cancelNovedad, 1500);
-      } catch (err) {
-        console.error(err);
-        fb.textContent = 'No se pudo guardar. Reintentá al reconectar.';
-      } finally {
-        saveBtn.disabled = false;
-      }
-    }
-
-    /* === INIT === */
-    function init() {
-      // Header shrink on scroll
-      const header = document.getElementById('siteHeader');
-      const SHRINK_THRESHOLD = 24;
-      let ticking = false;
-      function updateHeader() {
-        if (window.scrollY > SHRINK_THRESHOLD) {
-          header.classList.add('is-scrolled');
-        } else {
-          header.classList.remove('is-scrolled');
-        }
-        ticking = false;
-      }
-      window.addEventListener('scroll', () => {
-        if (!ticking) { window.requestAnimationFrame(updateHeader); ticking = true; }
-      }, { passive: true });
-      updateHeader();
-
-      // Refresh button
-      document.getElementById('refreshBtn').addEventListener('click', fetchAll);
-
-      document.querySelectorAll('#areaFilters .chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          areaFilter = chip.dataset.area;
-          document.querySelectorAll('#areaFilters .chip').forEach(c => {
-            c.classList.toggle('is-active', c === chip);
-            c.setAttribute('aria-pressed', String(c === chip));
-          renderStats();
-          applyFiltersSeguimiento();
-
+      visible.forEach(function(e) {
+        var init = (e.nombre || '?').charAt(0).toUpperCase();
+        var cls = e.action === 'ENTRADA' ? 'tag--ingreso' : e.action === 'SALIDA' ? 'tag--salida' : 'tag--sin-registro';
+        tbody.innerHTML += '<tr><td><div class="emp-cell"><div class="avatar">' + init + '</div><div><div class="emp-name">' + e.nombre + '</div><div class="emp-id">ID ' + e.uid + '</div></div></div></td><td>' + e.area + '</td><td><span class="time-cell">' + e.hora + '</span></td><td><span class="time-cell">—</span></td><td><span class="tag ' + cls + '">' + e.action + '</span></td></tr>';
       });
-      // Filter chips
-      document.querySelectorAll('#filterChips .chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          document.querySelectorAll('#filterChips .chip').forEach(c => c.classList.remove('is-active'));
-          chip.classList.add('is-active');
-          applyFiltersSeguimiento();
+    }
 
+    function selectArea(area) {
+      selectedArea = area;
+      document.querySelectorAll('[data-area]').forEach(function(btn) {
+        var active = btn.getAttribute('data-area') === area;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
       });
-
-      // Search input
-      document.getElementById('filtroEmpleado').addEventListener('input', () => {
-        clearTimeout(window._debounceSeguimiento);
-        window._debounceSeguimiento = setTimeout(applyFiltersSeguimiento, 200);
-      });
-
-      // Pagination buttons
-      document.getElementById('pgPrevSeguimiento').addEventListener('click', () => paginateSeguimiento(-1));
-      document.getElementById('pgNextSeguimiento').addEventListener('click', () => paginateSeguimiento(1));
-      document.getElementById('pgPrevNovedades').addEventListener('click', () => paginateNovedades(-1));
-      document.getElementById('pgNextNovedades').addEventListener('click', () => paginateNovedades(1));
-
-      // Novedades form
-      document.getElementById('btnNewNovedad').addEventListener('click', toggleNovedadForm);
-      document.getElementById('btnCancelNovedad').addEventListener('click', cancelNovedad);
-      document.getElementById('novedadForm').addEventListener('submit', submitNovedad);
-
-      initPersonal();
-      // Initial render
-      renderHeaderInfo();
-      applyFiltersSeguimiento();
-      fetchAll();
-      setInterval(fetchAll, REFRESH_MS);
+      render();
     }
 
-    function initPersonal() { /* stub */ }
-
-    // ═══ ADMIN: Asignar NFC ═══
-    var adminToken = 'As1st3ncIA-2026-QT';
-    loadPendingNfc();
-
-    async function loadPendingNfc() {
-      if (!adminToken) return;
-      var tbody = document.getElementById('pendingNfcBody');
-      tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Cargando tarjetas pendientes…</td></tr>';
-      try {
-        var res = await fetch(APPS_SCRIPT_URL + '?action=pending', {
-          headers: { 'X-Admin-Token': adminToken },
-          signal: AbortSignal.timeout(15000)
-
-        var data = await res.json();
-        renderPendingNfc(data);
-      } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">⚠️ Error al cargar. Verificá la clave.</td></tr>';
-      }
+    function loadEvents() {
+      if (refreshBtn) refreshBtn.disabled = true;
+      loadState = 'loading';
+      if (syncLabel) syncLabel.textContent = 'Conectando…';
+      var ctrl = new AbortController();
+      var t = setTimeout(function() { ctrl.abort(); }, 30000);
+      fetch(APPS_SCRIPT_URL + '?action=today', { method: 'GET', cache: 'no-store', signal: ctrl.signal })
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(data) {
+          if (!Array.isArray(data)) throw new Error('Invalid');
+          events = data.map(normalize);
+          loadState = 'ready';
+          if (syncLabel) syncLabel.textContent = 'Sincronizado · ' + new Date().toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour12:false});
+        })
+        .catch(function(err) {
+          loadState = 'error'; events = [];
+          if (syncLabel) syncLabel.textContent = 'Sin conexión';
+        })
+        .finally(function() {
+          clearTimeout(t);
+          if (refreshBtn) refreshBtn.disabled = false;
+          render();
+        });
     }
 
-    function renderPendingNfc(items) {
-      var tbody = document.getElementById('pendingNfcBody');
-      if (!items || !items.length) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay tarjetas pendientes. Pasá una tarjeta nueva por el lector.</td></tr>';
-        document.getElementById('pendingNfcCount').textContent = '0';
-        return;
-      }
-      document.getElementById('pendingNfcCount').textContent = items.length;
-      tbody.innerHTML = items.map(function(p, i) {
-        return '<tr>' +
-          '<td><code>' + (p.uid || '—') + '</code></td>' +
-          '<td><input id="pNombre_' + i + '" placeholder="Nombre completo" style="width:100%;padding:4px;border:1px solid var(--primary-20);border-radius:4px;font:inherit"></td>' +
-          '<td><select id="pArea_' + i + '" style="padding:4px;border:1px solid var(--primary-20);border-radius:4px;font:inherit"><option>Administración</option><option>Operación</option></select></td>' +
-          '<td><button data-idx="' + i + '" data-uid="' + (p.uid || '') + '" style="background:' + (p.nombre ? 'var(--primary)' : 'var(--accent)') + ';color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit">' + (p.nombre ? 'Modificar' : 'Guardar') + '</button></td>' +
-          '</tr>';
-      }).join('');
-    }
-    document.getElementById('pendingNfcTable').addEventListener('click', function(e) {
-      var btn = e.target.closest('button[data-idx]');
-      if (!btn) return;
-      var idx = parseInt(btn.getAttribute('data-idx'));
-      var uid = btn.getAttribute('data-uid');
-      guardarNfc(idx, uid, btn);
+    // Wire up area filters
+    document.querySelectorAll('[data-area]').forEach(function(btn) {
+      btn.addEventListener('click', function() { selectArea(btn.getAttribute('data-area')); });
     });
+    if (refreshBtn) refreshBtn.addEventListener('click', loadEvents);
 
-    async function guardarNfc(idx, uid, btnEl) {
-          var row = btnEl.closest('tr');
-          if (!row) { alert('Error: fila no encontrada'); return; }
-          var inp = row.querySelector('input[placeholder="Nombre completo"]');
-          var sel = row.querySelector('select');
-          if (!inp || !sel) { alert('Error: campos no encontrados'); return; }
-          var nombre = inp.value.trim();
-          var area = sel.value;
-      if (!nombre) { alert('Escribí el nombre del empleado'); return; }
-      btnEl.textContent = 'Guardando…'; btnEl.disabled = true;
-      try {
-        var url = APPS_SCRIPT_URL + '?action=assign&uid=' + encodeURIComponent(uid) + '&nombre=' + encodeURIComponent(nombre) + '&area=' + encodeURIComponent(area);
-        var res = await fetch(url); // no body
+    // NFC section
+    var nfcBody = document.getElementById('pendingNfcBody');
+    var nfcCount = document.getElementById('pendingNfcCount');
+    var nfcFeedback = document.getElementById('nfcFeedback');
 
-        var data = await res.json();
-        if (data.status === 'ok' || data.ok) { btnEl.textContent = '✓ Guardado'; btnEl.style.background = 'var(--green)'; setTimeout(loadPendingNfc, 1000); }
-        else { alert(data.error || 'Error al guardar'); btnEl.textContent = 'Guardar'; btnEl.disabled = false; }
-      } catch (err) {
-        alert('Error de conexión'); btnEl.textContent = 'Guardar'; btnEl.disabled = false;
-      }
+    function loadNfc() {
+      if (!nfcBody) return;
+      nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Cargando…</td></tr>';
+      fetch(APPS_SCRIPT_URL + '?action=empleados', { signal: AbortSignal.timeout(15000) })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!Array.isArray(data)) { if (nfcCount) nfcCount.textContent = '0'; return; }
+          var items = data.filter(function(p) { return p.uid && p.uid !== '\u2014'; });
+          if (nfcCount) nfcCount.textContent = items.length || '0';
+          if (!items.length) { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes. Pasá un NFC por el lector.</td></tr>'; return; }
+          nfcBody.innerHTML = items.map(function(p, i) {
+            var has = !!(p.nombre && p.nombre !== 'Sin nombre');
+            return '<tr><td style="font-family:ui-monospace;font-size:13px">' + (p.uid || '—') + '</td><td><input id="pn_' + i + '" value="' + (has ? p.nombre : '') + '" placeholder="Nombre" style="width:100%"></td><td><select id="pa_' + i + '"><option' + ((p.area || '').indexOf('Admin') >= 0 ? ' selected' : '') + '>Administración</option><option' + ((p.area || '').indexOf('Oper') >= 0 ? ' selected' : '') + '>Operación</option></select></td><td><button class="btn-save" onclick="saveNfc(' + i + ',\'' + (p.uid || '') + '\',this)" style="background:var(--accent);color:white;border:0;padding:6px 12px;border-radius:6px;cursor:pointer">' + (has ? 'Modificar' : 'Guardar') + '</button></td></tr>';
+          }).join('');
+        }).catch(function() { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Error.</td></tr>'; });
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
+    function saveNfc(idx, uid, btn) {
+      var inp = document.getElementById('pn_' + idx);
+      var sel = document.getElementById('pa_' + idx);
+      if (!inp || !sel) { alert('Error'); return; }
+      var n = inp.value.trim(), a = sel.value;
+      if (!n) { alert('Escribí el nombre'); return; }
+      btn.textContent = 'Guardando…'; btn.disabled = true;
+      fetch(APPS_SCRIPT_URL + '?action=assign&uid=' + encodeURIComponent(uid) + '&nombre=' + encodeURIComponent(n) + '&area=' + encodeURIComponent(a))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.status === 'ok' || d.ok) { btn.textContent = '\u2713 Guardado'; setTimeout(function() { loadNfc(); loadEvents(); }, 1000); }
+          else { alert(d.msg || d.error || 'Error'); btn.textContent = 'Guardar'; btn.disabled = false; }
+        }).catch(function() { alert('Error de conexión'); btn.textContent = 'Guardar'; btn.disabled = false; });
     }
+
+    loadEvents();
+    loadNfc();
   </script>
+
 </body>
 </html>
