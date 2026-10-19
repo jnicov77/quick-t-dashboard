@@ -803,7 +803,7 @@ document.getElementById('syncLabel').textContent = 'JS OK - Cargando datos...';
       .then(function(r) { return r.json(); })
       .then(function(d) {
         document.getElementById('syncLabel').textContent = 'Eventos: ' + d.length;
-        var tbody = document.getElementById('eventsBody');
+        var tbody = document.getElementById('tablaSeguimientoBody');
         tbody.innerHTML = '';
         d.forEach(function(e) {
           tbody.innerHTML += '<tr><td>' + (e.nombre || 'Sin nombre') + '</td><td>' + (e.uid || '—') + '</td><td>' + (e.area || '—') + '</td><td>' + (e.action || '—') + '</td><td>' + (e.timestamp || '—') + '</td></tr>';
