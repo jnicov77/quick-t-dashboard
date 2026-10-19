@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick-T — JusTTime</title>
+  <title>Quick-T — Industrias SAS</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,7 +14,7 @@
        PALETA ESMERALDA v3.0 — Quick-T
          --primary: #1A1D23 (texto, iconos)
          --accent:  #10B981 (CTAs, interactivo)
-         --alert:   #0DF2C9 (alertas, urgencias)
+         --alert:   #F43F5E (alertas, urgencias)
          --cloud:   #F8FAFC (fondos)
          --deep:    #0F172A (hero, footer, dark surfaces)
        Regla 60-25-10-4-1
@@ -24,7 +24,7 @@
     :root {
       --primary:   #1A1D23;
       --accent:    #10B981;
-      --alert:     #0DF2C9;
+      --alert:     #F43F5E;
       --cloud:     #F8FAFC;
       --deep:      #0F172A;
       --green:     #16A34A;
@@ -100,13 +100,13 @@
       color: var(--primary);
     }
     .logo-mark {
-      width: auto; height: 44px;
-      display: flex; align-items: center;
+      width: 44px; height: 44px;
+      display: grid; place-items: center;
       transition: width 0.28s ease, height 0.28s ease;
     }
-    .logo-mark img { height: 100%; width: auto; display: block; }
+    .logo-mark img { width: 100%; height: 100%; display: block; }
     .logo-text { transition: font-size 0.28s ease; }
-    .site-header.is-scrolled .logo-mark { width: auto; height: 32px; }
+    .site-header.is-scrolled .logo-mark { width: 28px; height: 28px; }
     .site-header.is-scrolled .logo { font-size: 15px; }
 
     .header-meta {
@@ -176,19 +176,6 @@
     .section-subtitle {
       font-size: 13px; color: var(--primary-60); margin-top: 2px;
     }
-    .novedades-priority { padding: 24px; background: white; border: 1px solid var(--primary-10); border-radius: var(--radius-md); box-shadow: var(--shadow-hover); }
-    .novedades-priority .section-title { font-size: 24px; }
-    #novedadesPanel { overflow-x: auto; }
-    .nfc-details { border: 1px solid var(--primary-10); border-radius: var(--radius-md); background: white; }
-    .nfc-details > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; cursor: pointer; list-style: none; border-radius: var(--radius-md); }
-    .nfc-details > summary::-webkit-details-marker { display: none; }
-    .nfc-details > summary::after { content: '+'; font-size: 24px; color: var(--accent); }
-    .nfc-details[open] > summary::after { content: '−'; }
-    .nfc-details > summary:hover { background: var(--accent-15); }
-    .nfc-details > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-    .nfc-details .tag { background: var(--accent-15); vertical-align: middle; }
-    .nfc-content { padding: 0 20px 20px; }
-    .nfc-content > .section-subtitle { margin-bottom: 16px; }
 
     /* ========== METRIC CARDS (3, mock style) ========== */
     .metrics-grid {
@@ -339,7 +326,7 @@
       letter-spacing: 0.04em; text-transform: uppercase;
     }
     .tag--ingreso     { background: var(--green-15); color: var(--green); }
-    .tag--salida      { background: var(--alert-15); color: #BE123C; }
+    .tag--salida      { background: var(--alert-15); color: var(--primary); }
     .tag--sin-registro{ background: var(--primary-10); color: var(--primary-60); }
 
     /* ========== PAGINATION ========== */
@@ -466,24 +453,6 @@
     }
     .form-feedback.is-pending { background: var(--alert-15); color: var(--primary); }
 
-    .area-toolbar { margin: 20px 0 0; }
-    .area-toolbar .chip.is-active { background: var(--accent); color: var(--deep); border-color: var(--accent); }
-    .area-count { font-weight: 700; margin-left: 6px; }
-    .section-head { flex-wrap: wrap; }
-    #seguimientoPanel { overflow-x: auto; }
-    #tablaSeguimiento { min-width: 600px; }
-    .data-notice { font-size: 13px; color: var(--primary-60); margin-top: 10px; }
-    dialog { margin: auto; width: min(900px, calc(100% - 24px)); max-height: 90dvh; border: 1px solid var(--primary-10); border-radius: 16px; padding: 24px; color: var(--primary); }
-    dialog::backdrop { background: rgba(15,23,42,.55); backdrop-filter: blur(3px); }
-    dialog .field { margin: 14px 0; }
-    dialog .field textarea { height: 140px; min-height: 140px; max-height: 300px; resize: vertical; overflow: auto; }
-    .personal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-    .personal-scroll { overflow: auto; max-height: 340px; }
-    #importControls { border: 0; min-width: 0; }
-    #pendingNfcTable { min-width: 640px; }
-    #pendingNfcTable select { height: 36px; border: 1px solid var(--primary-20); border-radius: 8px; background: white; font: inherit; padding: 6px; }
-    .admin-key { max-width: 340px; margin: 12px 0; }
-    .personal-status { padding: 12px 16px; background: var(--accent-15); border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
     /* ========== FOOTER ========== */
     .site-footer {
       margin-top: 48px; padding: 20px 0;
@@ -514,9 +483,11 @@
     <div class="header-inner">
       <div class="logo">
         <div class="logo-mark">
-          <img src="quickt-logo-new.png" alt="Quick-T">
+          <img src="quickt-logo-256.png" alt="Quick-T"
+               onerror="this.onerror=null;this.src='quickt-logo.png';">
         </div>
-        </div>
+        <span class="logo-text">Quick-T</span>
+      </div>
       <!-- Tagline: "Asistencia Inteligente. Cero Fricción." (Nicolás feedback) -->
       <div class="header-meta" style="margin-left: 8px; display:flex; align-items:center;">
         <span style="font-size:13px; color:var(--primary-60);">Asistencia Inteligente. Cero Fricción.</span>
@@ -526,7 +497,7 @@
         <span class="status-date" id="headerDate">—</span>
         <span class="status-pill">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="syncLabel">INIT…</span>
+          Sincronizado
         </span>
         <button class="icon-btn" id="refreshBtn" type="button"
                 aria-label="Actualizar datos" title="Actualizar">
@@ -547,13 +518,7 @@
 
     <!-- ========== HERO: nombre de la empresa (Nicolás: solo "Industrias SAS", sin tagline) ========== -->
     <section class="hero" aria-labelledby="heroTitle">
-      <h1 id="heroTitle">JusTTime</h1>
-      <div class="chips area-toolbar" id="areaFilters" role="group" aria-label="Filtrar por área">
-        <button class="chip is-active" type="button" data-area="" aria-pressed="true">Todos <span class="area-count" id="countAll">—</span></button>
-        <button class="chip" type="button" data-area="Administración" aria-pressed="false">Administración <span class="area-count" id="countAdmin">—</span></button>
-        <button class="chip" type="button" data-area="Operación" aria-pressed="false">Operación <span class="area-count" id="countOperacion">—</span></button>
-      </div>
-      <p class="data-notice" id="areaNotice" aria-live="polite">Personas con marcación hoy por dispositivo · Actualización cada 30 segundos.</p>
+      <h1 id="heroTitle">Industrias SAS</h1>
     </section>
 
     <!-- ========== MÉTRICAS (3 cards: Asistencia, Empleados, Novedades — Nicolás: quitar Horario) ========== -->
@@ -581,14 +546,83 @@
         <div class="metric-card">
           <div class="metric-label">Novedades</div>
           <div class="metric-value" id="statNovedades">0</div>
-          <div class="metric-hint">Registradas en el día · Todas las áreas</div>
+          <div class="metric-hint">Registradas en el día</div>
         </div>
 
       </div>
     </section>
 
+    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
+    <section aria-labelledby="secSeguimiento">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
+          <div class="section-subtitle">Últimos movimientos del día</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="text" id="filtroEmpleado"
+                 placeholder="Buscar empleado por nombre..."
+                 aria-label="Buscar empleado" />
+        </div>
+        <div class="chips" id="filterChips" role="tablist">
+          <button class="chip is-active" data-filter="" type="button">Todos</button>
+          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
+          <button class="chip" data-filter="salida" type="button">Salida</button>
+          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
+        </div>
+      </div>
+
+      <div class="panel" id="seguimientoPanel">
+        <table id="tablaSeguimiento">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Hora entrada</th>
+              <th>Hora salida</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tablaSeguimientoBody">
+            <tr>
+              <td colspan="4" class="empty-state">Cargando marcaciones…</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination" id="paginationSeguimiento" style="display:none;">
+          <span class="pagination-info" id="pgInfoSeguimiento"></span>
+          <div class="pagination-btns">
+            <button class="pg-btn" id="pgPrevSeguimiento" disabled
+                    aria-label="Página anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Anterior
+            </button>
+            <button class="pg-btn" id="pgNextSeguimiento"
+                    aria-label="Página siguiente">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ========== NOVEDADES (renamed from "Panel de Novedades") ========== -->
-    <section class="novedades-priority" aria-labelledby="secNovedades">
+    <section aria-labelledby="secNovedades">
       <div class="section-head">
         <div>
           <div class="section-title" id="secNovedades">Novedades</div>
@@ -683,116 +717,13 @@
       </div>
     </section>
 
-    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
-    <section aria-labelledby="secSeguimiento">
-      <div class="section-head">
-        <div>
-          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
-          <div class="section-subtitle">Últimos movimientos del día</div>
-        </div>
-        <button class="btn-primary" id="btnAddPersonal" type="button">➕ Agregar Personal</button>
-      </div>
-
-      <div class="toolbar">
-        <div class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-               aria-hidden="true">
-            <circle cx="11" cy="11" r="7"/>
-            <path d="m21 21-4.3-4.3"/>
-          </svg>
-          <input type="text" id="filtroEmpleado"
-                 placeholder="Buscar empleado por nombre..."
-                 aria-label="Buscar empleado" />
-        </div>
-        <div class="chips" id="filterChips" role="tablist">
-          <button class="chip is-active" data-filter="" type="button">Todos</button>
-          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
-          <button class="chip" data-filter="salida" type="button">Salida</button>
-          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
-        </div>
-      </div>
-
-      <div class="panel" id="seguimientoPanel">
-        <table id="tablaSeguimiento">
-          <thead>
-            <tr>
-              <th>Empleado</th>
-              <th>Área / dispositivo</th>
-              <th>Hora entrada</th>
-              <th>Hora salida</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tablaSeguimientoBody">
-            <tr>
-              <td colspan="5" class="empty-state">Cargando marcaciones…</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination" id="paginationSeguimiento" style="display:none;">
-          <span class="pagination-info" id="pgInfoSeguimiento"></span>
-          <div class="pagination-btns">
-            <button class="pg-btn" id="pgPrevSeguimiento" disabled
-                    aria-label="Página anterior">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-              Anterior
-            </button>
-            <button class="pg-btn" id="pgNextSeguimiento"
-                    aria-label="Página siguiente">
-              Siguiente
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m9 18 6-6-6-6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section aria-labelledby="secNfc">
-      <details class="nfc-details">
-      <summary>
-        <h2 class="section-title" id="secNfc">Asignar NFC <span class="tag" id="pendingNfcCount">0</span></h2>
-      </summary>
-      <div class="nfc-content">
-      <p class="section-subtitle">Asigna nombres a las tarjetas detectadas o modifica los ya asignados.</p>
-      <p class="personal-status" id="personalStatus" role="status">Conectando personal…</p>
-      <div class="panel personal-scroll"><table id="pendingNfcTable">
-        <thead><tr><th>UID del NFC</th><th>Nombre</th><th>Área</th><th>Acción</th></tr></thead>
-        <tbody id="pendingNfcBody"><tr><td colspan="4" class="empty-state">Consultando tarjetas…</td></tr></tbody>
-      </table></div>
-      <p class="data-notice" id="nfcFeedback" role="status"></p>
-      </div>
-      </details>
-    </section>
-
-    <dialog id="personalDialog" aria-labelledby="personalTitle">
-      <div class="section-head"><h2 id="personalTitle">Agregar Personal</h2><button class="btn-ghost" id="closeImport" type="button" aria-label="Cerrar carga de personal">Cerrar</button></div>
-      <p class="section-subtitle">Sube un CSV o pega desde Excel con encabezados: <strong>Nombre, Cédula, Cargo, Área</strong>. UID es opcional; otras columnas se conservan. Áreas: Administración y Operación.</p>
-      <p class="data-notice">La asignación automática usa únicamente tarjetas reales detectadas y libres de la misma área. Sin tarjetas disponibles, el empleado queda pendiente; nunca se generan UIDs ficticios.</p>
-      <p class="data-notice"><a href="asistenc-ia-plantilla.csv" download class="btn-ghost">Descargar plantilla CSV</a></p>
-      <fieldset id="importControls">
-        <div class="field"><label for="personalFile">Archivo CSV / TSV · Máximo 2 MB</label><input id="personalFile" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values"></div>
-        <div class="field"><label for="personalPaste">O pega las celdas de Excel aquí</label><textarea id="personalPaste" placeholder="Nombre,Cédula,Cargo,Área" spellcheck="false"></textarea></div>
-        <div class="field"><label for="importAdminKey">Clave de administración (para guardar)</label><input id="importAdminKey" type="password" autocomplete="off"></div>
-        <div class="personal-actions"><button class="btn-ghost" id="previewImport" type="button">Validar y previsualizar</button><button class="btn-primary" id="confirmImport" type="button" disabled>Confirmar carga</button></div>
-      </fieldset>
-      <p class="data-notice" id="importBackendStatus"></p>
-      <p class="personal-status" id="importFeedback" role="status" style="margin-top:16px"></p>
-      <div class="personal-scroll" id="importPreview"></div>
-    </dialog>
-
   </main>
 
   <footer class="site-footer">
     Quick-T V1.0 · Cada registro es exacto, auditable y verificable.
   </footer>
 
+  
   
   <script>
     document.body.style.border = '5px solid red';
@@ -810,21 +741,21 @@
       var text = String(value || '').trim();
       var local = text.match(/^(?:\\d{4}-\\d{2}-\\d{2}[ T])?(\\d{2}:\\d{2}(?::\\d{2})?)(?:\\.\\d+)?$/);
       if (local) return local[1];
-      var d = new Date(text);
-      return isNaN(d.getTime()) ? '\u2014' : d.toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      var date = new Date(text);
+      return Number.isNaN(date.getTime()) ? '\u2014' : date.toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
     }
 
     function normalize(row) {
-      var f = {};
-      Object.keys(row).forEach(function(k) { f[k.trim().toLowerCase()] = String(row[k] || '').trim(); });
-      var area = f.area || f['área'] || f.device_loc || f.location || '';
-      var key = area.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();
+      var fields = {};
+      Object.keys(row).forEach(function(k) { fields[k.trim().toLowerCase()] = String(row[k] || '').trim(); });
+      var area = fields.area || fields.location || '';
+      var key = area.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
       return {
-        nombre: f.nombre || f.employee_name || 'Sin nombre',
-        uid: f.uid || f.identificacion || '\u2014',
-        area: key.indexOf('admin') === 0 ? 'Administración' : key.indexOf('oper') === 0 ? 'Operación' : area || 'Sin área',
-        action: (f.action || f.accion || '').toUpperCase(),
-        hora: eventHour(f.timestamp || f.hora)
+        nombre: fields.nombre || fields.employee_name || 'Sin nombre',
+        uid: fields.uid || fields.identificacion || '\u2014',
+        area: key.indexOf('admin') === 0 ? 'Administración' : key.indexOf('oper') === 0 ? 'Operación' : area || 'Sin area',
+        action: (fields.action || '').toUpperCase(),
+        hora: eventHour(fields.timestamp || fields.hora)
       };
     }
 
@@ -832,33 +763,31 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       var visible = events.filter(function(e) { return !selectedArea || e.area === selectedArea; });
-      var countEl = document.getElementById('countAll');
-      if (countEl) countEl.textContent = 'Todos ' + visible.length;
       if (!visible.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">' + (loadState === 'loading' ? 'Cargando…' : loadState === 'error' ? 'Error al cargar.' : selectedArea ? 'No hay eventos.' : 'No hay eventos hoy.') + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">' + (loadState === 'loading' ? 'Cargando...' : loadState === 'error' ? 'Error.' : 'No hay eventos hoy.') + '</td></tr>';
         return;
       }
       visible.forEach(function(e) {
         var init = (e.nombre || '?').charAt(0).toUpperCase();
         var cls = e.action === 'ENTRADA' ? 'tag--ingreso' : e.action === 'SALIDA' ? 'tag--salida' : 'tag--sin-registro';
-        tbody.innerHTML += '<tr><td><div class="emp-cell"><div class="avatar">' + init + '</div><div><div class="emp-name">' + e.nombre + '</div><div class="emp-id">ID ' + e.uid + '</div></div></div></td><td>' + e.area + '</td><td><span class="time-cell">' + e.hora + '</span></td><td><span class="time-cell">—</span></td><td><span class="tag ' + cls + '">' + e.action + '</span></td></tr>';
+        tbody.innerHTML += '<tr><td><div class="emp-cell"><div class="avatar">' + init + '</div><div><div class="emp-name">' + e.nombre + '</div><div class="emp-id">ID ' + e.uid + '</div></div></div></td><td>' + e.area + '</td><td><span class="time-cell">' + e.hora + '</span></td><td><span class="time-cell">&mdash;</span></td><td><span class="tag ' + cls + '">' + e.action + '</span></td></tr>';
       });
     }
 
     function selectArea(area) {
       selectedArea = area;
       document.querySelectorAll('[data-area]').forEach(function(btn) {
-        var active = btn.getAttribute('data-area') === area;
+        var active = btn.dataset.area === area;
         btn.classList.toggle('is-active', active);
         btn.setAttribute('aria-pressed', String(active));
       });
       render();
     }
 
-    function loadEvents() { document.getElementById("syncLabel").textContent = "CARGANDO…";
+    function loadEvents() {
       if (refreshBtn) refreshBtn.disabled = true;
       loadState = 'loading';
-      if (syncLabel) syncLabel.textContent = 'Conectando…';
+      if (syncLabel) syncLabel.textContent = 'Cargando...';
       var ctrl = new AbortController();
       var t = setTimeout(function() { ctrl.abort(); }, 30000);
       fetch(APPS_SCRIPT_URL + '?action=today', { method: 'GET', cache: 'no-store', signal: ctrl.signal })
@@ -867,11 +796,11 @@
           if (!Array.isArray(data)) throw new Error('Invalid');
           events = data.map(normalize);
           loadState = 'ready';
-          if (syncLabel) syncLabel.textContent = 'Sincronizado · ' + new Date().toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour12:false});
+          if (syncLabel) syncLabel.textContent = 'Sincronizado';
         })
-        .catch(function(err) {
+        .catch(function() {
           loadState = 'error'; events = [];
-          if (syncLabel) syncLabel.textContent = 'Sin conexión';
+          if (syncLabel) syncLabel.textContent = 'Sin conexion';
         })
         .finally(function() {
           clearTimeout(t);
@@ -880,30 +809,27 @@
         });
     }
 
-    // Wire up area filters
     document.querySelectorAll('[data-area]').forEach(function(btn) {
-      btn.addEventListener('click', function() { selectArea(btn.getAttribute('data-area')); });
+      btn.addEventListener('click', function() { selectArea(btn.dataset.area); });
     });
     if (refreshBtn) refreshBtn.addEventListener('click', loadEvents);
 
-    // NFC section
     var nfcBody = document.getElementById('pendingNfcBody');
     var nfcCount = document.getElementById('pendingNfcCount');
-    var nfcFeedback = document.getElementById('nfcFeedback');
 
     function loadNfc() {
       if (!nfcBody) return;
-      nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Cargando…</td></tr>';
+      nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Cargando...</td></tr>';
       fetch(APPS_SCRIPT_URL + '?action=empleados', { signal: AbortSignal.timeout(15000) })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (!Array.isArray(data)) { if (nfcCount) nfcCount.textContent = '0'; return; }
           var items = data.filter(function(p) { return p.uid && p.uid !== '\u2014'; });
           if (nfcCount) nfcCount.textContent = items.length || '0';
-          if (!items.length) { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes. Pasá un NFC por el lector.</td></tr>'; return; }
+          if (!items.length) { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes.</td></tr>'; return; }
           nfcBody.innerHTML = items.map(function(p, i) {
             var has = !!(p.nombre && p.nombre !== 'Sin nombre');
-            return '<tr><td style="font-family:ui-monospace;font-size:13px">' + (p.uid || '—') + '</td><td><input id="pn_' + i + '" value="' + (has ? p.nombre : '') + '" placeholder="Nombre" style="width:100%"></td><td><select id="pa_' + i + '"><option' + ((p.area || '').indexOf('Admin') >= 0 ? ' selected' : '') + '>Administración</option><option' + ((p.area || '').indexOf('Oper') >= 0 ? ' selected' : '') + '>Operación</option></select></td><td><button class="btn-save" onclick="saveNfc(' + i + ',\'' + (p.uid || '') + '\',this)" style="background:var(--accent);color:white;border:0;padding:6px 12px;border-radius:6px;cursor:pointer">' + (has ? 'Modificar' : 'Guardar') + '</button></td></tr>';
+            return '<tr><td style="font-family:ui-monospace;font-size:13px">' + (p.uid || '—') + '</td><td><input id="pn_' + i + '" value="' + (has ? p.nombre : '') + '" placeholder="Nombre" style="width:100%"></td><td><select id="pa_' + i + '"><option' + ((p.area || '').indexOf('Admin') >= 0 ? ' selected' : '') + '>Administracion</option><option' + ((p.area || '').indexOf('Oper') >= 0 ? ' selected' : '') + '>Operacion</option></select></td><td><button class="btn-save" onclick="saveNfc(' + i + ',\\\'' + (p.uid || '') + '\\\',this)" style="background:var(--accent);color:white;border:0;padding:6px 12px;border-radius:6px;cursor:pointer">' + (has ? 'Modificar' : 'Guardar') + '</button></td></tr>';
           }).join('');
         }).catch(function() { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Error.</td></tr>'; });
     }
@@ -913,14 +839,14 @@
       var sel = document.getElementById('pa_' + idx);
       if (!inp || !sel) { alert('Error'); return; }
       var n = inp.value.trim(), a = sel.value;
-      if (!n) { alert('Escribí el nombre'); return; }
-      btn.textContent = 'Guardando…'; btn.disabled = true;
+      if (!n) { alert('Escribi el nombre'); return; }
+      btn.textContent = 'Guardando...'; btn.disabled = true;
       fetch(APPS_SCRIPT_URL + '?action=assign&uid=' + encodeURIComponent(uid) + '&nombre=' + encodeURIComponent(n) + '&area=' + encodeURIComponent(a))
         .then(function(r) { return r.json(); })
         .then(function(d) {
-          if (d.status === 'ok' || d.ok) { btn.textContent = '\u2713 Guardado'; setTimeout(function() { loadNfc(); loadEvents(); }, 1000); }
+          if (d.status === 'ok' || d.ok) { btn.textContent = 'Listo'; setTimeout(function() { loadNfc(); loadEvents(); }, 1000); }
           else { alert(d.msg || d.error || 'Error'); btn.textContent = 'Guardar'; btn.disabled = false; }
-        }).catch(function() { alert('Error de conexión'); btn.textContent = 'Guardar'; btn.disabled = false; });
+        }).catch(function() { alert('Error de conexion'); btn.textContent = 'Guardar'; btn.disabled = false; });
     }
 
     loadEvents();
