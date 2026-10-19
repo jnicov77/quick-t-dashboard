@@ -526,7 +526,7 @@
         <span class="status-date" id="headerDate">—</span>
         <span class="status-pill">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="syncLabel">Conectando…</span>
+          <span id="syncLabel">INIT…</span>
         </span>
         <button class="icon-btn" id="refreshBtn" type="button"
                 aria-label="Actualizar datos" title="Actualizar">
@@ -855,7 +855,7 @@
       render();
     }
 
-    function loadEvents() {
+    function loadEvents() { document.getElementById("syncLabel").textContent = "CARGANDO…";
       if (refreshBtn) refreshBtn.disabled = true;
       loadState = 'loading';
       if (syncLabel) syncLabel.textContent = 'Conectando…';
