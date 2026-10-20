@@ -797,69 +797,143 @@
   
 
   <script>
-document.getElementById('syncLabel').textContent = 'JS OK - Cargando datos...';
+    document.getElementById('syncLabel').textContent = 'Cargando...';
     var URL = 'https://script.google.com/macros/s/AKfycby76InNecWmM8joxk5KMC7sQmqIlzWSxresQlfmK_DAG4BnZlRTF8YKetMDo1K4NdEnLg/exec';
-    fetch(URL + '?action=today')
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        document.getElementById('syncLabel').textContent = 'Eventos: ' + d.length;
-        var tbody = document.getElementById('tablaSeguimientoBody');
-        tbody.innerHTML = '';
-        d.forEach(function(e) {
-          var uid = e.uid || e.identificacion || '—';
-          var ts = e.timestamp || e.entrada || e.salida || '—';
-          var nombre = e.nombre || 'Sin nombre';
-          var area = e.area || '—';
-          var action = e.action || (e.entrada && !e.salida ? 'ENTRADA' : e.salida && !e.entrada ? 'SALIDA' : '—');
-          tbody.innerHTML += '<tr><td>' + nombre + '</td><td>' + uid + '</td><td>' + area + '</td><td>' + action + '</td><td>' + ts + '</td></tr>';
-        });
-      })
-      .catch(function(err) {
-        document.getElementById('syncLabel').textContent = 'Error: ' + err.message;
-      });
-    
-    // Wire buttons
+    var APPS_SCRIPT_URL = URL;
+    var events = [];
+    var selectedArea = '';
+    var loadState = 'loading';
+    var tbody = document.getElementById('tablaSeguimientoBody');
+    var syncLabel = document.getElementById('syncLabel');
     var refreshBtn = document.getElementById('refreshBtn');
-    if (refreshBtn) refreshBtn.addEventListener('click', function() { location.reload(); });
-    
+
+    function eventHour(value) {
+      var t = String(value||'').trim(), m = t.match(/^(?:\d{4}-\d{2}-\d{2}[ T])?(\d{2}:\d{2}(?::\d{2})?)/);
+      if (m) return m[1];
+      var d = new Date(t);
+      return isNaN(d.getTime()) ? '—' : d.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+
+    function normalize(row) {
+      var f = {}; Object.keys(row).forEach(function(k){f[k.trim().toLowerCase()]=String(row[k]||'').trim()});
+      var area = f.area||f.location||'';
+      var uid = f.uid || f.identificacion || '—';
+      return {
+        nombre: f.nombre||f.employee_name||'Sin nombre',
+        uid: uid,
+        identificacion: uid,
+        area: area||'Sin area',
+        action: f.action||(f.entrada&&!f.salida?'ENTRADA':f.salida&&!f.entrada?'SALIDA':'—'),
+        hora: eventHour(f.timestamp||f.entrada||f.salida),
+        entrada: f.entrada||'',
+        salida: f.salida||'',
+        estado: f.entrada&&!f.salida?'ingreso':f.salida?'salida':'sin-registro'
+      };
+    }
+
+    function render() {
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      var q = (document.getElementById('filtroEmpleado')||{}).value||'';
+      var estadoFilter = '';
+      var activeChip = document.querySelector('#filterChips .chip.is-active');
+      if (activeChip) estadoFilter = activeChip.getAttribute('data-filter')||'';
+      
+      var visible = events.filter(function(e) {
+        if (selectedArea && e.area !== selectedArea) return false;
+        if (q && (e.nombre+' '+e.uid).toLowerCase().indexOf(q.toLowerCase()) === -1) return false;
+        if (estadoFilter && e.estado !== estadoFilter) return false;
+        return true;
+      });
+      
+      if (!visible.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">' + (loadState==='loading'?'Cargando...':loadState==='error'?'Error.':'No hay eventos.') + '</td></tr>';
+        return;
+      }
+      
+      visible.forEach(function(e) {
+        var ini = (e.nombre||'?').charAt(0).toUpperCase();
+        var cls = e.estado==='ingreso'?'tag--ingreso':e.estado==='salida'?'tag--salida':'tag--sin-registro';
+        var label = e.estado==='ingreso'?'Ingreso':e.estado==='salida'?'Salida':'Sin Registro';
+        tbody.innerHTML += '<tr><td><div class="emp-cell"><div class="avatar">'+ini+'</div><div><div class="emp-name">'+e.nombre+'</div><div class="emp-id">ID '+e.uid+'</div></div></div></td><td>'+e.area+'</td><td><span class="time-cell">'+(e.entrada?eventHour(e.entrada):'—')+'</span></td><td><span class="time-cell">'+(e.salida?eventHour(e.salida):'—')+'</span></td><td><span class="tag '+cls+'">'+label+'</span></td></tr>';
+      });
+    }
+
+    function selectArea(area) {
+      selectedArea = area;
+      document.querySelectorAll('#areaFilters .chip').forEach(function(btn) {
+        var active = btn.getAttribute('data-area') === area;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
+      });
+      render();
+    }
+
+    function loadEvents() {
+      if (refreshBtn) refreshBtn.disabled = true;
+      loadState = 'loading';
+      if (syncLabel) syncLabel.textContent = 'Cargando...';
+      var ctrl = new AbortController();
+      var t = setTimeout(function(){ctrl.abort();},30000);
+      fetch(URL+'?action=today',{method:'GET',cache:'no-store',signal:ctrl.signal})
+        .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+        .then(function(d){if(!Array.isArray(d))throw new Error('Invalid');events=d.map(normalize);loadState='ready';
+          if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});})
+        .catch(function(err){loadState='error';events=[];if(syncLabel)syncLabel.textContent='Error: '+err.message;})
+        .finally(function(){clearTimeout(t);if(refreshBtn)refreshBtn.disabled=false;render()});
+    }
+
+    // Wire: area filters
+    document.querySelectorAll('#areaFilters .chip').forEach(function(btn){
+      btn.addEventListener('click',function(){selectArea(btn.getAttribute('data-area'));});
+    });
+
+    // Wire: state filter chips
+    document.querySelectorAll('#filterChips .chip').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        document.querySelectorAll('#filterChips .chip').forEach(function(c){c.classList.remove('is-active');});
+        btn.classList.add('is-active');
+        render();
+      });
+    });
+
+    // Wire: search input
+    var searchInput = document.getElementById('filtroEmpleado');
+    if (searchInput) {
+      var searchTimeout;
+      searchInput.addEventListener('input',function(){
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(render, 300);
+      });
+    }
+
+    // Wire: refresh
+    if (refreshBtn) refreshBtn.addEventListener('click', loadEvents);
+
+    // Wire: pagination prev/next
+    var pgPrev = document.getElementById('pgPrevSeguimiento');
+    var pgNext = document.getElementById('pgNextSeguimiento');
+    if (pgPrev) pgPrev.addEventListener('click', function(){ /* pagination placeholder */ });
+    if (pgNext) pgNext.addEventListener('click', function(){ /* pagination placeholder */ });
+
     // NFC
     var nfcBody = document.getElementById('pendingNfcBody');
     var nfcCount = document.getElementById('pendingNfcCount');
-    var APPS_SCRIPT_URL = URL;
-    
     function loadNfc() {
-      if (!nfcBody) return;
-      nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Cargando tarjetas...</td></tr>';
-      fetch(APPS_SCRIPT_URL + '?action=empleados', { signal: AbortSignal.timeout(15000) })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (!Array.isArray(data)) { if (nfcCount) nfcCount.textContent = '0'; return; }
-          var items = data.filter(function(p) { return p.uid && p.uid !== '\u2014'; });
-          if (nfcCount) nfcCount.textContent = items.length || '0';
-          if (!items.length) { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes.</td></tr>'; return; }
-          nfcBody.innerHTML = items.map(function(p, i) {
-            var has = !!(p.nombre && p.nombre !== 'Sin nombre');
-            return '<tr><td>' + (p.uid || '—') + '</td><td><input id="pn_' + i + '" value="' + (has ? p.nombre : '') + '" placeholder="Nombre"></td><td><select id="pa_' + i + '"><option>Administracion</option><option>Operacion</option></select></td><td><button onclick="saveNfc(' + i + ',\'' + (p.uid || '') + '\',this)">' + (has ? 'Modificar' : 'Guardar') + '</button></td></tr>';
-          }).join('');
-        }).catch(function() { nfcBody.innerHTML = '<tr><td colspan="4" class="empty-state">Error.</td></tr>'; });
+      if(!nfcBody)return;
+      nfcBody.innerHTML='<tr><td colspan="4" class="empty-state">Cargando tarjetas...</td></tr>';
+      fetch(APPS_SCRIPT_URL+'?action=empleados',{signal:AbortSignal.timeout(15000)})
+        .then(function(r){return r.json()})
+        .then(function(data){if(!Array.isArray(data)){if(nfcCount)nfcCount.textContent='0';return}
+          var items=data.filter(function(p){return p.uid&&p.uid!=='—'});
+          if(nfcCount)nfcCount.textContent=items.length||'0';
+          if(!items.length){nfcBody.innerHTML='<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes.</td></tr>';return}
+          nfcBody.innerHTML=items.map(function(p,i){var h=!!(p.nombre&&p.nombre!=='Sin nombre');
+            return'<tr><td>'+p.uid+'</td><td><input id="pn_'+i+'" value="'+(h?p.nombre:'')+'" placeholder="Nombre"></td><td><select id="pa_'+i+'"><option>Administracion</option><option>Operacion</option></select></td><td><button onclick="saveNfc('+i+',\''+p.uid+'\',this)">'+(h?'Modificar':'Guardar')+'</button></td></tr>';
+          }).join('');}).catch(function(){nfcBody.innerHTML='<tr><td colspan="4" class="empty-state">Error.</td></tr>';});
     }
-    
-    function saveNfc(idx, uid, btn) {
-      var inp = document.getElementById('pn_' + idx);
-      var sel = document.getElementById('pa_' + idx);
-      if (!inp || !sel) { alert('Error'); return; }
-      var n = inp.value.trim(), a = sel.value;
-      if (!n) { alert('Escribi el nombre'); return; }
-      btn.textContent = 'Guardando...'; btn.disabled = true;
-      fetch(APPS_SCRIPT_URL + '?action=assign&uid=' + encodeURIComponent(uid) + '&nombre=' + encodeURIComponent(n) + '&area=' + encodeURIComponent(a))
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          if (d.status === 'ok' || d.ok) { btn.textContent = 'Listo'; setTimeout(function() { loadNfc(); location.reload(); }, 1000); }
-          else { alert(d.msg || d.error || 'Error'); btn.textContent = 'Guardar'; btn.disabled = false; }
-        }).catch(function() { alert('Error de conexion'); btn.textContent = 'Guardar'; btn.disabled = false; });
-    }
-    
-    loadNfc();
+    function saveNfc(idx,uid,btn){var i=document.getElementById('pn_'+idx),s=document.getElementById('pa_'+idx);if(!i||!s){alert('Error');return}var n=i.value.trim(),a=s.value;if(!n){alert('Escribi el nombre');return}btn.textContent='Guardando...';btn.disabled=true;fetch(APPS_SCRIPT_URL+'?action=assign&uid='+encodeURIComponent(uid)+'&nombre='+encodeURIComponent(n)+'&area='+encodeURIComponent(a)).then(function(r){return r.json()}).then(function(d){if(d.status==='ok'||d.ok){btn.textContent='Listo';setTimeout(function(){loadNfc();loadEvents()},1000)}else{alert(d.msg||d.error||'Error');btn.textContent='Guardar';btn.disabled=false}}).catch(function(){alert('Error de conexion');btn.textContent='Guardar';btn.disabled=false});}
+    loadEvents();loadNfc();
   </script>
 </body>
 </html>
