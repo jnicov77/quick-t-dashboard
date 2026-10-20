@@ -916,6 +916,62 @@
     if (pgPrev) pgPrev.addEventListener('click', function(){ /* pagination placeholder */ });
     if (pgNext) pgNext.addEventListener('click', function(){ /* pagination placeholder */ });
 
+    // NOVEDADES
+    var btnNewNov = document.getElementById('btnNewNovedad');
+    var btnCancelNov = document.getElementById('btnCancelNovedad');
+    var novForm = document.getElementById('novedadForm');
+    var novEmpleadoSel = document.getElementById('novedadEmpleadoSel');
+    var novTipoSel = document.getElementById('novedadTipoSel');
+    var novNota = document.getElementById('novedadNotaInput');
+    var novFeedback = document.getElementById('novedadFeedback');
+    var btnSaveNov = document.getElementById('btnSaveNovedad');
+
+    if (btnNewNov) btnNewNov.addEventListener('click', function() {
+      novForm.classList.add('is-open');
+      // Poblar empleados
+      if (novEmpleadoSel) {
+        novEmpleadoSel.innerHTML = '<option value="">Seleccionar...</option>';
+        var seen = {};
+        events.forEach(function(e) {
+          var id = e.uid || e.identificacion;
+          if (id && !seen[id]) {
+            seen[id] = true;
+            novEmpleadoSel.innerHTML += '<option value="' + id + '">' + (e.nombre||'Sin nombre') + ' (' + id + ')</option>';
+          }
+        });
+      }
+    });
+
+    if (btnCancelNov) btnCancelNov.addEventListener('click', function() {
+      novForm.classList.remove('is-open');
+      if (novFeedback) novFeedback.textContent = '';
+    });
+
+    if (novForm) novForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var emp = novEmpleadoSel ? novEmpleadoSel.value : '';
+      var tipo = novTipoSel ? novTipoSel.value : '';
+      var nota = novNota ? novNota.value.trim() : '';
+      if (!emp || !tipo || !nota) {
+        if (novFeedback) novFeedback.textContent = 'Completa todos los campos';
+        return;
+      }
+      if (btnSaveNov) btnSaveNov.disabled = true;
+      var payload = 'identificacion=' + encodeURIComponent(emp) + '&nombre=' + encodeURIComponent(emp) + '&tipo=' + encodeURIComponent(tipo) + '&nota=' + encodeURIComponent(nota) + '&timestamp=' + encodeURIComponent(new Date().toISOString());
+      fetch(APPS_SCRIPT_URL + '?action=novedad', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: payload })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.status === 'ok') {
+            if (novFeedback) novFeedback.textContent = 'Novedad registrada';
+            novForm.classList.remove('is-open');
+            novEmpleadoSel.value = ''; novTipoSel.value = ''; novNota.value = '';
+          } else {
+            if (novFeedback) novFeedback.textContent = d.msg || 'Error';
+          }
+        }).catch(function() { if (novFeedback) novFeedback.textContent = 'Error de conexion'; })
+        .finally(function() { if (btnSaveNov) btnSaveNov.disabled = false; });
+    });
+
     // NFC
     var nfcBody = document.getElementById('pendingNfcBody');
     var nfcCount = document.getElementById('pendingNfcCount');
