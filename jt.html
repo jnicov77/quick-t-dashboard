@@ -878,8 +878,16 @@
       fetch(URL+'?action=today',{method:'GET',cache:'no-store',signal:ctrl.signal})
         .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
         .then(function(d){if(!Array.isArray(d))throw new Error('Invalid');events=d.map(normalize);loadState='ready';
-          if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});})
-        .catch(function(err){loadState='error';events=[];if(syncLabel)syncLabel.textContent='Error: '+err.message;})
+          if(syncLabel)syncLabel.textContent='Sincronizado';
+    var cntAll=events.length,cntAdmin=events.filter(function(e){return e.area==='Administracion'||e.area==='Administración'}).length,cntOp=events.filter(function(e){return e.area==='Operacion'||e.area==='Operación'}).length;
+    var ca=document.getElementById('countAll'),cd=document.getElementById('countAdmin'),co=document.getElementById('countOperacion');
+    if(ca)ca.textContent=cntAll;if(cd)cd.textContent=cntAdmin;if(co)co.textContent=cntOp;
+    if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});})
+        .catch(function(err){loadState='error';events=[];if(syncLabel)syncLabel.textContent='Sincronizado';
+    var cntAll=events.length,cntAdmin=events.filter(function(e){return e.area==='Administracion'||e.area==='Administración'}).length,cntOp=events.filter(function(e){return e.area==='Operacion'||e.area==='Operación'}).length;
+    var ca=document.getElementById('countAll'),cd=document.getElementById('countAdmin'),co=document.getElementById('countOperacion');
+    if(ca)ca.textContent=cntAll;if(cd)cd.textContent=cntAdmin;if(co)co.textContent=cntOp;
+    if(syncLabel)syncLabel.textContent='Error: '+err.message;})
         .finally(function(){clearTimeout(t);if(refreshBtn)refreshBtn.disabled=false;render()});
     }
 
