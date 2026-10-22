@@ -879,14 +879,20 @@
         .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
         .then(function(d){if(!Array.isArray(d))throw new Error('Invalid');events=d.map(normalize);loadState='ready';
           if(syncLabel)syncLabel.textContent='Sincronizado';
-    var cntAll=events.length,cntAdmin=events.filter(function(e){return e.area==='Administracion'||e.area==='Administración'}).length,cntOp=events.filter(function(e){return e.area==='Operacion'||e.area==='Operación'}).length;
+    var uniqueUids=[],uniqueAdmin=[],uniqueOp=[];
+    events.forEach(function(e){if(e.uid&&e.uid!=='—'&&uniqueUids.indexOf(e.uid)===-1)uniqueUids.push(e.uid);
+      if(e.area==='Administracion'||e.area==='Administración'){if(e.uid&&e.uid!=='—'&&uniqueAdmin.indexOf(e.uid)===-1)uniqueAdmin.push(e.uid)}
+      else if(e.area==='Operacion'||e.area==='Operación'){if(e.uid&&e.uid!=='—'&&uniqueOp.indexOf(e.uid)===-1)uniqueOp.push(e.uid)}});
     var ca=document.getElementById('countAll'),cd=document.getElementById('countAdmin'),co=document.getElementById('countOperacion');
-    if(ca)ca.textContent=cntAll;if(cd)cd.textContent=cntAdmin;if(co)co.textContent=cntOp;
+    if(ca)ca.textContent=uniqueUids.length;if(cd)cd.textContent=uniqueAdmin.length;if(co)co.textContent=uniqueOp.length;
     if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});})
         .catch(function(err){loadState='error';events=[];if(syncLabel)syncLabel.textContent='Sincronizado';
-    var cntAll=events.length,cntAdmin=events.filter(function(e){return e.area==='Administracion'||e.area==='Administración'}).length,cntOp=events.filter(function(e){return e.area==='Operacion'||e.area==='Operación'}).length;
+    var uniqueUids=[],uniqueAdmin=[],uniqueOp=[];
+    events.forEach(function(e){if(e.uid&&e.uid!=='—'&&uniqueUids.indexOf(e.uid)===-1)uniqueUids.push(e.uid);
+      if(e.area==='Administracion'||e.area==='Administración'){if(e.uid&&e.uid!=='—'&&uniqueAdmin.indexOf(e.uid)===-1)uniqueAdmin.push(e.uid)}
+      else if(e.area==='Operacion'||e.area==='Operación'){if(e.uid&&e.uid!=='—'&&uniqueOp.indexOf(e.uid)===-1)uniqueOp.push(e.uid)}});
     var ca=document.getElementById('countAll'),cd=document.getElementById('countAdmin'),co=document.getElementById('countOperacion');
-    if(ca)ca.textContent=cntAll;if(cd)cd.textContent=cntAdmin;if(co)co.textContent=cntOp;
+    if(ca)ca.textContent=uniqueUids.length;if(cd)cd.textContent=uniqueAdmin.length;if(co)co.textContent=uniqueOp.length;
     if(syncLabel)syncLabel.textContent='Error: '+err.message;})
         .finally(function(){clearTimeout(t);if(refreshBtn)refreshBtn.disabled=false;render()});
     }
