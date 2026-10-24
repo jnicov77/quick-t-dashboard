@@ -548,50 +548,116 @@
     <!-- ========== HERO: nombre de la empresa (Nicolás: solo "JusTTime", sin tagline) ========== -->
     <section class="hero" aria-labelledby="heroTitle">
       <h1 id="heroTitle">JusTTime</h1>
+      <p class="data-notice">Monitorea la operación del día.</p>
       <div class="chips area-toolbar" id="areaFilters" role="group" aria-label="Filtrar por área">
-        <button class="chip is-active" type="button" data-area="" aria-pressed="true">Todos <span class="area-count" id="countAll">—</span></button>
-        <button class="chip" type="button" data-area="Administración" aria-pressed="false">Administración <span class="area-count" id="countAdmin">—</span></button>
-        <button class="chip" type="button" data-area="Operación" aria-pressed="false">Operación <span class="area-count" id="countOperacion">—</span></button>
+        <button class="chip is-active" type="button" data-area="" aria-pressed="true">Todos</button>
+        <button class="chip" type="button" data-area="Administración" aria-pressed="false">Administración</button>
+        <button class="chip" type="button" data-area="Operación" aria-pressed="false">Operación</button>
       </div>
-      <p class="data-notice" id="areaNotice" aria-live="polite">Personas con marcación hoy por dispositivo · Actualización cada 30 segundos.</p>
     </section>
 
-    <!-- ========== MÉTRICAS (3 cards: Asistencia, Empleados, Novedades — Nicolás: quitar Horario) ========== -->
+
     <section aria-label="Métricas del día">
-      <div class="metrics-grid">
-
-        <!-- 1. ASISTENCIA con progress bar ámbar + descripción -->
+      <div class="metrics-grid" id="metricsGrid">
         <div class="metric-card">
-          <div class="metric-label">Asistencia</div>
-          <div class="metric-value" id="statAsistencia">
-            <span id="statPct">—</span><span class="unit">%</span>
+          <div class="metric-label">Entradas</div>
+          <div class="metric-value" id="statEntradas">— de —</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Salidas</div>
+          <div class="metric-value" id="statSalidas">— de —</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Sin marcación</div>
+          <div class="metric-value" id="statSinMarcacion">— de —</div>
+        </div>
+        <div class="metric-card" id="trabajadoresCard" hidden>
+          <div class="metric-label">Trabajadores</div>
+          <div class="metric-value" id="statTrabajadores">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
+    <section aria-labelledby="secSeguimiento">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
+          <div class="section-subtitle">Últimos movimientos del día</div>
+        </div>
+
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="text" id="filtroEmpleado"
+                 placeholder="Buscar empleado por nombre..."
+                 aria-label="Buscar empleado" />
+        </div>
+        <div class="chips" id="filterChips" role="tablist">
+          <button class="chip is-active" data-filter="" type="button">Todos</button>
+          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
+          <button class="chip" data-filter="salida" type="button">Salida</button>
+          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
+        </div>
+      </div>
+
+      <div class="panel" id="seguimientoPanel">
+        <table id="tablaSeguimiento">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Área / dispositivo</th>
+              <th>Hora entrada</th>
+              <th>Hora salida</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tablaSeguimientoBody">
+            <tr>
+              <td colspan="5" class="empty-state">Cargando marcaciones…</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination" id="paginationSeguimiento" style="display:none;">
+          <span class="pagination-info" id="pgInfoSeguimiento"></span>
+          <div class="pagination-btns">
+            <button class="pg-btn" id="pgPrevSeguimiento" disabled
+                    aria-label="Página anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Anterior
+            </button>
+            <button class="pg-btn" id="pgNextSeguimiento"
+                    aria-label="Página siguiente">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </button>
           </div>
-          <div class="progress-bar"><span id="progressFill" style="width: 0%;"></span></div>
-          <div class="metric-hint" id="statAsistenciaHint">— empleados ingresaron</div>
         </div>
-
-        <!-- 2. EMPLEADOS -->
-        <div class="metric-card">
-          <div class="metric-label">Empleados</div>
-          <div class="metric-value" id="statEmpleados">0</div>
-          <div class="metric-hint">Total registrados</div>
-        </div>
-
-        <!-- 3. NOVEDADES -->
-        <div class="metric-card">
-          <div class="metric-label">Novedades</div>
-          <div class="metric-value" id="statNovedades">0</div>
-          <div class="metric-hint">Registradas en el día · Todas las áreas</div>
-        </div>
-
       </div>
     </section>
 
     <!-- ========== NOVEDADES (renamed from "Panel de Novedades") ========== -->
-    <section class="novedades-priority" aria-labelledby="secNovedades">
+    <section aria-labelledby="secNovedades">
+      <details class="nfc-details" id="novedadesDetails">
+      <summary>
+        <h2 class="section-title" id="secNovedades">Novedades <span class="tag" id="novedadesCount">0</span></h2>
+      </summary>
+      <div class="nfc-content">
       <div class="section-head">
         <div>
-          <div class="section-title" id="secNovedades">Novedades</div>
           <div class="section-subtitle">Observaciones sobre ingresos y salidas.</div>
         </div>
         <div class="novedades-actions">
@@ -681,77 +747,8 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- ========== SEGUIMIENTO PERSONAL (mock style) ========== -->
-    <section aria-labelledby="secSeguimiento">
-      <div class="section-head">
-        <div>
-          <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
-          <div class="section-subtitle">Últimos movimientos del día</div>
-        </div>
-        <button class="btn-primary" id="btnAddPersonal" type="button">➕ Agregar Personal</button>
       </div>
-
-      <div class="toolbar">
-        <div class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-               aria-hidden="true">
-            <circle cx="11" cy="11" r="7"/>
-            <path d="m21 21-4.3-4.3"/>
-          </svg>
-          <input type="text" id="filtroEmpleado"
-                 placeholder="Buscar empleado por nombre..."
-                 aria-label="Buscar empleado" />
-        </div>
-        <div class="chips" id="filterChips" role="tablist">
-          <button class="chip is-active" data-filter="" type="button">Todos</button>
-          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
-          <button class="chip" data-filter="salida" type="button">Salida</button>
-          <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
-        </div>
-      </div>
-
-      <div class="panel" id="seguimientoPanel">
-        <table id="tablaSeguimiento">
-          <thead>
-            <tr>
-              <th>Empleado</th>
-              <th>Área / dispositivo</th>
-              <th>Hora entrada</th>
-              <th>Hora salida</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tablaSeguimientoBody">
-            <tr>
-              <td colspan="5" class="empty-state">Cargando marcaciones…</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination" id="paginationSeguimiento" style="display:none;">
-          <span class="pagination-info" id="pgInfoSeguimiento"></span>
-          <div class="pagination-btns">
-            <button class="pg-btn" id="pgPrevSeguimiento" disabled
-                    aria-label="Página anterior">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-              Anterior
-            </button>
-            <button class="pg-btn" id="pgNextSeguimiento"
-                    aria-label="Página siguiente">
-              Siguiente
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m9 18 6-6-6-6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
+      </details>
     </section>
 
     <section aria-labelledby="secNfc">
@@ -760,7 +757,7 @@
         <h2 class="section-title" id="secNfc">Asignar NFC <span class="tag" id="pendingNfcCount">0</span></h2>
       </summary>
       <div class="nfc-content">
-      <p class="section-subtitle">Asigna nombres a las tarjetas detectadas o modifica los ya asignados.</p>
+      <p class="section-subtitle">Asigna personal a sus lectores o modifica los ya asignados.</p>
       <p class="personal-status" id="personalStatus" role="status">Conectando personal…</p>
       <div class="panel personal-scroll"><table id="pendingNfcTable">
         <thead><tr><th>UID del NFC</th><th>Nombre</th><th>Área</th><th>Acción</th></tr></thead>
@@ -801,7 +798,12 @@
     var URL = 'https://script.google.com/macros/s/AKfycbz6HPfI-f8wsGVN9SPiku6CH42bMnBWZ1aLxkdihbe_Wm7A5GZJNMScsyYM3zzDPwmiNQ/exec';
     var APPS_SCRIPT_URL = URL;
     var events = [];
+    var eventRows = [];
+    var workers = null;
     var selectedArea = '';
+    var seguimientoPage = 1;
+    var seguimientoPageSize = 10;
+    var seguimientoFilterKey = '';
     var loadState = 'loading';
     var tbody = document.getElementById('tablaSeguimientoBody');
     var syncLabel = document.getElementById('syncLabel');
@@ -831,27 +833,98 @@
       };
     }
 
+    function areaKey(area) {
+      return String(area || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+    }
+
+    function operationDay(value) {
+      var text = String(value || '').trim();
+      if (!text) return '';
+      if (/^\d{2}:\d{2}/.test(text)) return operationDay(new Date().toISOString());
+      if (/^\d{4}-\d{2}-\d{2}/.test(text) && !/(?:Z|[+-]\d{2}:?\d{2})$/i.test(text)) return text.slice(0, 10);
+      var date = new Date(text);
+      return isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit'
+      }).format(date);
+    }
+
+    function updateMetrics(area) {
+      document.getElementById('trabajadoresCard').hidden = !area;
+      var roster = new Map();
+      (workers || []).forEach(function(person, index) {
+        var name = String(person.nombre || '').trim();
+        if (!name || name === 'Sin nombre') return;
+        if (area && areaKey(person.area) !== areaKey(area)) return;
+        var uid = String(person.uid || person.identificacion || '').trim().toUpperCase();
+        var key = uid && uid !== '—' ? uid : 'worker-' + index;
+        if (!roster.has(key)) roster.set(key, {entrada: false, salida: false});
+      });
+      var today = operationDay(new Date().toISOString());
+      eventRows.forEach(function(row) {
+        var fields = {};
+        Object.keys(row).forEach(function(key) { fields[key.trim().toLowerCase()] = row[key]; });
+        var uid = String(fields.uid || fields.identificacion || '').trim().toUpperCase();
+        var worker = roster.get(uid);
+        if (!worker) return;
+        ['entrada', 'salida'].forEach(function(kind) {
+          var mark = fields[kind];
+          if (!mark && String(fields.action || '').toLowerCase() === kind) mark = fields.timestamp;
+          if (operationDay(mark) === today) worker[kind] = true;
+        });
+      });
+      var entradas = 0, salidas = 0, sinMarcacion = 0;
+      roster.forEach(function(worker) {
+        if (worker.entrada) entradas++;
+        if (worker.salida) salidas++;
+        if (!worker.entrada && !worker.salida) sinMarcacion++;
+      });
+      var total = workers === null ? '—' : roster.size;
+      var ready = workers !== null && loadState === 'ready';
+      document.getElementById('statEntradas').textContent = (ready ? entradas : '—') + ' de ' + total;
+      document.getElementById('statSalidas').textContent = (ready ? salidas : '—') + ' de ' + total;
+      document.getElementById('statSinMarcacion').textContent = (ready ? sinMarcacion : '—') + ' de ' + total;
+      document.getElementById('statTrabajadores').textContent = total;
+    }
+
     function render() {
+      updateMetrics(selectedArea);
       if (!tbody) return;
       tbody.innerHTML = '';
       var q = (document.getElementById('filtroEmpleado')||{}).value||'';
       var estadoFilter = '';
       var activeChip = document.querySelector('#filterChips .chip.is-active');
       if (activeChip) estadoFilter = activeChip.getAttribute('data-filter')||'';
+      var filterKey = JSON.stringify([selectedArea, q, estadoFilter]);
+      if (filterKey !== seguimientoFilterKey) seguimientoPage = 1;
+      seguimientoFilterKey = filterKey;
+      var assignedAreas = new Map();
+      (workers || []).forEach(function(person) {
+        var uid = String(person.uid || person.identificacion || '').trim().toUpperCase();
+        if (uid && person.area) assignedAreas.set(uid, person.area);
+      });
       
       var visible = events.filter(function(e) {
-        if (selectedArea && e.area !== selectedArea) return false;
+        var area = assignedAreas.get(String(e.uid).trim().toUpperCase()) || e.area;
+        if (selectedArea && areaKey(area) !== areaKey(selectedArea)) return false;
         if (q && (e.nombre+' '+e.uid).toLowerCase().indexOf(q.toLowerCase()) === -1) return false;
         if (estadoFilter && e.estado !== estadoFilter) return false;
         return true;
       });
       
+      var totalPages = Math.max(1, Math.ceil(visible.length / seguimientoPageSize));
+      seguimientoPage = Math.max(1, Math.min(seguimientoPage, totalPages));
+      var start = (seguimientoPage - 1) * seguimientoPageSize;
+      document.getElementById('paginationSeguimiento').style.display = visible.length ? 'flex' : 'none';
+      document.getElementById('pgInfoSeguimiento').textContent = visible.length ?
+        (start + 1) + '–' + Math.min(start + seguimientoPageSize, visible.length) + ' de ' + visible.length : '0 de 0';
+      document.getElementById('pgPrevSeguimiento').disabled = seguimientoPage === 1;
+      document.getElementById('pgNextSeguimiento').disabled = seguimientoPage === totalPages;
       if (!visible.length) {
         tbody.innerHTML = '<tr><td colspan="5" class="empty-state">' + (loadState==='loading'?'Cargando...':loadState==='error'?'Error.':'No hay eventos.') + '</td></tr>';
         return;
       }
       
-      visible.forEach(function(e) {
+      visible.slice(start, start + seguimientoPageSize).forEach(function(e) {
         var ini = (e.nombre||'?').charAt(0).toUpperCase();
         var cls = e.estado==='ingreso'?'tag--ingreso':e.estado==='salida'?'tag--salida':'tag--sin-registro';
         var label = e.estado==='ingreso'?'Ingreso':e.estado==='salida'?'Salida':'Sin Registro';
@@ -859,8 +932,16 @@
       });
     }
 
+    function paginateSeguimiento(page) {
+      seguimientoPage = Math.max(1, Math.floor(Number(page)) || 1);
+      render();
+    }
+
     function selectArea(area) {
       selectedArea = area;
+      seguimientoPage = 1;
+      document.querySelector('[aria-labelledby="secNovedades"]').hidden = !!area;
+      document.querySelector('[aria-labelledby="secNfc"]').hidden = !!area;
       document.querySelectorAll('#areaFilters .chip').forEach(function(btn) {
         var active = btn.getAttribute('data-area') === area;
         btn.classList.toggle('is-active', active);
@@ -877,22 +958,10 @@
       var t = setTimeout(function(){ctrl.abort();},30000);
       fetch(URL+'?action=today',{method:'GET',cache:'no-store',signal:ctrl.signal})
         .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
-        .then(function(d){if(!Array.isArray(d))throw new Error('Invalid');events=d.map(normalize);loadState='ready';
+        .then(function(d){if(!Array.isArray(d))throw new Error('Invalid');eventRows=d;events=d.map(normalize);loadState='ready';
           if(syncLabel)syncLabel.textContent='Sincronizado';
-    var uniqueUids=[],uniqueAdmin=[],uniqueOp=[];
-    events.forEach(function(e){if(e.uid&&e.uid!=='—'&&uniqueUids.indexOf(e.uid)===-1)uniqueUids.push(e.uid);
-      if(e.area==='Administracion'||e.area==='Administración'){if(e.uid&&e.uid!=='—'&&uniqueAdmin.indexOf(e.uid)===-1)uniqueAdmin.push(e.uid)}
-      else if(e.area==='Operacion'||e.area==='Operación'){if(e.uid&&e.uid!=='—'&&uniqueOp.indexOf(e.uid)===-1)uniqueOp.push(e.uid)}});
-    var ca=document.getElementById('countAll'),cd=document.getElementById('countAdmin'),co=document.getElementById('countOperacion');
-    if(ca)ca.textContent=uniqueUids.length;if(cd)cd.textContent=uniqueAdmin.length;if(co)co.textContent=uniqueOp.length;
     if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});})
-        .catch(function(err){loadState='error';events=[];if(syncLabel)syncLabel.textContent='Sincronizado';
-    var uniqueUids=[],uniqueAdmin=[],uniqueOp=[];
-    events.forEach(function(e){if(e.uid&&e.uid!=='—'&&uniqueUids.indexOf(e.uid)===-1)uniqueUids.push(e.uid);
-      if(e.area==='Administracion'||e.area==='Administración'){if(e.uid&&e.uid!=='—'&&uniqueAdmin.indexOf(e.uid)===-1)uniqueAdmin.push(e.uid)}
-      else if(e.area==='Operacion'||e.area==='Operación'){if(e.uid&&e.uid!=='—'&&uniqueOp.indexOf(e.uid)===-1)uniqueOp.push(e.uid)}});
-    var ca=document.getElementById('countAll'),cd=document.getElementById('countAdmin'),co=document.getElementById('countOperacion');
-    if(ca)ca.textContent=uniqueUids.length;if(cd)cd.textContent=uniqueAdmin.length;if(co)co.textContent=uniqueOp.length;
+        .catch(function(err){loadState='error';eventRows=[];events=[];if(syncLabel)syncLabel.textContent='Sincronizado';
     if(syncLabel)syncLabel.textContent='Error: '+err.message;})
         .finally(function(){clearTimeout(t);if(refreshBtn)refreshBtn.disabled=false;render()});
     }
@@ -927,10 +996,44 @@
     // Wire: pagination prev/next
     var pgPrev = document.getElementById('pgPrevSeguimiento');
     var pgNext = document.getElementById('pgNextSeguimiento');
-    if (pgPrev) pgPrev.addEventListener('click', function(){ /* pagination placeholder */ });
-    if (pgNext) pgNext.addEventListener('click', function(){ /* pagination placeholder */ });
+    if (pgPrev) pgPrev.addEventListener('click', function(){ paginateSeguimiento(seguimientoPage - 1); });
+    if (pgNext) pgNext.addEventListener('click', function(){ paginateSeguimiento(seguimientoPage + 1); });
 
     // NOVEDADES
+    function updateNovedadesCount() {
+      var today = operationDay(new Date().toISOString());
+      var rows = document.querySelectorAll('#tablaNovedadesBody tr');
+      var count = 0;
+      rows.forEach(function(row) {
+        if (row.querySelector('.empty-state')) return;
+        if (!row.dataset.day || row.dataset.day === today) count++;
+      });
+      document.getElementById('novedadesCount').textContent = count;
+    }
+
+    function recordNovedad(emp, tipo, nota, payload) {
+      var body = document.getElementById('tablaNovedadesBody');
+      body.querySelectorAll('tr').forEach(function(row) {
+        if (row.querySelector('.empty-state')) row.remove();
+      });
+      var timestamp = new URLSearchParams(payload).get('timestamp');
+      var row = document.createElement('tr');
+      row.dataset.day = operationDay(timestamp);
+      var employee = events.find(function(person) { return person.uid === emp; });
+      [new Date(timestamp).toLocaleTimeString('es-CO', {timeZone: 'America/Bogota', hour12: false}),
+        employee ? employee.nombre : emp, tipo, nota].forEach(function(value) {
+        var cell = document.createElement('td');
+        cell.textContent = value;
+        row.appendChild(cell);
+      });
+      body.prepend(row);
+      updateNovedadesCount();
+    }
+
+    document.getElementById('novedadesDetails').addEventListener('toggle', updateNovedadesCount);
+    new MutationObserver(updateNovedadesCount).observe(document.getElementById('tablaNovedadesBody'), {childList: true, subtree: true});
+    updateNovedadesCount();
+
     var btnNewNov = document.getElementById('btnNewNovedad');
     var btnCancelNov = document.getElementById('btnCancelNovedad');
     var novForm = document.getElementById('novedadForm');
@@ -976,6 +1079,7 @@
         .then(function(r) { return r.json(); })
         .then(function(d) {
           if (d.status === 'ok') {
+            recordNovedad(emp, tipo, nota, payload);
             if (novFeedback) novFeedback.textContent = 'Novedad registrada';
             novForm.classList.remove('is-open');
             novEmpleadoSel.value = ''; novTipoSel.value = ''; novNota.value = '';
@@ -995,6 +1099,7 @@
       fetch(APPS_SCRIPT_URL+'?action=empleados',{signal:AbortSignal.timeout(15000)})
         .then(function(r){return r.json()})
         .then(function(data){if(!Array.isArray(data)){if(nfcCount)nfcCount.textContent='0';return}
+          workers=data;render();
           var items=data.filter(function(p){return p.uid&&p.uid!=='—'});
           if(nfcCount)nfcCount.textContent=items.length||'0';
           if(!items.length){nfcBody.innerHTML='<tr><td colspan="4" class="empty-state">Sin tarjetas pendientes.</td></tr>';return}
