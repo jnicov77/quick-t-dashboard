@@ -584,7 +584,7 @@
           <div class="metric-label">Salidas</div>
           <div class="metric-value" id="statSalidas">—</div>
         </div>
-        <div class="metric-card">
+        <div class="metric-card" id="empleadosCard">
           <div class="metric-label">Total empleados</div>
           <div class="metric-value" id="statEmpleados">—</div>
         </div>
@@ -867,6 +867,7 @@
 
     function updateMetrics(area) {
       document.getElementById('trabajadoresCard').hidden = !area;
+      document.getElementById('empleadosCard').hidden = !!area;
       var roster = new Map();
       (workers || []).forEach(function(person, index) {
         var name = String(person.nombre || '').trim();
