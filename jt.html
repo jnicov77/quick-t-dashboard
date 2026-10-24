@@ -48,8 +48,7 @@
 
     html, body {
    background-color: #1A1D23;
-   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='52' viewBox='0 0 60 52'%3E%3Cpath d='M30 0l30 17.3v34.6L30 52 0 34.7V17.3L30 0z' fill='none' stroke='%238A96A3' stroke-width='0.6' stroke-opacity='0.25'/%3E%3Cpath d='M30 8l22 12.7v25.4L30 58 8 45.4V20.7L30 8z' fill='none' stroke='%238A96A3' stroke-width='0.4' stroke-opacity='0.12'/%3E%3C/svg%3E");
-         background-size: 60px 52px;
+         position: relative;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       color: var(--primary);
       background: var(--cloud);
@@ -67,10 +66,23 @@
 
     /* ========== APP LAYOUT ========== */
     .app {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px 64px;
-    }
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 32px 24px 48px;
+          position: relative;
+          z-index: 1;
+        }
+    
+        /* Fondo hexagonal global — sutil y difuminado */
+        body::before {
+          content: '';
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='69' viewBox='0 0 80 69'%3E%3Cpath d='M40 0l40 23v46L40 69 0 46V23L40 0z' fill='none' stroke='%238A96A3' stroke-width='0.8' stroke-opacity='0.3'/%3E%3Cpath d='M40 10l28 16v32L40 74 12 58V26L40 10z' fill='none' stroke='%238A96A3' stroke-width='0.4' stroke-opacity='0.15'/%3E%3C/svg%3E");
+          background-size: 80px 69px;
+          z-index: 0;
+          pointer-events: none;
+        }
 
     /* ========== HEADER (glassmorph + shrink on scroll) ========== */
     .site-header {
