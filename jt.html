@@ -47,6 +47,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
+   background-color: #1A1D23;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='52' viewBox='0 0 60 52'%3E%3Cpath d='M30 0l30 17.3v34.6L30 52 0 34.7V17.3L30 0z' fill='none' stroke='%238A96A3' stroke-width='0.5' stroke-opacity='0.15'/%3E%3Cpath d='M30 8l22 12.7v25.4L30 58 8 45.4V20.7L30 8z' fill='none' stroke='%238A96A3' stroke-width='0.3' stroke-opacity='0.08'/%3E%3C/svg%3E");
+   background-size: 60px 52px;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       color: var(--primary);
       background: var(--cloud);
@@ -880,8 +883,8 @@
       });
       var total = workers === null ? '—' : roster.size;
       var ready = workers !== null && loadState === 'ready';
-      document.getElementById('statEntradas').textContent = (ready ? entradas : '—') + ' de ' + total;
-      document.getElementById('statSalidas').textContent = (ready ? salidas : '—') + ' de ' + total;
+      document.getElementById('statEntradas').textContent = ready ? entradas : '—';
+      document.getElementById('statSalidas').textContent = ready ? salidas : '—';
       document.getElementById('statSinMarcacion').textContent = (ready ? sinMarcacion : '—') + ' de ' + total;
       document.getElementById('statTrabajadores').textContent = total;
     }
@@ -1106,6 +1109,30 @@
           nfcBody.innerHTML=items.map(function(p,i){var h=!!(p.nombre&&p.nombre!=='Sin nombre');
             return'<tr><td>'+p.uid+'</td><td><input id="pn_'+i+'" value="'+(h?p.nombre:'')+'" placeholder="Nombre"></td><td><select id="pa_'+i+'"><option'+(p.area==='Administracion'?' selected':'')+'>Administracion</option><option'+(p.area==='Operacion'?' selected':'')+'>Operacion</option></select></td><td><button onclick="saveNfc('+i+',\''+p.uid+'\',this)">'+(h?'Modificar':'Guardar')+'</button></td></tr>';
           }).join('');}).catch(function(){nfcBody.innerHTML='<tr><td colspan="4" class="empty-state">Error.</td></tr>';});
+    }
+    function toggleEditNfc(idx,uid,btn){
+      var spanN=document.getElementById('pn_'+idx),inpN=document.getElementById('pne_'+idx);
+      var spanA=document.getElementById('pa_'+idx),selA=document.getElementById('pae_'+idx);
+      if(inpN.style.display==='none'){
+        spanN.style.display='none';inpN.style.display='';
+        spanA.style.display='none';selA.style.display='';
+        btn.textContent='Guardar';btn.onclick=function(){saveNfcEdit(idx,uid,btn)};
+      }else{
+        spanN.style.display='';inpN.style.display='none';
+        spanA.style.display='';selA.style.display='none';
+        btn.textContent='Modificar';btn.onclick=function(){toggleEditNfc(idx,uid,btn)};
+      }
+    }
+    function saveNfcEdit(idx,uid,btn){
+      var i=document.getElementById('pne_'+idx),s=document.getElementById('pae_'+idx);
+      if(!i||!s){alert('Error');return}
+      var n=i.value.trim(),a=s.value;
+      if(!n){alert('Escribi el nombre');return}
+      btn.textContent='Guardando...';btn.disabled=true;
+      fetch(APPS_SCRIPT_URL+'?action=assign&uid='+encodeURIComponent(uid)+'&nombre='+encodeURIComponent(n)+'&area='+encodeURIComponent(a)).then(function(r){return r.json()}).then(function(d){
+        if(d.status==='ok'||d.ok){btn.textContent='Listo';setTimeout(function(){loadNfc();loadEvents()},1000)}
+        else{alert(d.msg||d.error||'Error');btn.textContent='Guardar';btn.disabled=false}
+      }).catch(function(){alert('Error de conexion');btn.textContent='Guardar';btn.disabled=false});
     }
     function saveNfc(idx,uid,btn){var i=document.getElementById('pn_'+idx),s=document.getElementById('pa_'+idx);if(!i||!s){alert('Error');return}var n=i.value.trim(),a=s.value;if(!n){alert('Escribi el nombre');return}btn.textContent='Guardando...';btn.disabled=true;fetch(APPS_SCRIPT_URL+'?action=assign&uid='+encodeURIComponent(uid)+'&nombre='+encodeURIComponent(n)+'&area='+encodeURIComponent(a)).then(function(r){return r.json()}).then(function(d){if(d.status==='ok'||d.ok){btn.textContent='Listo';setTimeout(function(){loadNfc();loadEvents()},1000)}else{alert(d.msg||d.error||'Error');btn.textContent='Guardar';btn.disabled=false}}).catch(function(){alert('Error de conexion');btn.textContent='Guardar';btn.disabled=false});}
     loadEvents();loadNfc();
