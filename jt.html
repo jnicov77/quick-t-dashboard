@@ -976,6 +976,10 @@
       fetch(URL+'?action=today',{method:'GET',cache:'no-store',signal:ctrl.signal})
         .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
         .then(function(d){if(!Array.isArray(d))throw new Error('Invalid');eventRows=d;events=d.map(normalize);loadState='ready';
+          // Cargar lista de empleados (workers) para metricas
+          fetch(APPS_SCRIPT_URL+'?action=empleados').then(function(r){return r.json()}).then(function(data){
+            if(Array.isArray(data)){workers=data;updateMetrics(selectedArea)}
+          }).catch(function(){workers=[]});
           if(syncLabel)syncLabel.textContent='Sincronizado';
     if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});})
         .catch(function(err){loadState='error';eventRows=[];events=[];if(syncLabel)syncLabel.textContent='Sincronizado';
