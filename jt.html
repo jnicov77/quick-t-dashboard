@@ -568,7 +568,7 @@
     <!-- ========== HERO: nombre de la empresa (Nicolás: solo "JusTTime", sin tagline) ========== -->
     <section class="hero" aria-labelledby="heroTitle">
       <h1 id="heroTitle">JusTTime</h1>
-      <p class="data-notice">Monitorea la operación del día.</p>
+      <p class="data-notice">Monitorea la operación del día. · <span id="liveClock">—</span></p>
       <div class="chips area-toolbar" id="areaFilters" role="group" aria-label="Filtrar por área">
         <button class="chip is-active" type="button" data-area="" aria-pressed="true">Todos</button>
         <button class="chip" type="button" data-area="Administración" aria-pressed="false">Administración</button>
@@ -1161,6 +1161,11 @@
     }
     function saveNfc(idx,uid,btn){var i=document.getElementById('pn_'+idx),s=document.getElementById('pa_'+idx);if(!i||!s){alert('Error');return}var n=i.value.trim(),a=s.value;if(!n){alert('Escribi el nombre');return}btn.textContent='Guardando...';btn.disabled=true;fetch(APPS_SCRIPT_URL+'?action=assign&uid='+encodeURIComponent(uid)+'&nombre='+encodeURIComponent(n)+'&area='+encodeURIComponent(a)).then(function(r){return r.json()}).then(function(d){if(d.status==='ok'||d.ok){btn.textContent='Listo';setTimeout(function(){loadNfc();loadEvents()},1000)}else{alert(d.msg||d.error||'Error');btn.textContent='Guardar';btn.disabled=false}}).catch(function(){alert('Error de conexion');btn.textContent='Guardar';btn.disabled=false});}
     loadEvents();loadNfc();
+    setInterval(function(){
+      var d=new Date();
+      var el=document.getElementById('liveClock');
+      if(el)el.textContent=d.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    },1000);
   </script>
 </body>
 </html>
