@@ -578,15 +578,15 @@
       <div class="metrics-grid" id="metricsGrid">
         <div class="metric-card">
           <div class="metric-label">Entradas</div>
-          <div class="metric-value" id="statEntradas">— de —</div>
+          <div class="metric-value" id="statEntradas">—</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Salidas</div>
-          <div class="metric-value" id="statSalidas">— de —</div>
+          <div class="metric-value" id="statSalidas">—</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Total empleados</div>
-          <div class="metric-value" id="statEmpleados">— de —</div>
+          <div class="metric-value" id="statEmpleados">—</div>
         </div>
         <div class="metric-card" id="trabajadoresCard" hidden>
           <div class="metric-label">Trabajadores</div>
@@ -899,7 +899,7 @@
       var ready = workers !== null && loadState === 'ready';
       document.getElementById('statEntradas').textContent = ready ? entradas : '—';
       document.getElementById('statSalidas').textContent = ready ? salidas : '—';
-      document.getElementById('statEmpleados').textContent = (ready ? sinMarcacion : '—') + ' de ' + total;
+      document.getElementById('statEmpleados').textContent = ready ? sinMarcacion : '—';
       document.getElementById('statTrabajadores').textContent = total;
     }
 
