@@ -529,6 +529,19 @@
 </head>
 <body>
 
+  <!-- ========== LOGIN OVERLAY ========== -->
+  <div id="loginOverlay" style="position:fixed;inset:0;background:#1A1D23;display:flex;align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:rgba(30,41,59,0.9);padding:32px;border-radius:16px;text-align:center;border:1px solid #8A96A3;">
+      <div style="font-size:28px;font-weight:700;color:#f8fafc;margin-bottom:8px;">JusTTime</div>
+      <div style="color:#94a3b8;margin-bottom:20px;">Ingresa el código de acceso</div>
+      <input id="accessCode" type="password" placeholder="Código" style="width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:16px;text-align:center;letter-spacing:4px;margin-bottom:12px;" autocomplete="off">
+      <button id="accessBtn" style="width:100%;padding:10px;border-radius:8px;border:none;background:#10B981;color:#0f172a;font-weight:700;cursor:pointer;font-size:15px;">Entrar</button>
+      <div id="accessError" style="color:#ef4444;margin-top:10px;font-size:13px;display:none;">Código incorrecto</div>
+    </div>
+  </div>
+
+  <div id="dashboardContent" style="display:none;">
+
   <!-- ========== HEADER (glassmorph, sticky, shrink on scroll) ========== -->
   <header class="site-header" id="siteHeader">
     <div class="header-inner">
@@ -1168,6 +1181,28 @@
       var el=document.getElementById('liveClock');
       if(el)el.textContent=d.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
     },1000);
+
+    // ═══ LOGIN ═══
+    (function(){
+      var overlay=document.getElementById('loginOverlay');
+      var content=document.getElementById('dashboardContent');
+      var input=document.getElementById('accessCode');
+      var btn=document.getElementById('accessBtn');
+      var err=document.getElementById('accessError');
+      if(sessionStorage.getItem('jtt_auth')==='1'){ if(overlay)overlay.style.display='none'; if(content)content.style.display='block'; return; }
+      function check(){
+        if(input && input.value.trim().toUpperCase()==='JTT'){
+          sessionStorage.setItem('jtt_auth','1');
+          if(overlay)overlay.style.display='none';
+          if(content)content.style.display='block';
+        } else {
+          if(err)err.style.display='block';
+        }
+      }
+      if(btn)btn.addEventListener('click',check);
+      if(input)input.addEventListener('keydown',function(e){ if(e.key==='Enter')check(); });
+    })();
   </script>
+  </div><!-- /dashboardContent -->
 </body>
 </html>
