@@ -1034,7 +1034,7 @@
       document.getElementById('novedadesCount').textContent = count;
     }
 
-    function recordNovedad(emp, tipo, nota, payload) {
+    function recordNovedad(emp, nombre, tipo, nota, payload) {
       var body = document.getElementById('tablaNovedadesBody');
       body.querySelectorAll('tr').forEach(function(row) {
         if (row.querySelector('.empty-state')) row.remove();
@@ -1042,9 +1042,10 @@
       var timestamp = new URLSearchParams(payload).get('timestamp');
       var row = document.createElement('tr');
       row.dataset.day = operationDay(timestamp);
-      var employee = events.find(function(person) { return person.uid === emp; });
+      var employee = (workers||[]).find(function(person) { return String(person.uid||'').toUpperCase() === String(emp||'').toUpperCase(); });
+      var displayName = nombre || (employee ? employee.nombre : emp);
       [new Date(timestamp).toLocaleTimeString('es-CO', {timeZone: 'America/Bogota', hour12: false}),
-        employee ? employee.nombre : emp, tipo, nota].forEach(function(value) {
+        displayName, tipo, nota].forEach(function(value) {
         var cell = document.createElement('td');
         cell.textContent = value;
         row.appendChild(cell);
@@ -1105,7 +1106,7 @@
         .then(function(r) { return r.json(); })
         .then(function(d) {
           if (d.status === 'ok') {
-            recordNovedad(emp, tipo, nota, payload);
+            recordNovedad(emp, nombreSel, tipo, nota, payload);
             if (novFeedback) novFeedback.textContent = 'Novedad registrada';
             novForm.classList.remove('is-open');
             novEmpleadoSel.value = ''; novTipoSel.value = ''; novNota.value = '';
