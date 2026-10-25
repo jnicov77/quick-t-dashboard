@@ -1068,15 +1068,17 @@
 
     if (btnNewNov) btnNewNov.addEventListener('click', function() {
       novForm.classList.add('is-open');
-      // Poblar empleados
+      // Poblar empleados desde workers (lista completa)
       if (novEmpleadoSel) {
         novEmpleadoSel.innerHTML = '<option value="">Seleccionar...</option>';
         var seen = {};
-        events.forEach(function(e) {
+        var src = (workers && workers.length) ? workers : events;
+        src.forEach(function(e) {
           var id = e.uid || e.identificacion;
+          var name = e.nombre && e.nombre !== 'Sin nombre' ? e.nombre : '';
           if (id && !seen[id]) {
             seen[id] = true;
-            novEmpleadoSel.innerHTML += '<option value="' + id + '">' + (e.nombre||'Sin nombre') + ' (' + id + ')</option>';
+            novEmpleadoSel.innerHTML += '<option value="' + id + '">' + (name || id) + '</option>';
           }
         });
       }
