@@ -1099,7 +1099,8 @@
         return;
       }
       if (btnSaveNov) btnSaveNov.disabled = true;
-      var payload = 'identificacion=' + encodeURIComponent(emp) + '&nombre=' + encodeURIComponent(emp) + '&tipo=' + encodeURIComponent(tipo) + '&nota=' + encodeURIComponent(nota) + '&timestamp=' + encodeURIComponent(new Date().toISOString());
+      var nombreSel = novEmpleadoSel.options[novEmpleadoSel.selectedIndex].textContent.trim();
+      var payload = 'identificacion=' + encodeURIComponent(emp) + '&nombre=' + encodeURIComponent(nombreSel) + '&tipo=' + encodeURIComponent(tipo) + '&nota=' + encodeURIComponent(nota) + '&timestamp=' + encodeURIComponent(new Date().toISOString());
       fetch(APPS_SCRIPT_URL + '?action=novedad', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: payload })
         .then(function(r) { return r.json(); })
         .then(function(d) {
