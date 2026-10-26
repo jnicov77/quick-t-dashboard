@@ -844,7 +844,7 @@
       var t = String(value||'').trim(), m = t.match(/^(?:\d{4}-\d{2}-\d{2}[ T])?(\d{2}:\d{2}(?::\d{2})?)/);
       if (m) return m[1];
       var d = new Date(t);
-      var z=new Date(d.getTime()+5*3600000);return isNaN(z.getTime())?'—' : d.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      return isNaN(d.getTime()) ? '—' : d.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
     }
 
     function normalize(row) {
