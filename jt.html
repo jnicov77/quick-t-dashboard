@@ -1181,7 +1181,7 @@
     setInterval(function(){
       var d=new Date();
       var el=document.getElementById('liveClock');
-      if(el)el.textContent=d.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      if(el)el.textContent=d.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
     },1000);
 
     // ═══ LOGIN ═══
