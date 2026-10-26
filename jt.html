@@ -886,15 +886,17 @@
       (workers || []).forEach(function(person, index) {
         var name = String(person.nombre || '').trim();
         if (!name || name === 'Sin nombre') return;
-        if (area && areaKey(person.area) !== areaKey(area)) return;
         var uid = String(person.uid || person.identificacion || '').trim().toUpperCase();
         var key = uid && uid !== '—' ? uid : 'worker-' + index;
-        if (!roster.has(key)) roster.set(key, {entrada: false, salida: false});
+        if (!roster.has(key)) roster.set(key, {entrada: false, salida: false, area: String(person.area || '')});
       });
       var today = operationDay(new Date().toISOString());
       eventRows.forEach(function(row) {
         var fields = {};
         Object.keys(row).forEach(function(key) { fields[key.trim().toLowerCase()] = row[key]; });
+        var eventArea = String(fields.area || '').trim();
+        // Si hay filtro de area, solo contar eventos de esa area
+        if (area && areaKey(eventArea) !== areaKey(area)) return;
         var uid = String(fields.uid || fields.identificacion || '').trim().toUpperCase();
         var worker = roster.get(uid);
         if (!worker) return;
@@ -910,7 +912,7 @@
         if (worker.salida) salidas++;
         if (!worker.entrada && !worker.salida) sinMarcacion++;
       });
-      var total = workers === null ? '—' : roster.size;
+      var total = workers === null ? '—' : (area ? Array.from(roster.values()).filter(function(w){return areaKey(w.area) === areaKey(area)}).length : roster.size);
       var ready = workers !== null && loadState === 'ready';
       document.getElementById('statEntradas').textContent = ready ? entradas : '—';
       document.getElementById('statSalidas').textContent = ready ? salidas : '—';
