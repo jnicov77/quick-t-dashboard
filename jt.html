@@ -938,9 +938,14 @@
         if (uid && person.area) assignedAreas.set(uid, person.area);
       });
       
+      // La tabla muestra SOLO el dia operativo de hoy: la hoja `eventos`
+      // acumula todos los dias, y sin este filtro la tabla se llenaba con
+      // filas de dias previos (las metricas ya filtraban por dia).
+      var today = operationDay(new Date().toISOString());
       var visible = events.filter(function(e) {
         var area = assignedAreas.get(String(e.uid).trim().toUpperCase()) || e.area;
         if (selectedArea && areaKey(area) !== areaKey(selectedArea)) return false;
+        if (operationDay(e.entrada || e.salida) !== today) return false;
         if (q && (e.nombre+' '+e.uid).toLowerCase().indexOf(q.toLowerCase()) === -1) return false;
         if (estadoFilter && e.estado !== estadoFilter) return false;
         return true;
