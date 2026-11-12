@@ -350,6 +350,25 @@
     }
     .time-empty { color: var(--primary-60); }
 
+    /* Multi-marcaciones: tramos del día por empleado */
+    .tramos { display: flex; flex-direction: column; gap: 4px; }
+    .tramo {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-variant-numeric: tabular-nums;
+      font-size: 13px; color: var(--primary);
+      white-space: nowrap;
+    }
+    .tramo--abierto { color: var(--green); font-weight: 600; }
+    .tramo b { font-weight: 500; color: var(--primary-60); font-size: 12px; }
+    .horas-cell {
+      font-family: 'Space Grotesk', sans-serif;
+      font-variant-numeric: tabular-nums;
+      font-size: 14px; font-weight: 600; color: var(--primary);
+      white-space: nowrap;
+    }
+    .horas-curso { display: block; font-size: 11px; font-weight: 500; color: var(--primary-60); }
+
     /* ESTADO TAGS (3 estados: Ingreso verde, Salida ámbar, Sin Registro gris) */
     .tag {
       display: inline-flex; align-items: center; gap: 4px;
@@ -593,11 +612,11 @@
     <section aria-label="Métricas del día">
       <div class="metrics-grid" id="metricsGrid">
         <div class="metric-card">
-          <div class="metric-label">Entradas</div>
+          <div class="metric-label">Entradas registradas</div>
           <div class="metric-value" id="statEntradas">—</div>
         </div>
         <div class="metric-card">
-          <div class="metric-label">Salidas</div>
+          <div class="metric-label">Salidas registradas</div>
           <div class="metric-value" id="statSalidas">—</div>
         </div>
         <div class="metric-card" id="empleadosCard">
@@ -616,7 +635,7 @@
       <div class="section-head">
         <div>
           <div class="section-title" id="secSeguimiento">Seguimiento Personal</div>
-          <div class="section-subtitle">Últimos movimientos del día</div>
+          <div class="section-subtitle" id="seguimientoResumen">Últimos movimientos del día</div>
         </div>
 
       </div>
@@ -635,8 +654,8 @@
         </div>
         <div class="chips" id="filterChips" role="tablist">
           <button class="chip is-active" data-filter="" type="button">Todos</button>
-          <button class="chip" data-filter="ingreso" type="button">Ingreso</button>
-          <button class="chip" data-filter="salida" type="button">Salida</button>
+          <button class="chip" data-filter="ingreso" type="button">Dentro</button>
+          <button class="chip" data-filter="salida" type="button">Ya salió</button>
           <button class="chip" data-filter="sin-registro" type="button">Sin Registro</button>
         </div>
       </div>
@@ -647,8 +666,8 @@
             <tr>
               <th>Empleado</th>
               <th>Área / dispositivo</th>
-              <th>Hora entrada</th>
-              <th>Hora salida</th>
+              <th>Tramos del día (entradas y salidas)</th>
+              <th>Horas trabajadas</th>
               <th>Estado</th>
             </tr>
           </thead>
@@ -848,21 +867,42 @@
       return '—';
     }
 
-    function normalize(row) {
-      var f = {}; Object.keys(row).forEach(function(k){f[k.trim().toLowerCase()]=String(row[k]||'').trim()});
-      var area = f.area||f.location||'';
-      var uid = f.uid || f.identificacion || '—';
+    // Una fila de `?action=jornadas`: el empleado con TODAS sus marcas del día.
+    function normalizeJornada(j, fecha) {
+      var marcas = (j.marcas||[]).map(function(m){
+        return { hora: String(m.hora||''),
+                 accion: String(m.accion||'').toUpperCase()==='SALIDA' ? 'SALIDA' : 'ENTRADA' };
+      });
+      var uid = String(j.uid||'').trim();
       return {
-        nombre: f.nombre||f.employee_name||'Sin nombre',
+        fecha: fecha || '',
+        nombre: String(j.nombre||'').trim() || ('UID ' + uid),
         uid: uid,
         identificacion: uid,
-        area: area||'Sin area',
-        action: f.action||(f.entrada&&!f.salida?'ENTRADA':f.salida&&!f.entrada?'SALIDA':'—'),
-        hora: eventHour(f.timestamp||f.entrada||f.salida),
-        entrada: f.entrada||'',
-        salida: f.salida||'',
-        estado: f.entrada&&!f.salida?'ingreso':f.salida?'salida':'sin-registro'
+        area: String(j.area||'').trim() || 'Sin area',
+        marcas: marcas,
+        tramos: (j.tramos||[]).map(function(t){
+          return { entrada: String(t.entrada||''), salida: String(t.salida||''), minutos: Number(t.minutos||0) };
+        }),
+        abierto: String(j.abierto||''),
+        dentro: !!j.dentro,
+        minutosEnCurso: Number(j.minutosEnCurso||0),
+        totalMinutos: Number(j.totalMinutos||0),
+        pausaMinutos: Number(j.pausaMinutos||0),
+        ultima: marcas.length ? marcas[marcas.length-1].hora : '',
+        // Mismos valores que usan los chips de filtro: dentro / salió / sin marca
+        estado: !marcas.length ? 'sin-registro' : (j.dentro ? 'ingreso' : 'salida')
       };
+    }
+
+    function minutosTexto(min) {
+      var m = Math.max(0, Math.round(Number(min)||0));
+      return Math.floor(m/60) + 'h ' + String(m%60).padStart(2,'0') + 'm';
+    }
+
+    function corto(hora) {
+      var t = String(hora||'').trim();
+      return t ? t.slice(0,5) : '—';
     }
 
     function areaKey(area) {
@@ -883,42 +923,59 @@
     function updateMetrics(area) {
       document.getElementById('trabajadoresCard').hidden = !area;
       document.getElementById('empleadosCard').hidden = !!area;
-      var roster = new Map();
-      (workers || []).forEach(function(person, index) {
+
+      // Una sola lista de personas: el roster (empleados) + quien haya marcado.
+      // Cada marca cuenta: por eso alguien que entra y sale dos veces suma 2 y 2.
+      var gente = new Map();
+      function slot(uid, areaName, nombre) {
+        var k = String(uid || '').trim().toUpperCase();
+        if (!k || k === '—') return null;
+        var g = gente.get(k);
+        if (!g) { g = {area: '', entradas: 0, salidas: 0, dentro: false}; gente.set(k, g); }
+        if (areaName) g.area = areaName;
+        return g;
+      }
+      (workers || []).forEach(function(person) {
         var name = String(person.nombre || '').trim();
         if (!name || name === 'Sin nombre') return;
-        var uid = String(person.uid || person.identificacion || '').trim().toUpperCase();
-        var key = uid && uid !== '—' ? uid : 'worker-' + index;
-        if (!roster.has(key)) roster.set(key, {entrada: false, salida: false, area: String(person.area || '')});
+        slot(person.uid || person.identificacion, String(person.area || ''));
       });
-      var today = operationDay(new Date().toISOString());
-      eventRows.forEach(function(row) {
-        var fields = {};
-        Object.keys(row).forEach(function(key) { fields[key.trim().toLowerCase()] = row[key]; });
-        var eventArea = String(fields.area || '').trim();
-        // Si hay filtro de area, solo contar eventos de esa area
-        if (area && areaKey(eventArea) !== areaKey(area)) return;
-        var uid = String(fields.uid || fields.identificacion || '').trim().toUpperCase();
-        var worker = roster.get(uid);
-        if (!worker) return;
-        ['entrada', 'salida'].forEach(function(kind) {
-          var mark = fields[kind];
-          if (!mark && String(fields.action || '').toLowerCase() === kind) mark = fields.timestamp;
-          if (operationDay(mark) === today) worker[kind] = true;
+      events.forEach(function(e) {
+        var g = slot(e.uid, e.area);
+        if (!g) return;
+        e.marcas.forEach(function(m) {
+          if (m.accion === 'SALIDA') g.salidas++; else g.entradas++;
         });
+        g.dentro = e.dentro;
       });
-      var entradas = 0, salidas = 0, sinMarcacion = 0;
-      roster.forEach(function(worker) {
-        if (worker.entrada) entradas++;
-        if (worker.salida) salidas++;
-        if (!worker.entrada && !worker.salida) sinMarcacion++;
+
+      var entradas = 0, salidas = 0, dentro = 0, sinMarcacion = 0, total = 0;
+      gente.forEach(function(g) {
+        if (area && areaKey(g.area) !== areaKey(area)) return;
+        total++;
+        entradas += g.entradas;
+        salidas  += g.salidas;
+        if (g.dentro) dentro++;
+        if (!g.entradas && !g.salidas) sinMarcacion++;
       });
-      var total = workers === null ? '—' : (area ? Array.from(roster.values()).filter(function(w){return areaKey(w.area) === areaKey(area)}).length : roster.size);
-      var ready = workers !== null && loadState === 'ready';
+
+      var ready = loadState === 'ready';
       document.getElementById('statEntradas').textContent = ready ? entradas : '—';
       document.getElementById('statSalidas').textContent = ready ? salidas : '—';
       document.getElementById('statEmpleados').textContent = ready ? total : '—';
       document.getElementById('statTrabajadores').textContent = total;
+
+      var resumen = document.getElementById('seguimientoResumen');
+      if (resumen) {
+        if (!ready) {
+          resumen.textContent = 'Últimos movimientos del día';
+        } else {
+          var salieron = Math.max(0, total - dentro - sinMarcacion);
+          resumen.textContent = dentro + ' dentro · '
+            + salieron + (salieron === 1 ? ' ya salió' : ' ya salieron') + ' · '
+            + sinMarcacion + (sinMarcacion === 1 ? ' sin marcar' : ' sin marcar');
+        }
+      }
     }
 
     function render() {
@@ -945,7 +1002,7 @@
       var visible = events.filter(function(e) {
         var area = assignedAreas.get(String(e.uid).trim().toUpperCase()) || e.area;
         if (selectedArea && areaKey(area) !== areaKey(selectedArea)) return false;
-        if (operationDay(e.entrada || e.salida) !== today) return false;
+        if (e.fecha && e.fecha !== today) return false;
         if (q && (e.nombre+' '+e.uid).toLowerCase().indexOf(q.toLowerCase()) === -1) return false;
         if (estadoFilter && e.estado !== estadoFilter) return false;
         return true;
@@ -967,8 +1024,28 @@
       visible.slice(start, start + seguimientoPageSize).forEach(function(e) {
         var ini = (e.nombre||'?').charAt(0).toUpperCase();
         var cls = e.estado==='ingreso'?'tag--ingreso':e.estado==='salida'?'tag--salida':'tag--sin-registro';
-        var label = e.estado==='ingreso'?'Ingreso':e.estado==='salida'?'Salida':'Sin Registro';
-        tbody.innerHTML += '<tr><td><div class="emp-cell"><div class="avatar">'+ini+'</div><div><div class="emp-name">'+e.nombre+'</div><div class="emp-id">ID '+e.uid+'</div></div></div></td><td>'+e.area+'</td><td><span class="time-cell">'+(e.entrada?eventHour(e.entrada):'—')+'</span></td><td><span class="time-cell">'+(e.salida?eventHour(e.salida):'—')+'</span></td><td><span class="tag '+cls+'">'+label+'</span></td></tr>';
+        var label = e.estado==='ingreso'?'Dentro':e.estado==='salida'?'Salió':'Sin Registro';
+
+        // TODOS los tramos del día: tantas entradas y salidas como haya hecho.
+        var tramos = (e.tramos||[]).map(function(t){
+          return '<span class="tramo" title="'+t.entrada+' → '+t.salida+'">'
+               + corto(t.entrada) + ' → ' + corto(t.salida)
+               + ' <b>(' + minutosTexto(t.minutos) + ')</b></span>';
+        });
+        if (e.dentro) {
+          tramos.push('<span class="tramo tramo--abierto" title="'+e.abierto+' → sin salida todavía">'
+                    + corto(e.abierto) + ' → en curso</span>');
+        }
+        var celdaTramos = tramos.length
+          ? '<div class="tramos">' + tramos.join('') + '</div>'
+          : '<span class="time-cell time-empty">—</span>';
+
+        var horas = e.totalMinutos > 0 ? minutosTexto(e.totalMinutos) : (e.dentro ? '0h 00m' : '—');
+        if (e.dentro && e.minutosEnCurso > 0) {
+          horas += '<span class="horas-curso">+' + minutosTexto(e.minutosEnCurso) + ' en curso</span>';
+        }
+
+        tbody.innerHTML += '<tr><td><div class="emp-cell"><div class="avatar">'+ini+'</div><div><div class="emp-name">'+e.nombre+'</div><div class="emp-id">ID '+e.uid+'</div></div></div></td><td>'+e.area+'</td><td>'+celdaTramos+'</td><td><span class="horas-cell">'+horas+'</span></td><td><span class="tag '+cls+'">'+label+'</span></td></tr>';
       });
     }
 
@@ -996,17 +1073,24 @@
       if (syncLabel) syncLabel.textContent = 'Cargando...';
       var ctrl = new AbortController();
       var t = setTimeout(function(){ctrl.abort();},30000);
-      fetch(URL+'?action=today',{method:'GET',cache:'no-store',signal:ctrl.signal})
+      // `jornadas` trae TODAS las marcas del día ya emparejadas en tramos,
+      // con las horas trabajadas. Reemplaza a `today` (una fila por empleado).
+      fetch(URL+'?action=jornadas',{method:'GET',cache:'no-store',signal:ctrl.signal})
         .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
-        .then(function(d){if(!Array.isArray(d))throw new Error('Invalid');eventRows=d;events=d.map(normalize);loadState='ready';
+        .then(function(d){
+          var lista = (d && Array.isArray(d.empleados)) ? d.empleados : (Array.isArray(d) ? d : []);
+          var fecha = (d && d.fecha) ? d.fecha : '';
+          eventRows = lista;
+          events = lista.map(function(j){ return normalizeJornada(j, fecha); });
+          loadState = 'ready';
           // Cargar lista de empleados (workers) para metricas
           fetch(APPS_SCRIPT_URL+'?action=empleados').then(function(r){return r.json()}).then(function(data){
             if(Array.isArray(data)){workers=data;updateMetrics(selectedArea)}
           }).catch(function(){workers=[]});
-          if(syncLabel)syncLabel.textContent='Sincronizado';
-    if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});})
-        .catch(function(err){loadState='error';eventRows=[];events=[];if(syncLabel)syncLabel.textContent='Sincronizado';
-    if(syncLabel)syncLabel.textContent='Error: '+err.message;})
+          if(syncLabel)syncLabel.textContent='Sincronizado · '+new Date().toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour12:false});
+        })
+        .catch(function(err){loadState='error';eventRows=[];events=[];
+          if(syncLabel)syncLabel.textContent='Error: '+err.message;})
         .finally(function(){clearTimeout(t);if(refreshBtn)refreshBtn.disabled=false;render()});
     }
 
