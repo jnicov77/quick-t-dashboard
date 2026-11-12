@@ -943,9 +943,13 @@
       events.forEach(function(e) {
         var g = slot(e.uid, e.area);
         if (!g) return;
-        e.marcas.forEach(function(m) {
-          if (m.accion === 'SALIDA') g.salidas++; else g.entradas++;
-        });
+        // Se cuentan MOVIMIENTOS, no marcas: cada tramo cerrado es una entrada
+        // y una salida; si quedó un tramo abierto, esa entrada también cuenta.
+        // Contar marcas sueltas inflaba el número con las filas viejas del
+        // historial (las salidas que el bug viejo dejó antes de la entrada).
+        var cerrados = (e.tramos || []).length;
+        g.entradas += cerrados + (e.dentro ? 1 : 0);
+        g.salidas  += cerrados;
         g.dentro = e.dentro;
       });
 
