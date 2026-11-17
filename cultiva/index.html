@@ -2479,12 +2479,29 @@ function renderMe(){
   </div>
   ${standalone||window.claude?'':`<div class="card" style="margin-top:22px;display:grid;gap:12px"><div style="display:flex;gap:10px;align-items:center"><span style="width:26px;display:inline-flex;color:var(--primary)">${I.dl}</span><b>Instala la app</b></div>
     <p style="font-size:14px;color:var(--muted)">${deferredInstall?'Agrégala a tu pantalla de inicio y úsala sin conexión.':isIOS?'En Safari, toca Compartir y luego “Agregar a inicio”.':'En el menú del navegador, elige “Instalar app” o “Agregar a pantalla de inicio”.'}</p>${deferredInstall?'<button class="btn" id="inst">Instalar</button>':''}</div>`}
-  <div style="margin-top:22px;display:grid;gap:8px;justify-items:center"><button class="linkish" id="reset">Reiniciar mi progreso de aprendizaje</button>
+  <div style="margin-top:22px;display:grid;gap:8px;justify-items:center"><button class="linkish" id="upd">Actualizar la app</button>
+  <p class="fine" style="margin:0 0 4px">Si no ves los últimos cambios. No borra tus cultivos ni tu progreso.</p>
+  <button class="linkish" id="reset">Reiniciar mi progreso de aprendizaje</button>
   <p class="fine">Contenido basado en el Manual Completo de Cultivo de ROXS Bio Filtros. Solo para mayores de 18 años.</p></div>`;
   wireSelects($app);
   document.getElementById('goal-s').addEventListener('change',e=>{ S.goal=+e.currentTarget.dataset.val; saveS(); toast('Meta actualizada'); });
   document.getElementById('pur-s').addEventListener('change',e=>{ S.purpose=e.currentTarget.dataset.val; saveS(); render(); toast('Enfoque actualizado'); });
   document.getElementById('snd').onclick=()=>{ S.sound=!S.sound; saveS(); render(); };
+  // Borra la copia guardada de la APP (service worker + caches del juego) y
+  // recarga. Nunca toca localStorage: los cultivos y el progreso no se pierden.
+  document.getElementById('upd').onclick=async()=>{
+    try{
+      if('serviceWorker' in navigator){
+        const rs=await navigator.serviceWorker.getRegistrations();
+        await Promise.all(rs.map(r=>r.unregister()));
+      }
+      if(window.caches){
+        const ks=await caches.keys();
+        await Promise.all(ks.filter(k=>k.indexOf('cultiva-')===0).map(k=>caches.delete(k)));
+      }
+    }catch(e){}
+    location.reload();
+  };
   document.getElementById('inst')?.addEventListener('click',async()=>{ try{ deferredInstall.prompt(); await deferredInstall.userChoice; }catch(e){} deferredInstall=null; render(); });
   document.getElementById('reset').onclick=()=>modal(`<div class="row">${wd('triste','sad')}<div><h2>¿Reiniciar tu aprendizaje?</h2><p>Se borran tu XP, racha, lecciones y logros. Tus cultivos se conservan.</p></div></div><button class="btn ghost" data-m="no">Cancelar</button><button class="btn bad" data-m="yes">Reiniciar</button>`,
     v=>{ if(v!=='yes') return; const keep={age:true, onboarded:false, deletedCrops:S.deletedCrops}; S=Object.assign(fresh(),keep); saveS(); render(); });
