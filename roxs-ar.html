@@ -17,23 +17,23 @@
   #world { position:fixed; top:0; left:0; width:100%; height:100%; z-index:10; perspective:1000px; pointer-events:none; }
 
   /* HUD flotante */
-  #hud { position:absolute; bottom:50%; left:50%; width:320px; max-width:calc(100vw - 24px); margin-left:-160px; transform:translateY(35%); text-align:center; display:none; }
-  #panel { background:rgba(13,13,13,.44); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.14); border-radius:24px; padding:18px 16px 15px; box-shadow:0 14px 44px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.07); }
+  #hud { position:absolute; bottom:50%; left:50%; width:290px; max-width:calc(100vw - 20px); margin-left:-145px; transform:translateY(35%); text-align:center; display:none; }
+  #panel { background:rgba(13,13,13,.44); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.14); border-radius:20px; padding:14px 13px 12px; box-shadow:0 14px 44px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.07); }
 
-  #gauges { display:flex; justify-content:center; gap:16px; }
-  .gauge { position:relative; width:86px; height:86px; filter:drop-shadow(0 0 14px currentColor); }
-  .gauge svg { width:86px; height:86px; }
+  #gauges { display:flex; justify-content:center; gap:13px; }
+  .gauge { position:relative; width:68px; height:68px; filter:drop-shadow(0 0 14px currentColor); }
+  .gauge svg { width:68px; height:68px; }
   .gauge .ring-bg { fill:none; stroke:rgba(255,255,255,.09); stroke-width:4; }
   .gauge .ring-fill { fill:none; stroke-width:4; stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset .8s; filter:drop-shadow(0 0 7px currentColor); }
-  .gauge .val { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:17px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+  .gauge .val { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:14px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
 
-  #labels { display:flex; justify-content:center; gap:16px; margin-top:6px; }
-  #labels span { width:86px; font-size:9px; letter-spacing:.14em; font-weight:700; opacity:.9; }
+  #labels { display:flex; justify-content:center; gap:13px; margin-top:5px; }
+  #labels span { width:68px; font-size:8px; letter-spacing:.14em; font-weight:700; opacity:.9; }
 
-  #rec { font-size:13px; line-height:1.5; font-weight:650; margin:14px auto 0; max-width:290px; text-wrap:balance; }
-  #rec.small { font-size:11.5px; font-weight:500; }
-  #info { font-size:10px; margin-top:9px; color:rgba(255,255,255,.62); font-variant-numeric:tabular-nums; letter-spacing:.02em; }
-  #hint { font-size:9.5px; margin-top:7px; color:var(--muted); letter-spacing:.02em; }
+  #rec { font-size:11.5px; line-height:1.45; font-weight:650; margin:12px auto 0; max-width:245px; text-wrap:balance; }
+  #rec.small { font-size:10.5px; font-weight:500; }
+  #info { font-size:9px; margin-top:8px; color:rgba(255,255,255,.62); font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+  #hint { font-size:8.5px; margin-top:6px; color:var(--muted); letter-spacing:.02em; }
 
   /* Pantalla de inicio */
   #start { position:fixed; inset:0; z-index:30; display:flex; align-items:center; justify-content:center; padding:22px; background:radial-gradient(ellipse 460px 340px at 50% 22%,rgba(212,168,67,.10),transparent),rgba(0,0,0,.86); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
@@ -78,23 +78,23 @@
     <div id="panel">
       <div id="gauges">
         <div class="gauge" style="color:#00D4D4">
-          <svg viewBox="0 0 86 86">
-            <circle class="ring-bg" cx="43" cy="43" r="36"/>
-            <circle class="ring-fill" id="ringT" cx="43" cy="43" r="36" stroke="#00D4D4" stroke-dasharray="226" stroke-dashoffset="226"/>
+          <svg viewBox="0 0 68 68">
+            <circle class="ring-bg" cx="34" cy="34" r="28"/>
+            <circle class="ring-fill" id="ringT" cx="34" cy="34" r="28" stroke="#00D4D4" stroke-dasharray="175.93" stroke-dashoffset="175.93"/>
           </svg>
           <div class="val" id="arTemp">--</div>
         </div>
         <div class="gauge" style="color:#00E676">
-          <svg viewBox="0 0 86 86">
-            <circle class="ring-bg" cx="43" cy="43" r="36"/>
-            <circle class="ring-fill" id="ringH" cx="43" cy="43" r="36" stroke="#00E676" stroke-dasharray="226" stroke-dashoffset="226"/>
+          <svg viewBox="0 0 68 68">
+            <circle class="ring-bg" cx="34" cy="34" r="28"/>
+            <circle class="ring-fill" id="ringH" cx="34" cy="34" r="28" stroke="#00E676" stroke-dasharray="175.93" stroke-dashoffset="175.93"/>
           </svg>
           <div class="val" id="arHum">--</div>
         </div>
         <div class="gauge" style="color:#B388FF">
-          <svg viewBox="0 0 86 86">
-            <circle class="ring-bg" cx="43" cy="43" r="36"/>
-            <circle class="ring-fill" id="ringV" cx="43" cy="43" r="36" stroke="#B388FF" stroke-dasharray="226" stroke-dashoffset="226"/>
+          <svg viewBox="0 0 68 68">
+            <circle class="ring-bg" cx="34" cy="34" r="28"/>
+            <circle class="ring-fill" id="ringV" cx="34" cy="34" r="28" stroke="#B388FF" stroke-dasharray="175.93" stroke-dashoffset="175.93"/>
           </svg>
           <div class="val" id="arVPD">--</div>
         </div>
@@ -141,7 +141,7 @@ function getRec(t,h,v){
   return r;
 }
 
-var circ=2*Math.PI*36;
+var circ=2*Math.PI*28;
 
 function freshness(at){
   if(!at) return 'sin hora del dato';

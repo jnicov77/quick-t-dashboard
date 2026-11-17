@@ -84,18 +84,20 @@
     .guide summary { cursor:pointer; font-size:11px; color:#C8C6BE; min-height:48px; padding:15px 0; }
     .guide p { font-size:11px; line-height:1.7; color:var(--muted); margin:0 0 14px; }
     .guide strong { color:#DDD6C4; font-weight:600; }
-    .spark-card { border:1px solid rgba(255,255,255,.1); border-radius:18px; background:linear-gradient(160deg,rgba(255,255,255,.035),rgba(255,255,255,.012)); padding:4px 16px 8px; }
-    .spark-row { padding:12px 0; }
-    .spark-row + .spark-row { border-top:1px solid rgba(255,255,255,.05); }
-    .spark-head { display:flex; align-items:baseline; gap:6px; margin-bottom:7px; }
-    .spark-name { font-size:11px; color:#D8DDD9; }
-    .spark-val { margin-left:auto; font-size:14px; font-weight:750; color:var(--accent); font-variant-numeric:tabular-nums; }
-    .spark-unit { font-size:9px; color:var(--muted); }
-    .spark-box { position:relative; height:42px; }
-    .spark-box canvas { width:100%; height:42px; display:block; }
+    .spark-card { border:1px solid rgba(255,255,255,.1); border-radius:18px; background:linear-gradient(160deg,rgba(255,255,255,.035),rgba(255,255,255,.012)); padding:16px 16px 14px; }
+    .spark-canvas { position:relative; height:132px; }
+    .spark-canvas canvas { width:100%; height:132px; display:block; }
     .spark-empty { position:absolute; inset:0; display:grid; place-items:center; font-size:10px; color:var(--muted); }
-    .spark-foot { display:flex; justify-content:space-between; font-size:9px; color:var(--muted); margin-top:5px; font-variant-numeric:tabular-nums; }
-    .spark-note { font-size:10px; color:var(--muted); line-height:1.6; margin:10px 0 0; text-align:center; }
+    .spark-legend { margin-top:13px; padding-top:5px; border-top:1px solid rgba(255,255,255,.06); }
+    .lg { display:grid; grid-template-columns:auto 1fr auto auto; align-items:baseline; gap:2px 7px; padding:8px 0; }
+    .lg + .lg { border-top:1px solid rgba(255,255,255,.045); }
+    .lg-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 7px var(--accent); align-self:center; }
+    .lg-name { font-size:11px; color:#D8DDD9; }
+    .lg-val { font-size:14px; font-weight:750; color:var(--accent); font-variant-numeric:tabular-nums; }
+    .lg-unit { font-size:9px; color:var(--muted); }
+    .lg-range { grid-column:2 / -1; font-size:9px; color:var(--muted); font-variant-numeric:tabular-nums; }
+    .spark-note { font-size:10px; color:var(--muted); line-height:1.65; margin:12px 0 0; }
+    .spark-note b { color:#DDD6C4; font-weight:600; }
     .foot { text-align:center; padding-top:22px; }
     .privacy { color:var(--muted); font-size:10px; display:flex; justify-content:center; align-items:center; gap:6px; margin-bottom:15px; }
     .signature { border-top:1px solid #ffffff0d; padding-top:16px; margin:0; font-size:11px; letter-spacing:.06em; color:var(--gold); }
@@ -150,23 +152,17 @@
     </section>
     <p class="last-reading" id="lastReading">Última lectura: esperando datos</p>
     <div class="section-heading" style="margin-top:26px"><h2>TENDENCIA DE LA SESIÓN</h2><span class="live-label" id="sparkLabel">Esperando datos</span></div>
-    <section class="spark-card" id="sparkCard" aria-label="Gráfica de la tendencia de la sesión">
-      <div class="spark-row" style="--accent:var(--cyan)">
-        <div class="spark-head"><span class="spark-name">🌡️ Temperatura</span><span class="spark-val" id="spT">--</span><span class="spark-unit">°C</span></div>
-        <div class="spark-box"><canvas id="spTc" aria-hidden="true"></canvas><span class="spark-empty" id="spTe">Esperando lecturas…</span></div>
-        <div class="spark-foot"><span id="spTmin">mín —</span><span id="spTmax">máx —</span></div>
+    <section class="spark-card" id="sparkCard" aria-label="Gráfica de control de la sesión">
+      <div class="spark-canvas">
+        <canvas id="sparkAll" aria-hidden="true"></canvas>
+        <span class="spark-empty" id="sparkEmpty">Esperando lecturas…</span>
       </div>
-      <div class="spark-row" style="--accent:var(--green)">
-        <div class="spark-head"><span class="spark-name">💧 Humedad relativa</span><span class="spark-val" id="spH">--</span><span class="spark-unit">%</span></div>
-        <div class="spark-box"><canvas id="spHc" aria-hidden="true"></canvas><span class="spark-empty" id="spHe">Esperando lecturas…</span></div>
-        <div class="spark-foot"><span id="spHmin">mín —</span><span id="spHmax">máx —</span></div>
+      <div class="spark-legend">
+        <div class="lg" style="--accent:var(--cyan)"><span class="lg-dot" aria-hidden="true"></span><span class="lg-name">🌡️ Temperatura</span><span class="lg-val" id="spT">--</span><span class="lg-unit">°C</span><span class="lg-range" id="spTrange">sin datos todavía</span></div>
+        <div class="lg" style="--accent:var(--green)"><span class="lg-dot" aria-hidden="true"></span><span class="lg-name">💧 Humedad relativa</span><span class="lg-val" id="spH">--</span><span class="lg-unit">%</span><span class="lg-range" id="spHrange">sin datos todavía</span></div>
+        <div class="lg" style="--accent:var(--purple)"><span class="lg-dot" aria-hidden="true"></span><span class="lg-name">📊 Déficit de presión de vapor</span><span class="lg-val" id="spV">--</span><span class="lg-unit">kPa</span><span class="lg-range" id="spVrange">sin datos todavía</span></div>
       </div>
-      <div class="spark-row" style="--accent:var(--purple)">
-        <div class="spark-head"><span class="spark-name">📊 Déficit de presión de vapor</span><span class="spark-val" id="spV">--</span><span class="spark-unit">kPa</span></div>
-        <div class="spark-box"><canvas id="spVc" aria-hidden="true"></canvas><span class="spark-empty" id="spVe">Esperando lecturas…</span></div>
-        <div class="spark-foot"><span id="spVmin">mín —</span><span id="spVmax">máx —</span></div>
-      </div>
-      <p class="spark-note" id="sparkNote">Solo se guarda en esta pantalla, mientras la página está abierta. Al cerrarla, se borra.</p>
+      <p class="spark-note" id="sparkNote">Los tres datos en <b>una sola gráfica</b>. Cada línea se estira a su propio mínimo y máximo de la sesión, así se ve la <b>forma</b> de las tres y se comparan de un vistazo; para el valor exacto está la leyenda. Solo se guarda en esta pantalla: al cerrar la página, se borra.</p>
     </section>
     <details class="guide"><summary>Conexión y acceso desde tu celular</summary><p><strong>Primera conexión:</strong> activá Bluetooth, encendé el sensor y tocá Conectar. Elegí ROXS-Garden. Luego intentaremos recuperar el dispositivo autorizado y reconectar si se pierde la señal.</p><p><strong>Navegadores:</strong> Chrome en Android o Chrome/Edge en una computadora con Bluetooth. Safari en iPhone/iPad no admite Web Bluetooth. La reconexión al abrir depende de los permisos y del navegador.</p><p><strong>Acceso rápido:</strong> en el menú del navegador elegí «Agregar a pantalla de inicio» o «Instalar aplicación», si está disponible. La página necesita HTTPS para usar Bluetooth. Esta edición de un solo archivo no garantiza la reapertura sin internet; las lecturas no usan internet una vez abierta.</p><p><strong>Cómo leer el panel:</strong> las flechas comparan con la lectura anterior; no indican por sí solas un estado bueno o malo. Los anillos usan escalas de 0–50 °C, 0–100 % y 0–3 kPa. La guía VPD es orientativa y depende de la especie y etapa de cultivo.</p></details>
 <footer class="foot"><div class="privacy"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3Z"/><path d="M5 8l2 2 4-4"/></svg> Sin cuentas · Sin nube · Directo a tu sensor</div><p class="signature">ROXS Lab · Quick-T</p></footer>
@@ -403,28 +399,27 @@ function update(d) {
   recordPoint(d);
 }
 
-// ═══ TENDENCIA DE LA SESIÓN ═══
+// ═══ TENDENCIA DE LA SESIÓN — gráfica de control con los 3 datos juntos ═══
 // Solo en memoria: al cerrar la página se borra, igual que el resto de la sesión.
 const HIST_MAX = 120;
 const HIST = {t:[], h:[], v:[]};
-const SPARKS = [
-  {key:'t', rgb:'0,212,212', canvas:'spTc', value:'spT', empty:'spTe', min:'spTmin', max:'spTmax', unit:'°C', precision:1, span:50},
-  {key:'h', rgb:'0,230,118', canvas:'spHc', value:'spH', empty:'spHe', min:'spHmin', max:'spHmax', unit:'%', precision:1, span:100},
-  {key:'v', rgb:'179,136,255', canvas:'spVc', value:'spV', empty:'spVe', min:'spVmin', max:'spVmax', unit:'kPa', precision:2, span:3}
+const SERIES = [
+  {key:'t', rgb:'0,212,212',   value:'spT', range:'spTrange', unit:'°C',  precision:1, span:50},
+  {key:'h', rgb:'0,230,118',   value:'spH', range:'spHrange', unit:'%',   precision:1, span:100},
+  {key:'v', rgb:'179,136,255', value:'spV', range:'spVrange', unit:'kPa', precision:2, span:3}
 ];
 
 function recordPoint(d) {
-  for (const s of SPARKS) {
+  for (const s of SERIES) {
     HIST[s.key].push(d[s.key]);
     if (HIST[s.key].length > HIST_MAX) HIST[s.key].shift();
   }
-  drawSparks();
+  drawChart();
 }
 
-function drawSpark(s) {
-  const canvas = $(s.canvas);
+function drawChart() {
+  const canvas = $('sparkAll');
   if (!canvas) return;
-  const data = HIST[s.key];
   const rect = canvas.parentElement.getBoundingClientRect();
   const w = Math.max(1, Math.round(rect.width));
   const h = Math.max(1, Math.round(rect.height));
@@ -434,82 +429,95 @@ function drawSpark(s) {
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, w, h);
-  const empty = $(s.empty);
-  if (data.length < 2) { if (empty) empty.hidden = false; return; }
-  if (empty) empty.hidden = true;
 
-  // Autoescala con amplitud mínima: una línea plana no se pega a los bordes.
-  const lo = Math.min.apply(null, data);
-  const hi = Math.max.apply(null, data);
-  const minSpan = s.span * 0.04;
-  let a = lo, b = hi;
-  if (b - a < minSpan) { const mid = (a + b) / 2; a = mid - minSpan / 2; b = mid + minSpan / 2; }
-  const pad = 5, plotH = h - pad * 2;
-  const X = i => (i / (data.length - 1)) * (w - 2) + 1;
-  const Y = v => pad + plotH * (1 - (v - a) / (b - a));
-
-  const gradient = ctx.createLinearGradient(0, pad, 0, h - pad);
-  gradient.addColorStop(0, 'rgba(' + s.rgb + ',.30)');
-  gradient.addColorStop(1, 'rgba(' + s.rgb + ',0)');
-  ctx.beginPath();
-  ctx.moveTo(X(0), Y(data[0]));
-  for (let i = 1; i < data.length; i++) ctx.lineTo(X(i), Y(data[i]));
-  ctx.lineTo(X(data.length - 1), h - pad);
-  ctx.lineTo(X(0), h - pad);
-  ctx.closePath();
-  ctx.fillStyle = gradient;
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(X(0), Y(data[0]));
-  for (let i = 1; i < data.length; i++) ctx.lineTo(X(i), Y(data[i]));
-  ctx.strokeStyle = 'rgb(' + s.rgb + ')';
-  ctx.lineWidth = 1.8;
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(X(data.length - 1), Y(data[data.length - 1]), 2.6, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgb(' + s.rgb + ')';
-  ctx.fill();
-
-  if ($(s.min)) $(s.min).textContent = 'mín ' + lo.toFixed(s.precision) + ' ' + s.unit;
-  if ($(s.max)) $(s.max).textContent = 'máx ' + hi.toFixed(s.precision) + ' ' + s.unit;
-}
-
-function drawSparks() {
-  for (const s of SPARKS) {
-    drawSpark(s);
-    const data = HIST[s.key];
-    if ($(s.value)) $(s.value).textContent = data.length ? data[data.length - 1].toFixed(s.precision) : '--';
-  }
   const n = HIST.t.length;
   const label = $('sparkLabel');
   if (label) label.textContent = n === 0 ? 'Esperando datos'
     : n === 1 ? '1 lectura'
     : n + ' lecturas' + (n >= HIST_MAX ? ' · últimas ' + HIST_MAX : '');
-  const note = $('sparkNote');
-  if (note) note.hidden = n === 0;
+
+  const empty = $('sparkEmpty');
+  if (empty) empty.hidden = n >= 2;
+  if (n < 2) return;
+
+  const pad = 6;
+  const plotH = h - pad * 2;
+
+  // Rejilla de control: los cuartos del alto.
+  ctx.strokeStyle = 'rgba(255,255,255,.055)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 3; i++) {
+    const y = Math.round(pad + plotH * (i / 4)) + 0.5;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+
+  const X = i => (i / (n - 1)) * (w - 2) + 1;
+
+  for (const s of SERIES) {
+    const data = HIST[s.key];
+    // Cada serie se estira a SU mínimo y máximo de la sesión, con una amplitud
+    // mínima para que una línea plana no se pegue a un borde. El alto es
+    // relativo a propósito: sirve para comparar tendencias, no valores.
+    const lo = Math.min.apply(null, data);
+    const hi = Math.max.apply(null, data);
+    const minSpan = s.span * 0.02;
+    let a = lo, b = hi;
+    if (b - a < minSpan) { const mid = (a + b) / 2; a = mid - minSpan / 2; b = mid + minSpan / 2; }
+    const Y = v => pad + plotH * (1 - (v - a) / (b - a));
+
+    const gradient = ctx.createLinearGradient(0, pad, 0, h - pad);
+    gradient.addColorStop(0, 'rgba(' + s.rgb + ',.20)');
+    gradient.addColorStop(1, 'rgba(' + s.rgb + ',0)');
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(data[0]));
+    for (let i = 1; i < data.length; i++) ctx.lineTo(X(i), Y(data[i]));
+    ctx.lineTo(X(data.length - 1), h - pad);
+    ctx.lineTo(X(0), h - pad);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(data[0]));
+    for (let i = 1; i < data.length; i++) ctx.lineTo(X(i), Y(data[i]));
+    ctx.strokeStyle = 'rgb(' + s.rgb + ')';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(X(data.length - 1), Y(data[data.length - 1]), 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgb(' + s.rgb + ')';
+    ctx.fill();
+
+    if ($(s.value)) $(s.value).textContent = data[data.length - 1].toFixed(s.precision);
+    if ($(s.range)) {
+      $(s.range).textContent = 'mín ' + lo.toFixed(s.precision) + ' · máx ' + hi.toFixed(s.precision) +
+                               ' ' + s.unit + ' · escala 0–' + s.span + ' ' + s.unit;
+    }
+  }
 }
 
 function resetSparks() {
-  for (const s of SPARKS) {
+  for (const s of SERIES) {
     HIST[s.key].length = 0;
     if ($(s.value)) $(s.value).textContent = '--';
-    if ($(s.min)) $(s.min).textContent = 'mín —';
-    if ($(s.max)) $(s.max).textContent = 'máx —';
+    if ($(s.range)) $(s.range).textContent = 'sin datos todavía';
   }
-  drawSparks();
+  drawChart();
 }
 
 let sparkResizeTimer = null;
 window.addEventListener('resize', () => {
   clearTimeout(sparkResizeTimer);
-  sparkResizeTimer = setTimeout(drawSparks, 150);
+  sparkResizeTimer = setTimeout(drawChart, 150);
 });
-window.addEventListener('orientationchange', () => setTimeout(drawSparks, 250));
-drawSparks();
+window.addEventListener('orientationchange', () => setTimeout(drawChart, 250));
+drawChart();
 
 $('connectBtn').addEventListener('click', () => { retries = 0; connect(false); });
 $('chooseBtn').addEventListener('click', () => { retries = 0; resetSparks(); connect(true); });
