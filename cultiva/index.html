@@ -158,7 +158,7 @@ p{margin:0}
 .tip{position:absolute;bottom:calc(100% + 12px);white-space:nowrap;background:var(--surface);border:2px solid var(--line);color:var(--go);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;border-radius:12px;animation:bob 1.6s ease-in-out infinite;z-index:3}
 .tip::after{content:"";position:absolute;left:50%;bottom:-8px;width:12px;height:12px;margin-left:-6px;background:var(--surface);border-right:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
 .node-label{margin-top:12px;font-size:13px;font-weight:700;color:var(--muted);max-width:140px;text-align:center}
-.path-deco{position:absolute;width:118px;pointer-events:none;opacity:.98}
+.path-deco{position:absolute;width:118px;pointer-events:none;opacity:.98;z-index:2}
 .soon{display:grid;gap:10px;margin-top:14px}
 .soon-item{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--locked);color:var(--locked-ink);font-weight:700;font-size:14px}
 .soon-item svg{width:22px;height:22px;flex:none}
@@ -249,6 +249,12 @@ p{margin:0}
 .addnote .btn{width:auto;min-height:46px;padding-inline:16px}
 .reco{display:flex;gap:12px;align-items:center}
 .reco img{width:56px;flex:none}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sm{background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:10px 6px;display:grid;gap:3px;justify-items:center;text-align:center}
+.sm .si{width:22px;height:22px}
+.sm .si svg{width:22px;height:22px;display:block}
+.sm b{font-family:var(--f-display);font-size:21px;line-height:1.15;color:var(--ink);letter-spacing:-.02em}
+.sm small{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .linkish{color:var(--muted);font-weight:700;font-size:14px;text-decoration:underline;text-underline-offset:3px;padding:6px}
 
@@ -1398,6 +1404,125 @@ async function cloudInit(){
   }catch(e){ Cloud.on=false; }
 }
 
+/* ---------- Sensor ROXS Garden (Bluetooth) ---------- */
+/* Los mismos UUID que el panel del dashboard: es el mismo aparato. Una lectura
+   entra como registro de clima con la forma del formulario manual, asi todo el
+   motor agronomico (rangos, alertas, tareas, tendencia) la usa sin cambios. */
+const SVC='4fafc201-1fb5-459e-8fcc-c5c9c331914b', CHR='beb5483e-36e1-4688-b7f5-ea07361b26a8';
+const SENSOR_GAP=30*60*1000;        // no mas de un registro automatico cada 30 min
+const Sensor={dev:null,char:null,on:false,busy:false,wired:false,last:null,at:0,err:''};
+
+function sensorSupported(){ try{ return !!(window.isSecureContext && navigator.bluetooth); }catch(e){ return false; } }
+function sensorFresh(){ return !!Sensor.at && (Date.now()-Sensor.at) < 10*60*1000; }
+function sensorLabel(){
+  if(!Sensor.at) return 'Sin lecturas todavía';
+  const s=Math.max(0,Math.floor((Date.now()-Sensor.at)/1000));
+  const h = s<60 ? s+' s' : s<3600 ? Math.floor(s/60)+' min' : Math.floor(s/3600)+' h';
+  return 'Lectura hace '+h;
+}
+// Recoge la ultima lectura que haya dejado el panel del sensor en este mismo
+// dispositivo (mismo origen, mismo localStorage). No inventa nada si no hay.
+function sensorPickUpPanel(){
+  try{
+    const o=JSON.parse(localStorage.getItem('roxs_last')||'null');
+    if(o && typeof o.t==='number' && typeof o.h==='number' && (!Sensor.at || (o.at||0)>Sensor.at)){
+      Sensor.last={t:o.t,h:o.h,v:typeof o.v==='number'?o.v:null}; Sensor.at=o.at||0;
+    }
+  }catch(e){}
+}
+function sensorOnReading(o){
+  if(!o || typeof o.t!=='number' || typeof o.h!=='number' || !isFinite(o.t) || !isFinite(o.h)) return;
+  Sensor.last={t:o.t,h:o.h,v:typeof o.v==='number'&&isFinite(o.v)?o.v:null};
+  Sensor.at=Date.now(); Sensor.err='';
+  try{ localStorage.setItem('roxs_last', JSON.stringify({t:o.t,h:o.h,v:Sensor.last.v,at:Sensor.at})); }catch(e){}
+  const c=UI.crop?cropById(UI.crop):null;
+  if(c && c.status!=='finalizado' && S.sensorAuto!==false && sensorAutoDue(c)) sensorLog(c,false);
+  else rerenderCrop(c);
+}
+function sensorAutoDue(c){
+  const r=[...c.logs].filter(l=>l.src==='sensor').sort((a,b)=>(a.ts||0)-(b.ts||0));
+  const last=r[r.length-1];
+  return !last || (Date.now()-(last.ts||0)) > SENSOR_GAP;
+}
+function sensorLog(c, manual){
+  const d=Sensor.last; if(!d) return false;
+  const l={id:uid(), d:today(), t:'clima', temp:Math.round(d.t*10)/10, hum:Math.round(d.h), src:'sensor', ts:Date.now()};
+  if(typeof d.v==='number') l.vpd=Math.round(d.v*100)/100;
+  c.logs.push(l);
+  let gain=false;
+  if(manual && S.trackDay!==today()){ S.trackDay=today(); addXP(2); gain=true; }
+  saveCrop(c);
+  const b=checkBadges(); saveS();
+  const al=alertsFor(c);
+  toast(b.length?`Logro: ${b[0].name}` : al.length?`Guardado. Ojo: ${al[0]}` : manual?`Lectura guardada${gain?' · +2 XP':''}`:'Lectura del sensor guardada');
+  return true;
+}
+function rerenderCrop(c){
+  const act=c || (UI.crop?cropById(UI.crop):null);
+  if(act && UI.view!=='hearts' && $app.className!=='app full') renderCropDetail(act);
+}
+function sensorDisconnected(){
+  Sensor.on=false; Sensor.err='Se perdió la señal. Acercá el sensor y volvé a conectar.';
+  rerenderCrop(null);
+}
+async function sensorConnect(){
+  if(Sensor.busy || Sensor.on) return;
+  if(!sensorSupported()) return toast('Este navegador no puede hablar con el sensor. Probá con Chrome en Android.');
+  Sensor.busy=true; Sensor.err=''; rerenderCrop(null);
+  try{
+    if(!Sensor.dev){
+      Sensor.dev=await navigator.bluetooth.requestDevice({filters:[{name:'ROXS-Garden'}],optionalServices:[SVC]});
+      Sensor.dev.addEventListener('gattserverdisconnected', sensorDisconnected);
+    }
+    const srv = Sensor.dev.gatt.connected ? Sensor.dev.gatt : await Sensor.dev.gatt.connect();
+    const svc = await srv.getPrimaryService(SVC);
+    Sensor.char = await svc.getCharacteristic(CHR);
+    if(!Sensor.wired){
+      Sensor.char.addEventListener('characteristicvaluechanged', e=>{
+        try{ sensorOnReading(JSON.parse(new TextDecoder().decode(e.target.value))); }
+        catch(err){ Sensor.err='La lectura llegó en un formato que no entendemos.'; rerenderCrop(null); }
+      });
+      Sensor.wired=true;
+    }
+    await Sensor.char.startNotifications();
+    Sensor.on=true; Sensor.err='';
+    const c=UI.crop?cropById(UI.crop):null;
+    if(c && c.status!=='finalizado' && S.sensorAuto!==false && sensorAutoDue(c)) sensorLog(c,false);
+    else toast('Sensor conectado');
+  }catch(e){
+    Sensor.on=false;
+    Sensor.err = (e && e.name==='NotFoundError') ? 'No elegiste ningún sensor.'
+      : (e && e.name==='SecurityError') ? 'Bluetooth necesita permiso del navegador.'
+      : 'No pudimos conectar. Revisá que el sensor esté encendido y cerca.';
+    toast(Sensor.err);
+  }finally{ Sensor.busy=false; rerenderCrop(null); }
+}
+function sensorCard(c){
+  const live=Sensor.last, on=Sensor.on, auto=S.sensorAuto!==false;
+  const saved=c.logs.filter(l=>l.src==='sensor').length;
+  const vals = live ? `<div class="sgrid">
+      <div class="sm"><span class="si" style="color:#E0602B">${I.thermo}</span><b>${live.t.toFixed(1)}</b><small>°C</small></div>
+      <div class="sm"><span class="si" style="color:#2C7FD6">${I.drop}</span><b>${live.h.toFixed(0)}</b><small>% HR</small></div>
+      <div class="sm"><span class="si" style="color:var(--primary)">${I.gauge}</span><b>${typeof live.v==='number'?live.v.toFixed(2):'—'}</b><small>kPa VPD</small></div>
+    </div>`
+    : `<p class="hint" style="text-align:left;margin:0">Encendé tu ROXS Garden, tocá <b>Conectar sensor</b> y elegí ROXS-Garden. Cada lectura entra como registro de clima, así el plan, las alertas y la tendencia usan lo que mide el aparato y no lo que uno se acuerda de anotar.</p>`;
+  return `<div class="card" style="display:grid;gap:12px">
+    <div class="chiprow" style="margin:0">
+      <span class="pill ${on?'ok':'none'}">${on?'Sensor conectado':'Sensor desconectado'}</span>
+      ${Sensor.at?`<span class="pill ${sensorFresh()?'ok':'warn'}">${sensorLabel()}</span>`:''}
+      ${saved?`<span class="pill">${saved} del sensor</span>`:''}
+    </div>
+    ${vals}
+    ${Sensor.err?`<p class="fine" style="text-align:left;max-width:none;color:var(--bad)">${esc(Sensor.err)}</p>`:''}
+    <div class="row-btns">
+      <button class="btn sm ${on?'ghost':'go'}" id="sens-c" style="flex:1" ${on?'disabled':''}>${I.bolt}${on?'Conectado':'Conectar'}</button>
+      <button class="btn sm ghost" id="sens-s" style="flex:1" ${live?'':'disabled'}>${I.check}Guardar lectura</button>
+    </div>
+    <div class="setting" style="border-bottom:0;padding-bottom:0"><span style="font-size:14px">Guardar sola cada 30 min</span><button class="switch" id="sens-a" role="switch" aria-checked="${auto}" aria-label="Guardar una lectura automáticamente cada 30 minutos"></button></div>
+    ${sensorSupported()?'':`<p class="fine" style="text-align:left;max-width:none">En iPhone el Bluetooth web no funciona (Safari no deja que una web pública hable con la red local). Probá desde Chrome en Android, o anotá el dato a mano.</p>`}
+  </div>`;
+}
+
 /* ---------- Progreso y juego ---------- */
 function refillHearts(){ const step=20*60*1000; if(S.hearts>=5){ S.heartsTs=Date.now(); return; } const n=Math.floor((Date.now()-S.heartsTs)/step); if(n>0){ S.hearts=Math.min(5,S.hearts+n); S.heartsTs+=n*step; } }
 function dailyXP(){ return S.daily.d===today()?S.daily.xp:0; }
@@ -1585,14 +1710,20 @@ function renderLearn(){
   const vNames=['Semilla','Germinación','Plántula','Vegetativa','Floración','Lista para cosecha'];
   const units = UNITS.map((u,ui)=>{
     const unlocked = isUnlocked(u.lessons[0].id), complete=u.lessons.every(l=>S.done[l.id]);
-    const nodes = u.lessons.map(l=>{
+    // Los nodos zigzaguean con estos desplazamientos. Se calculan primero para
+    // saber hacia que lado se va la unidad y poner a Widcy del otro lado.
+    const uOffs = u.lessons.map(()=>offs[k++ % offs.length]);
+    const firstNZ = uOffs.find(o=>o!==0) || 0;
+    const nodes = u.lessons.map((l,i)=>{
       const done=!!S.done[l.id], isCur=cur&&cur.id===l.id, open=isUnlocked(l.id);
-      const cls = done?'done':isCur?'cur':'lock', off = offs[k++ % offs.length];
-      return `<div class="node-wrap" style="transform:translateX(${off}px)">${isCur?`<span class="tip">Empezar</span>`:''}
+      const cls = done?'done':isCur?'cur':'lock';
+      return `<div class="node-wrap" style="transform:translateX(${uOffs[i]}px)">${isCur?`<span class="tip">Empezar</span>`:''}
         <button class="node ${cls}" data-lesson="${l.id}" ${open?'':'aria-disabled="true"'} aria-label="${esc(l.title)}${done?' (completada)':open?'':' (bloqueada)'}">${done?I.check:open?(I[l.icon]||I.leaf):I.lock}${S.done[l.id]?.pro?`<span class="crown">${I.star}</span>`:''}</button>
         <span class="node-label">${esc(l.title)}</span></div>`;
     }).join('');
-    const side = ui%2===0 ? 'left:-4px' : 'right:-4px';
+    // Del lado opuesto a los botones: si los nodos se van a la derecha, ella va a la
+    // izquierda. Antes alternaba por numero de unidad y por eso caia encima de los botones.
+    const side = firstNZ > 0 ? 'left:-4px' : 'right:-4px';
     const deco = `<span class="path-deco" style="${side};top:${u.lessons.length>2?70:40}px;width:${u.pose==='saludando'||u.pose==='triste'?78:104}px">${wd(u.pose,'still')}</span>`;
     const test = !complete && ui>0 && !unlocked ? `<div class="unit-actions"><button class="test-btn" data-test="${u.id}">${I.bolt}Saltar con examen</button></div>`:'';
     return `<section class="unit" id="unit-${u.id}"><div class="unit-head ${unlocked?u.cls:'u-locked'}"><div><div class="k">Unidad ${ui+1}</div><h2>${u.title}</h2><p>${u.sub}</p></div><span class="chap">${u.chap}</span></div>${test}<div class="path">${deco}${nodes}</div></section>`;
@@ -2039,6 +2170,7 @@ function renderCropDetail(c){
    ${c.status!=='finalizado'&&nextS?`<button class="btn go" id="cd-next">Pasar a ${nextS.n}</button>`:''}
    ${tasks.length?`<div class="sec-h"><h2>Pendiente hoy</h2><span class="k">${tasks.length}</span></div><div class="tasks">${tasks.map(t=>`<div class="task">${I.clock}<span>${esc(t)}</span></div>`).join('')}</div>`:''}
    ${c.status!=='finalizado'&&r?`<div class="sec-h"><h2>Registrar</h2><span class="k">Hoy ${fmtD(today())}</span></div>${catRows(c)}`:''}
+   ${c.status!=='finalizado'&&r?`<div class="sec-h"><h2>Sensor ROXS Garden</h2><span class="k">${Sensor.on?'En vivo':'Bluetooth'}</span></div>${sensorCard(c)}`:''}
    ${r&&hasTrend?`<div class="sec-h"><h2>Tendencia del clima</h2></div><div class="charts"><div class="chart"><h4>Temperatura °C</h4>${lineChart(c,'temp',r.t,'°','#E0602B')}</div><div class="chart"><h4>Humedad %</h4>${lineChart(c,'hum',r.h,'%','#2C7FD6')}</div></div>`:''}
    <div class="sec-h"><h2>Widcy te recomienda</h2></div>
    <div class="card" style="display:grid;gap:12px"><div class="reco">${wd('explicando','still',64)}<div style="min-width:0"><b style="font-size:14px">Lección: ${rec.title}</b><p style="font-size:14px;color:var(--muted)">Lo que necesitas saber para la etapa de ${stageObj(c.stage).n.toLowerCase()} (capítulo ${stageObj(c.stage).chap}).</p></div></div>
@@ -2054,6 +2186,13 @@ function renderCropDetail(c){
   document.getElementById('cd-back').onclick=()=>{ UI.crop=null; render(); };
   document.getElementById('cd-next')?.addEventListener('click',()=>stageForm(c));
   document.querySelectorAll('[data-log]').forEach(b=>b.onclick=()=>logForm(c,b.dataset.log));
+  document.getElementById('sens-c')?.addEventListener('click',sensorConnect);
+  document.getElementById('sens-s')?.addEventListener('click',()=>{ if(sensorLog(c,true)) renderCropDetail(c); });
+  document.getElementById('sens-a')?.addEventListener('click',e=>{
+    S.sensorAuto = S.sensorAuto===false ? true : false;
+    e.currentTarget.setAttribute('aria-checked', String(S.sensorAuto));
+    saveS();
+  });
   document.getElementById('cd-lesson').onclick=()=>{ if(S.done[rec.id]) startLesson(rec,{practice:true}); else if(S.hearts<=0) noHearts(); else startLesson(rec,{}); };
   document.getElementById('cd-cata')?.addEventListener('click',()=>cataForm(c));
   document.getElementById('cd-ficha').onclick=()=>fichaView(c);
@@ -2308,6 +2447,7 @@ document.addEventListener('keydown',e=>{
 try{ if(!window.claude && 'serviceWorker' in navigator && location.protocol==='https:'){ navigator.serviceWorker.register('sw.js').catch(()=>{}); } }catch(e){}
 function start(data){
   load();
+  sensorPickUpPanel();
   if(data && data.S){ S=Object.assign(fresh(), data.S); if(Array.isArray(data.CROPS)) CROPS=data.CROPS; }
   render();
   cloudInit();
