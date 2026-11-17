@@ -50,9 +50,6 @@
     .section-heading h2 { font-size:10px; font-weight:600; letter-spacing:.16em; color:var(--muted); margin:0; }
     .live-label { font-size:10px; color:var(--muted); }
     .readings { display:grid; gap:12px; }
-      .calendar-section { margin-top:24px; padding:0 4px; }
-  .calendar-section input, .calendar-section select { font-size:11px; }
-  .cal-grid div { padding:4px; border-radius:3px; }
   .card { --accent:var(--cyan); --rgb:0,212,212; position:relative; border:1px solid rgba(var(--rgb),.23); border-radius:20px; padding:17px 19px; background:linear-gradient(125deg,rgba(var(--rgb),.065),rgba(255,255,255,.015) 65%); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); box-shadow:0 8px 28px rgba(0,0,0,.2),0 0 30px rgba(var(--rgb),.045),inset 0 1px rgba(255,255,255,.035); transition:border-color .35s,box-shadow .35s,transform .35s,opacity .35s; overflow:hidden; }
     .card.h { --accent:var(--green); --rgb:0,230,118; }
     .card.p { --accent:var(--purple); --rgb:179,136,255; }
@@ -87,14 +84,24 @@
     .guide summary { cursor:pointer; font-size:11px; color:#C8C6BE; min-height:48px; padding:15px 0; }
     .guide p { font-size:11px; line-height:1.7; color:var(--muted); margin:0 0 14px; }
     .guide strong { color:#DDD6C4; font-weight:600; }
+    .spark-card { border:1px solid rgba(255,255,255,.1); border-radius:18px; background:linear-gradient(160deg,rgba(255,255,255,.035),rgba(255,255,255,.012)); padding:4px 16px 8px; }
+    .spark-row { padding:12px 0; }
+    .spark-row + .spark-row { border-top:1px solid rgba(255,255,255,.05); }
+    .spark-head { display:flex; align-items:baseline; gap:6px; margin-bottom:7px; }
+    .spark-name { font-size:11px; color:#D8DDD9; }
+    .spark-val { margin-left:auto; font-size:14px; font-weight:750; color:var(--accent); font-variant-numeric:tabular-nums; }
+    .spark-unit { font-size:9px; color:var(--muted); }
+    .spark-box { position:relative; height:42px; }
+    .spark-box canvas { width:100%; height:42px; display:block; }
+    .spark-empty { position:absolute; inset:0; display:grid; place-items:center; font-size:10px; color:var(--muted); }
+    .spark-foot { display:flex; justify-content:space-between; font-size:9px; color:var(--muted); margin-top:5px; font-variant-numeric:tabular-nums; }
+    .spark-note { font-size:10px; color:var(--muted); line-height:1.6; margin:10px 0 0; text-align:center; }
     .foot { text-align:center; padding-top:22px; }
     .privacy { color:var(--muted); font-size:10px; display:flex; justify-content:center; align-items:center; gap:6px; margin-bottom:15px; }
     .signature { border-top:1px solid #ffffff0d; padding-top:16px; margin:0; font-size:11px; letter-spacing:.06em; color:var(--gold); }
     noscript p { padding:16px; border:1px solid var(--red); font-size:13px; }
     @media(hover:hover) { .card:hover { border-color:rgba(var(--rgb),.45); box-shadow:0 0 38px rgba(var(--rgb),.11); transform:translateY(-2px); } .btn:not(:disabled):hover { box-shadow:0 5px 28px rgba(212,168,67,.24); } .rec:hover,.guide:hover { border-color:var(--gold); box-shadow:0 0 25px rgba(212,168,67,.07); } }
-    @media(max-width:350px) { .app { padding-left:16px; padding-right:16px; }   .calendar-section { margin-top:24px; padding:0 4px; }
-  .calendar-section input, .calendar-section select { font-size:11px; }
-  .cal-grid div { padding:4px; border-radius:3px; }
+    @media(max-width:350px) { .app { padding-left:16px; padding-right:16px; }
   .card { padding:16px; } .value { font-size:56px; } .dial { width:60px; height:60px; } .trend { font-size:9px; } }
     @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
   </style>
@@ -117,7 +124,6 @@
       <button class="btn" id="connectBtn" type="button">Conectar ROXS Garden</button>
       <button class="btn" id="reconnectBtn" type="button" hidden style="margin-top:6px;background:var(--cyan);border-color:var(--cyan);color:#0D0D0D" onclick="retries=0;connect(false)">🔄 Reconectar ahora</button>
       <button class="btn" id="arBtn" hidden onclick="window.open('roxs-ar.html','_blank')" style="background:linear-gradient(135deg,#00D4D4,var(--cyan));border-color:#00D4D4;color:#0D0D0D;margin-top:6px">🥽 Ver en Realidad Aumentada</button>
-      <button class="btn" id="guideBtn" hidden onclick="document.getElementById('guidePanel').hidden=!document.getElementById('guidePanel').hidden" style="background:linear-gradient(135deg,#B388FF,var(--purple));border-color:#B388FF;color:#fff;margin-top:6px">📖 Guía de Cultivo ROXS</button>
       <button class="secondary" id="chooseBtn" type="button" hidden>Elegir otro sensor</button>
     </section>
     <div class="section-heading"><h2>AMBIENTE DE TU CULTIVO</h2><span class="live-label" id="liveLabel">Esperando sensor</span></div>
@@ -137,72 +143,32 @@
     </section>
     <p class="last-reading" id="lastReading">Última lectura: esperando datos</p>
     <section class="rec" id="rec" aria-labelledby="recTitle">
-      <div class="eyebrow"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M10 2l2 5 6 3-6 2-2 6-2-6-6-2 6-3Z"/></svg> Guía de cultivo · VPD</div>
+      <div class="eyebrow"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M10 2l2 5 6 3-6 2-2 6-2-6-6-2 6-3Z"/></svg> Recomendación en vivo · VPD</div>
       <h2 id="recTitle">Cada lectura, una mejor decisión.</h2>
       <p id="recText">Conectá tu ROXS Garden para conocer el estado del ambiente y su recomendación.</p>
       <div class="scale" aria-hidden="true"><div class="scale-track"><i style="--segment:#00D4D4"></i><i style="--segment:#68DDDE"></i><i style="--segment:#00E676"></i><i style="--segment:#B388FF"></i><i style="--segment:#D4A843"></i><i style="--segment:#FF7184"></i></div><span class="scale-marker" id="vpdMarker" hidden></span><div class="scale-labels"><span>Bajo</span><span>Óptimo</span><span>Alto</span></div></div>
       <p class="rec-note" id="recNote" hidden>Última lectura guardada en pantalla; no es un dato en vivo.</p>
     </section>
-    <section id="guidePanel" hidden style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-top:10px;max-height:400px;overflow-y:auto;font-size:12px;line-height:1.7">
-<h3 style="color:var(--purple);margin:0 0 12px">📖 Guía de Cultivo ROXS</h3>
-<div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-<label style="font-size:10px;color:var(--muted)">Etapa actual:</label>
-<select id="guideStage" onchange="updateGuideComparison()" style="padding:5px 8px;background:#1a1a1a;border:1px solid #333;color:var(--gold);border-radius:6px;font-size:11px">
-<option>Germinación</option><option>Crecimiento</option><option>Floración</option><option>Cosecha</option></select>
-</div>
-<div id="guideComparison" style="font-size:11px;line-height:1.8;margin-bottom:12px"></div>
-<p style="color:var(--gold);font-style:italic">"Cultivar es, ante todo, un acto de libertad."</p>
-<p>Este manual es una brújula para reconectarte con el ritmo de la tierra. A medida que tus plantas crezcan, tú también lo harás.</p>
-
-<h4 style="color:var(--cyan);margin:12px 0 6px">🌱 ETAPAS DEL CULTIVO</h4>
-<table style="width:100%;font-size:10px;border-collapse:collapse;margin-bottom:12px">
-<tr style="color:var(--gold)"><td style="padding:4px">Etapa</td><td>Temp</td><td>Humedad</td><td>VPD</td><td>Luz</td></tr>
-<tr><td style="padding:4px;color:var(--green)">Germinación</td><td>20-25°C</td><td>70-80%</td><td>0.4-0.8</td><td>18h</td></tr>
-<tr><td style="padding:4px;color:var(--cyan)">Crecimiento</td><td>22-28°C</td><td>55-70%</td><td>0.8-1.2</td><td>18h</td></tr>
-<tr><td style="padding:4px;color:var(--purple)">Floración</td><td>20-26°C</td><td>40-55%</td><td>1.0-1.5</td><td>12h</td></tr>
-<tr><td style="padding:4px;color:var(--gold)">Cosecha</td><td>18-22°C</td><td>35-50%</td><td>1.2-1.6</td><td>12h</td></tr>
-</table>
-
-<h4 style="color:var(--cyan);margin:12px 0 6px">🧬 CONCEPTOS CLAVE</h4>
-<p><b style="color:var(--gold)">Cannabinoides:</b> Moléculas únicas (THC, CBD) que determinan potencia y efectos.</p>
-<p><b style="color:var(--gold)">Terpenos:</b> Compuestos aromáticos que modulan el efecto (Linalool=calma, Limoneno=energía).</p>
-<p><b style="color:var(--gold)">Tricomas:</b> Glándulas donde se producen cannabinoides. Indicador visual de madurez.</p>
-<p><b style="color:var(--gold)">Fotoperiodo:</b> Ciclo luz/oscuridad que controla crecimiento vs. floración.</p>
-
-<h4 style="color:var(--cyan);margin:12px 0 6px">🌿 FILOSOFÍA ROXS</h4>
-<p>• Minimizar la huella: sustratos reutilizables, luces LED eficientes.</p>
-<p>• Nutrición limpia: enmiendas orgánicas sobre sales sintéticas.</p>
-<p>• Zero-Waste: reutilizar material vegetal (té, compost, extractos).</p>
-<p>• Pureza desde la semilla hasta el consumo.</p>
-
-<h4 style="color:var(--cyan);margin:12px 0 6px">✅ BUENAS PRÁCTICAS</h4>
-<p>• Observá los tricomas con lupa para saber el momento exacto de cosecha.</p>
-<p>• Mantené un diario de cultivo con fechas, riegos y observaciones.</p>
-<p>• La prevención es clave: buen flujo de aire evita hongos.</p>
-<p>• Secado lento (7-14 días) y curado en frascos para máxima calidad.</p>
-<p style="color:var(--muted);margin-top:12px;font-size:10px">© ROXS Lab · QUICK-T</p>
-</section>
+    <div class="section-heading" style="margin-top:26px"><h2>TENDENCIA DE LA SESIÓN</h2><span class="live-label" id="sparkLabel">Esperando datos</span></div>
+    <section class="spark-card" id="sparkCard" aria-label="Gráfica de la tendencia de la sesión">
+      <div class="spark-row" style="--accent:var(--cyan)">
+        <div class="spark-head"><span class="spark-name">🌡️ Temperatura</span><span class="spark-val" id="spT">--</span><span class="spark-unit">°C</span></div>
+        <div class="spark-box"><canvas id="spTc" aria-hidden="true"></canvas><span class="spark-empty" id="spTe">Esperando lecturas…</span></div>
+        <div class="spark-foot"><span id="spTmin">mín —</span><span id="spTmax">máx —</span></div>
+      </div>
+      <div class="spark-row" style="--accent:var(--green)">
+        <div class="spark-head"><span class="spark-name">💧 Humedad relativa</span><span class="spark-val" id="spH">--</span><span class="spark-unit">%</span></div>
+        <div class="spark-box"><canvas id="spHc" aria-hidden="true"></canvas><span class="spark-empty" id="spHe">Esperando lecturas…</span></div>
+        <div class="spark-foot"><span id="spHmin">mín —</span><span id="spHmax">máx —</span></div>
+      </div>
+      <div class="spark-row" style="--accent:var(--purple)">
+        <div class="spark-head"><span class="spark-name">📊 Déficit de presión de vapor</span><span class="spark-val" id="spV">--</span><span class="spark-unit">kPa</span></div>
+        <div class="spark-box"><canvas id="spVc" aria-hidden="true"></canvas><span class="spark-empty" id="spVe">Esperando lecturas…</span></div>
+        <div class="spark-foot"><span id="spVmin">mín —</span><span id="spVmax">máx —</span></div>
+      </div>
+      <p class="spark-note" id="sparkNote">Solo se guarda en esta pantalla, mientras la página está abierta. Al cerrarla, se borra.</p>
+    </section>
     <details class="guide"><summary>Conexión y acceso desde tu celular</summary><p><strong>Primera conexión:</strong> activá Bluetooth, encendé el sensor y tocá Conectar. Elegí ROXS-Garden. Luego intentaremos recuperar el dispositivo autorizado y reconectar si se pierde la señal.</p><p><strong>Navegadores:</strong> Chrome en Android o Chrome/Edge en una computadora con Bluetooth. Safari en iPhone/iPad no admite Web Bluetooth. La reconexión al abrir depende de los permisos y del navegador.</p><p><strong>Acceso rápido:</strong> en el menú del navegador elegí «Agregar a pantalla de inicio» o «Instalar aplicación», si está disponible. La página necesita HTTPS para usar Bluetooth. Esta edición de un solo archivo no garantiza la reapertura sin internet; las lecturas no usan internet una vez abierta.</p><p><strong>Cómo leer el panel:</strong> las flechas comparan con la lectura anterior; no indican por sí solas un estado bueno o malo. Los anillos usan escalas de 0–50 °C, 0–100 % y 0–3 kPa. La guía VPD es orientativa y depende de la especie y etapa de cultivo.</p></details>
-    
-  <section class="calendar-section" id="calendarSection" hidden aria-label="Calendario de cultivo">
-    <div class="section-heading"><h2>CALENDARIO DE CULTIVO</h2></div>
-    <div class="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <button class="btn" style="width:auto;padding:6px 14px;font-size:12px;" onclick="calShift(-1)">◀</button>
-      <span id="calMonth" style="font-size:13px;color:var(--gold);font-weight:600;"></span>
-      <button class="btn" style="width:auto;padding:6px 14px;font-size:12px;" onclick="calShift(1)">▶</button>
-    </div>
-    <div class="cal-grid" id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:10px;"></div>
-    <div class="cal-form" style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap;">
-      <input id="evDate" type="date" style="flex:1;min-width:100px;padding:6px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:11px;">
-      <input id="evVar" placeholder="Variedad" style="flex:1;min-width:80px;padding:6px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:11px;">
-      <select id="evStage" style="flex:1;min-width:60px;padding:6px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:11px;">
-        <option>Siembra</option><option>Germinación</option><option>Transplante</option><option>Inicio floración</option><option>Poda</option><option>Cosecha</option>
-      </select>
-      <button class="btn" style="width:auto;padding:6px 12px;font-size:18px;line-height:1;" onclick="addEvent()">+</button>
-    </div>
-    <div id="evList" style="margin-top:8px;font-size:11px;color:var(--muted);max-height:120px;overflow-y:auto;"></div>
-  </section>
-
 <footer class="foot"><div class="privacy"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3Z"/><path d="M5 8l2 2 4-4"/></svg> Sin cuentas · Sin nube · Directo a tu sensor</div><p class="signature">ROXS Lab · Quick-T</p></footer>
   </main>
 <script>
@@ -236,10 +202,7 @@ function setStatus(state) {
   if ($('chooseBtn')) $('chooseBtn').hidden = !dev || active || state === 'connecting';
   if ($('reconnectBtn')) $('reconnectBtn').hidden = !dev || active || state === 'connecting';
   if ($('readings')) $('readings').classList.toggle('disconnected', !active);
-  if ($('guideBtn')) $('guideBtn').hidden = !active;
   if ($('arBtn')) $('arBtn').hidden = !active;
-  if ($('guidePanel')) $('guidePanel').hidden = true;
-  if ($('calendarSection')) $('calendarSection').hidden = !active;
   if (!active) freshConnectionReading = false;
   refreshFreshness();
 }
@@ -437,11 +400,119 @@ function update(d) {
   freshConnectionReading = true;
   message('Datos recibidos directamente de tu ROXS Garden.');
   refreshFreshness();
-  if(typeof updateGuideComparison==='function') updateGuideComparison();
+  recordPoint(d);
 }
 
+// ═══ TENDENCIA DE LA SESIÓN ═══
+// Solo en memoria: al cerrar la página se borra, igual que el resto de la sesión.
+const HIST_MAX = 120;
+const HIST = {t:[], h:[], v:[]};
+const SPARKS = [
+  {key:'t', rgb:'0,212,212', canvas:'spTc', value:'spT', empty:'spTe', min:'spTmin', max:'spTmax', unit:'°C', precision:1, span:50},
+  {key:'h', rgb:'0,230,118', canvas:'spHc', value:'spH', empty:'spHe', min:'spHmin', max:'spHmax', unit:'%', precision:1, span:100},
+  {key:'v', rgb:'179,136,255', canvas:'spVc', value:'spV', empty:'spVe', min:'spVmin', max:'spVmax', unit:'kPa', precision:2, span:3}
+];
+
+function recordPoint(d) {
+  for (const s of SPARKS) {
+    HIST[s.key].push(d[s.key]);
+    if (HIST[s.key].length > HIST_MAX) HIST[s.key].shift();
+  }
+  drawSparks();
+}
+
+function drawSpark(s) {
+  const canvas = $(s.canvas);
+  if (!canvas) return;
+  const data = HIST[s.key];
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(1, Math.round(rect.width));
+  const h = Math.max(1, Math.round(rect.height));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  const empty = $(s.empty);
+  if (data.length < 2) { if (empty) empty.hidden = false; return; }
+  if (empty) empty.hidden = true;
+
+  // Autoescala con amplitud mínima: una línea plana no se pega a los bordes.
+  const lo = Math.min.apply(null, data);
+  const hi = Math.max.apply(null, data);
+  const minSpan = s.span * 0.04;
+  let a = lo, b = hi;
+  if (b - a < minSpan) { const mid = (a + b) / 2; a = mid - minSpan / 2; b = mid + minSpan / 2; }
+  const pad = 5, plotH = h - pad * 2;
+  const X = i => (i / (data.length - 1)) * (w - 2) + 1;
+  const Y = v => pad + plotH * (1 - (v - a) / (b - a));
+
+  const gradient = ctx.createLinearGradient(0, pad, 0, h - pad);
+  gradient.addColorStop(0, 'rgba(' + s.rgb + ',.30)');
+  gradient.addColorStop(1, 'rgba(' + s.rgb + ',0)');
+  ctx.beginPath();
+  ctx.moveTo(X(0), Y(data[0]));
+  for (let i = 1; i < data.length; i++) ctx.lineTo(X(i), Y(data[i]));
+  ctx.lineTo(X(data.length - 1), h - pad);
+  ctx.lineTo(X(0), h - pad);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(X(0), Y(data[0]));
+  for (let i = 1; i < data.length; i++) ctx.lineTo(X(i), Y(data[i]));
+  ctx.strokeStyle = 'rgb(' + s.rgb + ')';
+  ctx.lineWidth = 1.8;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(X(data.length - 1), Y(data[data.length - 1]), 2.6, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgb(' + s.rgb + ')';
+  ctx.fill();
+
+  if ($(s.min)) $(s.min).textContent = 'mín ' + lo.toFixed(s.precision) + ' ' + s.unit;
+  if ($(s.max)) $(s.max).textContent = 'máx ' + hi.toFixed(s.precision) + ' ' + s.unit;
+}
+
+function drawSparks() {
+  for (const s of SPARKS) {
+    drawSpark(s);
+    const data = HIST[s.key];
+    if ($(s.value)) $(s.value).textContent = data.length ? data[data.length - 1].toFixed(s.precision) : '--';
+  }
+  const n = HIST.t.length;
+  const label = $('sparkLabel');
+  if (label) label.textContent = n === 0 ? 'Esperando datos'
+    : n === 1 ? '1 lectura'
+    : n + ' lecturas' + (n >= HIST_MAX ? ' · últimas ' + HIST_MAX : '');
+  const note = $('sparkNote');
+  if (note) note.hidden = n === 0;
+}
+
+function resetSparks() {
+  for (const s of SPARKS) {
+    HIST[s.key].length = 0;
+    if ($(s.value)) $(s.value).textContent = '--';
+    if ($(s.min)) $(s.min).textContent = 'mín —';
+    if ($(s.max)) $(s.max).textContent = 'máx —';
+  }
+  drawSparks();
+}
+
+let sparkResizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(sparkResizeTimer);
+  sparkResizeTimer = setTimeout(drawSparks, 150);
+});
+window.addEventListener('orientationchange', () => setTimeout(drawSparks, 250));
+drawSparks();
+
 $('connectBtn').addEventListener('click', () => { retries = 0; connect(false); });
-$('chooseBtn').addEventListener('click', () => { retries = 0; connect(true); });
+$('chooseBtn').addEventListener('click', () => { retries = 0; resetSparks(); connect(true); });
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     refreshFreshness();
@@ -472,58 +543,6 @@ const manifest = {
 $('appManifest').href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
 initializeBluetooth();
 
-// ═══ CALENDARIO DE CULTIVO ═══
-let calOffset=0, calDate=new Date();
-function getEvs(){try{return JSON.parse(localStorage.getItem('roxs_evs')||'[]');}catch(e){return[];}}
-function saveEvs(evs){localStorage.setItem('roxs_evs',JSON.stringify(evs));}
-function renderCal(){
-  var d=new Date(calDate.getFullYear(),calDate.getMonth()+calOffset,1);
-  var months=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-  document.getElementById('calMonth').textContent=months[d.getMonth()]+' '+d.getFullYear();
-  var evs=getEvs(),today=new Date().toISOString().slice(0,10);
-  var grid=document.getElementById('calGrid'),h='<div style="color:var(--muted);">Do</div><div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div><div>Vi</div><div style="color:var(--muted);">Sa</div>';
-  var startDay=(d.getDay()+6)%7,end=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
-  for(var i=0;i<startDay;i++)h+='<div></div>';
-  for(var day=1;day<=end;day++){
-    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-    var hasEv=evs.some(function(e){return e.date===ds;});
-    var isToday=ds===today;
-    h+='<div style="padding:3px;'+(isToday?'background:var(--purple);color:#fff;border-radius:4px;':'')+'">'+day+(hasEv?'<div style="width:4px;height:4px;background:var(--green);border-radius:50%;margin:1px auto 0;"></div>':'')+'</div>';
-  }
-  grid.innerHTML=h;renderEvs();
-}
-function calShift(n){calOffset+=n;renderCal();}
-function addEvent(){
-  var d=document.getElementById('evDate').value,v=document.getElementById('evVar').value.trim(),s=document.getElementById('evStage').value;
-  if(!d||!v)return;
-  var evs=getEvs();evs.push({date:d,variety:v,stage:s});saveEvs(evs);
-  document.getElementById('evVar').value='';renderCal();
-}
-function renderEvs(){
-  var evs=getEvs(),list=document.getElementById('evList');
-  if(!evs.length){list.innerHTML='';return;}
-  evs.sort(function(a,b){return a.date>b.date?1:-1;});
-  list.innerHTML=evs.map(function(e,i){
-    return'<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);"><span>'+e.date+' · '+e.stage+' · <b>'+e.variety+'</b></span><span onclick="delEv('+i+')" style="cursor:pointer;color:var(--red);">x</span></div>';
-  }).join('');
-  var a=evs.filter(function(e){var t=new Date(e.date);var n=new Date();var diff=(t-n)/(1000*60*60*24);return diff>=0&&diff<=7;});
-  if(a.length)document.getElementById('recNote').textContent='Próximos: '+a.map(function(e){return e.stage+' de '+e.variety+' el '+e.date;}).join(' · ');
-}
-function delEv(i){var evs=getEvs();evs.splice(i,1);saveEvs(evs);renderCal();}
-renderCal();
-// Mover guía debajo de su botón
-if($('guidePanel')&&$('guideBtn')){$('guideBtn').after($('guidePanel'));}
-// ═══ GUÍA INTERACTIVA ═══
-var STAGES={'Germinación':{t:[20,25],h:[70,80],v:[0.4,0.8]},'Crecimiento':{t:[22,28],h:[55,70],v:[0.8,1.2]},'Floración':{t:[20,26],h:[40,55],v:[1.0,1.5]},'Cosecha':{t:[18,22],h:[35,50],v:[1.2,1.6]}};
-function updateGuideComparison(){
-  var s=document.getElementById('guideStage').value,st=STAGES[s],d=previous;
-  if(!st||!d){document.getElementById('guideComparison').innerHTML='<span style=\"color:var(--muted)\">Conectá el sensor para ver la comparación.</span>';return}
-  var ok=function(v,r){return v>=r[0]&&v<=r[1]?'✅':'⚠️';}
-  document.getElementById('guideComparison').innerHTML='<table style=\"width:100%;font-size:10px\"><tr style=\"color:var(--gold)\"><td>Métrica</td><td>Actual</td><td>Ideal '+s+'</td><td></td></tr>'+
-    '<tr><td>🌡️ Temp</td><td>'+d.t.toFixed(1)+'°C</td><td>'+st.t[0]+'-'+st.t[1]+'°C</td><td>'+ok(d.t,st.t)+'</td></tr>'+
-    '<tr><td>💧 Humedad</td><td>'+d.h.toFixed(1)+'%</td><td>'+st.h[0]+'-'+st.h[1]+'%</td><td>'+ok(d.h,st.h)+'</td></tr>'+
-    '<tr><td>📊 VPD</td><td>'+d.v.toFixed(2)+'kPa</td><td>'+st.v[0]+'-'+st.v[1]+'kPa</td><td>'+ok(d.v,st.v)+'</td></tr></table>';
-}
 
 </script>
 </body>
