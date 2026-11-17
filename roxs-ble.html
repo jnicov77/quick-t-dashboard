@@ -126,6 +126,13 @@
       <button class="btn" id="arBtn" hidden onclick="window.open('roxs-ar.html','_blank')" style="background:linear-gradient(135deg,#00D4D4,var(--cyan));border-color:#00D4D4;color:#0D0D0D;margin-top:6px">🥽 Ver en Realidad Aumentada</button>
       <button class="secondary" id="chooseBtn" type="button" hidden>Elegir otro sensor</button>
     </section>
+    <section class="rec" id="rec" style="margin:2px 0 26px" aria-labelledby="recTitle">
+      <div class="eyebrow"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M10 2l2 5 6 3-6 2-2 6-2-6-6-2 6-3Z"/></svg> Recomendación en vivo · VPD</div>
+      <h2 id="recTitle">Cada lectura, una mejor decisión.</h2>
+      <p id="recText">Conectá tu ROXS Garden para conocer el estado del ambiente y su recomendación.</p>
+      <div class="scale" aria-hidden="true"><div class="scale-track"><i style="--segment:#00D4D4"></i><i style="--segment:#68DDDE"></i><i style="--segment:#00E676"></i><i style="--segment:#B388FF"></i><i style="--segment:#D4A843"></i><i style="--segment:#FF7184"></i></div><span class="scale-marker" id="vpdMarker" hidden></span><div class="scale-labels"><span>Bajo</span><span>Óptimo</span><span>Alto</span></div></div>
+      <p class="rec-note" id="recNote" hidden>Última lectura guardada en pantalla; no es un dato en vivo.</p>
+    </section>
     <div class="section-heading"><h2>AMBIENTE DE TU CULTIVO</h2><span class="live-label" id="liveLabel">Esperando sensor</span></div>
     <section class="readings disconnected" id="readings" aria-label="Lecturas ambientales">
       <article class="card t" aria-labelledby="tTitle">
@@ -142,13 +149,6 @@
       </article>
     </section>
     <p class="last-reading" id="lastReading">Última lectura: esperando datos</p>
-    <section class="rec" id="rec" aria-labelledby="recTitle">
-      <div class="eyebrow"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M10 2l2 5 6 3-6 2-2 6-2-6-6-2 6-3Z"/></svg> Recomendación en vivo · VPD</div>
-      <h2 id="recTitle">Cada lectura, una mejor decisión.</h2>
-      <p id="recText">Conectá tu ROXS Garden para conocer el estado del ambiente y su recomendación.</p>
-      <div class="scale" aria-hidden="true"><div class="scale-track"><i style="--segment:#00D4D4"></i><i style="--segment:#68DDDE"></i><i style="--segment:#00E676"></i><i style="--segment:#B388FF"></i><i style="--segment:#D4A843"></i><i style="--segment:#FF7184"></i></div><span class="scale-marker" id="vpdMarker" hidden></span><div class="scale-labels"><span>Bajo</span><span>Óptimo</span><span>Alto</span></div></div>
-      <p class="rec-note" id="recNote" hidden>Última lectura guardada en pantalla; no es un dato en vivo.</p>
-    </section>
     <div class="section-heading" style="margin-top:26px"><h2>TENDENCIA DE LA SESIÓN</h2><span class="live-label" id="sparkLabel">Esperando datos</span></div>
     <section class="spark-card" id="sparkCard" aria-label="Gráfica de la tendencia de la sesión">
       <div class="spark-row" style="--accent:var(--cyan)">
@@ -394,7 +394,7 @@ function update(d) {
   $('vpdMarker').hidden = false;
   $('vpdMarker').style.left = ((band + within) / RECS.length * 100) + '%';
   previous = {t:d.t,h:d.h,v:d.v};
-  try { localStorage.setItem('roxs_last', JSON.stringify({t:d.t,h:d.h,v:d.v})); } catch(_) {}
+  try { localStorage.setItem('roxs_last', JSON.stringify({t:d.t,h:d.h,v:d.v,at:Date.now()})); } catch(_) {}
   lastReadingTime = Date.now();
   readingCount++;
   freshConnectionReading = true;
