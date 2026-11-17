@@ -430,6 +430,15 @@ p{margin:0}
 .nav button{font-size:11px;padding:10px 4px 8px;margin:4px}
 .nav button svg{width:28px;height:28px}
 
+/* ===== v4: pestaña Dispositivos ===== */
+/* Con 5 pestañas el ancho por boton baja: letra e icono mas chicos y permiso de
+   corte, para que "DISPOSITIVOS" no se salga de la barra en pantallas angostas. */
+.nav-in{grid-template-columns:repeat(5,1fr)}
+.nav button{font-size:9.5px;padding:9px 1px 7px;margin:4px 1px;letter-spacing:.01em}
+.nav button span{overflow-wrap:anywhere;hyphens:auto;line-height:1.06}
+.nav button svg{width:25px;height:25px}
+.dev-sel{width:100%;min-height:52px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;font-weight:700}
+
 /* Widcy: poses y animaciones sutiles */
 .wd-wrap{position:relative;display:grid;place-items:end center;flex:none}
 .wd-wrap::before{content:"";position:absolute;left:50%;bottom:4%;width:88%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--sun) 34%,transparent) 0%,transparent 68%);z-index:0}
@@ -1435,9 +1444,9 @@ function sensorOnReading(o){
   Sensor.last={t:o.t,h:o.h,v:typeof o.v==='number'&&isFinite(o.v)?o.v:null};
   Sensor.at=Date.now(); Sensor.err='';
   try{ localStorage.setItem('roxs_last', JSON.stringify({t:o.t,h:o.h,v:Sensor.last.v,at:Sensor.at})); }catch(e){}
-  const c=UI.crop?cropById(UI.crop):null;
-  if(c && c.status!=='finalizado' && S.sensorAuto!==false && sensorAutoDue(c)) sensorLog(c,false);
-  else rerenderCrop(c);
+  const c=sensorTarget();
+  if(c && S.sensorAuto!==false && sensorAutoDue(c)) sensorLog(c,false);
+  else refreshView();
 }
 function sensorAutoDue(c){
   const r=[...c.logs].filter(l=>l.src==='sensor').sort((a,b)=>(a.ts||0)-(b.ts||0));
@@ -1457,18 +1466,27 @@ function sensorLog(c, manual){
   toast(b.length?`Logro: ${b[0].name}` : al.length?`Guardado. Ojo: ${al[0]}` : manual?`Lectura guardada${gain?' · +2 XP':''}`:'Lectura del sensor guardada');
   return true;
 }
-function rerenderCrop(c){
-  const act=c || (UI.crop?cropById(UI.crop):null);
-  if(act && UI.view!=='hearts' && $app.className!=='app full') renderCropDetail(act);
+/* En que cultivo se guardan las lecturas: el que este abierto, o el elegido en
+   Dispositivos, o el unico activo. Nunca inventa uno. */
+function sensorTarget(){
+  if(UI.crop){ const c=cropById(UI.crop); if(c && c.status!=='finalizado') return c; }
+  const act=CROPS.filter(c=>c.status!=='finalizado');
+  if(!act.length) return null;
+  return act.find(c=>c.id===S.sensorCrop) || act[0];
+}
+function refreshView(){
+  if(UI.view==='hearts') return;
+  if(UI.crop){ const c=cropById(UI.crop); if(c) return renderCropDetail(c); }
+  if(S.tab==='devices') renderDevices();
 }
 function sensorDisconnected(){
   Sensor.on=false; Sensor.err='Se perdió la señal. Acercá el sensor y volvé a conectar.';
-  rerenderCrop(null);
+  refreshView();
 }
 async function sensorConnect(){
   if(Sensor.busy || Sensor.on) return;
   if(!sensorSupported()) return toast('Este navegador no puede hablar con el sensor. Probá con Chrome en Android.');
-  Sensor.busy=true; Sensor.err=''; rerenderCrop(null);
+  Sensor.busy=true; Sensor.err=''; refreshView();
   try{
     if(!Sensor.dev){
       Sensor.dev=await navigator.bluetooth.requestDevice({filters:[{name:'ROXS-Garden'}],optionalServices:[SVC]});
@@ -1480,14 +1498,14 @@ async function sensorConnect(){
     if(!Sensor.wired){
       Sensor.char.addEventListener('characteristicvaluechanged', e=>{
         try{ sensorOnReading(JSON.parse(new TextDecoder().decode(e.target.value))); }
-        catch(err){ Sensor.err='La lectura llegó en un formato que no entendemos.'; rerenderCrop(null); }
+        catch(err){ Sensor.err='La lectura llegó en un formato que no entendemos.'; refreshView(); }
       });
       Sensor.wired=true;
     }
     await Sensor.char.startNotifications();
     Sensor.on=true; Sensor.err='';
-    const c=UI.crop?cropById(UI.crop):null;
-    if(c && c.status!=='finalizado' && S.sensorAuto!==false && sensorAutoDue(c)) sensorLog(c,false);
+    const c=sensorTarget();
+    if(c && S.sensorAuto!==false && sensorAutoDue(c)) sensorLog(c,false);
     else toast('Sensor conectado');
   }catch(e){
     Sensor.on=false;
@@ -1495,11 +1513,12 @@ async function sensorConnect(){
       : (e && e.name==='SecurityError') ? 'Bluetooth necesita permiso del navegador.'
       : 'No pudimos conectar. Revisá que el sensor esté encendido y cerca.';
     toast(Sensor.err);
-  }finally{ Sensor.busy=false; rerenderCrop(null); }
+  }finally{ Sensor.busy=false; refreshView(); }
 }
 function sensorCard(c){
+  const target = c || sensorTarget();
   const live=Sensor.last, on=Sensor.on, auto=S.sensorAuto!==false;
-  const saved=c.logs.filter(l=>l.src==='sensor').length;
+  const saved = target ? target.logs.filter(l=>l.src==='sensor').length : 0;
   const vals = live ? `<div class="sgrid">
       <div class="sm"><span class="si" style="color:#E0602B">${I.thermo}</span><b>${live.t.toFixed(1)}</b><small>°C</small></div>
       <div class="sm"><span class="si" style="color:#2C7FD6">${I.drop}</span><b>${live.h.toFixed(0)}</b><small>% HR</small></div>
@@ -1516,11 +1535,52 @@ function sensorCard(c){
     ${Sensor.err?`<p class="fine" style="text-align:left;max-width:none;color:var(--bad)">${esc(Sensor.err)}</p>`:''}
     <div class="row-btns">
       <button class="btn sm ${on?'ghost':'go'}" id="sens-c" style="flex:1" ${on?'disabled':''}>${I.bolt}${on?'Conectado':'Conectar'}</button>
-      <button class="btn sm ghost" id="sens-s" style="flex:1" ${live?'':'disabled'}>${I.check}Guardar lectura</button>
+      <button class="btn sm ghost" id="sens-s" style="flex:1" ${live&&target?'':'disabled'}>${I.check}Guardar lectura</button>
     </div>
     <div class="setting" style="border-bottom:0;padding-bottom:0"><span style="font-size:14px">Guardar sola cada 30 min</span><button class="switch" id="sens-a" role="switch" aria-checked="${auto}" aria-label="Guardar una lectura automáticamente cada 30 minutos"></button></div>
+    ${target?'':`<p class="fine" style="text-align:left;max-width:none">Todavía no tenés un cultivo activo. Creá uno en <b>Cultivos</b> y las lecturas se guardan ahí.</p>`}
     ${sensorSupported()?'':`<p class="fine" style="text-align:left;max-width:none">En iPhone el Bluetooth web no funciona (Safari no deja que una web pública hable con la red local). Probá desde Chrome en Android, o anotá el dato a mano.</p>`}
   </div>`;
+}
+
+/* ---------- Dispositivos ---------- */
+function renderDevices(){
+  const act=CROPS.filter(c=>c.status!=='finalizado');
+  const target=sensorTarget();
+  const sel = act.length>1 ? `<div class="sec-h"><h2>Guardar las lecturas en</h2></div>
+    <div class="card" style="padding:12px"><select id="dev-sel" class="dev-sel" aria-label="Cultivo donde guardar las lecturas">
+      ${act.map(c=>`<option value="${c.id}" ${target&&target.id===c.id?'selected':''}>${esc(c.name)} · ${stageObj(c.stage).n}</option>`).join('')}
+    </select></div>`
+    : act.length===1 ? `<p class="fine" style="margin-top:14px">Guardando en <b>${esc(act[0].name)}</b> (${stageObj(act[0].stage).n}).</p>` : '';
+  $app.innerHTML = topbar() + `
+    <h1 class="page-h">Dispositivos</h1>
+    <p class="page-sub">Conectá tu ROXS Garden y las lecturas entran solas al cultivo: temperatura, humedad y VPD medidos, no anotados a mano.</p>
+    <div class="sec-h"><h2>Sensor de ambiente</h2><span class="k">${Sensor.on?'En vivo':Sensor.at?sensorLabel():'Bluetooth'}</span></div>
+    ${sensorCard(null)}
+    ${sel}
+    <div class="sec-h"><h2>Cómo se usa</h2></div>
+    <div class="card"><ul class="facts num">
+      <li><span><b>Encendé el sensor</b> y dejalo cerca de las plantas.</span></li>
+      <li><span><b>Tocá Conectar</b> y elegí ROXS-Garden. Solo hay que autorizarlo la primera vez.</span></li>
+      <li><span><b>Guardá la lectura</b> cuando quieras, o dejá el automático cada 30 minutos.</span></li>
+      <li><span><b>Se guarda en el cultivo</b> que elijas arriba: de ahí salen las alertas y la tendencia.</span></li>
+    </ul></div>`;
+  bindSensor(c=>{ c ? renderDevices() : renderDevices(); });
+}
+/* Los tres controles de la tarjeta del sensor, con el guardado apuntando al
+   cultivo objetivo de esta pantalla. */
+function bindSensor(onSaved){
+  document.getElementById('sens-c')?.addEventListener('click',sensorConnect);
+  document.getElementById('sens-a')?.addEventListener('click',e=>{
+    S.sensorAuto = S.sensorAuto===false ? true : false;
+    e.currentTarget.setAttribute('aria-checked', String(S.sensorAuto));
+    saveS();
+  });
+  document.getElementById('dev-sel')?.addEventListener('change',e=>{ S.sensorCrop=e.target.value; saveS(); renderDevices(); });
+  document.getElementById('sens-s')?.addEventListener('click',()=>{
+    const t=sensorTarget();
+    if(t && sensorLog(t,true)) onSaved(t);
+  });
 }
 
 /* ---------- Progreso y juego ---------- */
@@ -1637,7 +1697,7 @@ function render(){
   if(!S.onboarded){ $app.className='app full'; $nav.hidden=true; return renderOnboarding(0); }
   if(S.tab==='chat') S.tab='learn';
   $app.className='app'; $nav.hidden=false; renderNav();
-  ({learn:renderLearn, crops:renderCrops, badges:renderBadges, me:renderMe}[S.tab]||renderLearn)();
+  ({learn:renderLearn, crops:renderCrops, devices:renderDevices, badges:renderBadges, me:renderMe}[S.tab]||renderLearn)();
   if(S.tab!=='learn') window.scrollTo(0,0);
 }
 function topbar(){
@@ -1649,7 +1709,7 @@ function topbar(){
 }
 function renderNav(){
   const tasks = CROPS.filter(c=>c.status!=='finalizado').reduce((n,c)=>n+computeTasks(c).length,0);
-  const tabs=[['learn','Aprender','home'],['crops','Cultivos','pot'],['badges','Logros','trophy'],['me','Perfil','user']];
+  const tabs=[['learn','Aprender','home'],['crops','Cultivos','pot'],['devices','Dispositivos','thermo'],['badges','Logros','trophy'],['me','Perfil','user']];
   document.getElementById('nav-in').innerHTML = tabs.map(([id,l,ic])=>`<button data-tab="${id}" ${S.tab===id?'aria-current="page"':''}>${I[ic]}<span>${l}</span>${id==='crops'&&tasks?`<span class="dot-badge" aria-label="${tasks} pendientes">${tasks}</span>`:''}</button>`).join('');
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ S.tab=b.dataset.tab; UI.crop=null; render(); });
 }
@@ -2186,13 +2246,7 @@ function renderCropDetail(c){
   document.getElementById('cd-back').onclick=()=>{ UI.crop=null; render(); };
   document.getElementById('cd-next')?.addEventListener('click',()=>stageForm(c));
   document.querySelectorAll('[data-log]').forEach(b=>b.onclick=()=>logForm(c,b.dataset.log));
-  document.getElementById('sens-c')?.addEventListener('click',sensorConnect);
-  document.getElementById('sens-s')?.addEventListener('click',()=>{ if(sensorLog(c,true)) renderCropDetail(c); });
-  document.getElementById('sens-a')?.addEventListener('click',e=>{
-    S.sensorAuto = S.sensorAuto===false ? true : false;
-    e.currentTarget.setAttribute('aria-checked', String(S.sensorAuto));
-    saveS();
-  });
+  bindSensor(()=>renderCropDetail(c));
   document.getElementById('cd-lesson').onclick=()=>{ if(S.done[rec.id]) startLesson(rec,{practice:true}); else if(S.hearts<=0) noHearts(); else startLesson(rec,{}); };
   document.getElementById('cd-cata')?.addEventListener('click',()=>cataForm(c));
   document.getElementById('cd-ficha').onclick=()=>fichaView(c);
