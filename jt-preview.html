@@ -589,7 +589,7 @@
       body { background:#fff !important; }
       #dashboardContent { display:none !important; }
       .dialog-auth, dialog { display:none !important; }
-      #reportePrint { display:block !important; }
+      #reportePrint { display:block !important; visibility:visible !important; }
     }
   </style>
 </head>
@@ -1455,7 +1455,7 @@
       if (d2 && !d2.value) d2.value = rangoHasta || isoHoyJTT();
     }
 
-    function cargarReporte() {
+    function cargarReporte(alCargar) {
       aplicarRango();
       if (!rangoDesde || !rangoHasta) { estadoReporte('Elige las dos fechas.'); return; }
       if (rangoDesde > rangoHasta) { estadoReporte('La fecha inicial no puede ser mayor que la final.'); return; }
@@ -1472,6 +1472,7 @@
           reporteData = d;
           renderReporte();
           estadoReporte('Período ' + d.desde + ' a ' + d.hasta + ' · ' + d.dias.length + ' días');
+          if (alCargar === 'imprimir') imprimirReporte();
         })
         .catch(function(err){ reporteData = null; renderReporte(); estadoReporte('Error: ' + err.message); })
         .finally(function(){ if (btn) btn.disabled = false; });
@@ -1607,11 +1608,16 @@
     }
 
     function imprimirReporte() {
-      if (!reporteData) { estadoReporte('Primero toca «Ver el período».'); return; }
+      // Si todavía no hay datos, se cargan y se imprime al terminar.
+      if (!reporteData) { cargarReporte('imprimir'); return; }
       var caja = document.getElementById('reportePrint');
-      if (!caja) return;
+      if (!caja) { estadoReporte('No se encontró la hoja de impresión.'); return; }
       caja.innerHTML = htmlReporte();
-      window.print();
+      try {
+        window.print();
+      } catch (e) {
+        estadoReporte('El navegador bloqueó la impresión: usá Ctrl+P (Cmd+P en Mac).');
+      }
     }
 
     // ── Cableado ───────────────────────────────────────────────────
@@ -1648,9 +1654,9 @@
     cargarReporte();
 
   </script>
-  
-  <!-- Hoja que se imprime (invisible en pantalla). La llena el JS antes de window.print(). -->
+  </div><!-- /dashboardContent -->
+<!-- Hoja que se imprime (invisible en pantalla). La llena el JS antes de window.print(). -->
   <div id="reportePrint" aria-hidden="true"></div>
-</div><!-- /dashboardContent -->
+
 </body>
 </html>
