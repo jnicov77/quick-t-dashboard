@@ -582,7 +582,6 @@
     #reportePrint .rp-pie { margin-top:14px; padding-top:6px; border-top:1px solid #DDE3EA;
       font-size:7.5pt; color:#6B7785; }
     #reportePrint .rp-hint { font-size:7.5pt; color:#6B7785; margin:4px 0 0; }
-    #reportePrint .rp-emp { margin:10px 0 3px; font-size:9.5pt; }
 
     @page { size: A4; margin: 14mm 12mm; }
     @media print {
@@ -1438,6 +1437,13 @@
     function fechaLarga(iso) {
       return Number(iso.slice(8,10)) + ' de ' + MESES_LARGOS[Number(iso.slice(5,7))-1] + ' de ' + iso.slice(0,4);
     }
+    // La hora viene como 'HH:mm:ss', pero si viene con fecha completa
+    // ('2026-11-14 12:05:00') también tiene que salir bien.
+    function soloHora(v) {
+      var t = String(v === null || v === undefined ? '' : v).trim();
+      var m = t.match(/(\d{2}:\d{2})/);
+      return m ? m[1] : t;
+    }
     function estadoReporte(txt) {
       var el = document.getElementById('reporteEstado');
       if (el) el.textContent = txt || '';
@@ -1581,27 +1587,13 @@
            + abiertas.map(function(a){
                return '<tr class="abierta"><td>' + escRep(a.nombre) + '</td><td>' + escRep(a.area)
                     + '</td><td>' + etiquetaDia(a.fecha) + '</td><td>'
-                    + String(a.ultima || '').slice(0,5) + '</td></tr>';
+                    + soloHora(a.ultima) + '</td></tr>';
              }).join('')
            + '</tbody></table>';
       }
 
-      h += '<h2>Detalle por día</h2>';
-      d.empleados.forEach(function(e){
-        h += '<p class="rp-emp"><strong>' + escRep(e.nombre) + '</strong> · ' + escRep(e.area)
-           + ' · total ' + hmRep(e.totalMinutos) + '</p>'
-           + '<table><thead><tr><th>Día</th><th class="n">Tramos</th><th class="n">Pausa</th>'
-           + '<th class="n">Trabajado</th><th>Estado</th></tr></thead><tbody>'
-           + (e.porDia || []).map(function(pd){
-               var est = pd.abierto ? 'Abierta' : (pd.tramos ? 'Cerrada' : 'Sin marca');
-               return '<tr' + (pd.abierto ? ' class="abierta"' : '') + '><td>' + etiquetaDia(pd.fecha)
-                    + '</td><td class="n">' + (pd.tramos || '—') + '</td><td class="n">'
-                    + (pd.pausaMinutos ? hmRep(pd.pausaMinutos) : '—') + '</td><td class="n">'
-                    + (pd.minutos ? horasDec(pd.minutos) + ' h' : '—') + '</td><td>' + est + '</td></tr>';
-             }).join('')
-           + '</tbody></table>';
-      });
-
+      // El PDF va sin el detalle día por día de cada persona: RR. HH. quiere el
+      // resumen por persona y las jornadas abiertas a revisar, nada más.
       h += '<div class="rp-pie">Generado por Quick-T Asistenc-IA · zona horaria America/Bogota · '
          + new Date().toLocaleString('es-CO',{timeZone:'America/Bogota',hour12:false}) + '</div>';
       return h;
