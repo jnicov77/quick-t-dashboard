@@ -187,10 +187,10 @@ const AGENTS=[
    Cada hábitat puede tener uno o varios botones, por ejemplo:
    NW:[{label:'Abrir dashboard', url:'https://quickt.tech/tu-dashboard'}] */
 const LINKS={
- NW:[], // ROXS GARDEN
- SW:[], // ASISTENC-IA
- NE:[], // QUICK-T FOOD
- SE:[]  // TALLER 3D
+ NW:[{label:'Monitor BLE',url:'roxs-ble.html'},{label:'Experiencia AR',url:'roxs-ar.html'}], // ROXS GARDEN
+ SW:[{label:'JusTTime',url:'jt.html'}], // ASISTENC-IA
+ NE:[{label:'Carta digital',url:'food-landing.html'},{label:'Amelia',url:'amelia-food.html'},{label:'Bacu',url:'bacu-food.html'}], // QUICK-T FOOD
+ SE:[]  // TALLER 3D (sin pagina publica todavia)
 };
 const CLS={zoro:'Hada orquestadora',wong:'Mago del código',sanji:'Enano herrero'};
 AGENTS.forEach(a=>a.cls=CLS[a.id]);
