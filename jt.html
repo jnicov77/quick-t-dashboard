@@ -544,6 +544,52 @@
       .novedad-form { grid-template-columns: 1fr; }
       .app { padding: 0 16px 48px; }
     }
+
+    /* ══════════ Reporte de jornadas (rango + PDF) ══════════ */
+    .rango-fechas { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .rango-fechas label { font-size:13px; color:var(--primary-60); display:flex; gap:6px; align-items:center; }
+    .rango-fechas input[type=date] { font:inherit; font-size:13px; padding:7px 9px;
+      border:1px solid var(--primary-20); border-radius:8px; background:#fff; color:var(--primary); }
+    .chk-todos { font-size:13px; color:var(--primary-60); display:flex; gap:7px; align-items:center; cursor:pointer; }
+    .reporte-acciones { justify-content:space-between; }
+    #reportePanel { overflow-x:auto; }
+    #tablaReporte th.num, #tablaReporte td.num { text-align:right; }
+    #tablaReporte td.sin-marca { color:#B26B00; }
+    #tablaReporte tfoot td { font-weight:700; border-top:2px solid var(--primary-20); }
+    .rep-aviso { background:#FFF4D6; border:1px solid #EFD9A8; border-radius:10px;
+      padding:10px 12px; font-size:13px; color:#7A4B00; margin:14px 0; }
+
+    /* Hoja que se imprime: invisible en pantalla */
+    #reportePrint { display:none; color:#12181F; background:#fff; }
+    #reportePrint .rp-head { border-bottom:2px solid #0A1F44; padding-bottom:8px;
+      margin-bottom:14px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; }
+    #reportePrint .rp-brand { font-size:16pt; font-weight:800; color:#0A1F44; line-height:1.1; }
+    #reportePrint .rp-brand small { display:block; font-size:9pt; font-weight:400; color:#5B6472; }
+    #reportePrint .rp-cliente { text-align:right; font-size:10pt; color:#5B6472; }
+    #reportePrint h2 { font-size:11.5pt; color:#0A1F44; margin:14px 0 5px; }
+    #reportePrint table { width:100%; border-collapse:collapse; }
+    #reportePrint th, #reportePrint td { border-bottom:.5pt solid #DDE3EA; padding:4px 6px;
+      font-size:9pt; text-align:left; }
+    #reportePrint th { background:#0A1F44; color:#fff; font-size:7.5pt;
+      text-transform:uppercase; letter-spacing:.03em; }
+    #reportePrint td.n, #reportePrint th.n { text-align:right; }
+    #reportePrint tr.abierta td { background:#FFF4D6; }
+    #reportePrint .rp-kpi { display:flex; gap:8px; margin-bottom:12px; }
+    #reportePrint .rp-kpi div { flex:1; border:1px solid #DDE3EA; border-radius:6px;
+      padding:8px 10px; background:#F4F7FA; }
+    #reportePrint .rp-kpi span { display:block; font-size:8pt; color:#5B6472; }
+    #reportePrint .rp-kpi b { font-size:12.5pt; color:#0A1F44; }
+    #reportePrint .rp-pie { margin-top:14px; padding-top:6px; border-top:1px solid #DDE3EA;
+      font-size:7.5pt; color:#6B7785; }
+    #reportePrint .rp-hint { font-size:7.5pt; color:#6B7785; margin:4px 0 0; }
+
+    @page { size: A4; margin: 14mm 12mm; }
+    @media print {
+      body { background:#fff !important; }
+      #dashboardContent { display:none !important; }
+      .dialog-auth, dialog { display:none !important; }
+      #reportePrint { display:block !important; visibility:visible !important; }
+    }
   </style>
 </head>
 <body>
@@ -698,6 +744,51 @@
             </button>
           </div>
         </div>
+      </div>
+    </section>
+
+
+    <!-- ========== REPORTE DE JORNADAS — rango + PDF para RR. HH. ========== -->
+    <section aria-labelledby="secReporte">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="secReporte">Reporte de jornadas</div>
+          <div class="section-subtitle" id="reporteResumen">Elige el período y genera el reporte para RR. HH.</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="chips" id="rangoChips" role="tablist" aria-label="Período del reporte">
+          <button class="chip is-active" data-rango="semana" type="button" aria-pressed="true">Esta semana</button>
+          <button class="chip" data-rango="pasada" type="button" aria-pressed="false">Semana pasada</button>
+          <button class="chip" data-rango="mes" type="button" aria-pressed="false">Este mes</button>
+          <button class="chip" data-rango="libre" type="button" aria-pressed="false">Rango libre</button>
+        </div>
+        <div class="rango-fechas" id="rangoFechas" hidden>
+          <label>Desde <input type="date" id="rangoDesde" aria-label="Desde"></label>
+          <label>Hasta <input type="date" id="rangoHasta" aria-label="Hasta"></label>
+        </div>
+      </div>
+
+      <div class="toolbar reporte-acciones">
+        <label class="chk-todos"><input type="checkbox" id="rangoTodos"> Incluir a quien no marcó</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-ghost" id="btnVerPeriodo" type="button">Ver el período</button>
+          <button class="btn-primary" id="btnReporte" type="button">Generar reporte (PDF)</button>
+        </div>
+      </div>
+      <p class="data-notice" id="reporteEstado" role="status"></p>
+
+      <div class="panel" id="reportePanel">
+        <table id="tablaReporte">
+          <thead id="tablaReporteHead">
+            <tr><th>Persona</th><th>Área</th><th class="num">Total</th></tr>
+          </thead>
+          <tbody id="tablaReporteBody">
+            <tr><td colspan="99" class="empty-state">Elige un período y toca «Ver el período».</td></tr>
+          </tbody>
+          <tfoot id="tablaReporteFoot"></tfoot>
+        </table>
       </div>
     </section>
 
@@ -1298,7 +1389,266 @@
       if(btn)btn.addEventListener('click',check);
       if(input)input.addEventListener('keydown',function(e){ if(e.key==='Enter')check(); });
     })();
+
+    /* ═══════════════ REPORTE DE JORNADAS (rango → PDF) ═══════════════
+       Pide ?action=jornadas_rango al backend, arma la tabla del período y
+       deja la hoja lista para imprimir (Guardar como PDF). Sin librerías. */
+    var rangoModo = 'semana';
+    var rangoDesde = '', rangoHasta = '';
+    var reporteData = null;
+    var DIAS_CORTOS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    var MESES_LARGOS = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                        'agosto','septiembre','octubre','noviembre','diciembre'];
+
+    function escRep(v) {
+      return String(v === null || v === undefined ? '' : v)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function isoHoyJTT() {
+      return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Bogota',
+        year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    }
+    function sumarDiasISO(iso, n) {
+      var d = new Date(iso + 'T12:00:00Z');
+      d.setUTCDate(d.getUTCDate() + n);
+      return d.toISOString().slice(0,10);
+    }
+    function lunesDeISO(iso) {
+      var dow = new Date(iso + 'T12:00:00Z').getUTCDay();
+      return sumarDiasISO(iso, dow === 0 ? -6 : 1 - dow);
+    }
+    function rangoDeModo(modo) {
+      var hoy = isoHoyJTT();
+      if (modo === 'semana') { var l = lunesDeISO(hoy); return {desde:l, hasta:sumarDiasISO(l,6)}; }
+      if (modo === 'pasada') { var p = sumarDiasISO(lunesDeISO(hoy), -7); return {desde:p, hasta:sumarDiasISO(p,6)}; }
+      if (modo === 'mes')    { return {desde: hoy.slice(0,7) + '-01', hasta: hoy}; }
+      var d1 = document.getElementById('rangoDesde'), d2 = document.getElementById('rangoHasta');
+      return {desde: (d1 && d1.value) || '', hasta: (d2 && d2.value) || ''};
+    }
+    function hmRep(min) {
+      var m = Math.max(0, Math.round(Number(min) || 0));
+      return Math.floor(m/60) + 'h ' + String(m%60).padStart(2,'0') + 'm';
+    }
+    function horasDec(min) { return ((Number(min)||0)/60).toFixed(1).replace('.', ','); }
+    function etiquetaDia(iso) {
+      return DIAS_CORTOS[new Date(iso + 'T12:00:00Z').getUTCDay()] + ' ' + iso.slice(8,10);
+    }
+    function fechaLarga(iso) {
+      return Number(iso.slice(8,10)) + ' de ' + MESES_LARGOS[Number(iso.slice(5,7))-1] + ' de ' + iso.slice(0,4);
+    }
+    // La hora viene como 'HH:mm:ss', pero si viene con fecha completa
+    // ('2026-11-14 12:05:00') también tiene que salir bien.
+    function soloHora(v) {
+      var t = String(v === null || v === undefined ? '' : v).trim();
+      var m = t.match(/(\d{2}:\d{2})/);
+      return m ? m[1] : t;
+    }
+    function estadoReporte(txt) {
+      var el = document.getElementById('reporteEstado');
+      if (el) el.textContent = txt || '';
+    }
+
+    function aplicarRango() {
+      var r = rangoDeModo(rangoModo);
+      rangoDesde = r.desde; rangoHasta = r.hasta;
+      var caja = document.getElementById('rangoFechas');
+      if (caja) caja.hidden = (rangoModo !== 'libre');
+      var d1 = document.getElementById('rangoDesde'), d2 = document.getElementById('rangoHasta');
+      if (d1 && rangoModo !== 'libre') d1.value = rangoDesde;
+      if (d2 && rangoModo !== 'libre') d2.value = rangoHasta;
+      if (d1 && !d1.value) d1.value = rangoDesde || isoHoyJTT();
+      if (d2 && !d2.value) d2.value = rangoHasta || isoHoyJTT();
+    }
+
+    function cargarReporte(alCargar) {
+      aplicarRango();
+      if (!rangoDesde || !rangoHasta) { estadoReporte('Elige las dos fechas.'); return; }
+      if (rangoDesde > rangoHasta) { estadoReporte('La fecha inicial no puede ser mayor que la final.'); return; }
+      var chk = document.getElementById('rangoTodos');
+      var btn = document.getElementById('btnVerPeriodo');
+      if (btn) btn.disabled = true;
+      estadoReporte('Consultando el período…');
+      var qs = '?action=jornadas_rango&desde=' + rangoDesde + '&hasta=' + rangoHasta
+             + ((chk && chk.checked) ? '&todos=1' : '');
+      fetch(URL + qs, {method:'GET', cache:'no-store'})
+        .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(d){
+          if (d && d.status === 'error') { reporteData = null; renderReporte(); estadoReporte(d.msg || 'Error'); return; }
+          reporteData = d;
+          renderReporte();
+          estadoReporte('Período ' + d.desde + ' a ' + d.hasta + ' · ' + d.dias.length + ' días');
+          if (alCargar === 'imprimir') imprimirReporte();
+        })
+        .catch(function(err){ reporteData = null; renderReporte(); estadoReporte('Error: ' + err.message); })
+        .finally(function(){ if (btn) btn.disabled = false; });
+    }
+
+    function renderReporte() {
+      var head = document.getElementById('tablaReporteHead');
+      var tbody = document.getElementById('tablaReporteBody');
+      var pie = document.getElementById('tablaReporteFoot');
+      var resumen = document.getElementById('reporteResumen');
+      if (!tbody) return;
+
+      if (!reporteData || !reporteData.empleados || !reporteData.empleados.length) {
+        tbody.innerHTML = '<tr><td colspan="99" class="empty-state">Sin datos en ese período.</td></tr>';
+        if (pie) pie.innerHTML = '';
+        return;
+      }
+
+      var dias = reporteData.dias;
+      if (head) {
+        var h = '<tr><th>Persona</th><th>Área</th>';
+        dias.forEach(function(f){ h += '<th class="num">' + etiquetaDia(f) + '</th>'; });
+        h += '<th class="num">Total</th></tr>';
+        head.innerHTML = h;
+      }
+
+      var totales = {}, gran = 0;
+      dias.forEach(function(f){ totales[f] = 0; });
+
+      tbody.innerHTML = reporteData.empleados.map(function(e){
+        var por = {};
+        (e.porDia || []).forEach(function(pd){ por[pd.fecha] = pd; });
+        var celdas = dias.map(function(f){
+          var pd = por[f];
+          if (!pd || !pd.minutos) return '<td class="num sin-marca">—</td>';
+          totales[f] += pd.minutos;
+          return '<td class="num">' + horasDec(pd.minutos) + '</td>';
+        }).join('');
+        gran += e.totalMinutos;
+        return '<tr><td>' + escRep(e.nombre) + '</td><td>' + escRep(e.area) + '</td>' + celdas
+             + '<td class="num"><strong>' + hmRep(e.totalMinutos) + '</strong></td></tr>';
+      }).join('');
+
+      if (pie) {
+        pie.innerHTML = '<tr><td colspan="2">Total del período</td>'
+          + dias.map(function(f){ return '<td class="num">' + horasDec(totales[f]) + '</td>'; }).join('')
+          + '<td class="num">' + hmRep(gran) + '</td></tr>';
+      }
+      if (resumen) {
+        var abiertas = listarAbiertas().length;
+        resumen.textContent = 'Últimos ' + dias.length + ' días · ' + hmRep(gran) + ' horas'
+          + (abiertas ? ' · ' + abiertas + ' jornada' + (abiertas === 1 ? '' : 's') + ' abierta' + (abiertas === 1 ? '' : 's') : '');
+      }
+    }
+
+    function listarAbiertas() {
+      var out = [];
+      (reporteData && reporteData.empleados ? reporteData.empleados : []).forEach(function(e){
+        (e.jornadasAbiertas || []).forEach(function(a){
+          out.push({ nombre:e.nombre, area:e.area, fecha:a.fecha, ultima:a.ultima });
+        });
+      });
+      return out;
+    }
+
+    function htmlReporte() {
+      var d = reporteData, dias = d.dias;
+      var gran = d.empleados.reduce(function(s,e){ return s + e.totalMinutos; }, 0);
+      var abiertas = listarAbiertas();
+      var h = '';
+
+      h += '<div class="rp-head">'
+         +   '<div class="rp-brand">QUICK-T<small>Asistenc-IA · Reporte de jornadas</small></div>'
+         +   '<div class="rp-cliente"><strong>JusTTime</strong><br>'
+         +     fechaLarga(d.desde) + ' – ' + fechaLarga(d.hasta) + '</div>'
+         + '</div>';
+
+      h += '<div class="rp-kpi">'
+         +   '<div><span>Horas totales</span><b>' + hmRep(gran) + '</b></div>'
+         +   '<div><span>Personas</span><b>' + d.empleados.length + '</b></div>'
+         +   '<div><span>Días del rango</span><b>' + dias.length + '</b></div>'
+         +   '<div><span>Jornadas abiertas</span><b>' + abiertas.length + '</b></div>'
+         + '</div>';
+
+      h += '<h2>Resumen por persona</h2><table><thead><tr><th>Persona</th><th>Área</th>'
+         + dias.map(function(f){ return '<th class="n">' + etiquetaDia(f) + '</th>'; }).join('')
+         + '<th class="n">Total</th></tr></thead><tbody>';
+      d.empleados.forEach(function(e){
+        var por = {};
+        (e.porDia || []).forEach(function(pd){ por[pd.fecha] = pd; });
+        h += '<tr><td>' + escRep(e.nombre) + '</td><td>' + escRep(e.area) + '</td>'
+           + dias.map(function(f){
+               var pd = por[f];
+               return '<td class="n">' + ((pd && pd.minutos) ? horasDec(pd.minutos) : '—') + '</td>';
+             }).join('')
+           + '<td class="n"><strong>' + hmRep(e.totalMinutos) + '</strong></td></tr>';
+      });
+      h += '</tbody></table><p class="rp-hint">Un guion (—) es un día sin ninguna marca. '
+         + 'Columnas por día en horas decimales; los totales en horas y minutos.</p>';
+
+      if (abiertas.length) {
+        h += '<h2>Jornadas abiertas — revisar con RR. HH.</h2>'
+           + '<p class="rp-hint">Marcaron entrada y no marcaron salida. '
+           + '<strong>No se cuentan como tiempo trabajado</strong> en el total: se informan aparte.</p>'
+           + '<table><thead><tr><th>Persona</th><th>Área</th><th>Día</th><th>Última marca</th></tr></thead><tbody>'
+           + abiertas.map(function(a){
+               return '<tr class="abierta"><td>' + escRep(a.nombre) + '</td><td>' + escRep(a.area)
+                    + '</td><td>' + etiquetaDia(a.fecha) + '</td><td>'
+                    + soloHora(a.ultima) + '</td></tr>';
+             }).join('')
+           + '</tbody></table>';
+      }
+
+      // El PDF va sin el detalle día por día de cada persona: RR. HH. quiere el
+      // resumen por persona y las jornadas abiertas a revisar, nada más.
+      h += '<div class="rp-pie">Generado por Quick-T Asistenc-IA · zona horaria America/Bogota · '
+         + new Date().toLocaleString('es-CO',{timeZone:'America/Bogota',hour12:false}) + '</div>';
+      return h;
+    }
+
+    function imprimirReporte() {
+      // Si todavía no hay datos, se cargan y se imprime al terminar.
+      if (!reporteData) { cargarReporte('imprimir'); return; }
+      var caja = document.getElementById('reportePrint');
+      if (!caja) { estadoReporte('No se encontró la hoja de impresión.'); return; }
+      caja.innerHTML = htmlReporte();
+      try {
+        window.print();
+      } catch (e) {
+        estadoReporte('El navegador bloqueó la impresión: usá Ctrl+P (Cmd+P en Mac).');
+      }
+    }
+
+    // ── Cableado ───────────────────────────────────────────────────
+    document.querySelectorAll('#rangoChips .chip').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('#rangoChips .chip').forEach(function(c){
+          c.classList.remove('is-active'); c.setAttribute('aria-pressed','false');
+        });
+        btn.classList.add('is-active'); btn.setAttribute('aria-pressed','true');
+        rangoModo = btn.getAttribute('data-rango');
+        aplicarRango();
+        if (rangoModo !== 'libre') cargarReporte();
+      });
+    });
+    var _rd = document.getElementById('rangoDesde'), _rh = document.getElementById('rangoHasta');
+    if (_rd) _rd.addEventListener('change', function(){ rangoModo = 'libre'; _marcarChipLibre(); cargarReporte(); });
+    if (_rh) _rh.addEventListener('change', function(){ rangoModo = 'libre'; _marcarChipLibre(); cargarReporte(); });
+    function _marcarChipLibre() {
+      document.querySelectorAll('#rangoChips .chip').forEach(function(c){
+        var on = c.getAttribute('data-rango') === 'libre';
+        c.classList.toggle('is-active', on); c.setAttribute('aria-pressed', String(on));
+      });
+      var caja = document.getElementById('rangoFechas');
+      if (caja) caja.hidden = false;
+    }
+    var _bv = document.getElementById('btnVerPeriodo');
+    if (_bv) _bv.addEventListener('click', cargarReporte);
+    var _br = document.getElementById('btnReporte');
+    if (_br) _br.addEventListener('click', imprimirReporte);
+    var _ct = document.getElementById('rangoTodos');
+    if (_ct) _ct.addEventListener('change', cargarReporte);
+
+    aplicarRango();
+    cargarReporte();
+
   </script>
   </div><!-- /dashboardContent -->
+<!-- Hoja que se imprime (invisible en pantalla). La llena el JS antes de window.print(). -->
+  <div id="reportePrint" aria-hidden="true"></div>
+
 </body>
 </html>
